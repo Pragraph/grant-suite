@@ -1,0 +1,487 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   Grant Suite — Design System
+   Aesthetic: "Linear meets Stripe" — dark-first, information-dense,
+   typographically driven.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* ── Dark-first: dark theme is the default via data-theme attribute ────── */
+@custom-variant dark (&:is([data-theme="dark"] *));
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Tailwind v4 Theme Extension
+   Maps all CSS custom properties to Tailwind utility classes.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@theme inline {
+  /* ── Typography ─────────────────────────────────────────────────────── */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "Cascadia Code",
+    "Fira Code", monospace;
+  --font-display: var(--font-instrument-serif), "Georgia", serif;
+  --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Surface & Semantic Colors ──────────────────────────────────────── */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* ── Accent Scale ───────────────────────────────────────────────────── */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-50: var(--accent-50);
+  --color-accent-100: var(--accent-100);
+  --color-accent-200: var(--accent-200);
+  --color-accent-300: var(--accent-300);
+  --color-accent-400: var(--accent-400);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+  --color-accent-700: var(--accent-700);
+  --color-accent-800: var(--accent-800);
+  --color-accent-900: var(--accent-900);
+  --color-accent-950: var(--accent-950);
+
+  /* ── Status Colors ──────────────────────────────────────────────────── */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-muted: var(--success-muted);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-muted: var(--warning-muted);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
+  --color-error-muted: var(--error-muted);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-muted: var(--info-muted);
+
+  /* ── Phase Colors (7-phase grant workflow) ──────────────────────────── */
+  --color-phase-1: var(--phase-1);
+  --color-phase-2: var(--phase-2);
+  --color-phase-3: var(--phase-3);
+  --color-phase-4: var(--phase-4);
+  --color-phase-5: var(--phase-5);
+  --color-phase-6: var(--phase-6);
+  --color-phase-7: var(--phase-7);
+  --color-phase-1-muted: var(--phase-1-muted);
+  --color-phase-2-muted: var(--phase-2-muted);
+  --color-phase-3-muted: var(--phase-3-muted);
+  --color-phase-4-muted: var(--phase-4-muted);
+  --color-phase-5-muted: var(--phase-5-muted);
+  --color-phase-6-muted: var(--phase-6-muted);
+  --color-phase-7-muted: var(--phase-7-muted);
+
+  /* ── Sidebar Colors ─────────────────────────────────────────────────── */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* ── Chart Colors ───────────────────────────────────────────────────── */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* ── Border Radius ──────────────────────────────────────────────────── */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* ── Shadows ────────────────────────────────────────────────────────── */
+  --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 5%);
+  --shadow-sm: 0 1px 3px 0 oklch(0 0 0 / 10%), 0 1px 2px -1px oklch(0 0 0 / 10%);
+  --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 10%), 0 2px 4px -2px oklch(0 0 0 / 10%);
+  --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 10%), 0 4px 6px -4px oklch(0 0 0 / 10%);
+  --shadow-xl: 0 20px 25px -5px oklch(0 0 0 / 10%), 0 8px 10px -6px oklch(0 0 0 / 10%);
+  --shadow-2xl: 0 25px 50px -12px oklch(0 0 0 / 25%);
+  --shadow-glow: 0 0 20px var(--accent-500);
+  --shadow-glow-sm: 0 0 10px var(--accent-500);
+  --shadow-glow-lg: 0 0 40px var(--accent-500), 0 0 80px var(--accent-500);
+  --shadow-card: 0 0 0 1px var(--border), 0 1px 3px oklch(0 0 0 / 8%);
+  --shadow-card-hover: 0 0 0 1px var(--border), 0 4px 12px oklch(0 0 0 / 12%);
+
+  /* ── Transitions ────────────────────────────────────────────────────── */
+  --transition-timing-function-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-timing-function-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-timing-function-snappy: cubic-bezier(0.2, 0, 0, 1);
+  --transition-duration-fast: 150ms;
+  --transition-duration-normal: 250ms;
+  --transition-duration-slow: 400ms;
+
+  /* ── Custom Animations ──────────────────────────────────────────────── */
+  --animate-fade-in: fade-in 0.3s var(--transition-timing-function-smooth);
+  --animate-fade-in-up: fade-in-up 0.4s var(--transition-timing-function-smooth);
+  --animate-slide-in-right: slide-in-right 0.3s var(--transition-timing-function-smooth);
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-pulse-dot: pulse-dot 1.5s var(--transition-timing-function-smooth) infinite;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Keyframes
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Dark Theme (Default — :root)
+   "Linear meets Stripe" — deep, cool-tinted surfaces with vibrant indigo accent
+   ════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: dark;
+
+  /* ── Surfaces ───────────────────────────────────────────────────────── */
+  --background: oklch(0.13 0.006 285);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.17 0.005 285);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.19 0.006 285);
+  --popover-foreground: oklch(0.97 0 0);
+
+  /* ── Semantic Surfaces ──────────────────────────────────────────────── */
+  --primary: oklch(0.97 0 0);
+  --primary-foreground: oklch(0.13 0.006 285);
+  --secondary: oklch(0.21 0.006 285);
+  --secondary-foreground: oklch(0.90 0 0);
+  --muted: oklch(0.21 0.006 285);
+  --muted-foreground: oklch(0.60 0 0);
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.97 0 0);
+
+  /* ── Accent Scale (Indigo / Violet) ─────────────────────────────────── */
+  --accent: oklch(0.21 0.006 285);
+  --accent-foreground: oklch(0.97 0 0);
+  --accent-50: oklch(0.97 0.02 275);
+  --accent-100: oklch(0.93 0.04 275);
+  --accent-200: oklch(0.86 0.08 275);
+  --accent-300: oklch(0.76 0.14 275);
+  --accent-400: oklch(0.68 0.19 275);
+  --accent-500: oklch(0.59 0.24 275);
+  --accent-600: oklch(0.52 0.24 275);
+  --accent-700: oklch(0.45 0.22 275);
+  --accent-800: oklch(0.38 0.18 275);
+  --accent-900: oklch(0.30 0.14 275);
+  --accent-950: oklch(0.22 0.10 275);
+
+  /* ── Status Colors ──────────────────────────────────────────────────── */
+  --success: oklch(0.68 0.17 152);
+  --success-foreground: oklch(0.97 0 0);
+  --success-muted: oklch(0.28 0.06 152);
+  --warning: oklch(0.75 0.15 75);
+  --warning-foreground: oklch(0.15 0 0);
+  --warning-muted: oklch(0.30 0.06 75);
+  --error: oklch(0.65 0.2 25);
+  --error-foreground: oklch(0.97 0 0);
+  --error-muted: oklch(0.28 0.06 25);
+  --info: oklch(0.68 0.15 230);
+  --info-foreground: oklch(0.97 0 0);
+  --info-muted: oklch(0.28 0.06 230);
+
+  /* ── Phase Colors ───────────────────────────────────────────────────── */
+  --phase-1: oklch(0.68 0.17 250);
+  --phase-2: oklch(0.65 0.20 275);
+  --phase-3: oklch(0.68 0.17 310);
+  --phase-4: oklch(0.65 0.17 340);
+  --phase-5: oklch(0.70 0.15 50);
+  --phase-6: oklch(0.68 0.17 152);
+  --phase-7: oklch(0.65 0.15 195);
+  --phase-1-muted: oklch(0.25 0.04 250);
+  --phase-2-muted: oklch(0.25 0.04 275);
+  --phase-3-muted: oklch(0.25 0.04 310);
+  --phase-4-muted: oklch(0.25 0.04 340);
+  --phase-5-muted: oklch(0.25 0.04 50);
+  --phase-6-muted: oklch(0.25 0.04 152);
+  --phase-7-muted: oklch(0.25 0.04 195);
+
+  /* ── Border / Input / Ring ──────────────────────────────────────────── */
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: var(--accent-500);
+
+  /* ── Chart Colors ───────────────────────────────────────────────────── */
+  --chart-1: var(--accent-400);
+  --chart-2: var(--phase-3);
+  --chart-3: var(--phase-6);
+  --chart-4: var(--phase-5);
+  --chart-5: var(--phase-7);
+
+  /* ── Sidebar ────────────────────────────────────────────────────────── */
+  --sidebar: oklch(0.15 0.006 285);
+  --sidebar-foreground: oklch(0.90 0 0);
+  --sidebar-primary: var(--accent-500);
+  --sidebar-primary-foreground: oklch(0.97 0 0);
+  --sidebar-accent: oklch(0.21 0.006 285);
+  --sidebar-accent-foreground: oklch(0.97 0 0);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: var(--accent-500);
+
+  /* ── Misc ────────────────────────────────────────────────────────────── */
+  --radius: 0.625rem;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Light Theme — [data-theme="light"]
+   Clean, airy surfaces with the same accent palette
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* ── Surfaces ───────────────────────────────────────────────────────── */
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.14 0.005 285);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.14 0.005 285);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.14 0.005 285);
+
+  /* ── Semantic Surfaces ──────────────────────────────────────────────── */
+  --primary: oklch(0.20 0.006 285);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.96 0.003 285);
+  --secondary-foreground: oklch(0.28 0.006 285);
+  --muted: oklch(0.96 0.003 285);
+  --muted-foreground: oklch(0.50 0 0);
+  --destructive: oklch(0.58 0.22 25);
+  --destructive-foreground: oklch(0.98 0 0);
+
+  /* ── Accent Scale (Indigo / Violet) ─────────────────────────────────── */
+  --accent: oklch(0.96 0.003 285);
+  --accent-foreground: oklch(0.20 0.006 285);
+  --accent-50: oklch(0.97 0.02 275);
+  --accent-100: oklch(0.93 0.04 275);
+  --accent-200: oklch(0.86 0.08 275);
+  --accent-300: oklch(0.76 0.14 275);
+  --accent-400: oklch(0.68 0.19 275);
+  --accent-500: oklch(0.55 0.24 275);
+  --accent-600: oklch(0.48 0.24 275);
+  --accent-700: oklch(0.42 0.22 275);
+  --accent-800: oklch(0.35 0.18 275);
+  --accent-900: oklch(0.28 0.14 275);
+  --accent-950: oklch(0.20 0.10 275);
+
+  /* ── Status Colors ──────────────────────────────────────────────────── */
+  --success: oklch(0.55 0.17 152);
+  --success-foreground: oklch(0.98 0 0);
+  --success-muted: oklch(0.94 0.04 152);
+  --warning: oklch(0.68 0.15 75);
+  --warning-foreground: oklch(0.15 0 0);
+  --warning-muted: oklch(0.95 0.04 75);
+  --error: oklch(0.58 0.22 25);
+  --error-foreground: oklch(0.98 0 0);
+  --error-muted: oklch(0.94 0.04 25);
+  --info: oklch(0.55 0.17 230);
+  --info-foreground: oklch(0.98 0 0);
+  --info-muted: oklch(0.94 0.04 230);
+
+  /* ── Phase Colors ───────────────────────────────────────────────────── */
+  --phase-1: oklch(0.55 0.17 250);
+  --phase-2: oklch(0.52 0.20 275);
+  --phase-3: oklch(0.55 0.17 310);
+  --phase-4: oklch(0.55 0.17 340);
+  --phase-5: oklch(0.60 0.15 50);
+  --phase-6: oklch(0.55 0.17 152);
+  --phase-7: oklch(0.55 0.15 195);
+  --phase-1-muted: oklch(0.94 0.03 250);
+  --phase-2-muted: oklch(0.94 0.03 275);
+  --phase-3-muted: oklch(0.94 0.03 310);
+  --phase-4-muted: oklch(0.94 0.03 340);
+  --phase-5-muted: oklch(0.94 0.03 50);
+  --phase-6-muted: oklch(0.94 0.03 152);
+  --phase-7-muted: oklch(0.94 0.03 195);
+
+  /* ── Border / Input / Ring ──────────────────────────────────────────── */
+  --border: oklch(0 0 0 / 10%);
+  --input: oklch(0 0 0 / 10%);
+  --ring: var(--accent-500);
+
+  /* ── Chart Colors ───────────────────────────────────────────────────── */
+  --chart-1: var(--accent-500);
+  --chart-2: var(--phase-3);
+  --chart-3: var(--phase-6);
+  --chart-4: var(--phase-5);
+  --chart-5: var(--phase-7);
+
+  /* ── Sidebar ────────────────────────────────────────────────────────── */
+  --sidebar: oklch(0.98 0.002 285);
+  --sidebar-foreground: oklch(0.20 0.006 285);
+  --sidebar-primary: var(--accent-500);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.96 0.003 285);
+  --sidebar-accent-foreground: oklch(0.20 0.006 285);
+  --sidebar-border: oklch(0 0 0 / 8%);
+  --sidebar-ring: var(--accent-500);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Base Layer — Global Resets & Defaults
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @apply font-body;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* ── Selection ──────────────────────────────────────────────────────── */
+  ::selection {
+    background: var(--accent-500);
+    color: oklch(0.97 0 0);
+  }
+
+  /* ── Focus Visible Ring ─────────────────────────────────────────────── */
+  :focus-visible {
+    outline: 2px solid var(--accent-500);
+    outline-offset: 2px;
+  }
+
+  /* ── Scrollbar Styling ──────────────────────────────────────────────── */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted-foreground) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--muted-foreground);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--foreground);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Utility Classes
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  /* ── Text Gradient (accent) ─────────────────────────────────────────── */
+  .text-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--accent-400),
+      var(--accent-500),
+      var(--accent-300)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ── Glow Effect ────────────────────────────────────────────────────── */
+  .glow {
+    box-shadow: 0 0 20px oklch(0.59 0.24 275 / 25%),
+      0 0 60px oklch(0.59 0.24 275 / 10%);
+  }
+
+  .glow-sm {
+    box-shadow: 0 0 10px oklch(0.59 0.24 275 / 20%);
+  }
+
+  .glow-lg {
+    box-shadow: 0 0 40px oklch(0.59 0.24 275 / 30%),
+      0 0 80px oklch(0.59 0.24 275 / 15%);
+  }
+}
