@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  outputFileTracingRoot: __dirname,
+  output: "export",
+  images: { unoptimized: true },
   typescript: {
     // Pre-existing issue: special characters in parent directory path (*[ON])
     // break TypeScript module resolution during `next build`.
