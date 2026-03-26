@@ -1,0 +1,2 @@
+# SPA fallback for client-side dynamic routes
+/projects/*  /projects/_.html  200
