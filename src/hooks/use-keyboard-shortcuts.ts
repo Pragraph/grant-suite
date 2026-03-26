@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { useLayoutStore } from "@/stores/layout-store";
+import { useUiStore } from "@/stores/ui-store";
 
 export function useKeyboardShortcuts() {
-  const { toggleSidebar, setCommandPaletteOpen } = useLayoutStore();
+  const { toggleSidebar, setCommandPaletteOpen } = useUiStore();
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {

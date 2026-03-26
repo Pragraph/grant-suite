@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
   FileText,
-  Receipt,
   Settings,
   Sun,
   Moon,
@@ -15,10 +15,11 @@ import {
   CircleDot,
   CheckCircle2,
   Sparkles,
+  Download,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useLayoutStore } from "@/stores/layout-store";
+import { useUiStore } from "@/stores/ui-store";
 import { useTheme } from "@/components/providers/theme-provider";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,6 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { Phase } from "@/components/ui/phase-icon";
 
 // ── Phase data ────────────────────────────────────────────────────────────────
@@ -59,9 +59,8 @@ const statusIcons: Record<CompletionStatus, typeof Circle> = {
 // ── Workspace nav items ───────────────────────────────────────────────────────
 
 const workspaceItems = [
-  { label: "Documents", icon: FileText, href: "/projects/documents" },
-  { label: "Cost Tracker", icon: Receipt, href: "/projects/costs" },
-  { label: "Settings", icon: Settings, href: "/projects/settings" },
+  { label: "Documents", icon: FileText, href: "/documents" },
+  { label: "Settings", icon: Settings, href: "/settings" },
 ];
 
 // ── Sidebar content (shared between desktop sidebar and mobile drawer) ────────
@@ -81,7 +80,7 @@ function SidebarContent({
 }: SidebarContentProps) {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
-  const { toggleSidebar } = useLayoutStore();
+  const { toggleSidebar } = useUiStore();
 
   return (
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
@@ -140,7 +139,11 @@ function SidebarContent({
             </p>
           )}
 
-          <nav className="flex flex-col gap-0.5" role="navigation" aria-label="Pipeline phases">
+          <nav
+            className="flex flex-col gap-0.5"
+            role="navigation"
+            aria-label="Pipeline phases"
+          >
             {phases.map(({ phase, name }) => {
               const status = phaseStatuses[phase] ?? "not-started";
               const StatusIcon = statusIcons[status];
@@ -164,7 +167,9 @@ function SidebarContent({
                     isActive || isCurrentRoute
                       ? {
                           borderLeft: `3px solid var(--phase-${phase})`,
-                          paddingLeft: collapsed ? 0 : "calc(0.5rem - 3px)",
+                          paddingLeft: collapsed
+                            ? 0
+                            : "calc(0.5rem - 3px)",
                         }
                       : undefined
                   }
@@ -184,7 +189,8 @@ function SidebarContent({
                           "h-3.5 w-3.5 shrink-0",
                           status === "complete" && "text-success",
                           status === "in-progress" && "text-warning",
-                          status === "not-started" && "text-muted-foreground/50"
+                          status === "not-started" &&
+                            "text-muted-foreground/50"
                         )}
                       />
                     </>
@@ -227,7 +233,11 @@ function SidebarContent({
               <div className="mx-auto my-2 h-px w-6 bg-sidebar-border" />
             )}
 
-            <nav className="flex flex-col gap-0.5" role="navigation" aria-label="Workspace">
+            <nav
+              className="flex flex-col gap-0.5"
+              role="navigation"
+              aria-label="Workspace"
+            >
               {workspaceItems.map(({ label, icon: Icon, href }) => {
                 const isCurrentRoute = pathname === href;
 
@@ -255,7 +265,9 @@ function SidebarContent({
                         <TooltipTrigger asChild>
                           <Link href={href}>{item}</Link>
                         </TooltipTrigger>
-                        <TooltipContent side="right">{label}</TooltipContent>
+                        <TooltipContent side="right">
+                          {label}
+                        </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   );
@@ -276,27 +288,19 @@ function SidebarContent({
       <div className="border-t border-sidebar-border px-3 py-2">
         <div
           className={cn(
-            "flex items-center gap-2",
-            collapsed && "flex-col"
+            "flex items-center",
+            collapsed ? "flex-col gap-2" : "justify-between"
           )}
         >
-          <Avatar className="h-7 w-7">
-            <AvatarFallback className="text-[10px]">U</AvatarFallback>
-          </Avatar>
-
-          {!collapsed && (
-            <span className="flex-1 truncate text-xs font-medium text-sidebar-foreground">
-              User
-            </span>
-          )}
-
           <Button
             variant="ghost"
             size="icon"
             className="h-7 w-7 text-muted-foreground hover:text-foreground"
             onClick={toggleTheme}
             aria-label={
-              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+              theme === "dark"
+                ? "Switch to light mode"
+                : "Switch to dark mode"
             }
           >
             {theme === "dark" ? (
@@ -305,16 +309,78 @@ function SidebarContent({
               <Moon className="h-3.5 w-3.5" />
             )}
           </Button>
+
+          {!collapsed ? (
+            <Link
+              href="/export"
+              className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors duration-fast hover:text-foreground"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Export/Import Data
+            </Link>
+          ) : (
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href="/export"
+                    className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:text-foreground"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  Export/Import Data
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
+// ── Responsive auto-collapse hook ─────────────────────────────────────────────
+
+function useResponsiveSidebar() {
+  const { setSidebarMode, setMobileDrawerOpen } = useUiStore();
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px) and (max-width: 1023px)");
+
+    function handleChange(e: MediaQueryListEvent | MediaQueryList) {
+      if (e.matches) {
+        setSidebarMode("collapsed");
+      }
+    }
+
+    // Check on mount
+    handleChange(mediaQuery);
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, [setSidebarMode]);
+
+  // Close mobile drawer when resizing to desktop
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+
+    function handleChange(e: MediaQueryListEvent | MediaQueryList) {
+      if (e.matches) {
+        setMobileDrawerOpen(false);
+      }
+    }
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, [setMobileDrawerOpen]);
+}
+
 // ── Mobile drawer ─────────────────────────────────────────────────────────────
 
 function MobileSidebar() {
-  const { mobileDrawerOpen, setMobileDrawerOpen } = useLayoutStore();
+  const { mobileDrawerOpen, setMobileDrawerOpen } = useUiStore();
 
   return (
     <AnimatePresence>
@@ -335,7 +401,7 @@ function MobileSidebar() {
             animate={{ x: 0 }}
             exit={{ x: -280 }}
             transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-            className="fixed inset-y-0 left-0 z-50 w-[280px] shadow-xl"
+            className="fixed inset-y-0 left-0 z-50 w-70 shadow-xl"
           >
             <SidebarContent collapsed={false} />
           </motion.aside>
@@ -348,8 +414,10 @@ function MobileSidebar() {
 // ── Desktop sidebar ───────────────────────────────────────────────────────────
 
 function DesktopSidebar() {
-  const { sidebarMode } = useLayoutStore();
+  const { sidebarMode } = useUiStore();
   const collapsed = sidebarMode === "collapsed";
+
+  useResponsiveSidebar();
 
   return (
     <motion.aside

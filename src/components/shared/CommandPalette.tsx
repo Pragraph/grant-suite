@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutStore } from "@/stores/layout-store";
+import { useUiStore } from "@/stores/ui-store";
 import {
   CommandDialog,
   CommandInput,
@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/command";
 
 function CommandPalette() {
-  const { commandPaletteOpen, setCommandPaletteOpen } = useLayoutStore();
+  const { commandPaletteOpen, setCommandPaletteOpen } = useUiStore();
 
   return (
     <CommandDialog

@@ -1,28 +1,33 @@
 "use client";
 
-import { useLayoutStore } from "@/stores/layout-store";
+import { FileText } from "lucide-react";
+
+import { useUiStore } from "@/stores/ui-store";
 import { StatusDot } from "@/components/ui/status-dot";
 import type { Status } from "@/components/ui/status-dot";
 
-const aiStatusMap: Record<string, { dotStatus: Status; pulse: boolean }> = {
+const appStatusMap: Record<string, { dotStatus: Status; pulse: boolean }> = {
   idle: { dotStatus: "complete", pulse: false },
-  generating: { dotStatus: "active", pulse: true },
+  working: { dotStatus: "active", pulse: true },
   error: { dotStatus: "error", pulse: false },
 };
 
 function StatusBar() {
-  const { aiStatus, operationText, tokenCount, estimatedCost } =
-    useLayoutStore();
+  const { appStatus, operationText, documentCount } = useUiStore();
 
-  const { dotStatus, pulse } = aiStatusMap[aiStatus] ?? aiStatusMap.idle;
+  const { dotStatus, pulse } = appStatusMap[appStatus] ?? appStatusMap.idle;
 
   return (
     <footer className="fixed inset-x-0 bottom-0 z-30 flex h-8 items-center justify-between border-t border-border bg-secondary px-4">
-      {/* Left: AI status */}
+      {/* Left: App status */}
       <div className="flex items-center gap-2">
         <StatusDot status={dotStatus} pulse={pulse} />
         <span className="text-xs capitalize text-muted-foreground">
-          {aiStatus === "idle" ? "AI Ready" : aiStatus === "generating" ? "Generating…" : "Error"}
+          {appStatus === "idle"
+            ? "Idle"
+            : appStatus === "working"
+              ? "Working…"
+              : "Error"}
         </span>
       </div>
 
@@ -31,10 +36,12 @@ function StatusBar() {
         {operationText}
       </span>
 
-      {/* Right: Token count + cost */}
-      <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
-        <span>{tokenCount.toLocaleString()} tokens</span>
-        <span>${estimatedCost.toFixed(4)}</span>
+      {/* Right: Document count */}
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <FileText className="h-3 w-3" />
+        <span>
+          {documentCount} {documentCount === 1 ? "document" : "documents"}
+        </span>
       </div>
     </footer>
   );

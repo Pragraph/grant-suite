@@ -3,9 +3,9 @@ import { persist } from "zustand/middleware";
 
 type SidebarMode = "expanded" | "collapsed";
 
-type AiStatus = "idle" | "generating" | "error";
+type AppStatus = "idle" | "working" | "error";
 
-interface LayoutState {
+interface UiState {
   // Sidebar
   sidebarMode: SidebarMode;
   mobileDrawerOpen: boolean;
@@ -18,14 +18,12 @@ interface LayoutState {
   setCommandPaletteOpen: (open: boolean) => void;
 
   // Status bar
-  aiStatus: AiStatus;
+  appStatus: AppStatus;
   operationText: string;
-  tokenCount: number;
-  estimatedCost: number;
-  setAiStatus: (status: AiStatus) => void;
+  documentCount: number;
+  setAppStatus: (status: AppStatus) => void;
   setOperationText: (text: string) => void;
-  setTokenCount: (count: number) => void;
-  setEstimatedCost: (cost: number) => void;
+  setDocumentCount: (count: number) => void;
 
   // Breadcrumbs
   breadcrumbs: { label: string; href?: string }[];
@@ -33,10 +31,12 @@ interface LayoutState {
 
   // Top bar actions
   actions: { label: string; onClick: () => void; variant?: string }[];
-  setActions: (actions: { label: string; onClick: () => void; variant?: string }[]) => void;
+  setActions: (
+    actions: { label: string; onClick: () => void; variant?: string }[]
+  ) => void;
 }
 
-export const useLayoutStore = create<LayoutState>()(
+export const useUiStore = create<UiState>()(
   persist(
     (set) => ({
       // Sidebar
@@ -44,7 +44,8 @@ export const useLayoutStore = create<LayoutState>()(
       mobileDrawerOpen: false,
       toggleSidebar: () =>
         set((s) => ({
-          sidebarMode: s.sidebarMode === "expanded" ? "collapsed" : "expanded",
+          sidebarMode:
+            s.sidebarMode === "expanded" ? "collapsed" : "expanded",
         })),
       setSidebarMode: (mode) => set({ sidebarMode: mode }),
       setMobileDrawerOpen: (open) => set({ mobileDrawerOpen: open }),
@@ -54,14 +55,12 @@ export const useLayoutStore = create<LayoutState>()(
       setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
 
       // Status bar
-      aiStatus: "idle",
+      appStatus: "idle",
       operationText: "All changes saved",
-      tokenCount: 0,
-      estimatedCost: 0,
-      setAiStatus: (status) => set({ aiStatus: status }),
+      documentCount: 0,
+      setAppStatus: (status) => set({ appStatus: status }),
       setOperationText: (text) => set({ operationText: text }),
-      setTokenCount: (count) => set({ tokenCount: count }),
-      setEstimatedCost: (cost) => set({ estimatedCost: cost }),
+      setDocumentCount: (count) => set({ documentCount: count }),
 
       // Breadcrumbs
       breadcrumbs: [{ label: "Projects" }],

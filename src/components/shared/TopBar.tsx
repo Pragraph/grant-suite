@@ -4,11 +4,11 @@ import { Menu, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import { useLayoutStore } from "@/stores/layout-store";
+import { useUiStore } from "@/stores/ui-store";
 import { Button } from "@/components/ui/button";
 
 function TopBar() {
-  const { breadcrumbs, actions, setMobileDrawerOpen } = useLayoutStore();
+  const { breadcrumbs, actions, setMobileDrawerOpen } = useUiStore();
 
   return (
     <header className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-background px-4">
