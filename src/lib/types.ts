@@ -158,6 +158,51 @@ export const PHASES: PhaseInfo[] = [
   },
 ];
 
+// ─── Document Pipeline ──────────────────────────────────────────────────────
+
+export interface DependencyEntry {
+  phase: number;
+  step: number;
+  produces: string;
+  requires: string[];
+  optional: string[];
+  isOptional?: boolean;
+}
+
+export interface StepDefinition {
+  step: number;
+  name: string;
+  type: "standard" | "multi-method";
+  isOptional?: boolean;
+}
+
+export interface PhaseDefinition {
+  phase: number;
+  name: string;
+  color: string;
+  steps: StepDefinition[];
+}
+
+export interface DocumentNode {
+  name: string;
+  phase: number;
+  present: boolean;
+  stale: boolean;
+  dependsOn: string[];
+}
+
+export interface ReadinessResult {
+  ready: boolean;
+  missing: string[];
+  optionalMissing: string[];
+}
+
+export interface RequiredDocument {
+  canonicalName: string;
+  required: boolean;
+  present: boolean;
+}
+
 // ─── Storage keys ───────────────────────────────────────────────────────────
 
 export const STORAGE_KEYS = {
