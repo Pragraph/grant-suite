@@ -15,6 +15,9 @@ import {
   ArrowRight,
   RotateCcw,
   ExternalLink,
+  PartyPopper,
+  Download,
+  LayoutDashboard,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -707,21 +710,94 @@ export function Phase7Client({ projectId }: { projectId: string }) {
           })}
         </div>
 
-        {/* ── Phase Complete ─────────────────────────────────────────────── */}
+        {/* ── Project Complete Celebration ────────────────────────────────── */}
         {phaseCompletion === 100 && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-6"
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center py-8"
           >
-            <Card className="border-phase-7/30 bg-phase-7/5">
-              <CardContent className="p-6 space-y-3">
-                <CheckCircle2 className="h-8 w-8 text-phase-7 mx-auto" />
-                <h2 className="text-lg font-heading font-bold text-foreground">All Phases Complete!</h2>
-                <p className="text-sm text-muted-foreground">
-                  Your proposal has been written, reviewed, optimized, and your resubmission materials
-                  are ready. Good luck with your grant application!
-                </p>
+            <Card className="border-phase-7/30 bg-linear-to-b from-phase-7/10 to-phase-7/5 overflow-hidden relative">
+              {/* Decorative dots */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {[...Array(12)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute h-1.5 w-1.5 rounded-full bg-phase-7/20"
+                    initial={{ opacity: 0, y: 0 }}
+                    animate={{
+                      opacity: [0, 1, 0],
+                      y: [-20, -60 - Math.random() * 40],
+                      x: [0, (Math.random() - 0.5) * 40],
+                    }}
+                    transition={{
+                      duration: 2 + Math.random(),
+                      delay: i * 0.15,
+                      repeat: Infinity,
+                      repeatDelay: 3,
+                    }}
+                    style={{
+                      left: `${10 + (i / 12) * 80}%`,
+                      bottom: 0,
+                    }}
+                  />
+                ))}
+              </div>
+
+              <CardContent className="p-8 space-y-5 relative z-10">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 15 }}
+                >
+                  <PartyPopper className="h-12 w-12 text-phase-7 mx-auto" />
+                </motion.div>
+
+                <div className="space-y-2">
+                  <h2 className="text-xl font-heading font-bold text-foreground">
+                    Congratulations! Your grant proposal is complete.
+                  </h2>
+                  <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                    You&apos;ve successfully completed all 7 phases — from discovery through
+                    post-submission. Your proposal has been written, reviewed, optimized, and
+                    your resubmission materials are ready.
+                  </p>
+                </div>
+
+                {/* Summary stats */}
+                <div className="flex items-center justify-center gap-6 pt-2">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-phase-7">7</p>
+                    <p className="text-[11px] text-muted-foreground">Phases Completed</p>
+                  </div>
+                  <div className="h-8 w-px bg-border/50" />
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-phase-7">
+                      {documents.filter((d) => d.projectId === projectId && d.isCurrent).length}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">Documents Generated</p>
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex items-center justify-center gap-3 pt-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => window.location.assign("/projects")}
+                    className="text-xs"
+                  >
+                    <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
+                    Back to Dashboard
+                  </Button>
+                  <Button
+                    onClick={() => window.location.assign(`/projects/${projectId}/export`)}
+                    className="bg-phase-7 hover:bg-phase-7/90 text-white text-xs"
+                  >
+                    <Download className="h-3.5 w-3.5 mr-1.5" />
+                    Export All Documents
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </motion.div>

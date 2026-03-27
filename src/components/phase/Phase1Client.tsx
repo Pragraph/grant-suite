@@ -26,6 +26,7 @@ import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Progress } from "@/components/ui/progress";
 import { StepExecutor } from "@/components/phase/StepExecutor";
 import { MethodWizard, type WizardStepConfig } from "@/components/phase/MethodWizard";
+import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
 
 // ─── Phase 1 definition ────────────────────────────────────────────────────
 
@@ -795,6 +796,8 @@ export function Phase1Client({ projectId }: { projectId: string }) {
           );
         })}
       </div>
+
+      <PhaseCompleteCTA projectId={projectId} phase={1} phaseCompletion={phaseCompletion} />
     </motion.div>
   );
 }

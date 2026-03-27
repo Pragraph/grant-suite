@@ -29,6 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Progress } from "@/components/ui/progress";
 import { StepExecutor } from "@/components/phase/StepExecutor";
+import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
 
 // ─── Phase 2 definition ────────────────────────────────────────────────────
 
@@ -640,6 +641,8 @@ export function Phase2Client({ projectId }: { projectId: string }) {
           })}
         </div>
       )}
+
+      <PhaseCompleteCTA projectId={projectId} phase={2} phaseCompletion={phaseCompletion} />
     </motion.div>
   );
 }

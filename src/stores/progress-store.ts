@@ -2,9 +2,11 @@ import { create } from "zustand";
 import { storage } from "@/lib/storage";
 import type { PhaseProgress, StepStatus, GateStatus } from "@/lib/types";
 import { PHASES } from "@/lib/types";
+import type { GateResult } from "@/lib/quality-gate";
 
 interface ProgressState {
   progress: PhaseProgress;
+  gateResults: Record<number, GateResult>;
 
   // Actions
   loadProgress: (projectId: string) => void;
@@ -19,6 +21,12 @@ interface ProgressState {
     phase: number,
     status: GateStatus
   ) => void;
+  recordGateResult: (
+    projectId: string,
+    phase: number,
+    result: GateResult
+  ) => void;
+  getGateResult: (phase: number) => GateResult | undefined;
   getPhaseCompletion: (phase: number) => number;
   canAccessPhase: (phase: number) => boolean;
   clearProgress: () => void;
@@ -26,10 +34,18 @@ interface ProgressState {
 
 export const useProgressStore = create<ProgressState>()((set, get) => ({
   progress: { phases: {} },
+  gateResults: {},
 
   loadProgress: (projectId) => {
     const progress = storage.getProgress(projectId);
-    set({ progress });
+    // Load persisted gate results
+    const gateResultsRaw = localStorage.getItem(
+      `grant-suite-gate-results-${projectId}`
+    );
+    const gateResults = gateResultsRaw
+      ? (JSON.parse(gateResultsRaw) as Record<number, GateResult>)
+      : {};
+    set({ progress, gateResults });
   },
 
   updateStepStatus: (projectId, phase, step, status) => {
@@ -77,7 +93,20 @@ export const useProgressStore = create<ProgressState>()((set, get) => ({
     );
   },
 
+  recordGateResult: (projectId, phase, result) => {
+    const gateResults = { ...get().gateResults, [phase]: result };
+    localStorage.setItem(
+      `grant-suite-gate-results-${projectId}`,
+      JSON.stringify(gateResults)
+    );
+    set({ gateResults });
+  },
+
+  getGateResult: (phase) => {
+    return get().gateResults[phase];
+  },
+
   clearProgress: () => {
-    set({ progress: { phases: {} } });
+    set({ progress: { phases: {} }, gateResults: {} });
   },
 }));

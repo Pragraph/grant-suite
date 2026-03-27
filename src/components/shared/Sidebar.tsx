@@ -16,10 +16,14 @@ import {
   CheckCircle2,
   Sparkles,
   Download,
+  ShieldCheck,
+  ShieldX,
+  ShieldAlert,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useUiStore } from "@/stores/ui-store";
+import { useProgressStore } from "@/stores/progress-store";
 import { useTheme } from "@/components/providers/theme-provider";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Button } from "@/components/ui/button";
@@ -81,6 +85,7 @@ function SidebarContent({
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { toggleSidebar } = useUiStore();
+  const { progress } = useProgressStore();
 
   return (
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
@@ -184,6 +189,13 @@ function SidebarContent({
                       <span className="flex-1 truncate text-xs font-medium">
                         {name}
                       </span>
+                      {(() => {
+                        const gateStatus = progress.phases[phase]?.gateStatus;
+                        if (gateStatus === "passed") return <ShieldCheck className="h-3 w-3 shrink-0 text-success" />;
+                        if (gateStatus === "failed") return <ShieldX className="h-3 w-3 shrink-0 text-error" />;
+                        if (gateStatus === "overridden") return <ShieldAlert className="h-3 w-3 shrink-0 text-warning" />;
+                        return null;
+                      })()}
                       <StatusIcon
                         className={cn(
                           "h-3.5 w-3.5 shrink-0",

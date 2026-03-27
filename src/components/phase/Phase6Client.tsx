@@ -17,7 +17,6 @@ import {
   CheckCircle2,
   XCircle,
   Download,
-  ArrowRight,
   GitCompare,
 } from "lucide-react";
 
@@ -43,6 +42,7 @@ import {
 } from "@/components/ui/tooltip";
 import { StepExecutor } from "@/components/phase/StepExecutor";
 import { MarkdownRenderer } from "@/components/document/MarkdownRenderer";
+import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
 
 // ─── Phase 6 definition ────────────────────────────────────────────────────
 
@@ -1035,30 +1035,7 @@ export function Phase6Client({ projectId }: { projectId: string }) {
         </div>
 
         {/* ── Phase Complete CTA ─────────────────────────────────────────── */}
-        {phaseCompletion === 100 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-6"
-          >
-            <Card className="border-phase-6/30 bg-phase-6/5">
-              <CardContent className="p-6 space-y-3">
-                <CheckCircle2 className="h-8 w-8 text-phase-6 mx-auto" />
-                <h2 className="text-lg font-heading font-bold text-foreground">Phase 6 Complete!</h2>
-                <p className="text-sm text-muted-foreground">
-                  Your proposal has been reviewed and optimized. Continue to Phase 7 for post-submission tools.
-                </p>
-                <Button
-                  onClick={() => window.location.assign(`/projects/${projectId}/phase/7`)}
-                  className="bg-phase-7 hover:bg-phase-7/90 text-white"
-                >
-                  Continue to Phase 7
-                  <ArrowRight className="h-4 w-4 ml-1.5" />
-                </Button>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
+        <PhaseCompleteCTA projectId={projectId} phase={6} phaseCompletion={phaseCompletion} />
       </motion.div>
     </TooltipProvider>
   );

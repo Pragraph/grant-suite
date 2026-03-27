@@ -37,6 +37,7 @@ import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { StepExecutor } from "@/components/phase/StepExecutor";
+import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
 
 // ─── Phase 3 definition ────────────────────────────────────────────────────
 
@@ -1069,6 +1070,8 @@ export function Phase3Client({ projectId }: { projectId: string }) {
           </AnimatePresence>
         </motion.div>
       )}
+
+      <PhaseCompleteCTA projectId={projectId} phase={3} phaseCompletion={phaseCompletion} />
     </motion.div>
   );
 }

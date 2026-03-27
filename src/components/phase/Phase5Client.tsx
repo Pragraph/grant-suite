@@ -48,6 +48,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { StepExecutor } from "@/components/phase/StepExecutor";
+import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
 
 // ─── Phase 5 definition ────────────────────────────────────────────────────
 
@@ -1411,6 +1412,9 @@ export function Phase5Client({ projectId }: { projectId: string }) {
             );
           })}
         </div>
+
+        {/* ── Phase Complete CTA ─────────────────────────────────────────── */}
+        <PhaseCompleteCTA projectId={projectId} phase={5} phaseCompletion={phaseCompletion} />
       </motion.div>
     </TooltipProvider>
   );

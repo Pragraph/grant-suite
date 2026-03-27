@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/dialog";
 import { MarkdownRenderer } from "@/components/document/MarkdownRenderer";
 import { StepExecutor } from "@/components/phase/StepExecutor";
+import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
 
 // ─── Phase 4 definition ────────────────────────────────────────────────────
 
