@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Grant Suite
 
-## Getting Started
+A structured, 7-phase grant proposal writing system powered by your own LLM.
 
-First, run the development server:
+<!-- TODO: Add screenshot -->
+
+## What is this?
+
+Grant Suite guides you through writing a complete grant proposal across seven phases — from needs assessment to final submission. Each phase has structured documents, quality gates, and AI-assisted drafting via a compile-and-paste workflow.
+
+**The 7 phases:**
+
+1. **Discovery** — Needs assessment, stakeholder analysis, funding landscape
+2. **Planning** — Logic model, project design, timeline, budget framework
+3. **Drafting** — Narrative sections, methodology, evaluation plan
+4. **Budget** — Detailed budget, justification, cost-sharing
+5. **Review** — Internal review, compliance check, quality scoring
+6. **Revision** — Feedback integration, final edits, polish
+7. **Submission** — Final assembly, formatting, submission checklist
+
+## How it works
+
+Grant Suite is a **local-first** writing tool. No API keys, no accounts, no subscriptions.
+
+1. **Compile** a prompt from your project data and the current document template
+2. **Copy** the prompt to your preferred LLM (ChatGPT, Claude, Gemini, etc.)
+3. **Paste** the AI-generated draft back into Grant Suite
+4. **Refine** with follow-up prompts or manual editing
+5. **Export** finished documents as Markdown, DOCX, or ZIP
+
+Your data never leaves your browser. Everything is stored in localStorage and IndexedDB.
+
+## Tech stack
+
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?logo=tailwindcss)
+![React](https://img.shields.io/badge/React-19-61dafb?logo=react)
+
+- **Framework:** Next.js 15 (static export, App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4, shadcn/ui (customized)
+- **State:** Zustand (localStorage persistence)
+- **Storage:** IndexedDB via idb-keyval
+- **Animation:** Framer Motion
+- **Testing:** Vitest + Playwright
+- **Deployment:** Netlify (static)
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm
+
+### Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+git clone https://github.com/Pragraph/grant-suite.git
+cd grant-suite
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+No database, no environment variables, no API keys needed.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Scripts
 
-## Learn More
+| Command              | Description              |
+| -------------------- | ------------------------ |
+| `pnpm dev`           | Start dev server         |
+| `pnpm build`         | Production static build  |
+| `pnpm lint`          | Run ESLint               |
+| `pnpm test`          | Run tests (watch mode)   |
+| `pnpm test:run`      | Run tests (single pass)  |
+| `pnpm test:coverage` | Run tests with coverage  |
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/                  # Next.js App Router pages
+│   ├── (dashboard)/      # Main app layout
+│   │   ├── projects/     # Project list & detail views
+│   │   └── settings/     # User preferences
+│   ├── layout.tsx        # Root layout
+│   └── page.tsx          # Landing / home
+├── components/           # Reusable UI components
+├── lib/                  # Core logic, stores, utilities
+└── types/                # TypeScript type definitions
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+Grant Suite deploys as a fully static site on **Netlify**.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The included `netlify.toml` handles build configuration and SPA routing. Connect your GitHub repo to Netlify and it will auto-deploy on push to `main`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Privacy
+
+**All your data stays in your browser.** Grant Suite has no backend, no database, no analytics, and no telemetry. Nothing is ever sent to any server. You can verify this — the app is deployed as static HTML/CSS/JS with zero server-side code.
+
+## License
+
+[MIT](LICENSE)
