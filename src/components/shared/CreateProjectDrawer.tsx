@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+
 import { useProjectStore } from "@/stores/project-store";
 
 import {
@@ -70,7 +70,6 @@ export function CreateProjectDrawer({
   open,
   onOpenChange,
 }: CreateProjectDrawerProps) {
-  const router = useRouter();
   const createProject = useProjectStore((s) => s.createProject);
 
   const [title, setTitle] = useState("");
@@ -103,7 +102,7 @@ export function CreateProjectDrawer({
     setBudgetRange("");
     onOpenChange(false);
 
-    router.push(`/projects/${project.id}`);
+    window.location.href = `/projects/${project.id}`;
   };
 
   return (

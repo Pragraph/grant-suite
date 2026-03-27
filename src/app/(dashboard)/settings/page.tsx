@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, startTransition } from "react";
-import { useRouter } from "next/navigation";
+
 import { motion } from "framer-motion";
 import {
   Settings,
@@ -82,7 +82,6 @@ interface ProjectInfo {
 // ─── Main Component ────────────────────────────────────────────────────────
 
 export default function SettingsPage() {
-  const router = useRouter();
   const { setBreadcrumbs, setActions, setSidebarMode } = useUiStore();
   const { projects, loadProjects } = useProjectStore();
   const { setTheme: applyTheme } = useTheme();
@@ -261,7 +260,7 @@ export default function SettingsPage() {
     storage.clearAllData();
     setClearStep(0);
     setClearConfirmText("");
-    router.push("/projects");
+    window.location.href = "/projects";
   };
 
   // ── Download helper ──────────────────────────────────────────────────────

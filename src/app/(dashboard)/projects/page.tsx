@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+
 import { motion } from "framer-motion";
 import {
   Plus,
@@ -52,7 +52,6 @@ const phaseStripColors: Record<number, string> = {
 };
 
 export default function ProjectsPage() {
-  const router = useRouter();
   const { projects, loadProjects, deleteProject, updateProject } =
     useProjectStore();
   const { setBreadcrumbs, setActions } = useUiStore();
@@ -144,7 +143,7 @@ export default function ProjectsPage() {
                 <Card
                   className="group cursor-pointer hover:shadow-card-hover hover:border-border transition-all duration-normal"
                   onClick={() =>
-                    router.push(`/projects/${project.id}`)
+                    window.location.href = `/projects/${project.id}`
                   }
                 >
                   {/* Phase color strip */}

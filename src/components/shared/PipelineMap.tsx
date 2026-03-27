@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Lock, FileText } from "lucide-react";
-import { useRouter } from "next/navigation";
+
 
 import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
@@ -122,7 +122,6 @@ const MAIN_SVG_HEIGHT = LABEL_Y + 16;
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export function PipelineMap() {
-  const router = useRouter();
   const { activeProject } = useProjectStore();
   const { progress, canAccessPhase } = useProgressStore();
   const { documents } = useDocumentStore();
@@ -173,7 +172,7 @@ export function PipelineMap() {
       return;
     }
 
-    router.push(`/projects/${activeProject.id}?phase=${node.phase}`);
+    window.location.href = `/projects/${activeProject.id}?phase=${node.phase}`;
   };
 
   // ─── Desktop/Tablet: Horizontal SVG ─────────────────────────────────────

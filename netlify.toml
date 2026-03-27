@@ -7,6 +7,22 @@
 
 # Serve pre-rendered shells for dynamic routes (order matters — first match wins)
 
+# RSC payload rewrites (safety net for any remaining client-side navigation)
+[[redirects]]
+  from = "/projects/:id/phase/:phaseId.txt"
+  to = "/projects/_/phase/:phaseId.txt"
+  status = 200
+
+[[redirects]]
+  from = "/projects/:id/documents.txt"
+  to = "/projects/_/documents.txt"
+  status = 200
+
+[[redirects]]
+  from = "/projects/:id.txt"
+  to = "/projects/_.txt"
+  status = 200
+
 [[redirects]]
   from = "/projects/:id/documents"
   to = "/projects/_/documents.html"
