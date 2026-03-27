@@ -33,6 +33,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { PipelineMap } from "@/components/shared/PipelineMap";
 
 const statusBadgeVariant = {
   active: "success" as const,
@@ -184,6 +185,17 @@ export function ProjectDetailClient({ id }: { id: string }) {
           <Download className="h-4 w-4" />
           Export Project
         </Button>
+      </motion.div>
+
+      {/* Pipeline Map */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <Card className="p-4">
+          <PipelineMap />
+        </Card>
       </motion.div>
 
       {/* Main Content */}
