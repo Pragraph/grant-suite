@@ -2,6 +2,7 @@ import { Phase1Client } from "@/components/phase/Phase1Client";
 import { Phase2Client } from "@/components/phase/Phase2Client";
 import { Phase3Client } from "@/components/phase/Phase3Client";
 import { Phase4Client } from "@/components/phase/Phase4Client";
+import { Phase5Client } from "@/components/phase/Phase5Client";
 
 export function generateStaticParams() {
   return [
@@ -9,6 +10,7 @@ export function generateStaticParams() {
     { id: "_", phaseId: "2" },
     { id: "_", phaseId: "3" },
     { id: "_", phaseId: "4" },
+    { id: "_", phaseId: "5" },
   ];
 }
 
@@ -31,6 +33,10 @@ export default function PhasePage({
 
   if (params.phaseId === "4") {
     return <Phase4Client projectId={params.id} />;
+  }
+
+  if (params.phaseId === "5") {
+    return <Phase5Client projectId={params.id} />;
   }
 
   return (

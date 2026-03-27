@@ -25,6 +25,9 @@ import { template as researcherProfile } from "./phase3/researcher-profile";
 import { template as originalityCheck } from "./phase3/originality-check";
 import { template as trlAssessment } from "./phase3/trl-assessment";
 import { template as dataCompiler } from "./phase5/step1-data-compiler";
+import { template as executiveSummary } from "./phase5/step2-executive-summary";
+import { template as methodsWriter } from "./phase5/step3-methods";
+import { template as backgroundWriter } from "./phase5/step4-background";
 import { template as teamAssembly } from "./phase4/team-assembly";
 import { template as budgetConstruction } from "./phase4/budget-construction";
 import { template as budgetJustification } from "./phase4/budget-justification";
@@ -60,6 +63,9 @@ export const templates: PromptTemplate[] = [
   budgetConstruction,
   budgetJustification,
   dataCompiler,
+  executiveSummary,
+  methodsWriter,
+  backgroundWriter,
 ];
 
 export const templateMap: Record<string, PromptTemplate> = Object.fromEntries(
