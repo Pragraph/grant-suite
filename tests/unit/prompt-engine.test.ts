@@ -105,24 +105,25 @@ describe("PromptEngine — document injection", () => {
     const ctx = makeContext({
       formInputs: { grantName: "Test Grant" },
       documents: {
-        "Conceptual_Framework.md": "# My Framework\nThis is the framework.",
-        "Research_Questions.md": "# Questions\n1. What is X?",
+        "Complete_Proposal.md": "# My Proposal\nThis is the full proposal.",
+        "Grant_Intelligence.md": "# Intelligence\nFunder analysis here.",
       },
     });
-    const result = promptEngine.compile("phase2.framework-synthesis", ctx);
-    expect(result.compiledPrompt).toContain("# My Framework");
-    expect(result.compiledPrompt).toContain("1. What is X?");
+    const result = promptEngine.compile("phase6.step1-mock-review", ctx);
+    expect(result.compiledPrompt).toContain("# My Proposal");
+    expect(result.compiledPrompt).toContain("Funder analysis here.");
   });
 
-  it("leaves unresolved document partials intact", () => {
+  it("leaves unresolved document partials intact when no doc provided", () => {
     const ctx = makeContext({
       formInputs: { grantName: "Test Grant" },
       documents: {},
     });
-    const result = promptEngine.compile("phase2.framework-synthesis", ctx);
-    // Without documents, the {{#if}} blocks should be stripped,
-    // so the partial syntax should not appear in output
-    expect(result.compiledPrompt).not.toContain("{{> Conceptual_Framework.md}}");
+    const result = promptEngine.compile("phase6.step1-mock-review", ctx);
+    // Complete_Proposal.md partial is outside {{#if}}, so stays as-is
+    expect(result.compiledPrompt).toContain("{{> Complete_Proposal.md}}");
+    // Grant_Intelligence.md partial is inside {{#if}}, so block is stripped
+    expect(result.compiledPrompt).not.toContain("{{> Grant_Intelligence.md}}");
   });
 });
 
@@ -135,7 +136,7 @@ describe("PromptEngine — conditional blocks", () => {
       documents: { grant_guidelines_text: "These are the guidelines." },
     });
     const result = promptEngine.compile("phase1.grant-intelligence", ctx);
-    expect(result.compiledPrompt).toContain("UPLOADED GRANT GUIDELINES");
+    expect(result.compiledPrompt).toContain("GRANT GUIDELINES (PROVIDED BY USER)");
     expect(result.compiledPrompt).toContain("These are the guidelines.");
   });
 
@@ -144,7 +145,7 @@ describe("PromptEngine — conditional blocks", () => {
       formInputs: { grantName: "Veni" },
     });
     const result = promptEngine.compile("phase1.grant-intelligence", ctx);
-    expect(result.compiledPrompt).not.toContain("UPLOADED GRANT GUIDELINES");
+    expect(result.compiledPrompt).not.toContain("GRANT GUIDELINES (PROVIDED BY USER)");
   });
 
   it("{{#unless}} includes block when value is absent", () => {
@@ -153,7 +154,7 @@ describe("PromptEngine — conditional blocks", () => {
     });
     const result = promptEngine.compile("phase1.grant-intelligence", ctx);
     expect(result.compiledPrompt).toContain(
-      "No grant guidelines were uploaded",
+      "No grant documentation was provided",
     );
   });
 
@@ -164,7 +165,7 @@ describe("PromptEngine — conditional blocks", () => {
     });
     const result = promptEngine.compile("phase1.grant-intelligence", ctx);
     expect(result.compiledPrompt).not.toContain(
-      "No grant guidelines were uploaded",
+      "No grant documentation was provided",
     );
   });
 });
@@ -226,7 +227,7 @@ describe("PromptEngine — EP tag counting", () => {
     const ctx = makeContext({
       formInputs: { grantName: "Grant X" },
     });
-    const result = promptEngine.compile("phase5.data-compiler", ctx);
+    const result = promptEngine.compile("phase5.step1-data-compiler", ctx);
     const sorted = [...result.epTagsDeployed].sort();
     expect(result.epTagsDeployed).toEqual(sorted);
   });
@@ -250,13 +251,13 @@ describe("PromptEngine — word count estimation", () => {
     const ctxWith = makeContext({
       formInputs: { grantName: "Test" },
       documents: {
-        "Conceptual_Framework.md": "A ".repeat(500),
-        "Research_Questions.md": "B ".repeat(500),
+        "Complete_Proposal.md": "A ".repeat(500),
+        "Grant_Intelligence.md": "B ".repeat(500),
       },
     });
 
-    const without = promptEngine.compile("phase2.framework-synthesis", ctxWithout);
-    const withDocs = promptEngine.compile("phase2.framework-synthesis", ctxWith);
+    const without = promptEngine.compile("phase6.step1-mock-review", ctxWithout);
+    const withDocs = promptEngine.compile("phase6.step1-mock-review", ctxWith);
 
     expect(withDocs.estimatedWords).toBeGreaterThan(without.estimatedWords);
   });

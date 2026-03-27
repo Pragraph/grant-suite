@@ -9,7 +9,17 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: "node",
+    environment: "jsdom",
     include: ["tests/**/*.test.ts"],
+    environmentMatchGlobs: [
+      // Pure logic tests can run in node for speed
+      ["tests/unit/prompt-engine.test.ts", "node"],
+      ["tests/unit/document-pipeline.test.ts", "node"],
+    ],
+    coverage: {
+      provider: "v8",
+      include: ["src/lib/**/*.ts"],
+      exclude: ["src/lib/types.ts", "src/lib/constants.ts"],
+    },
   },
 });
