@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Download,
@@ -18,6 +17,7 @@ import { useDocumentStore } from "@/stores/document-store";
 import { useProgressStore } from "@/stores/progress-store";
 import { useUiStore } from "@/stores/ui-store";
 import { storage } from "@/lib/storage";
+import { getProjectIdFromUrl } from "@/lib/utils";
 import { exportAllDocuments } from "@/lib/export-all";
 import { PHASES } from "@/lib/types";
 import type { Project, StepStatus } from "@/lib/types";
@@ -55,13 +55,7 @@ const stepStatusColors: Record<StepStatus, string> = {
   complete: "text-success",
 };
 
-export function ProjectDetailClient({ id: idProp }: { id: string }) {
-  // In static export, the server component pre-renders with the build-time
-  // placeholder id ("_"). useParams() reads the actual id from the URL at
-  // runtime, so it always reflects the real route the user navigated to.
-  const params = useParams<{ id: string }>();
-  const id = params.id ?? idProp;
-
+export function ProjectDetailClient({ id: _idProp }: { id: string }) {
   const { setActiveProject, activeProject, updateProject } =
     useProjectStore();
   const { documents, loadDocuments } = useDocumentStore();
@@ -69,9 +63,11 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
     useProgressStore();
   const { setBreadcrumbs } = useUiStore();
 
-  // Local state — drives all rendering, bypasses Zustand hydration race
-  const [project, setProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [projectId] = useState(() => getProjectIdFromUrl());
+  const [project, setProject] = useState<Project | null>(() =>
+    projectId ? storage.getProject(projectId) ?? null : null,
+  );
+  const loading = false; // resolved synchronously from URL + localStorage
 
   const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
   const [expandedPhaseInitialized, setExpandedPhaseInitialized] = useState(false);
@@ -79,28 +75,20 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
   const [titleValue, setTitleValue] = useState("");
   const [exportingAll, setExportingAll] = useState(false);
 
-  // Primary project load — reads localStorage directly, no Zustand dependency
+  // Sync Zustand stores on mount
   useEffect(() => {
-    if (!id || id === "_") return;
-
-    const found = storage.getProject(id);
-    setProject(found);
-    setLoading(false);
-
-    // Also sync to Zustand store for sidebar/breadcrumbs/other components
-    if (found) {
-      setActiveProject(id);
-      loadProgress(id);
-      loadDocuments(id);
-    }
-  }, [id, setActiveProject, loadProgress, loadDocuments]);
+    if (!projectId) return;
+    setActiveProject(projectId);
+    loadProgress(projectId);
+    loadDocuments(projectId);
+  }, [projectId, setActiveProject, loadProgress, loadDocuments]);
 
   // Keep local state in sync if project is updated via store (e.g., title edit)
   useEffect(() => {
-    if (activeProject && activeProject.id === id) {
+    if (activeProject && projectId && activeProject.id === projectId) {
       setProject(activeProject);
     }
-  }, [activeProject, id]);
+  }, [activeProject, projectId]);
 
   useEffect(() => {
     if (project) {
@@ -141,14 +129,14 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
 
   const handleTitleSave = () => {
     if (titleValue.trim()) {
-      updateProject(id, { title: titleValue.trim() });
+      updateProject(projectId!, { title: titleValue.trim() });
     }
     setEditingTitle(false);
   };
 
   const handleExport = async () => {
-    const docs = await storage.getDocuments(id);
-    const prog = storage.getProgress(id);
+    const docs = await storage.getDocuments(projectId!);
+    const prog = storage.getProgress(projectId!);
     const data = JSON.stringify(
       { project, documents: docs, progress: prog },
       null,
@@ -168,7 +156,7 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
   const handleExportAll = async () => {
     setExportingAll(true);
     try {
-      await exportAllDocuments(id, project.title);
+      await exportAllDocuments(projectId!, project.title);
       toast.success("All documents exported as zip");
     } catch {
       toast.error("No documents to export");
@@ -380,7 +368,7 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
         {/* Right: Document Inventory */}
         <div className="flex-1 min-w-0 lg:min-w-70 lg:max-w-90">
           <DocumentInventory
-            projectId={id}
+            projectId={projectId!}
             projectTitle={project.title}
           />
         </div>

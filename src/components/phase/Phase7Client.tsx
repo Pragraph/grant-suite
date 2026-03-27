@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
@@ -23,7 +22,8 @@ import {
 
 import { cn } from "@/lib/utils";
 import { storage } from "@/lib/storage";
-import { useProjectStore } from "@/stores/project-store";
+import { getProjectIdFromUrl } from "@/lib/utils";
+import { useProjectStore} from "@/stores/project-store";
 import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
@@ -342,9 +342,8 @@ function ResponseResultUI({
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase7Client({ projectId: projectIdProp }: { projectId: string }) {
-  const params = useParams<{ id: string }>();
-  const projectId = (params.id as string) ?? projectIdProp;
+export function Phase7Client({ projectId: _projectIdProp }: { projectId: string }) {
+  const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
   const { documents, loadDocuments } = useDocumentStore();
@@ -353,10 +352,19 @@ export function Phase7Client({ projectId: projectIdProp }: { projectId: string }
   const [activeStep, setActiveStep] = useState<number | null>(1);
   const [step2Choice, setStep2Choice] = useState<"pending" | "same-funder">("pending");
 
+  // Pre-compute random values for decorative dots (avoids Math.random in render)
+  const [decorativeDots] = useState(() =>
+    Array.from({ length: 12 }, () => ({
+      yRand: Math.random() * 40,
+      xRand: (Math.random() - 0.5) * 40,
+      durRand: Math.random(),
+    })),
+  );
+
   // ── Initialize ────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!projectId || projectId === "_") return;
+    if (!projectId) return;
     const proj = storage.getProject(projectId);
     setActiveProject(projectId);
     loadProgress(projectId);
@@ -366,8 +374,7 @@ export function Phase7Client({ projectId: projectIdProp }: { projectId: string }
       { label: proj?.title || "Project", href: `/projects/${projectId}` },
       { label: "Phase 7: Post-Submission" },
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
 
   // ── Phase progress ────────────────────────────────────────────────────────
@@ -728,18 +735,18 @@ export function Phase7Client({ projectId: projectIdProp }: { projectId: string }
             <Card className="border-phase-7/30 bg-linear-to-b from-phase-7/10 to-phase-7/5 overflow-hidden relative">
               {/* Decorative dots */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                {[...Array(12)].map((_, i) => (
+                {decorativeDots.map((dot, i) => (
                   <motion.div
                     key={i}
                     className="absolute h-1.5 w-1.5 rounded-full bg-phase-7/20"
                     initial={{ opacity: 0, y: 0 }}
                     animate={{
                       opacity: [0, 1, 0],
-                      y: [-20, -60 - Math.random() * 40],
-                      x: [0, (Math.random() - 0.5) * 40],
+                      y: [-20, -60 - dot.yRand],
+                      x: [0, dot.xRand],
                     }}
                     transition={{
-                      duration: 2 + Math.random(),
+                      duration: 2 + dot.durRand,
                       delay: i * 0.15,
                       repeat: Infinity,
                       repeatDelay: 3,

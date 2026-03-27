@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
@@ -23,6 +22,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { storage } from "@/lib/storage";
+import { getProjectIdFromUrl } from "@/lib/utils";
 import { useProjectStore } from "@/stores/project-store";
 import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
@@ -167,9 +167,8 @@ type PatentSubStep = "search" | "novelty";
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase3Client({ projectId: projectIdProp }: { projectId: string }) {
-  const params = useParams<{ id: string }>();
-  const projectId = (params.id as string) ?? projectIdProp;
+export function Phase3Client({ projectId: _projectIdProp }: { projectId: string }) {
+  const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress } = useProgressStore();
   const { loadDocuments } = useDocumentStore();
@@ -187,7 +186,7 @@ export function Phase3Client({ projectId: projectIdProp }: { projectId: string }
   // ── Initialize ────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!projectId || projectId === "_") return;
+    if (!projectId) return;
     const proj = storage.getProject(projectId);
     setActiveProject(projectId);
     loadProgress(projectId);
@@ -197,8 +196,7 @@ export function Phase3Client({ projectId: projectIdProp }: { projectId: string }
       { label: proj?.title || "Project", href: `/projects/${projectId}` },
       { label: "Phase 3: Research Design & Optional Modules" },
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
   // ── Persist toggles ──────────────────────────────────────────────────────
 

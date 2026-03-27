@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
@@ -28,6 +27,7 @@ import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
 import { storage } from "@/lib/storage";
+import { getProjectIdFromUrl } from "@/lib/utils";
 import type { StepStatus } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
@@ -691,9 +691,8 @@ function OptimizationDiffView({
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase6Client({ projectId: projectIdProp }: { projectId: string }) {
-  const params = useParams<{ id: string }>();
-  const projectId = (params.id as string) ?? projectIdProp;
+export function Phase6Client({ projectId: _projectIdProp }: { projectId: string }) {
+  const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion, updateStepStatus } = useProgressStore();
   const { documents, loadDocuments, saveDocument } = useDocumentStore();
@@ -705,7 +704,7 @@ export function Phase6Client({ projectId: projectIdProp }: { projectId: string }
   // ── Initialize ────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!projectId || projectId === "_") return;
+    if (!projectId) return;
     const proj = storage.getProject(projectId);
     setActiveProject(projectId);
     loadProgress(projectId);
@@ -715,8 +714,7 @@ export function Phase6Client({ projectId: projectIdProp }: { projectId: string }
       { label: proj?.title || "Project", href: `/projects/${projectId}` },
       { label: "Phase 6: Review & Optimization" },
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
 
   // ── Phase progress ────────────────────────────────────────────────────────

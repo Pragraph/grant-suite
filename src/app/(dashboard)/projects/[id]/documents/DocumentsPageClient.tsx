@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { FolderArchive } from "lucide-react";
 import { toast } from "sonner";
@@ -10,52 +9,47 @@ import { useProjectStore } from "@/stores/project-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
 import { storage } from "@/lib/storage";
+import { getProjectIdFromUrl } from "@/lib/utils";
 import { exportAllDocuments } from "@/lib/export-all";
 import type { Project } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
 import { DocumentInventory } from "@/components/document/DocumentInventory";
 
-export function DocumentsPageClient({ id: idProp }: { id: string }) {
-  const params = useParams<{ id: string }>();
-  const id = params.id ?? idProp;
+export function DocumentsPageClient({ id: _idProp }: { id: string }) {
   const { setActiveProject, activeProject } = useProjectStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
-  const [project, setProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [projectId] = useState(() => getProjectIdFromUrl());
+  const [project, setProject] = useState<Project | null>(() =>
+    projectId ? storage.getProject(projectId) ?? null : null,
+  );
+  const loading = false;
   const [exportingAll, setExportingAll] = useState(false);
 
-  // Primary load — direct localStorage read
+  // Sync Zustand stores on mount
   useEffect(() => {
-    if (!id || id === "_") return;
-
-    const found = storage.getProject(id);
-    setProject(found);
-    setLoading(false);
-
-    if (found) {
-      setActiveProject(id);
-      loadDocuments(id);
-    }
-  }, [id, setActiveProject, loadDocuments]);
+    if (!projectId) return;
+    setActiveProject(projectId);
+    loadDocuments(projectId);
+  }, [projectId, setActiveProject, loadDocuments]);
 
   // Keep in sync with store updates
   useEffect(() => {
-    if (activeProject && activeProject.id === id) {
+    if (activeProject && projectId && activeProject.id === projectId) {
       setProject(activeProject);
     }
-  }, [activeProject, id]);
+  }, [activeProject, projectId]);
 
   useEffect(() => {
-    if (project) {
+    if (project && projectId) {
       setBreadcrumbs([
         { label: "Projects", href: "/projects" },
-        { label: project.title, href: `/projects/${id}` },
+        { label: project.title, href: `/projects/${projectId}` },
         { label: "Documents" },
       ]);
     }
-  }, [project, setBreadcrumbs, id]);
+  }, [project, setBreadcrumbs, projectId]);
 
   if (loading) {
     return (
@@ -78,7 +72,7 @@ export function DocumentsPageClient({ id: idProp }: { id: string }) {
   const handleExportAll = async () => {
     setExportingAll(true);
     try {
-      await exportAllDocuments(id, project.title);
+      await exportAllDocuments(projectId!, project.title);
       toast.success("All documents exported as zip");
     } catch {
       toast.error("No documents to export");
@@ -122,7 +116,7 @@ export function DocumentsPageClient({ id: idProp }: { id: string }) {
         transition={{ duration: 0.3, delay: 0.1 }}
       >
         <DocumentInventory
-          projectId={id}
+          projectId={projectId!}
           projectTitle={project.title}
           fullPage
         />

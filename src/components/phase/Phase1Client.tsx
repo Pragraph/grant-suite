@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Search,
@@ -15,6 +14,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { storage } from "@/lib/storage";
+import { getProjectIdFromUrl } from "@/lib/utils";
 import { useProjectStore } from "@/stores/project-store";
 import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
@@ -301,9 +301,8 @@ const stepExpandVariants = {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase1Client({ projectId: projectIdProp }: { projectId: string }) {
-  const params = useParams<{ id: string }>();
-  const projectId = (params.id as string) ?? projectIdProp;
+export function Phase1Client({ projectId: _projectIdProp }: { projectId: string }) {
+  const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
   const { documents, loadDocuments } = useDocumentStore();
@@ -311,12 +310,11 @@ export function Phase1Client({ projectId: projectIdProp }: { projectId: string }
 
   const [activeStep, setActiveStep] = useState<number | null>(1);
   const [activeMethod, setActiveMethod] = useState<string | null>(null);
-  const [completedMethods, setCompletedMethods] = useState<string[]>([]);
 
   // ── Initialize ────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!projectId || projectId === "_") return;
+    if (!projectId) return;
     const proj = storage.getProject(projectId);
     setActiveProject(projectId);
     loadProgress(projectId);
@@ -326,13 +324,12 @@ export function Phase1Client({ projectId: projectIdProp }: { projectId: string }
       { label: proj?.title || "Project", href: `/projects/${projectId}` },
       { label: "Phase 1: Foundation & Discovery" },
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
 
   // ── Load completed methods from documents ─────────────────────────────────
 
-  useEffect(() => {
+  const completedMethods = useMemo(() => {
     const methodDocs = documents.filter(
       (d) => d.projectId === projectId && d.phase === 1 && d.step === 1,
     );
@@ -349,7 +346,7 @@ export function Phase1Client({ projectId: projectIdProp }: { projectId: string }
     if (methodDocs.some((d) => d.canonicalName === "Method4_Convergence_Synthesis.md")) {
       completed.push("method4");
     }
-    setCompletedMethods(completed);
+    return completed;
   }, [documents, projectId]);
 
   // ── Phase progress ────────────────────────────────────────────────────────

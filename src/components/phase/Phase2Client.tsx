@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
@@ -19,6 +18,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { storage } from "@/lib/storage";
+import { getProjectIdFromUrl } from "@/lib/utils";
 import { useProjectStore } from "@/stores/project-store";
 import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
@@ -266,9 +266,8 @@ function PsychologyHighlightsUI({ content }: { content: string }) {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase2Client({ projectId: projectIdProp }: { projectId: string }) {
-  const params = useParams<{ id: string }>();
-  const projectId = (params.id as string) ?? projectIdProp;
+export function Phase2Client({ projectId: _projectIdProp }: { projectId: string }) {
+  const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
   const { documents, loadDocuments } = useDocumentStore();
@@ -276,12 +275,11 @@ export function Phase2Client({ projectId: projectIdProp }: { projectId: string }
 
   const [activeStep, setActiveStep] = useState<number | null>(1);
   const [mode, setMode] = useState<"individual" | "combined">("individual");
-  const [step3Output, setStep3Output] = useState<string | null>(null);
 
   // ── Initialize ────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!projectId || projectId === "_") return;
+    if (!projectId) return;
     const proj = storage.getProject(projectId);
     setActiveProject(projectId);
     loadProgress(projectId);
@@ -291,17 +289,16 @@ export function Phase2Client({ projectId: projectIdProp }: { projectId: string }
       { label: proj?.title || "Project", href: `/projects/${projectId}` },
       { label: "Phase 2: Strategic Positioning" },
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
 
   // ── Track Step 3 output for psychology highlights ─────────────────────────
 
-  useEffect(() => {
+  const step3Output = useMemo(() => {
     const psyDoc = documents.find(
       (d) => d.projectId === projectId && d.phase === 2 && d.step === 3 && d.isCurrent,
     );
-    setStep3Output(psyDoc?.content ?? null);
+    return psyDoc?.content ?? null;
   }, [documents, projectId]);
 
   // ── Phase progress ────────────────────────────────────────────────────────
