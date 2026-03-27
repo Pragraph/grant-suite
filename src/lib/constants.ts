@@ -27,7 +27,9 @@ export const DOCUMENT_DEPENDENCIES: DependencyEntry[] = [
   { phase: 3, step: 17, produces: "TRL_Assessment.md", requires: [], optional: [], isOptional: true },
 
   // Phase 4 — Budget & Team Planning
-  { phase: 4, step: 3, produces: "Budget_Team_Plan.md", requires: ["Research_Design.md", "Proposal_Blueprint.md", "Grant_Intelligence.md"], optional: [] },
+  { phase: 4, step: 1, produces: "Team_Strategy.md", requires: ["Research_Design.md", "Proposal_Blueprint.md", "Grant_Intelligence.md"], optional: [] },
+  { phase: 4, step: 2, produces: "Budget_Draft.md", requires: ["Research_Design.md", "Grant_Intelligence.md"], optional: ["Team_Strategy.md"] },
+  { phase: 4, step: 3, produces: "Budget_Team_Plan.md", requires: ["Team_Strategy.md", "Budget_Draft.md", "Grant_Intelligence.md"], optional: [] },
 
   // Phase 5 — Proposal Writing
   { phase: 5, step: 1, produces: "Proposal_Data.md", requires: ["Grant_Intelligence.md", "Proposal_Blueprint.md", "Research_Design.md", "Budget_Team_Plan.md"], optional: ["Partnership_Plan.md", "Patent_Analysis.md", "SDG_Alignment.md", "National_Alignment.md", "KPI_Plan.md"] },
