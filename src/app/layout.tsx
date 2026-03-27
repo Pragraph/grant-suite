@@ -25,8 +25,16 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Grant Suite",
-  description: "AI-Powered Grant Proposal Writing Assistant",
+  title: 'Grant Suite — Write winning grant proposals with AI-guided precision',
+  description: '7-phase system that transforms your research idea into a competition-ready proposal. From discovery to submission.',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({
