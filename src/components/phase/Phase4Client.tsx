@@ -834,7 +834,7 @@ function budgetToMarkdown(rows: BudgetRow[], years: number, currency: string): s
 export function Phase4Client({ projectId: projectIdProp }: { projectId: string }) {
   const params = useParams<{ id: string }>();
   const projectId = (params.id as string) ?? projectIdProp;
-  const { setActiveProject, activeProject, _hasHydrated } = useProjectStore();
+  const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
   const { documents, loadDocuments, saveDocument } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
@@ -866,21 +866,19 @@ export function Phase4Client({ projectId: projectIdProp }: { projectId: string }
   // ── Initialize ────────────────────────────────────────────────────────────
 
   useEffect(() => {
+    if (!projectId || projectId === "_") return;
+    const proj = storage.getProject(projectId);
     setActiveProject(projectId);
     loadProgress(projectId);
     loadDocuments(projectId);
     setBreadcrumbs([
       { label: "Projects", href: "/projects" },
-      { label: activeProject?.title || "Project", href: `/projects/${projectId}` },
+      { label: proj?.title || "Project", href: `/projects/${projectId}` },
       { label: "Phase 4: Budget & Team Planning" },
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
-  // Re-resolve after Zustand persist hydration
-  useEffect(() => {
-    if (_hasHydrated) setActiveProject(projectId);
-  }, [_hasHydrated, projectId, setActiveProject]);
 
   // ── Persist roles, letters, budget to localStorage ────────────────────────
 

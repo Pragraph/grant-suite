@@ -5,6 +5,24 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Serve pre-rendered shells for dynamic routes (order matters — first match wins)
+
+[[redirects]]
+  from = "/projects/:id/documents"
+  to = "/projects/_/documents.html"
+  status = 200
+
+[[redirects]]
+  from = "/projects/:id/phase/:phaseId"
+  to = "/projects/_/phase/:phaseId.html"
+  status = 200
+
+[[redirects]]
+  from = "/projects/:id"
+  to = "/projects/_.html"
+  status = 200
+
+# General SPA fallback for all other routes
 [[redirects]]
   from = "/*"
   to = "/index.html"

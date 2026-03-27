@@ -20,7 +20,7 @@ import { useUiStore } from "@/stores/ui-store";
 import { storage } from "@/lib/storage";
 import { exportAllDocuments } from "@/lib/export-all";
 import { PHASES } from "@/lib/types";
-import type { StepStatus } from "@/lib/types";
+import type { Project, StepStatus } from "@/lib/types";
 
 import { toast } from "sonner";
 
@@ -62,12 +62,16 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
   const params = useParams<{ id: string }>();
   const id = params.id ?? idProp;
 
-  const { setActiveProject, activeProject, updateProject, _hasHydrated } =
+  const { setActiveProject, activeProject, updateProject } =
     useProjectStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { progress, loadProgress, getPhaseCompletion, canAccessPhase } =
     useProgressStore();
   const { setBreadcrumbs } = useUiStore();
+
+  // Local state — drives all rendering, bypasses Zustand hydration race
+  const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
   const [expandedPhaseInitialized, setExpandedPhaseInitialized] = useState(false);
@@ -75,56 +79,62 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
   const [titleValue, setTitleValue] = useState("");
   const [exportingAll, setExportingAll] = useState(false);
 
+  // Primary project load — reads localStorage directly, no Zustand dependency
   useEffect(() => {
-    setActiveProject(id);
-    loadProgress(id);
-    loadDocuments(id);
+    if (!id || id === "_") return;
+
+    const found = storage.getProject(id);
+    setProject(found);
+    setLoading(false);
+
+    // Also sync to Zustand store for sidebar/breadcrumbs/other components
+    if (found) {
+      setActiveProject(id);
+      loadProgress(id);
+      loadDocuments(id);
+    }
   }, [id, setActiveProject, loadProgress, loadDocuments]);
 
-  // Re-resolve active project once hydration completes (persist may have
-  // overwritten activeProjectId during rehydration, so we need to re-set it).
+  // Keep local state in sync if project is updated via store (e.g., title edit)
   useEffect(() => {
-    if (_hasHydrated) {
-      setActiveProject(id);
+    if (activeProject && activeProject.id === id) {
+      setProject(activeProject);
     }
-  }, [_hasHydrated, id, setActiveProject]);
+  }, [activeProject, id]);
 
   useEffect(() => {
-    if (activeProject) {
+    if (project) {
       setBreadcrumbs([
         { label: "Projects", href: "/projects" },
-        { label: activeProject.title },
+        { label: project.title },
       ]);
     }
-  }, [activeProject, setBreadcrumbs]);
+  }, [project, setBreadcrumbs]);
 
   // Sync title and expanded phase from project data on initial load
-  if (activeProject && !editingTitle && titleValue !== activeProject.title) {
-    setTitleValue(activeProject.title);
+  if (project && !editingTitle && titleValue !== project.title) {
+    setTitleValue(project.title);
   }
-  if (activeProject && !expandedPhaseInitialized) {
-    setExpandedPhase(activeProject.currentPhase);
+  if (project && !expandedPhaseInitialized) {
+    setExpandedPhase(project.currentPhase);
     setExpandedPhaseInitialized(true);
   }
 
-  // Wait for Zustand persist to rehydrate before deciding "not found"
-  if (!_hasHydrated || !activeProject) {
-    // Still hydrating OR project hasn't resolved yet — show skeleton
-    if (_hasHydrated && !activeProject) {
-      // Hydration finished but project genuinely doesn't exist
-      return (
-        <div className="flex flex-col items-center justify-center py-24 gap-4">
-          <p className="text-muted-foreground">Project not found</p>
-          <Button variant="secondary" onClick={() => window.history.back()}>
-            Go Back
-          </Button>
-        </div>
-      );
-    }
-
+  if (loading) {
     return (
       <div className="flex items-center justify-center py-24 text-muted-foreground">
         Loading project...
+      </div>
+    );
+  }
+
+  if (!project) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <p className="text-muted-foreground">Project not found</p>
+        <Button variant="secondary" onClick={() => window.history.back()}>
+          Go Back
+        </Button>
       </div>
     );
   }
@@ -140,7 +150,7 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
     const docs = await storage.getDocuments(id);
     const prog = storage.getProgress(id);
     const data = JSON.stringify(
-      { project: activeProject, documents: docs, progress: prog },
+      { project, documents: docs, progress: prog },
       null,
       2
     );
@@ -148,7 +158,7 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${activeProject.title.replace(/\s+/g, "-").toLowerCase()}-export.json`;
+    a.download = `${project.title.replace(/\s+/g, "-").toLowerCase()}-export.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -158,7 +168,7 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
   const handleExportAll = async () => {
     setExportingAll(true);
     try {
-      await exportAllDocuments(id, activeProject.title);
+      await exportAllDocuments(id, project.title);
       toast.success("All documents exported as zip");
     } catch {
       toast.error("No documents to export");
@@ -185,7 +195,7 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleTitleSave();
                 if (e.key === "Escape") {
-                  setTitleValue(activeProject.title);
+                  setTitleValue(project.title);
                   setEditingTitle(false);
                 }
               }}
@@ -198,14 +208,14 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
               onClick={() => setEditingTitle(true)}
               title="Click to edit"
             >
-              {activeProject.title}
+              {project.title}
             </h1>
           )}
-          <Badge variant={statusBadgeVariant[activeProject.status]}>
-            {activeProject.status}
+          <Badge variant={statusBadgeVariant[project.status]}>
+            {project.status}
           </Badge>
-          {activeProject.targetFunder && (
-            <Badge>{activeProject.targetFunder}</Badge>
+          {project.targetFunder && (
+            <Badge>{project.targetFunder}</Badge>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -245,7 +255,7 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
             const isExpanded = expandedPhase === phase.id;
             const accessible = canAccessPhase(phase.id);
             const completion = getPhaseCompletion(phase.id);
-            const isCurrent = activeProject.currentPhase === phase.id;
+            const isCurrent = project.currentPhase === phase.id;
             const phaseProgress = progress.phases[phase.id];
 
             return (
@@ -371,7 +381,7 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
         <div className="flex-1 min-w-0 lg:min-w-70 lg:max-w-90">
           <DocumentInventory
             projectId={id}
-            projectTitle={activeProject.title}
+            projectTitle={project.title}
           />
         </div>
       </div>

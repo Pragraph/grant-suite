@@ -9,7 +9,9 @@ import { toast } from "sonner";
 import { useProjectStore } from "@/stores/project-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
+import { storage } from "@/lib/storage";
 import { exportAllDocuments } from "@/lib/export-all";
+import type { Project } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
 import { DocumentInventory } from "@/components/document/DocumentInventory";
@@ -17,35 +19,56 @@ import { DocumentInventory } from "@/components/document/DocumentInventory";
 export function DocumentsPageClient({ id: idProp }: { id: string }) {
   const params = useParams<{ id: string }>();
   const id = params.id ?? idProp;
-  const { setActiveProject, activeProject, _hasHydrated } = useProjectStore();
+  const { setActiveProject, activeProject } = useProjectStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
+  const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
   const [exportingAll, setExportingAll] = useState(false);
 
+  // Primary load — direct localStorage read
   useEffect(() => {
-    setActiveProject(id);
-    loadDocuments(id);
+    if (!id || id === "_") return;
+
+    const found = storage.getProject(id);
+    setProject(found);
+    setLoading(false);
+
+    if (found) {
+      setActiveProject(id);
+      loadDocuments(id);
+    }
   }, [id, setActiveProject, loadDocuments]);
 
-  // Re-resolve after Zustand persist hydration
+  // Keep in sync with store updates
   useEffect(() => {
-    if (_hasHydrated) setActiveProject(id);
-  }, [_hasHydrated, id, setActiveProject]);
+    if (activeProject && activeProject.id === id) {
+      setProject(activeProject);
+    }
+  }, [activeProject, id]);
 
   useEffect(() => {
-    if (activeProject) {
+    if (project) {
       setBreadcrumbs([
         { label: "Projects", href: "/projects" },
-        { label: activeProject.title, href: `/projects/${id}` },
+        { label: project.title, href: `/projects/${id}` },
         { label: "Documents" },
       ]);
     }
-  }, [activeProject, setBreadcrumbs, id]);
+  }, [project, setBreadcrumbs, id]);
 
-  if (!_hasHydrated || !activeProject) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center py-24 text-muted-foreground">
         Loading...
+      </div>
+    );
+  }
+
+  if (!project) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <p className="text-muted-foreground">Project not found</p>
       </div>
     );
   }
@@ -55,7 +78,7 @@ export function DocumentsPageClient({ id: idProp }: { id: string }) {
   const handleExportAll = async () => {
     setExportingAll(true);
     try {
-      await exportAllDocuments(id, activeProject.title);
+      await exportAllDocuments(id, project.title);
       toast.success("All documents exported as zip");
     } catch {
       toast.error("No documents to export");
@@ -77,7 +100,7 @@ export function DocumentsPageClient({ id: idProp }: { id: string }) {
             Documents
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {activeProject.title} &middot; {currentDocs.length} document
+            {project.title} &middot; {currentDocs.length} document
             {currentDocs.length !== 1 ? "s" : ""}
           </p>
         </div>
@@ -100,7 +123,7 @@ export function DocumentsPageClient({ id: idProp }: { id: string }) {
       >
         <DocumentInventory
           projectId={id}
-          projectTitle={activeProject.title}
+          projectTitle={project.title}
           fullPage
         />
       </motion.div>

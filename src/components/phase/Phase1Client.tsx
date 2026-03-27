@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { storage } from "@/lib/storage";
 import { useProjectStore } from "@/stores/project-store";
 import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
@@ -303,7 +304,7 @@ const stepExpandVariants = {
 export function Phase1Client({ projectId: projectIdProp }: { projectId: string }) {
   const params = useParams<{ id: string }>();
   const projectId = (params.id as string) ?? projectIdProp;
-  const { setActiveProject, activeProject, _hasHydrated } = useProjectStore();
+  const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
@@ -315,21 +316,19 @@ export function Phase1Client({ projectId: projectIdProp }: { projectId: string }
   // ── Initialize ────────────────────────────────────────────────────────────
 
   useEffect(() => {
+    if (!projectId || projectId === "_") return;
+    const proj = storage.getProject(projectId);
     setActiveProject(projectId);
     loadProgress(projectId);
     loadDocuments(projectId);
     setBreadcrumbs([
       { label: "Projects", href: "/projects" },
-      { label: activeProject?.title || "Project", href: `/projects/${projectId}` },
+      { label: proj?.title || "Project", href: `/projects/${projectId}` },
       { label: "Phase 1: Foundation & Discovery" },
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
-  // Re-resolve after Zustand persist hydration
-  useEffect(() => {
-    if (_hasHydrated) setActiveProject(projectId);
-  }, [_hasHydrated, projectId, setActiveProject]);
 
   // ── Load completed methods from documents ─────────────────────────────────
 
