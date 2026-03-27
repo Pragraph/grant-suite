@@ -34,6 +34,16 @@ import { Input } from "@/components/ui/input";
 import { PipelineMap } from "@/components/shared/PipelineMap";
 import { DocumentInventory } from "@/components/document/DocumentInventory";
 
+/**
+ * Force a full-page navigation, bypassing Next.js App Router's
+ * client-side interception. This is required for dynamic routes
+ * in static export because Next.js cannot resolve RSC payloads
+ * for paths not in generateStaticParams.
+ */
+function navigateTo(url: string) {
+  window.location.assign(url);
+}
+
 const statusBadgeVariant = {
   active: "success" as const,
   completed: "default" as const,
@@ -67,7 +77,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
   const [project, setProject] = useState<Project | null>(() =>
     projectId ? storage.getProject(projectId) ?? null : null,
   );
-  const loading = false; // resolved synchronously from URL + localStorage
+  const loading = false;
 
   const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
   const [expandedPhaseInitialized, setExpandedPhaseInitialized] = useState(false);
@@ -75,7 +85,6 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
   const [titleValue, setTitleValue] = useState("");
   const [exportingAll, setExportingAll] = useState(false);
 
-  // Sync Zustand stores on mount
   useEffect(() => {
     if (!projectId) return;
     setActiveProject(projectId);
@@ -83,7 +92,6 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
     loadDocuments(projectId);
   }, [projectId, setActiveProject, loadProgress, loadDocuments]);
 
-  // Keep local state in sync if project is updated via store (e.g., title edit)
   useEffect(() => {
     if (activeProject && projectId && activeProject.id === projectId) {
       setProject(activeProject);
@@ -99,7 +107,6 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
     }
   }, [project, setBreadcrumbs]);
 
-  // Sync title and expanded phase from project data on initial load
   if (project && !editingTitle && titleValue !== project.title) {
     setTitleValue(project.title);
   }
@@ -245,6 +252,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
             const completion = getPhaseCompletion(phase.id);
             const isCurrent = project.currentPhase === phase.id;
             const phaseProgress = progress.phases[phase.id];
+            const phaseUrl = `/projects/${projectId}/phase/${phase.id}`;
 
             return (
               <motion.div
@@ -262,9 +270,9 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                         : ""
                   }`}
                 >
-                  {/* Phase Row */}
+                  {/* Phase Row — toggles expand/collapse */}
                   <div
-                    className={`flex w-full items-center gap-3 px-4 py-3 text-left ${accessible ? "cursor-pointer" : "cursor-default"}`}
+                    className={`flex w-full items-center gap-3 px-4 py-3 text-left select-none ${accessible ? "cursor-pointer" : "cursor-default"}`}
                     onClick={() => accessible && setExpandedPhase(isExpanded ? null : phase.id)}
                   >
                     <PhaseIcon
@@ -293,14 +301,24 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                       </div>
                       {accessible && (
                         isCurrent ? (
-                          <a
-                            href={`/projects/${projectId}/phase/${phase.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1.5 rounded-md bg-accent-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-accent-600 transition-colors"
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigateTo(phaseUrl);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.stopPropagation();
+                                navigateTo(phaseUrl);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1.5 rounded-md bg-accent-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-accent-600 transition-colors cursor-pointer"
                           >
                             <Play className="h-3.5 w-3.5" />
                             {completion > 0 ? "Continue" : "Start"}
-                          </a>
+                          </div>
                         ) : completion === 100 ? (
                           <CheckCircle2 className="h-5 w-5 text-success" />
                         ) : null
@@ -330,10 +348,15 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                             phaseProgress?.steps[stepNum] ?? "not-started";
 
                           return (
-                            <a
+                            <div
                               key={stepNum}
-                              href={`/projects/${projectId}/phase/${phase.id}`}
-                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors no-underline text-inherit"
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => navigateTo(phaseUrl)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") navigateTo(phaseUrl);
+                              }}
+                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors cursor-pointer"
                             >
                               <span className="text-xs text-muted-foreground font-mono w-5">
                                 {stepNum}
@@ -346,7 +369,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                               >
                                 {stepStatusLabels[status]}
                               </span>
-                            </a>
+                            </div>
                           );
                         })}
                       </div>
