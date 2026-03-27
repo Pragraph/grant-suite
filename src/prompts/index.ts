@@ -13,6 +13,17 @@ import { template as step3Psychology } from "./phase2/step3-psychology";
 import { template as step4Impact } from "./phase2/step4-impact";
 import { template as step5Synthesis } from "./phase2/step5-synthesis";
 import { template as combinedSession } from "./phase2/combined-session";
+import { template as researchDesign } from "./phase3/research-design";
+import { template as partnershipStrategy } from "./phase3/partnership-strategy";
+import { template as partnerLetter } from "./phase3/partner-letter";
+import { template as patentSearch } from "./phase3/patent-search";
+import { template as noveltyAssessment } from "./phase3/novelty-assessment";
+import { template as sdgAlignment } from "./phase3/sdg-alignment";
+import { template as nationalAlignment } from "./phase3/national-alignment";
+import { template as kpiPlanning } from "./phase3/kpi-planning";
+import { template as researcherProfile } from "./phase3/researcher-profile";
+import { template as originalityCheck } from "./phase3/originality-check";
+import { template as trlAssessment } from "./phase3/trl-assessment";
 import { template as dataCompiler } from "./phase5/step1-data-compiler";
 
 export type { PromptTemplate } from "./types";
@@ -31,6 +42,17 @@ export const templates: PromptTemplate[] = [
   step4Impact,
   step5Synthesis,
   combinedSession,
+  researchDesign,
+  partnershipStrategy,
+  partnerLetter,
+  patentSearch,
+  noveltyAssessment,
+  sdgAlignment,
+  nationalAlignment,
+  kpiPlanning,
+  researcherProfile,
+  originalityCheck,
+  trlAssessment,
   dataCompiler,
 ];
 
