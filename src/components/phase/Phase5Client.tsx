@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
@@ -359,7 +360,9 @@ function CitationHighlights({ content }: { content: string }) {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase5Client({ projectId }: { projectId: string }) {
+export function Phase5Client({ projectId: projectIdProp }: { projectId: string }) {
+  const params = useParams<{ id: string }>();
+  const projectId = (params.id as string) ?? projectIdProp;
   const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
   const { documents, loadDocuments } = useDocumentStore();

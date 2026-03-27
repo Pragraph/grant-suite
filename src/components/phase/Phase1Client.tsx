@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Search,
@@ -299,7 +300,9 @@ const stepExpandVariants = {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase1Client({ projectId }: { projectId: string }) {
+export function Phase1Client({ projectId: projectIdProp }: { projectId: string }) {
+  const params = useParams<{ id: string }>();
+  const projectId = (params.id as string) ?? projectIdProp;
   const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
   const { documents, loadDocuments } = useDocumentStore();

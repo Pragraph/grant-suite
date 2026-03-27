@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { FolderArchive } from "lucide-react";
 import { toast } from "sonner";
@@ -13,7 +14,9 @@ import { exportAllDocuments } from "@/lib/export-all";
 import { Button } from "@/components/ui/button";
 import { DocumentInventory } from "@/components/document/DocumentInventory";
 
-export function DocumentsPageClient({ id }: { id: string }) {
+export function DocumentsPageClient({ id: idProp }: { id: string }) {
+  const params = useParams<{ id: string }>();
+  const id = params.id ?? idProp;
   const { setActiveProject, activeProject } = useProjectStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
@@ -165,7 +166,9 @@ type PatentSubStep = "search" | "novelty";
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase3Client({ projectId }: { projectId: string }) {
+export function Phase3Client({ projectId: projectIdProp }: { projectId: string }) {
+  const params = useParams<{ id: string }>();
+  const projectId = (params.id as string) ?? projectIdProp;
   const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress } = useProgressStore();
   const { loadDocuments } = useDocumentStore();

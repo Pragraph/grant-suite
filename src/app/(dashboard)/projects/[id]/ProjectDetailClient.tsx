@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Download,
@@ -54,7 +55,13 @@ const stepStatusColors: Record<StepStatus, string> = {
   complete: "text-success",
 };
 
-export function ProjectDetailClient({ id }: { id: string }) {
+export function ProjectDetailClient({ id: idProp }: { id: string }) {
+  // In static export, the server component pre-renders with the build-time
+  // placeholder id ("_"). useParams() reads the actual id from the URL at
+  // runtime, so it always reflects the real route the user navigated to.
+  const params = useParams<{ id: string }>();
+  const id = params.id ?? idProp;
+
   const { setActiveProject, activeProject, updateProject } = useProjectStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { progress, loadProgress, getPhaseCompletion, canAccessPhase } =
