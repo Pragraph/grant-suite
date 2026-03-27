@@ -4,6 +4,8 @@ import type { DependencyEntry, PhaseDefinition } from "./types";
 
 export const DOCUMENT_DEPENDENCIES: DependencyEntry[] = [
   // Phase 1 — Foundation & Discovery
+  { phase: 1, step: 1, produces: "Method4_Convergence_Synthesis.md", requires: [], optional: [] },
+  { phase: 1, step: 2, produces: "Grant_Matching.md", requires: [], optional: [] },
   { phase: 1, step: 3, produces: "Grant_Intelligence.md", requires: [], optional: [] },
 
   // Phase 2 — Strategic Positioning

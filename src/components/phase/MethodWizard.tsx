@@ -52,6 +52,7 @@ interface MethodWizardProps {
   methodName: string;
   projectId: string;
   steps: WizardStepConfig[];
+  initialFormValues?: Record<string, string>;
   onComplete: () => void;
   onCancel: () => void;
 }
@@ -91,6 +92,7 @@ export function MethodWizard({
   methodName,
   projectId,
   steps,
+  initialFormValues,
   onComplete,
   onCancel,
 }: MethodWizardProps) {
@@ -135,6 +137,11 @@ export function MethodWizard({
       if (Object.keys(updates).length > 0) {
         initial = { ...initial, formValues: { ...initial.formValues, ...updates } };
       }
+    }
+
+    // Merge caller-provided initial values (e.g., method outputs for convergence)
+    if (initialFormValues) {
+      initial = { ...initial, formValues: { ...initialFormValues, ...initial.formValues } };
     }
 
     return initial;
@@ -257,6 +264,7 @@ export function MethodWizard({
         method1: "Method1_Gap_Synthesis.md",
         method2: "Method2_Trend_Discovery.md",
         method3: "Method3_Funding_Discovery.md",
+        method4: "Method4_Convergence_Synthesis.md",
       };
 
       const docName = outputNames[methodId] || `${methodId}_output.md`;

@@ -10,7 +10,6 @@ import {
   SkipForward,
   Check,
   ChevronDown,
-  FileText,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -262,6 +261,28 @@ function getMethod3Steps(): WizardStepConfig[] {
   ];
 }
 
+function getMethod4Steps(): WizardStepConfig[] {
+  // Method 4 is a simpler wizard: compile the convergence prompt with injected outputs, then paste
+  return [
+    {
+      id: "m4-prompt",
+      title: "Convergence Synthesis Prompt",
+      description:
+        "We've compiled a prompt that combines your discovery method outputs. Copy it and paste into your AI tool.",
+      type: "prompt-compile",
+      templateId: "phase1.method4-convergence",
+    },
+    {
+      id: "m4-final",
+      title: "Paste Convergence Output",
+      description:
+        "Paste the convergence synthesis from your AI tool. This will identify your top research directions.",
+      type: "paste-output",
+      templateId: "phase1.method4-convergence",
+    },
+  ];
+}
+
 // ─── Animation variants ─────────────────────────────────────────────────────
 
 const fadeInUp = {
@@ -317,6 +338,9 @@ export function Phase1Client({ projectId }: { projectId: string }) {
     if (methodDocs.some((d) => d.canonicalName === "Method3_Funding_Discovery.md")) {
       completed.push("method3");
     }
+    if (methodDocs.some((d) => d.canonicalName === "Method4_Convergence_Synthesis.md")) {
+      completed.push("method4");
+    }
     setCompletedMethods(completed);
   }, [documents, projectId]);
 
@@ -334,7 +358,26 @@ export function Phase1Client({ projectId }: { projectId: string }) {
 
   // ── Method 4 availability ─────────────────────────────────────────────────
 
-  const method4Available = completedMethods.length >= 2;
+  const method4Available = completedMethods.filter((m) => m !== "method4").length >= 2;
+
+  // ── Collect method outputs for convergence ────────────────────────────────
+
+  const getMethodOutputs = useCallback(() => {
+    const outputs: Record<string, string> = {};
+    for (const doc of documents) {
+      if (doc.projectId !== projectId || doc.phase !== 1 || doc.step !== 1) continue;
+      if (doc.canonicalName === "Method1_Gap_Synthesis.md") {
+        outputs.method1_output = doc.content;
+      }
+      if (doc.canonicalName === "Method2_Trend_Discovery.md") {
+        outputs.method2_output = doc.content;
+      }
+      if (doc.canonicalName === "Method3_Funding_Discovery.md") {
+        outputs.method3_output = doc.content;
+      }
+    }
+    return outputs;
+  }, [documents, projectId]);
 
   // ── Step document summaries ───────────────────────────────────────────────
 
@@ -347,6 +390,27 @@ export function Phase1Client({ projectId }: { projectId: string }) {
     [documents, projectId],
   );
 
+  // ── Step unlocking logic ──────────────────────────────────────────────────
+
+  const isStepUnlocked = useCallback(
+    (stepNum: number): boolean => {
+      if (stepNum === 1) return true;
+      // Step 2 unlocks after Step 1 has at least one method done (or was skipped)
+      if (stepNum === 2) {
+        const step1Status = getStepStatus(1);
+        return completedMethods.length > 0 || step1Status !== "not-started";
+      }
+      // Step 3 unlocks after Step 2 is complete (or skipped)
+      if (stepNum === 3) {
+        const step2Status = getStepStatus(2);
+        const step1Status = getStepStatus(1);
+        return step2Status !== "not-started" || completedMethods.length > 0 || step1Status !== "not-started";
+      }
+      return true;
+    },
+    [getStepStatus, completedMethods],
+  );
+
   // ── Method wizard config ──────────────────────────────────────────────────
 
   const getMethodSteps = (methodId: string): WizardStepConfig[] => {
@@ -357,6 +421,8 @@ export function Phase1Client({ projectId }: { projectId: string }) {
         return getMethod2Steps();
       case "method3":
         return getMethod3Steps();
+      case "method4":
+        return getMethod4Steps();
       default:
         return [];
     }
@@ -366,10 +432,10 @@ export function Phase1Client({ projectId }: { projectId: string }) {
     return METHODS.find((m) => m.id === methodId)?.name || methodId;
   };
 
-  // ── Skip handler ──────────────────────────────────────────────────────────
+  // ── Skip handlers ─────────────────────────────────────────────────────────
 
-  const handleSkipToStep2 = () => {
-    setActiveStep(2);
+  const handleSkipToStep = (stepNum: number) => {
+    setActiveStep(stepNum);
   };
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -409,6 +475,7 @@ export function Phase1Client({ projectId }: { projectId: string }) {
           const isComplete = status === "complete";
           const isCurrent = status !== "not-started" && status !== "complete";
           const stepDocs = getStepDocuments(stepDef.step);
+          const unlocked = isStepUnlocked(stepDef.step);
 
           return (
             <div key={stepDef.step} className="relative">
@@ -438,7 +505,9 @@ export function Phase1Client({ projectId }: { projectId: string }) {
                       ? "border-phase-1 bg-phase-1 text-white"
                       : isCurrent
                         ? "border-phase-1 bg-transparent text-phase-1"
-                        : "border-border/50 bg-transparent text-muted-foreground/50",
+                        : unlocked
+                          ? "border-border/50 bg-transparent text-muted-foreground/50"
+                          : "border-border/30 bg-transparent text-muted-foreground/30",
                   )}
                 >
                   {isComplete ? (
@@ -456,7 +525,9 @@ export function Phase1Client({ projectId }: { projectId: string }) {
                         ? "text-foreground"
                         : isCurrent
                           ? "text-foreground"
-                          : "text-muted-foreground",
+                          : unlocked
+                            ? "text-muted-foreground"
+                            : "text-muted-foreground/50",
                     )}
                   >
                     {stepDef.name}
@@ -512,6 +583,7 @@ export function Phase1Client({ projectId }: { projectId: string }) {
                             methodName={getMethodName(activeMethod)}
                             projectId={projectId}
                             steps={getMethodSteps(activeMethod)}
+                            initialFormValues={activeMethod === "method4" ? getMethodOutputs() : undefined}
                             onComplete={() => {
                               setActiveMethod(null);
                               loadDocuments(projectId);
@@ -556,10 +628,6 @@ export function Phase1Client({ projectId }: { projectId: string }) {
                                     )}
                                     onClick={() => {
                                       if (isLocked) return;
-                                      if (method.id === "method4") {
-                                        // TODO: Method 4 in future session
-                                        return;
-                                      }
                                       setActiveMethod(method.id);
                                     }}
                                   >
@@ -600,7 +668,7 @@ export function Phase1Client({ projectId }: { projectId: string }) {
 
                             {/* Skip option */}
                             <button
-                              onClick={handleSkipToStep2}
+                              onClick={() => handleSkipToStep(2)}
                               className="flex w-full items-center gap-3 rounded-lg border border-dashed border-border/50 p-3 text-left transition-colors hover:bg-muted/50"
                             >
                               <SkipForward className="h-4 w-4 text-muted-foreground" />
@@ -615,6 +683,63 @@ export function Phase1Client({ projectId }: { projectId: string }) {
                             </button>
                           </div>
                         )
+                      ) : stepDef.step === 2 ? (
+                        // ── Step 2: Grant Matching (uses StepExecutor) ──
+                        <StepExecutor
+                          templateId="phase1.grant-matching"
+                          projectId={projectId}
+                          phase={1}
+                          step={2}
+                          title="Grant Matching"
+                          description="Identify and rank grant opportunities that best match your research profile and topic."
+                          additionalFields={[
+                            {
+                              name: "researchTopic",
+                              label: "Research Topic / Title",
+                              type: "text",
+                              placeholder: activeProject?.title || "e.g., Machine Learning for Drug Discovery",
+                            },
+                            {
+                              name: "discipline",
+                              label: "Discipline",
+                              type: "text",
+                              placeholder: activeProject?.discipline || "e.g., Computer Science",
+                            },
+                            {
+                              name: "country",
+                              label: "Country",
+                              type: "text",
+                              placeholder: activeProject?.country || "e.g., United States",
+                            },
+                            {
+                              name: "careerStage",
+                              label: "Career Stage",
+                              type: "text",
+                              placeholder: activeProject?.careerStage || "e.g., Early Career Researcher",
+                            },
+                            {
+                              name: "budgetRange",
+                              label: "Funding Range",
+                              type: "select",
+                              options: [
+                                { label: "Less than $50K", value: "<$50K" },
+                                { label: "$50K - $200K", value: "$50K-$200K" },
+                                { label: "$200K - $500K", value: "$200K-$500K" },
+                                { label: "$500K+", value: "$500K+" },
+                              ],
+                            },
+                            {
+                              name: "keywords",
+                              label: "Keywords (comma-separated)",
+                              type: "textarea",
+                              placeholder: "e.g., deep learning, protein folding, computational biology",
+                            },
+                          ]}
+                          onComplete={() => {
+                            loadDocuments(projectId);
+                            setActiveStep(3);
+                          }}
+                        />
                       ) : stepDef.step === 3 ? (
                         // ── Step 3: Grant Intelligence (uses StepExecutor) ──
                         <StepExecutor
@@ -623,7 +748,7 @@ export function Phase1Client({ projectId }: { projectId: string }) {
                           phase={1}
                           step={3}
                           title="Grant Intelligence Gathering"
-                          description="Analyze grant guidelines to extract evaluation criteria, requirements, and strategic insights."
+                          description="Analyze grant guidelines to produce the foundational Grant_Intelligence.md document. This is the most important step in Phase 1 — every subsequent phase depends on it."
                           additionalFields={[
                             {
                               name: "grantName",
@@ -634,26 +759,34 @@ export function Phase1Client({ projectId }: { projectId: string }) {
                             },
                             {
                               name: "grant_guidelines_text",
-                              label: "Grant Guidelines (paste text)",
+                              label: "Paste Grant Guidelines",
                               type: "file-upload-text",
-                              placeholder: "Paste the full grant guidelines text here...",
+                              placeholder: "Paste the full grant guidelines text here (from PDF or website)...",
+                            },
+                            {
+                              name: "grant_url",
+                              label: "Grant URL",
+                              type: "text",
+                              placeholder: "e.g., https://erc.europa.eu/apply-grant/starting-grant",
+                            },
+                            {
+                              name: "evaluation_criteria_text",
+                              label: "Paste Evaluation Criteria",
+                              type: "file-upload-text",
+                              placeholder: "Paste specific evaluation criteria text here...",
+                            },
+                            {
+                              name: "application_form_text",
+                              label: "Paste Application Form Details",
+                              type: "file-upload-text",
+                              placeholder: "Paste application form or template requirements here...",
                             },
                           ]}
                           onComplete={() => {
                             loadDocuments(projectId);
                           }}
                         />
-                      ) : (
-                        // ── Step 2: Placeholder (future session) ────
-                        <Card className="border-l-[3px] border-l-phase-1">
-                          <CardContent className="py-8 text-center">
-                            <FileText className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
-                            <p className="text-sm text-muted-foreground">
-                              {stepDef.name} — Coming in a future session
-                            </p>
-                          </CardContent>
-                        </Card>
-                      )}
+                      ) : null}
                     </div>
                   </motion.div>
                 )}

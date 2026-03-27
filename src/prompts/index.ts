@@ -1,10 +1,12 @@
 import type { PromptTemplate } from "./types";
 
 import { template as grantIntelligence } from "./phase1/grant-intelligence";
+import { template as grantMatching } from "./phase1/grant-matching";
 import { template as method1Discovery } from "./phase1/method1-discovery";
 import { template as method1Synthesis } from "./phase1/method1-synthesis";
 import { template as method2Discovery } from "./phase1/method2-discovery";
 import { template as method3Discovery } from "./phase1/method3-discovery";
+import { template as method4Convergence } from "./phase1/method4-convergence";
 import { template as frameworkSynthesis } from "./phase2/step5-synthesis";
 import { template as dataCompiler } from "./phase5/step1-data-compiler";
 
@@ -12,10 +14,12 @@ export type { PromptTemplate } from "./types";
 
 export const templates: PromptTemplate[] = [
   grantIntelligence,
+  grantMatching,
   method1Discovery,
   method1Synthesis,
   method2Discovery,
   method3Discovery,
+  method4Convergence,
   frameworkSynthesis,
   dataCompiler,
 ];
