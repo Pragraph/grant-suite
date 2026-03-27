@@ -62,7 +62,8 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
   const params = useParams<{ id: string }>();
   const id = params.id ?? idProp;
 
-  const { setActiveProject, activeProject, updateProject } = useProjectStore();
+  const { setActiveProject, activeProject, updateProject, _hasHydrated } =
+    useProjectStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { progress, loadProgress, getPhaseCompletion, canAccessPhase } =
     useProgressStore();
@@ -73,7 +74,6 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleValue, setTitleValue] = useState("");
   const [exportingAll, setExportingAll] = useState(false);
-  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     setActiveProject(id);
@@ -81,21 +81,13 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
     loadDocuments(id);
   }, [id, setActiveProject, loadProgress, loadDocuments]);
 
-  // After setting the active project, check if it was actually found
+  // Re-resolve active project once hydration completes (persist may have
+  // overwritten activeProjectId during rehydration, so we need to re-set it).
   useEffect(() => {
-    if (!id) return;
-    // Give store a tick to settle after setActiveProject
-    const timer = setTimeout(() => {
-      const project = useProjectStore.getState().activeProject;
-      if (!project) setNotFound(true);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [id]);
-
-  // Clear notFound when activeProject arrives (e.g. after hydration)
-  useEffect(() => {
-    if (activeProject) setNotFound(false);
-  }, [activeProject]);
+    if (_hasHydrated) {
+      setActiveProject(id);
+    }
+  }, [_hasHydrated, id, setActiveProject]);
 
   useEffect(() => {
     if (activeProject) {
@@ -115,18 +107,21 @@ export function ProjectDetailClient({ id: idProp }: { id: string }) {
     setExpandedPhaseInitialized(true);
   }
 
-  if (notFound && !activeProject) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <p className="text-muted-foreground">Project not found</p>
-        <Button variant="secondary" onClick={() => window.history.back()}>
-          Go Back
-        </Button>
-      </div>
-    );
-  }
+  // Wait for Zustand persist to rehydrate before deciding "not found"
+  if (!_hasHydrated || !activeProject) {
+    // Still hydrating OR project hasn't resolved yet — show skeleton
+    if (_hasHydrated && !activeProject) {
+      // Hydration finished but project genuinely doesn't exist
+      return (
+        <div className="flex flex-col items-center justify-center py-24 gap-4">
+          <p className="text-muted-foreground">Project not found</p>
+          <Button variant="secondary" onClick={() => window.history.back()}>
+            Go Back
+          </Button>
+        </div>
+      );
+    }
 
-  if (!activeProject) {
     return (
       <div className="flex items-center justify-center py-24 text-muted-foreground">
         Loading project...

@@ -268,7 +268,7 @@ function PsychologyHighlightsUI({ content }: { content: string }) {
 export function Phase2Client({ projectId: projectIdProp }: { projectId: string }) {
   const params = useParams<{ id: string }>();
   const projectId = (params.id as string) ?? projectIdProp;
-  const { setActiveProject, activeProject } = useProjectStore();
+  const { setActiveProject, activeProject, _hasHydrated } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
@@ -290,6 +290,11 @@ export function Phase2Client({ projectId: projectIdProp }: { projectId: string }
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
+
+  // Re-resolve after Zustand persist hydration
+  useEffect(() => {
+    if (_hasHydrated) setActiveProject(projectId);
+  }, [_hasHydrated, projectId, setActiveProject]);
 
   // ── Track Step 3 output for psychology highlights ─────────────────────────
 

@@ -694,7 +694,7 @@ function OptimizationDiffView({
 export function Phase6Client({ projectId: projectIdProp }: { projectId: string }) {
   const params = useParams<{ id: string }>();
   const projectId = (params.id as string) ?? projectIdProp;
-  const { setActiveProject, activeProject } = useProjectStore();
+  const { setActiveProject, activeProject, _hasHydrated } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion, updateStepStatus } = useProgressStore();
   const { documents, loadDocuments, saveDocument } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
@@ -715,6 +715,11 @@ export function Phase6Client({ projectId: projectIdProp }: { projectId: string }
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
+
+  // Re-resolve after Zustand persist hydration
+  useEffect(() => {
+    if (_hasHydrated) setActiveProject(projectId);
+  }, [_hasHydrated, projectId, setActiveProject]);
 
   // ── Phase progress ────────────────────────────────────────────────────────
 

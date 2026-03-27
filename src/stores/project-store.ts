@@ -10,7 +10,11 @@ interface ProjectState {
   // Derived
   activeProject: Project | null;
 
+  // Hydration
+  _hasHydrated: boolean;
+
   // Actions
+  _setHasHydrated: (v: boolean) => void;
   loadProjects: () => void;
   createProject: (
     data: Omit<Project, "id" | "createdAt" | "updatedAt" | "currentPhase" | "currentStep" | "status" | "metadata">
@@ -26,6 +30,8 @@ export const useProjectStore = create<ProjectState>()(
       projects: [],
       activeProjectId: null,
       activeProject: null,
+      _hasHydrated: false,
+      _setHasHydrated: (v) => set({ _hasHydrated: v }),
 
       loadProjects: () => {
         const projects = storage.getProjects();
@@ -88,6 +94,9 @@ export const useProjectStore = create<ProjectState>()(
       partialize: (state) => ({
         activeProjectId: state.activeProjectId,
       }),
+      onRehydrateStorage: () => (state) => {
+        state?._setHasHydrated(true);
+      },
     }
   )
 );

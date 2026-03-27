@@ -17,7 +17,7 @@ import { DocumentInventory } from "@/components/document/DocumentInventory";
 export function DocumentsPageClient({ id: idProp }: { id: string }) {
   const params = useParams<{ id: string }>();
   const id = params.id ?? idProp;
-  const { setActiveProject, activeProject } = useProjectStore();
+  const { setActiveProject, activeProject, _hasHydrated } = useProjectStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
   const [exportingAll, setExportingAll] = useState(false);
@@ -26,6 +26,11 @@ export function DocumentsPageClient({ id: idProp }: { id: string }) {
     setActiveProject(id);
     loadDocuments(id);
   }, [id, setActiveProject, loadDocuments]);
+
+  // Re-resolve after Zustand persist hydration
+  useEffect(() => {
+    if (_hasHydrated) setActiveProject(id);
+  }, [_hasHydrated, id, setActiveProject]);
 
   useEffect(() => {
     if (activeProject) {
@@ -37,7 +42,7 @@ export function DocumentsPageClient({ id: idProp }: { id: string }) {
     }
   }, [activeProject, setBreadcrumbs, id]);
 
-  if (!activeProject) {
+  if (!_hasHydrated || !activeProject) {
     return (
       <div className="flex items-center justify-center py-24 text-muted-foreground">
         Loading...

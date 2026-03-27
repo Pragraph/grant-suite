@@ -169,7 +169,7 @@ type PatentSubStep = "search" | "novelty";
 export function Phase3Client({ projectId: projectIdProp }: { projectId: string }) {
   const params = useParams<{ id: string }>();
   const projectId = (params.id as string) ?? projectIdProp;
-  const { setActiveProject, activeProject } = useProjectStore();
+  const { setActiveProject, activeProject, _hasHydrated } = useProjectStore();
   const { progress, loadProgress } = useProgressStore();
   const { loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
@@ -196,6 +196,11 @@ export function Phase3Client({ projectId: projectIdProp }: { projectId: string }
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
+
+  // Re-resolve after Zustand persist hydration
+  useEffect(() => {
+    if (_hasHydrated) setActiveProject(projectId);
+  }, [_hasHydrated, projectId, setActiveProject]);
 
   // ── Persist toggles ──────────────────────────────────────────────────────
 
