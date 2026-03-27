@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  // Only use static export for production builds.
+  // Dev server needs normal dynamic routing to work.
+  ...(process.env.NODE_ENV === "production" ? { output: "export" } : {}),
   images: { unoptimized: true },
   typescript: {
     // Pre-existing issue: special characters in parent directory path (*[ON])
