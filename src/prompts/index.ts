@@ -35,6 +35,13 @@ import { template as assemblyPolish } from "./phase5/step8-assembly-polish";
 import { template as teamAssembly } from "./phase4/team-assembly";
 import { template as budgetConstruction } from "./phase4/budget-construction";
 import { template as budgetJustification } from "./phase4/budget-justification";
+import { template as mockReview } from "./phase6/step1-mock-review";
+import { template as epAudit } from "./phase6/step2-ep-audit";
+import { template as complianceCheck } from "./phase6/step3-compliance";
+import { template as optimization } from "./phase6/step4-optimization";
+import { template as feedbackAnalysis } from "./phase7/step1-feedback-analysis";
+import { template as resubmissionStrategy } from "./phase7/step2-resubmission-strategy";
+import { template as responseRevised } from "./phase7/step3-response-revised";
 
 export type { PromptTemplate } from "./types";
 
@@ -74,6 +81,13 @@ export const templates: PromptTemplate[] = [
   budgetJustWriter,
   supportingDocsGenerator,
   assemblyPolish,
+  mockReview,
+  epAudit,
+  complianceCheck,
+  optimization,
+  feedbackAnalysis,
+  resubmissionStrategy,
+  responseRevised,
 ];
 
 export const templateMap: Record<string, PromptTemplate> = Object.fromEntries(
