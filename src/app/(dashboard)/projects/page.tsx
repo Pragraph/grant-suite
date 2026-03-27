@@ -140,92 +140,91 @@ export default function ProjectsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
               >
-                <Card
-                  className="group cursor-pointer hover:shadow-card-hover hover:border-border transition-all duration-normal"
-                  onClick={() =>
-                    window.location.href = `/projects/${project.id}`
-                  }
-                >
-                  {/* Phase color strip */}
-                  <div
-                    className={`h-0.75 ${phaseStripColors[project.currentPhase] ?? "bg-accent-500"}`}
-                  />
+                <a href={`/projects/${project.id}`} className="no-underline text-inherit block">
+                  <Card
+                    className="group cursor-pointer hover:shadow-card-hover hover:border-border transition-all duration-normal"
+                  >
+                    {/* Phase color strip */}
+                    <div
+                      className={`h-0.75 ${phaseStripColors[project.currentPhase] ?? "bg-accent-500"}`}
+                    />
 
-                  <CardContent className="pt-4">
-                    {/* Title */}
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-heading text-lg font-semibold text-foreground line-clamp-2">
-                        {project.title}
-                      </h3>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={(e) => e.stopPropagation()}
+                    <CardContent className="pt-4">
+                      {/* Title */}
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-heading text-lg font-semibold text-foreground line-clamp-2">
+                          {project.title}
+                        </h3>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={(e) => e.preventDefault()}
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="end"
+                            onClick={(e) => e.preventDefault()}
                           >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <DropdownMenuItem
-                            onClick={() => handleExport(project.id)}
-                          >
-                            <Download className="h-4 w-4" />
-                            Export
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleArchive(project.id)}
-                          >
-                            <Archive className="h-4 w-4" />
-                            Archive
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-error focus:text-error"
-                            onClick={() => handleDelete(project.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-
-                    {/* Funder badge */}
-                    {project.targetFunder && (
-                      <Badge className="mt-2">{project.targetFunder}</Badge>
-                    )}
-
-                    {/* Progress */}
-                    <div className="mt-3">
-                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
-                        <span>
-                          Phase {project.currentPhase} of 7
-                        </span>
-                        <span>{phaseCompletion}%</span>
+                            <DropdownMenuItem
+                              onClick={() => handleExport(project.id)}
+                            >
+                              <Download className="h-4 w-4" />
+                              Export
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleArchive(project.id)}
+                            >
+                              <Archive className="h-4 w-4" />
+                              Archive
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-error focus:text-error"
+                              onClick={() => handleDelete(project.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
-                      <Progress value={phaseCompletion} />
-                    </div>
 
-                    {/* Meta */}
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">
-                        {project.discipline}
-                        {project.country ? ` · ${project.country}` : ""}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(project.updatedAt), {
-                          addSuffix: true,
-                        })}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
+                      {/* Funder badge */}
+                      {project.targetFunder && (
+                        <Badge className="mt-2">{project.targetFunder}</Badge>
+                      )}
+
+                      {/* Progress */}
+                      <div className="mt-3">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
+                          <span>
+                            Phase {project.currentPhase} of 7
+                          </span>
+                          <span>{phaseCompletion}%</span>
+                        </div>
+                        <Progress value={phaseCompletion} />
+                      </div>
+
+                      {/* Meta */}
+                      <div className="mt-3 flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">
+                          {project.discipline}
+                          {project.country ? ` · ${project.country}` : ""}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(project.updatedAt), {
+                            addSuffix: true,
+                          })}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </a>
               </motion.div>
             );
           })}

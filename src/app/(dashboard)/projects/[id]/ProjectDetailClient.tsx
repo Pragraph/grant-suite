@@ -263,13 +263,9 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                   }`}
                 >
                   {/* Phase Row */}
-                  <button
-                    type="button"
-                    className="flex w-full items-center gap-3 px-4 py-3 text-left"
-                    onClick={() =>
-                      setExpandedPhase(isExpanded ? null : phase.id)
-                    }
-                    disabled={!accessible}
+                  <div
+                    className={`flex w-full items-center gap-3 px-4 py-3 text-left ${accessible ? "cursor-pointer" : "cursor-default"}`}
+                    onClick={() => accessible && setExpandedPhase(isExpanded ? null : phase.id)}
                   >
                     <PhaseIcon
                       phase={phase.id as 1 | 2 | 3 | 4 | 5 | 6 | 7}
@@ -297,16 +293,14 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                       </div>
                       {accessible && (
                         isCurrent ? (
-                          <Button
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              window.location.href = `/projects/${projectId}/phase/${phase.id}`;
-                            }}
+                          <a
+                            href={`/projects/${projectId}/phase/${phase.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1.5 rounded-md bg-accent-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-accent-600 transition-colors"
                           >
                             <Play className="h-3.5 w-3.5" />
                             {completion > 0 ? "Continue" : "Start"}
-                          </Button>
+                          </a>
                         ) : completion === 100 ? (
                           <CheckCircle2 className="h-5 w-5 text-success" />
                         ) : null
@@ -318,7 +312,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         ))}
                     </div>
-                  </button>
+                  </div>
 
                   {/* Expanded Steps */}
                   {isExpanded && accessible && (
@@ -336,10 +330,10 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                             phaseProgress?.steps[stepNum] ?? "not-started";
 
                           return (
-                            <div
+                            <a
                               key={stepNum}
-                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors cursor-pointer"
-                              onClick={() => window.location.href = `/projects/${projectId}/phase/${phase.id}`}
+                              href={`/projects/${projectId}/phase/${phase.id}`}
+                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors no-underline text-inherit"
                             >
                               <span className="text-xs text-muted-foreground font-mono w-5">
                                 {stepNum}
@@ -352,7 +346,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                               >
                                 {stepStatusLabels[status]}
                               </span>
-                            </div>
+                            </a>
                           );
                         })}
                       </div>
