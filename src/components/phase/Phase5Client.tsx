@@ -18,6 +18,11 @@ import {
   AlertTriangle,
   CheckCircle2,
   XCircle,
+  Download,
+  GripVertical,
+  Plus,
+  Sparkles,
+  Trash2,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -28,9 +33,12 @@ import { useUiStore } from "@/stores/ui-store";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
 import type { StepStatus } from "@/lib/types";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -89,21 +97,21 @@ const STEP_META: Record<number, StepMeta> = {
     description:
       "Draft the impact statement projecting outcomes and broader significance.",
     tooltip:
-      "Written fourth because it must project from the specific methods and connect back to the executive summary's promises.",
+      "Written after methods because impact claims must be grounded in what you'll actually do.",
   },
   6: {
     icon: DollarSign,
     description:
       "Draft the budget justification narrative connecting costs to methods.",
     tooltip:
-      "Written fifth because it must justify every cost in terms of the methods and impact already described.",
+      "Written after methods because every budget line must trace to a specific research activity.",
   },
   7: {
     icon: FolderOpen,
     description:
       "Compile supporting documents (data management plan, ethics, etc.).",
     tooltip:
-      "Written sixth because supporting documents reference details from all previous sections.",
+      "Generated near the end because supporting documents reference the full proposal content.",
   },
   8: {
     icon: Layers,
@@ -425,6 +433,10 @@ export function Phase5Client({ projectId }: { projectId: string }) {
       case 2: return "phase5.step2-executive-summary";
       case 3: return "phase5.step3-methods";
       case 4: return "phase5.step4-background";
+      case 5: return "phase5.step5-impact";
+      case 6: return "phase5.step6-budget-justification";
+      case 7: return "phase5.step7-supporting-documents";
+      case 8: return "phase5.step8-assembly-polish";
       default: return "";
     }
   };
@@ -476,6 +488,164 @@ export function Phase5Client({ projectId }: { projectId: string }) {
     ],
     [],
   );
+
+  const step5Fields = useMemo(
+    () => [
+      {
+        name: "wordLimit",
+        label: "Word limit for impact section",
+        type: "text" as const,
+        placeholder: "e.g., 2000",
+        required: true,
+      },
+    ],
+    [],
+  );
+
+  const step6Fields = useMemo(
+    () => [
+      {
+        name: "wordLimit",
+        label: "Word limit for budget justification",
+        type: "text" as const,
+        placeholder: "e.g., 2000",
+        required: true,
+      },
+    ],
+    [],
+  );
+
+  // ── Step 7: Supporting documents checklist ────────────────────────────────
+
+  const [selectedSupportDocs, setSelectedSupportDocs] = useState<Record<string, boolean>>({
+    dmp: false,
+    ethics: false,
+    dissemination: false,
+    risk: false,
+    gantt: false,
+    letters: false,
+  });
+  const [customDocTypes, setCustomDocTypes] = useState("");
+
+  const SUPPORT_DOC_OPTIONS = useMemo(
+    () => [
+      { key: "dmp", label: "Data Management Plan (DMP)" },
+      { key: "ethics", label: "Ethics Statement" },
+      { key: "dissemination", label: "Dissemination & Impact Plan" },
+      { key: "risk", label: "Risk Management Plan" },
+      { key: "gantt", label: "Gantt Chart / Timeline" },
+      { key: "letters", label: "Letters of Support (reference only — generated in Phase 3A/4)" },
+    ],
+    [],
+  );
+
+  const step7Fields = useMemo(() => {
+    const selected = SUPPORT_DOC_OPTIONS.filter((o) => selectedSupportDocs[o.key])
+      .map((o) => o.label);
+    if (customDocTypes.trim()) {
+      selected.push(...customDocTypes.split(",").map((s) => s.trim()).filter(Boolean));
+    }
+    const selectedDocString = selected.length > 0
+      ? selected.map((s) => `- ${s}`).join("\n")
+      : "No documents selected";
+
+    return [
+      {
+        name: "selectedDocuments",
+        label: "Selected supporting documents",
+        type: "textarea" as const,
+        placeholder: "Selected documents will appear here",
+        required: true,
+        defaultValue: selectedDocString,
+      },
+      ...(customDocTypes.trim()
+        ? [
+            {
+              name: "customDocumentTypes",
+              label: "Custom document types",
+              type: "text" as const,
+              placeholder: "",
+              required: false,
+              defaultValue: customDocTypes,
+            },
+          ]
+        : []),
+    ];
+  }, [selectedSupportDocs, customDocTypes, SUPPORT_DOC_OPTIONS]);
+
+  // ── Step 8: Assembly state ────────────────────────────────────────────────
+
+  const SECTION_ORDER_DEFAULT = useMemo(
+    () => [
+      { key: "executive-summary", label: "Executive Summary", docName: "Executive_Summary_Draft.md" },
+      { key: "background", label: "Background / Literature Review", docName: "Background_Draft.md" },
+      { key: "methods", label: "Research Methods", docName: "Methods_Draft.md" },
+      { key: "impact", label: "Expected Impact", docName: "Impact_Draft.md" },
+      { key: "budget-justification", label: "Budget Justification", docName: "Budget_Justification_Draft.md" },
+      { key: "supporting-docs", label: "Supporting Documents", docName: "Supporting_Documents.md" },
+    ],
+    [],
+  );
+
+  const [sectionOrder, setSectionOrder] = useState(SECTION_ORDER_DEFAULT);
+  const [customSections, setCustomSections] = useState<{ key: string; label: string; afterIndex: number }[]>([]);
+  const [assembledContent, setAssembledContent] = useState<string | null>(null);
+  const [showPolishPrompt, setShowPolishPrompt] = useState(false);
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+
+  const handleAssemble = useCallback(() => {
+    const parts: string[] = [];
+    sectionOrder.forEach((section, i) => {
+      // Insert any custom sections before this index
+      customSections
+        .filter((cs) => cs.afterIndex === i)
+        .forEach((cs) => parts.push(`\n## ${cs.label}\n\n[USER INPUT NEEDED: Content for ${cs.label}]\n`));
+
+      const content = getDocContent(section.docName);
+      if (content) {
+        parts.push(content);
+      } else {
+        parts.push(`\n## ${section.label}\n\n*Section not yet completed.*\n`);
+      }
+    });
+    // Custom sections after the last section
+    customSections
+      .filter((cs) => cs.afterIndex === sectionOrder.length)
+      .forEach((cs) => parts.push(`\n## ${cs.label}\n\n[USER INPUT NEEDED: Content for ${cs.label}]\n`));
+
+    const assembled = `# Complete Proposal\n\n${parts.join("\n\n---\n\n")}`;
+    setAssembledContent(assembled);
+  }, [sectionOrder, customSections, getDocContent]);
+
+  const handleDragStart = (idx: number) => setDragIdx(idx);
+  const handleDragOver = (e: React.DragEvent, idx: number) => {
+    e.preventDefault();
+    if (dragIdx === null || dragIdx === idx) return;
+    const newOrder = [...sectionOrder];
+    const [moved] = newOrder.splice(dragIdx, 1);
+    newOrder.splice(idx, 0, moved);
+    setSectionOrder(newOrder);
+    setDragIdx(idx);
+  };
+  const handleDragEnd = () => setDragIdx(null);
+
+  const addCustomSection = () => {
+    setCustomSections((prev) => [
+      ...prev,
+      { key: `custom-${Date.now()}`, label: "New Section", afterIndex: sectionOrder.length },
+    ]);
+  };
+
+  const handleDownloadMd = useCallback(() => {
+    if (!assembledContent) return;
+    const blob = new Blob([assembledContent], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Complete_Proposal.md";
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [assembledContent]);
 
   // ── Document stats for completed steps ──────────────────────────────────
 
@@ -550,7 +720,6 @@ export function Phase5Client({ projectId }: { projectId: string }) {
             const unlocked = isStepUnlocked(stepDef.step);
             const meta = STEP_META[stepDef.step];
             const StepIcon = meta?.icon;
-            const isSession16 = stepDef.step > 4;
 
             // Get document stats for completed steps
             const producedDocNames: Record<number, string> = {
@@ -579,35 +748,26 @@ export function Phase5Client({ projectId }: { projectId: string }) {
 
                 {/* Step header */}
                 <button
-                  onClick={() => {
-                    if (isSession16) return;
-                    setActiveStep(isActive ? null : stepDef.step);
-                  }}
-                  disabled={isSession16}
+                  onClick={() => setActiveStep(isActive ? null : stepDef.step)}
                   className={cn(
                     "flex w-full items-center gap-3 py-3 text-left transition-colors",
                     "hover:bg-muted/50 rounded-lg px-2 -mx-2",
-                    isSession16 && "opacity-50 cursor-not-allowed hover:bg-transparent",
                   )}
                 >
                   {/* Timeline dot */}
                   <div
                     className={cn(
                       "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 transition-all",
-                      isSession16
-                        ? "border-border/20 bg-transparent text-muted-foreground/20"
-                        : isComplete
-                          ? "border-phase-5 bg-phase-5 text-white"
-                          : isCurrent
-                            ? "border-phase-5 bg-transparent text-phase-5"
-                            : unlocked
-                              ? "border-border/50 bg-transparent text-muted-foreground/50"
-                              : "border-border/30 bg-transparent text-muted-foreground/30",
+                      isComplete
+                        ? "border-phase-5 bg-phase-5 text-white"
+                        : isCurrent
+                          ? "border-phase-5 bg-transparent text-phase-5"
+                          : unlocked
+                            ? "border-border/50 bg-transparent text-muted-foreground/50"
+                            : "border-border/30 bg-transparent text-muted-foreground/30",
                     )}
                   >
-                    {isSession16 ? (
-                      <Lock className="h-3.5 w-3.5" />
-                    ) : isComplete ? (
+                    {isComplete ? (
                       <Check className="h-4 w-4" />
                     ) : (
                       <span className="text-xs font-medium">{stepDef.step}</span>
@@ -619,28 +779,21 @@ export function Phase5Client({ projectId }: { projectId: string }) {
                       <p
                         className={cn(
                           "text-sm font-medium",
-                          isSession16
-                            ? "text-muted-foreground/30"
-                            : isComplete
+                          isComplete
+                            ? "text-foreground"
+                            : isCurrent
                               ? "text-foreground"
-                              : isCurrent
-                                ? "text-foreground"
-                                : unlocked
-                                  ? "text-muted-foreground"
-                                  : "text-muted-foreground/50",
+                              : unlocked
+                                ? "text-muted-foreground"
+                                : "text-muted-foreground/50",
                         )}
                       >
                         {stepDef.name}
                       </p>
-                      {!unlocked && !isSession16 && (
+                      {!unlocked && (
                         <Badge variant="outline" className="text-[10px] border-border/30 text-muted-foreground/50">
                           <Lock className="h-2.5 w-2.5 mr-0.5" />
                           Locked
-                        </Badge>
-                      )}
-                      {isSession16 && (
-                        <Badge variant="outline" className="text-[10px] border-border/20 text-muted-foreground/30">
-                          Coming soon
                         </Badge>
                       )}
                       {stepDef.step === 1 && isComplete && (
@@ -679,7 +832,7 @@ export function Phase5Client({ projectId }: { projectId: string }) {
 
                   <div className="flex items-center gap-2 shrink-0">
                     {/* Writing order tooltip */}
-                    {meta && !isSession16 && (
+                    {meta && (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="cursor-help">
@@ -697,25 +850,23 @@ export function Phase5Client({ projectId }: { projectId: string }) {
                         </TooltipContent>
                       </Tooltip>
                     )}
-                    {status !== "not-started" && !isSession16 && (
+                    {status !== "not-started" && (
                       <Badge variant={isComplete ? "default" : "outline"} className="text-[10px]">
                         {stepStatusLabels[status]}
                       </Badge>
                     )}
-                    {!isSession16 && (
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 text-muted-foreground transition-transform",
-                          isActive && "rotate-180",
-                        )}
-                      />
-                    )}
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 text-muted-foreground transition-transform",
+                        isActive && "rotate-180",
+                      )}
+                    />
                   </div>
                 </button>
 
                 {/* Step content (expanded) */}
                 <AnimatePresence>
-                  {isActive && !isSession16 && (
+                  {isActive && (
                     <motion.div
                       initial="collapsed"
                       animate="expanded"
@@ -866,7 +1017,392 @@ export function Phase5Client({ projectId }: { projectId: string }) {
                           </>
                         )}
 
-                        {/* Steps 5-8 are not built in this session */}
+                        {/* ── Step 5: Impact Writer ──────────────────── */}
+                        {stepDef.step === 5 && (
+                          <>
+                            {!unlocked ? (
+                              <LockedStepMessage stepNum={5} />
+                            ) : (
+                              <>
+                                <StepExecutor
+                                  templateId={getTemplateId(5)}
+                                  projectId={projectId}
+                                  phase={5}
+                                  step={5}
+                                  title="Impact Writer"
+                                  description={meta?.description}
+                                  additionalFields={step5Fields}
+                                  onComplete={() => {
+                                    loadDocuments(projectId);
+                                    setActiveStep(6);
+                                  }}
+                                />
+                                {isComplete && (
+                                  <PostStepStats
+                                    canonicalName="Impact_Draft.md"
+                                    getDocContent={getDocContent}
+                                  />
+                                )}
+                              </>
+                            )}
+                          </>
+                        )}
+
+                        {/* ── Step 6: Budget Justification Writer ──────── */}
+                        {stepDef.step === 6 && (
+                          <>
+                            {!unlocked ? (
+                              <LockedStepMessage stepNum={6} />
+                            ) : (
+                              <>
+                                <StepExecutor
+                                  templateId={getTemplateId(6)}
+                                  projectId={projectId}
+                                  phase={5}
+                                  step={6}
+                                  title="Budget Justification Writer"
+                                  description={meta?.description}
+                                  additionalFields={step6Fields}
+                                  onComplete={() => {
+                                    loadDocuments(projectId);
+                                    setActiveStep(7);
+                                  }}
+                                />
+                                {isComplete && (
+                                  <PostStepStats
+                                    canonicalName="Budget_Justification_Draft.md"
+                                    getDocContent={getDocContent}
+                                  />
+                                )}
+                              </>
+                            )}
+                          </>
+                        )}
+
+                        {/* ── Step 7: Supporting Documents Generator ───── */}
+                        {stepDef.step === 7 && (
+                          <>
+                            {!unlocked ? (
+                              <LockedStepMessage stepNum={7} />
+                            ) : (
+                              <>
+                                {/* Supporting docs checklist */}
+                                <Card className="border-phase-5/20 bg-phase-5/5">
+                                  <CardContent className="p-4 space-y-4">
+                                    <div className="flex items-center gap-2">
+                                      <FolderOpen className="h-4 w-4 text-phase-5" />
+                                      <p className="text-sm font-medium text-foreground">
+                                        Select supporting documents your grant requires
+                                      </p>
+                                    </div>
+                                    <div className="space-y-2">
+                                      {SUPPORT_DOC_OPTIONS.map((opt) => (
+                                        <div
+                                          key={opt.key}
+                                          className="flex items-center gap-2 rounded-md border border-border/30 px-3 py-2 text-xs"
+                                        >
+                                          <Checkbox
+                                            checked={selectedSupportDocs[opt.key] ?? false}
+                                            onCheckedChange={(v) =>
+                                              setSelectedSupportDocs((prev) => ({
+                                                ...prev,
+                                                [opt.key]: !!v,
+                                              }))
+                                            }
+                                          />
+                                          <span className="text-foreground font-medium">
+                                            {opt.label}
+                                          </span>
+                                        </div>
+                                      ))}
+                                      {/* Custom document type input */}
+                                      <div className="pt-2 space-y-1.5">
+                                        <Label className="text-xs text-muted-foreground">
+                                          Any other (comma-separated)
+                                        </Label>
+                                        <Input
+                                          value={customDocTypes}
+                                          onChange={(e) => setCustomDocTypes(e.target.value)}
+                                          placeholder="e.g., Consortium Agreement, IP Plan"
+                                          className="text-xs h-8"
+                                        />
+                                      </div>
+                                    </div>
+                                    {Object.values(selectedSupportDocs).some(Boolean) && (
+                                      <div className="flex items-start gap-2 rounded-md border border-info/30 bg-info/5 p-2.5">
+                                        <Info className="h-3.5 w-3.5 text-info mt-0.5 shrink-0" />
+                                        <p className="text-[11px] text-muted-foreground">
+                                          {Object.values(selectedSupportDocs).filter(Boolean).length}
+                                          {customDocTypes.trim()
+                                            ? ` + ${customDocTypes.split(",").filter((s) => s.trim()).length} custom`
+                                            : ""}{" "}
+                                          document(s) selected. The prompt will generate all in one output.
+                                        </p>
+                                      </div>
+                                    )}
+                                  </CardContent>
+                                </Card>
+
+                                <StepExecutor
+                                  templateId={getTemplateId(7)}
+                                  projectId={projectId}
+                                  phase={5}
+                                  step={7}
+                                  title="Supporting Documents Generator"
+                                  description={meta?.description}
+                                  additionalFields={step7Fields}
+                                  onComplete={() => {
+                                    loadDocuments(projectId);
+                                    setActiveStep(8);
+                                  }}
+                                />
+                                {isComplete && (
+                                  <PostStepStats
+                                    canonicalName="Supporting_Documents.md"
+                                    getDocContent={getDocContent}
+                                  />
+                                )}
+                              </>
+                            )}
+                          </>
+                        )}
+
+                        {/* ── Step 8: Full Proposal Assembly ───────────── */}
+                        {stepDef.step === 8 && (
+                          <>
+                            {!unlocked ? (
+                              <LockedStepMessage stepNum={8} />
+                            ) : (
+                              <div className="space-y-4">
+                                {/* Section reorder */}
+                                <Card className="border-phase-5/20 bg-phase-5/5">
+                                  <CardContent className="p-4 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                        <Layers className="h-4 w-4 text-phase-5" />
+                                        <p className="text-sm font-medium text-foreground">
+                                          Proposal Section Order
+                                        </p>
+                                      </div>
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-xs h-7"
+                                        onClick={addCustomSection}
+                                      >
+                                        <Plus className="h-3 w-3 mr-1" />
+                                        Add section
+                                      </Button>
+                                    </div>
+                                    <p className="text-[11px] text-muted-foreground">
+                                      Drag to reorder sections if your grant requires a different order.
+                                    </p>
+                                    <div className="space-y-1">
+                                      {sectionOrder.map((section, idx) => {
+                                        const hasContent = !!getDocContent(section.docName);
+                                        return (
+                                          <div
+                                            key={section.key}
+                                            draggable
+                                            onDragStart={() => handleDragStart(idx)}
+                                            onDragOver={(e) => handleDragOver(e, idx)}
+                                            onDragEnd={handleDragEnd}
+                                            className={cn(
+                                              "flex items-center gap-2 rounded-md border px-3 py-2 text-xs cursor-grab active:cursor-grabbing transition-colors",
+                                              dragIdx === idx
+                                                ? "border-phase-5/40 bg-phase-5/10"
+                                                : hasContent
+                                                  ? "border-success/20 bg-success/5"
+                                                  : "border-border/30 bg-muted/20",
+                                            )}
+                                          >
+                                            <GripVertical className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" />
+                                            <span className="text-muted-foreground/50 w-4">
+                                              {idx + 1}.
+                                            </span>
+                                            <span
+                                              className={cn(
+                                                "flex-1 font-medium",
+                                                hasContent ? "text-foreground" : "text-muted-foreground/50",
+                                              )}
+                                            >
+                                              {section.label}
+                                            </span>
+                                            {hasContent ? (
+                                              <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
+                                            ) : (
+                                              <XCircle className="h-3.5 w-3.5 text-muted-foreground/30 shrink-0" />
+                                            )}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+
+                                    {/* Custom sections */}
+                                    {customSections.length > 0 && (
+                                      <div className="space-y-1.5 pt-2 border-t border-border/20">
+                                        <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
+                                          Custom Sections
+                                        </p>
+                                        {customSections.map((cs, idx) => (
+                                          <div
+                                            key={cs.key}
+                                            className="flex items-center gap-2 rounded-md border border-border/30 px-3 py-1.5"
+                                          >
+                                            <Input
+                                              value={cs.label}
+                                              onChange={(e) => {
+                                                const updated = [...customSections];
+                                                updated[idx] = { ...cs, label: e.target.value };
+                                                setCustomSections(updated);
+                                              }}
+                                              className="text-xs h-7 flex-1"
+                                              placeholder="Section title"
+                                            />
+                                            <Button
+                                              type="button"
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-7 w-7 p-0 text-muted-foreground/50 hover:text-error"
+                                              onClick={() =>
+                                                setCustomSections((prev) =>
+                                                  prev.filter((_, i) => i !== idx),
+                                                )
+                                              }
+                                            >
+                                              <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+
+                                    {/* Assemble button */}
+                                    <Button
+                                      type="button"
+                                      onClick={handleAssemble}
+                                      className="w-full bg-phase-5 hover:bg-phase-5/90 text-white"
+                                    >
+                                      <Layers className="h-4 w-4 mr-2" />
+                                      Assemble Proposal
+                                    </Button>
+                                  </CardContent>
+                                </Card>
+
+                                {/* Assembled preview */}
+                                {assembledContent && (
+                                  <motion.div
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="space-y-4"
+                                  >
+                                    {/* Stats bar */}
+                                    <Card className="border-phase-5/20">
+                                      <CardContent className="p-3">
+                                        <div className="flex items-center gap-3 flex-wrap text-xs">
+                                          <span className="text-foreground font-medium">
+                                            Assembly Stats
+                                          </span>
+                                          <Badge variant="outline" className="text-[10px]">
+                                            {countWords(assembledContent).toLocaleString()} words
+                                          </Badge>
+                                          <Badge
+                                            variant="outline"
+                                            className="text-[10px] border-warning/30 text-warning bg-warning/5"
+                                          >
+                                            {countFlags(assembledContent, "CITATION NEEDED")} [CITATION
+                                            NEEDED]
+                                          </Badge>
+                                          <Badge
+                                            variant="outline"
+                                            className="text-[10px] border-info/30 text-info bg-info/5"
+                                          >
+                                            {countFlags(assembledContent, "USER INPUT NEEDED")} [USER
+                                            INPUT NEEDED]
+                                          </Badge>
+                                        </div>
+                                      </CardContent>
+                                    </Card>
+
+                                    {/* AI Polish option */}
+                                    {!showPolishPrompt ? (
+                                      <Card className="border-phase-5/15 bg-phase-5/5">
+                                        <CardContent className="p-3 flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                            <Sparkles className="h-4 w-4 text-phase-5" />
+                                            <div>
+                                              <p className="text-xs font-medium text-foreground">
+                                                Polish with AI
+                                              </p>
+                                              <p className="text-[11px] text-muted-foreground">
+                                                Generate a prompt to check consistency, flow, and
+                                                cross-references.
+                                              </p>
+                                            </div>
+                                          </div>
+                                          <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-xs h-7"
+                                            onClick={() => setShowPolishPrompt(true)}
+                                          >
+                                            <Sparkles className="h-3 w-3 mr-1" />
+                                            Polish
+                                          </Button>
+                                        </CardContent>
+                                      </Card>
+                                    ) : (
+                                      <StepExecutor
+                                        templateId={getTemplateId(8)}
+                                        projectId={projectId}
+                                        phase={5}
+                                        step={8}
+                                        title="Proposal Polish"
+                                        description="Review the assembled proposal for consistency, flow, and narrative coherence."
+                                        additionalFields={[
+                                          {
+                                            name: "assembledProposal",
+                                            label: "Assembled proposal (auto-filled)",
+                                            type: "textarea" as const,
+                                            placeholder: "",
+                                            required: true,
+                                          },
+                                        ]}
+                                        onComplete={() => {
+                                          loadDocuments(projectId);
+                                        }}
+                                      />
+                                    )}
+
+                                    {/* Export options */}
+                                    <div className="flex items-center gap-2">
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="text-xs"
+                                        onClick={handleDownloadMd}
+                                      >
+                                        <Download className="h-3.5 w-3.5 mr-1.5" />
+                                        Download as .md
+                                      </Button>
+                                    </div>
+
+                                    {/* Post-step stats if complete */}
+                                    {isComplete && (
+                                      <PostStepStats
+                                        canonicalName="Complete_Proposal.md"
+                                        getDocContent={getDocContent}
+                                      />
+                                    )}
+                                  </motion.div>
+                                )}
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
                     </motion.div>
                   )}
