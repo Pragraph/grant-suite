@@ -66,12 +66,29 @@ export function ProjectDetailClient({ id }: { id: string }) {
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleValue, setTitleValue] = useState("");
   const [exportingAll, setExportingAll] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     setActiveProject(id);
     loadProgress(id);
     loadDocuments(id);
   }, [id, setActiveProject, loadProgress, loadDocuments]);
+
+  // After setting the active project, check if it was actually found
+  useEffect(() => {
+    if (!id) return;
+    // Give store a tick to settle after setActiveProject
+    const timer = setTimeout(() => {
+      const project = useProjectStore.getState().activeProject;
+      if (!project) setNotFound(true);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [id]);
+
+  // Clear notFound when activeProject arrives (e.g. after hydration)
+  useEffect(() => {
+    if (activeProject) setNotFound(false);
+  }, [activeProject]);
 
   useEffect(() => {
     if (activeProject) {
@@ -89,6 +106,17 @@ export function ProjectDetailClient({ id }: { id: string }) {
   if (activeProject && !expandedPhaseInitialized) {
     setExpandedPhase(activeProject.currentPhase);
     setExpandedPhaseInitialized(true);
+  }
+
+  if (notFound && !activeProject) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <p className="text-muted-foreground">Project not found</p>
+        <Button variant="secondary" onClick={() => window.history.back()}>
+          Go Back
+        </Button>
+      </div>
+    );
   }
 
   if (!activeProject) {

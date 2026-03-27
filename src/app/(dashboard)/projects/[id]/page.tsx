@@ -4,10 +4,11 @@ export function generateStaticParams() {
   return [{ id: "_" }];
 }
 
-export default function ProjectDetailPage({
+export default async function ProjectDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  return <ProjectDetailClient id={params.id} />;
+  const { id } = await params;
+  return <ProjectDetailClient id={id} />;
 }

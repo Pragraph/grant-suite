@@ -4,10 +4,11 @@ export function generateStaticParams() {
   return [{ id: "_" }];
 }
 
-export default function DocumentsPage({
+export default async function DocumentsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  return <DocumentsPageClient id={params.id} />;
+  const { id } = await params;
+  return <DocumentsPageClient id={id} />;
 }

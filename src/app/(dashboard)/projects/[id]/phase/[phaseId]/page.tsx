@@ -18,42 +18,44 @@ export function generateStaticParams() {
   ];
 }
 
-export default function PhasePage({
+export default async function PhasePage({
   params,
 }: {
-  params: { id: string; phaseId: string };
+  params: Promise<{ id: string; phaseId: string }>;
 }) {
-  if (params.phaseId === "1") {
-    return <Phase1Client projectId={params.id} />;
+  const { id, phaseId } = await params;
+
+  if (phaseId === "1") {
+    return <Phase1Client projectId={id} />;
   }
 
-  if (params.phaseId === "2") {
-    return <Phase2Client projectId={params.id} />;
+  if (phaseId === "2") {
+    return <Phase2Client projectId={id} />;
   }
 
-  if (params.phaseId === "3") {
-    return <Phase3Client projectId={params.id} />;
+  if (phaseId === "3") {
+    return <Phase3Client projectId={id} />;
   }
 
-  if (params.phaseId === "4") {
-    return <Phase4Client projectId={params.id} />;
+  if (phaseId === "4") {
+    return <Phase4Client projectId={id} />;
   }
 
-  if (params.phaseId === "5") {
-    return <Phase5Client projectId={params.id} />;
+  if (phaseId === "5") {
+    return <Phase5Client projectId={id} />;
   }
 
-  if (params.phaseId === "6") {
-    return <Phase6Client projectId={params.id} />;
+  if (phaseId === "6") {
+    return <Phase6Client projectId={id} />;
   }
 
-  if (params.phaseId === "7") {
-    return <Phase7Client projectId={params.id} />;
+  if (phaseId === "7") {
+    return <Phase7Client projectId={id} />;
   }
 
   return (
     <div className="flex items-center justify-center py-20">
-      <p className="text-muted-foreground">Phase {params.phaseId} — Coming soon</p>
+      <p className="text-muted-foreground">Phase {phaseId} — Coming soon</p>
     </div>
   );
 }
