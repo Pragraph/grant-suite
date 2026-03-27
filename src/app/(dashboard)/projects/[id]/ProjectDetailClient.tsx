@@ -7,9 +7,9 @@ import {
   Lock,
   ChevronDown,
   ChevronRight,
-  FileText,
   Play,
   CheckCircle2,
+  FolderArchive,
 } from "lucide-react";
 
 import { useProjectStore } from "@/stores/project-store";
@@ -17,23 +17,20 @@ import { useDocumentStore } from "@/stores/document-store";
 import { useProgressStore } from "@/stores/progress-store";
 import { useUiStore } from "@/stores/ui-store";
 import { storage } from "@/lib/storage";
+import { exportAllDocuments } from "@/lib/export-all";
 import { PHASES } from "@/lib/types";
 import type { StepStatus } from "@/lib/types";
 
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { PipelineMap } from "@/components/shared/PipelineMap";
+import { DocumentInventory } from "@/components/document/DocumentInventory";
 
 const statusBadgeVariant = {
   active: "success" as const,
@@ -68,12 +65,7 @@ export function ProjectDetailClient({ id }: { id: string }) {
   const [expandedPhaseInitialized, setExpandedPhaseInitialized] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleValue, setTitleValue] = useState("");
-  const [docInventoryOpen, setDocInventoryOpen] = useState(true);
-  const [docViewerOpen, setDocViewerOpen] = useState(false);
-  const [selectedDoc, setSelectedDoc] = useState<{
-    name: string;
-    content: string;
-  } | null>(null);
+  const [exportingAll, setExportingAll] = useState(false);
 
   useEffect(() => {
     setActiveProject(id);
@@ -132,13 +124,18 @@ export function ProjectDetailClient({ id }: { id: string }) {
   };
 
   const currentDocs = documents.filter((d) => d.isCurrent);
-  const docsByPhase = PHASES.reduce(
-    (acc, phase) => {
-      acc[phase.id] = currentDocs.filter((d) => d.phase === phase.id);
-      return acc;
-    },
-    {} as Record<number, typeof currentDocs>
-  );
+
+  const handleExportAll = async () => {
+    setExportingAll(true);
+    try {
+      await exportAllDocuments(id, activeProject.title);
+      toast.success("All documents exported as zip");
+    } catch {
+      toast.error("No documents to export");
+    } finally {
+      setExportingAll(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -181,10 +178,22 @@ export function ProjectDetailClient({ id }: { id: string }) {
             <Badge>{activeProject.targetFunder}</Badge>
           )}
         </div>
-        <Button variant="secondary" onClick={handleExport}>
-          <Download className="h-4 w-4" />
-          Export Project
-        </Button>
+        <div className="flex items-center gap-2">
+          {currentDocs.length > 0 && (
+            <Button
+              variant="secondary"
+              onClick={handleExportAll}
+              disabled={exportingAll}
+            >
+              <FolderArchive className="h-4 w-4" />
+              {exportingAll ? "Exporting..." : "Export All Docs"}
+            </Button>
+          )}
+          <Button variant="secondary" onClick={handleExport}>
+            <Download className="h-4 w-4" />
+            Export Project
+          </Button>
+        </div>
       </motion.div>
 
       {/* Pipeline Map */}
@@ -330,106 +339,12 @@ export function ProjectDetailClient({ id }: { id: string }) {
 
         {/* Right: Document Inventory */}
         <div className="flex-1 min-w-0 lg:min-w-70 lg:max-w-90">
-          <Card>
-            <CardHeader className="py-3">
-              <button
-                type="button"
-                className="flex items-center justify-between w-full"
-                onClick={() => setDocInventoryOpen(!docInventoryOpen)}
-              >
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                  Documents
-                  <Badge variant="outline" className="ml-1">
-                    {currentDocs.length}
-                  </Badge>
-                </CardTitle>
-                {docInventoryOpen ? (
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                ) : (
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                )}
-              </button>
-            </CardHeader>
-
-            {docInventoryOpen && (
-              <CardContent className="pt-0">
-                {currentDocs.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-4 text-center">
-                    No documents yet. Start working on Phase 1 to generate your
-                    first documents.
-                  </p>
-                ) : (
-                  <div className="space-y-4">
-                    {PHASES.map((phase) => {
-                      const phaseDocs = docsByPhase[phase.id];
-                      if (!phaseDocs || phaseDocs.length === 0) return null;
-
-                      return (
-                        <div key={phase.id}>
-                          <div className="flex items-center gap-2 mb-2">
-                            <PhaseIcon
-                              phase={
-                                phase.id as 1 | 2 | 3 | 4 | 5 | 6 | 7
-                              }
-                              size="sm"
-                            />
-                            <span className="text-xs font-medium text-muted-foreground">
-                              {phase.name}
-                            </span>
-                          </div>
-                          <div className="space-y-1">
-                            {phaseDocs.map((doc) => (
-                              <button
-                                type="button"
-                                key={doc.id}
-                                className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left hover:bg-muted/50 transition-colors"
-                                onClick={() => {
-                                  setSelectedDoc({
-                                    name: doc.name,
-                                    content: doc.content,
-                                  });
-                                  setDocViewerOpen(true);
-                                }}
-                              >
-                                <span className="text-sm text-foreground truncate">
-                                  {doc.name}
-                                </span>
-                                <div className="flex items-center gap-2 shrink-0 ml-2">
-                                  <span className="text-xs text-muted-foreground">
-                                    v{doc.version}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {doc.wordCount.toLocaleString()}w
-                                  </span>
-                                </div>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </CardContent>
-            )}
-          </Card>
+          <DocumentInventory
+            projectId={id}
+            projectTitle={activeProject.title}
+          />
         </div>
       </div>
-
-      {/* Document Viewer Dialog */}
-      <Dialog open={docViewerOpen} onOpenChange={setDocViewerOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh]">
-          <DialogHeader>
-            <DialogTitle>{selectedDoc?.name}</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="max-h-[60vh]">
-            <div className="prose prose-invert prose-sm max-w-none whitespace-pre-wrap px-1">
-              {selectedDoc?.content}
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

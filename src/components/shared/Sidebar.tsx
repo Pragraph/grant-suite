@@ -24,6 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useUiStore } from "@/stores/ui-store";
 import { useProgressStore } from "@/stores/progress-store";
+import { useProjectStore } from "@/stores/project-store";
 import { useTheme } from "@/components/providers/theme-provider";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Button } from "@/components/ui/button";
@@ -86,6 +87,7 @@ function SidebarContent({
   const { theme, toggleTheme } = useTheme();
   const { toggleSidebar } = useUiStore();
   const { progress } = useProgressStore();
+  const { activeProjectId } = useProjectStore();
 
   return (
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
@@ -251,7 +253,12 @@ function SidebarContent({
               aria-label="Workspace"
             >
               {workspaceItems.map(({ label, icon: Icon, href }) => {
-                const isCurrentRoute = pathname === href;
+                const resolvedHref =
+                  label === "Documents" && activeProjectId
+                    ? `/projects/${activeProjectId}/documents`
+                    : href;
+                const isCurrentRoute =
+                  pathname === resolvedHref || pathname === href;
 
                 const item = (
                   <div
@@ -275,7 +282,7 @@ function SidebarContent({
                     <TooltipProvider key={label} delayDuration={300}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Link href={href}>{item}</Link>
+                          <Link href={resolvedHref}>{item}</Link>
                         </TooltipTrigger>
                         <TooltipContent side="right">
                           {label}
@@ -286,7 +293,7 @@ function SidebarContent({
                 }
 
                 return (
-                  <Link key={label} href={href}>
+                  <Link key={label} href={resolvedHref}>
                     {item}
                   </Link>
                 );
