@@ -22,7 +22,7 @@ export default function DashboardLayout({
       <MobileSidebar />
 
       {/* Main content area */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col bg-[#F9FAFB]">
         <TopBar />
 
         <main className="flex-1 overflow-y-auto pb-8">

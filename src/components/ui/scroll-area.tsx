@@ -40,7 +40,7 @@ const ScrollBar = React.forwardRef<
     )}
     {...props}
   >
-    <RadixScrollArea.Thumb className="relative flex-1 rounded-full bg-muted-foreground/30 hover:bg-muted-foreground/50" />
+    <RadixScrollArea.Thumb className="relative flex-1 rounded-full bg-gray-300 hover:bg-gray-400" />
   </RadixScrollArea.Scrollbar>
 ));
 ScrollBar.displayName = RadixScrollArea.Scrollbar.displayName;

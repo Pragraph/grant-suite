@@ -18,11 +18,11 @@ function StatusBar() {
   const { dotStatus, pulse } = appStatusMap[appStatus] ?? appStatusMap.idle;
 
   return (
-    <footer className="fixed inset-x-0 bottom-0 z-30 flex h-8 items-center justify-between border-t border-border bg-secondary px-4">
+    <footer className="fixed inset-x-0 bottom-0 z-30 flex h-8 items-center justify-between border-t border-gray-200 bg-gray-50 px-4">
       {/* Left: App status */}
       <div className="flex items-center gap-2">
         <StatusDot status={dotStatus} pulse={pulse} />
-        <span className="text-xs capitalize text-muted-foreground">
+        <span className="text-xs capitalize text-gray-500">
           {appStatus === "idle"
             ? "Idle"
             : appStatus === "working"
@@ -32,12 +32,12 @@ function StatusBar() {
       </div>
 
       {/* Center: Operation text */}
-      <span className="hidden text-xs text-muted-foreground sm:block">
+      <span className="hidden text-xs text-gray-400 sm:block">
         {operationText}
       </span>
 
       {/* Right: Document count */}
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="flex items-center gap-1.5 text-xs text-gray-400">
         <FileText className="h-3 w-3" />
         <span>
           {documentCount} {documentCount === 1 ? "document" : "documents"}
