@@ -9,7 +9,11 @@ export const DOCUMENT_DEPENDENCIES: DependencyEntry[] = [
   { phase: 1, step: 3, produces: "Grant_Intelligence.md", requires: [], optional: [] },
 
   // Phase 2 — Strategic Positioning
-  { phase: 2, step: 5, produces: "Proposal_Blueprint.md", requires: ["Grant_Intelligence.md"], optional: [] },
+  { phase: 2, step: 1, produces: "Requirements_Analysis.md", requires: ["Grant_Intelligence.md"], optional: [] },
+  { phase: 2, step: 2, produces: "Competitive_Analysis.md", requires: ["Grant_Intelligence.md"], optional: ["Requirements_Analysis.md"] },
+  { phase: 2, step: 3, produces: "Evaluator_Psychology.md", requires: ["Grant_Intelligence.md"], optional: [] },
+  { phase: 2, step: 4, produces: "Impact_Framework.md", requires: ["Grant_Intelligence.md"], optional: ["Requirements_Analysis.md", "Competitive_Analysis.md", "Evaluator_Psychology.md"] },
+  { phase: 2, step: 5, produces: "Proposal_Blueprint.md", requires: ["Grant_Intelligence.md"], optional: ["Requirements_Analysis.md", "Competitive_Analysis.md", "Evaluator_Psychology.md", "Impact_Framework.md"] },
 
   // Phase 3 — Research Design & Optional Modules
   { phase: 3, step: 1, produces: "Research_Design.md", requires: ["Grant_Intelligence.md", "Proposal_Blueprint.md"], optional: [] },
