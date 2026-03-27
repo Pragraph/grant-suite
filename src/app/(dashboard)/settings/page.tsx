@@ -291,8 +291,8 @@ export default function SettingsPage() {
       >
         {/* Page header */}
         <div className="flex items-center gap-3">
-          <Settings className="h-6 w-6 text-muted-foreground" />
-          <h1 className="text-2xl font-heading font-bold text-foreground">
+          <Settings className="h-6 w-6 text-gray-400" />
+          <h1 className="text-2xl font-heading font-bold text-gray-900">
             Settings
           </h1>
         </div>
@@ -531,9 +531,9 @@ export default function SettingsPage() {
               </Card>
 
               {/* Danger zone */}
-              <Card className="border-error/30">
+              <Card className="border border-red-200 bg-red-50/50 rounded-xl">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-error">
+                  <CardTitle className="flex items-center gap-2 text-red-700">
                     <AlertTriangle className="h-4 w-4" />
                     Danger Zone
                   </CardTitle>
@@ -542,7 +542,7 @@ export default function SettingsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-between rounded-lg border border-error/20 p-4">
+                  <div className="flex items-center justify-between rounded-lg border border-red-200 bg-red-50/50 p-4">
                     <div>
                       <p className="text-sm font-medium text-foreground">
                         Clear All Data
@@ -552,9 +552,9 @@ export default function SettingsPage() {
                       </p>
                     </div>
                     <Button
-                      variant="destructive"
                       size="sm"
                       onClick={() => setClearStep(1)}
+                      className="bg-red-600 hover:bg-red-700 text-white"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       Clear All Data

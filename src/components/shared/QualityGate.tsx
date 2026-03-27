@@ -30,14 +30,14 @@ import { PHASES } from "@/lib/types";
 const statusConfig = {
   pass: {
     icon: CheckCircle2,
-    color: "text-success",
-    bg: "bg-success/10",
+    color: "text-emerald-700",
+    bg: "bg-emerald-50",
     label: "Passed",
   },
   fail: {
     icon: XCircle,
-    color: "text-destructive",
-    bg: "bg-destructive/10",
+    color: "text-red-700",
+    bg: "bg-red-50",
     label: "Failed",
   },
   warn: {
@@ -70,7 +70,7 @@ function GateCheckRow({
       <button
         type="button"
         onClick={() => check.detail && setExpanded(!expanded)}
-        className="flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-muted/50"
+        className="flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-gray-50"
       >
         <div className={`mt-0.5 rounded-full p-0.5 ${config.bg}`}>
           <Icon className={`h-4 w-4 ${config.color}`} />
@@ -128,10 +128,10 @@ function VerdictBanner({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: result.checks.length * 0.1 + 0.15 }}
-        className="flex items-center gap-2 rounded-lg bg-success/10 border border-success/20 px-4 py-3"
+        className="flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3"
       >
-        <ShieldCheck className="h-5 w-5 text-success" />
-        <p className="text-sm font-medium text-success">
+        <ShieldCheck className="h-5 w-5 text-emerald-700" />
+        <p className="text-sm font-medium text-emerald-700">
           All checks passed
         </p>
       </motion.div>
@@ -144,10 +144,10 @@ function VerdictBanner({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: result.checks.length * 0.1 + 0.15 }}
-        className="flex items-center gap-2 rounded-lg bg-destructive/10 border border-destructive/20 px-4 py-3"
+        className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-3"
       >
-        <XCircle className="h-5 w-5 text-destructive" />
-        <p className="text-sm font-medium text-destructive">
+        <XCircle className="h-5 w-5 text-red-700" />
+        <p className="text-sm font-medium text-red-700">
           {failCount} required issue{failCount > 1 ? "s" : ""} must be
           resolved
         </p>

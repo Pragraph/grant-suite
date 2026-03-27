@@ -70,20 +70,20 @@ export function PhaseCompleteCTA({
         animate={{ opacity: 1, scale: 1 }}
         className="text-center py-6"
       >
-        <Card className={`border-phase-${phase}/30 bg-phase-${phase}/5`}>
+        <Card className="border border-[#4F7DF3]/20 bg-[#F0F4FF] rounded-xl">
           <CardContent className="p-6 space-y-3">
             <CheckCircle2
-              className={`h-8 w-8 text-phase-${phase} mx-auto`}
+              className="h-8 w-8 text-[#4F7DF3] mx-auto"
             />
-            <h2 className="text-lg font-heading font-bold text-foreground">
+            <h2 className="text-lg font-heading font-bold text-gray-900">
               Phase {phase} Complete!
             </h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-gray-500">
               All steps finished. Continue to {nextPhaseName}.
             </p>
             <Button
               onClick={handleContinueClick}
-              className={`bg-phase-${nextPhase} hover:bg-phase-${nextPhase}/90 text-white`}
+              className="bg-[#4F7DF3] hover:bg-[#3B63D4] text-white"
             >
               Continue to Phase {nextPhase}
               <ArrowRight className="h-4 w-4 ml-1.5" />

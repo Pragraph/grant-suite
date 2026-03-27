@@ -87,7 +87,7 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
   return (
     <div
       className={cn(
-        "prose prose-sm prose-invert max-w-none",
+        "prose prose-sm prose-gray max-w-none",
         // Headings
         "prose-headings:text-foreground prose-headings:font-semibold prose-headings:tracking-tight",
         "prose-h1:text-xl prose-h1:border-b prose-h1:border-border/50 prose-h1:pb-2 prose-h1:mb-4",
@@ -103,8 +103,8 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
         "prose-li:text-muted-foreground prose-li:marker:text-muted-foreground/50",
         "prose-ul:my-2 prose-ol:my-2",
         // Code
-        "prose-code:text-accent-300 prose-code:bg-muted prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-xs prose-code:font-mono prose-code:before:content-none prose-code:after:content-none",
-        "prose-pre:bg-muted prose-pre:border prose-pre:border-border/50 prose-pre:rounded-lg",
+        "prose-code:text-[#4F7DF3] prose-code:bg-gray-50 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-xs prose-code:font-mono prose-code:before:content-none prose-code:after:content-none",
+        "prose-pre:bg-gray-50 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-lg",
         // Tables
         "prose-table:border-collapse",
         "prose-th:border prose-th:border-border/50 prose-th:bg-muted prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:text-xs prose-th:font-medium prose-th:text-foreground",

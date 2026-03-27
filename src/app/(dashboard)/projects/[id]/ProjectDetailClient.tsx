@@ -199,18 +199,18 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
             />
           ) : (
             <h1
-              className="text-2xl font-heading font-bold text-foreground truncate cursor-pointer hover:text-accent-400 transition-colors"
+              className="text-2xl font-heading font-bold text-gray-900 truncate cursor-pointer hover:text-[#4F7DF3] transition-colors"
               onClick={() => setEditingTitle(true)}
               title="Click to edit"
             >
               {project.title}
             </h1>
           )}
-          <Badge variant={statusBadgeVariant[project.status]}>
+          <Badge className="bg-emerald-50 text-emerald-700 rounded-full px-3 py-1 text-xs font-semibold">
             {project.status}
           </Badge>
           {project.targetFunder && (
-            <Badge>{project.targetFunder}</Badge>
+            <Badge className="bg-[#F0F4FF] text-[#4F7DF3] rounded-full px-3 py-1 text-xs font-semibold">{project.targetFunder}</Badge>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -224,7 +224,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
               {exportingAll ? "Exporting..." : "Export All Docs"}
             </Button>
           )}
-          <Button variant="secondary" onClick={handleExport}>
+          <Button variant="secondary" onClick={handleExport} className="border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg">
             <Download className="h-4 w-4" />
             Export Project
           </Button>
@@ -237,7 +237,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        <Card className="p-4">
+        <Card className="bg-white rounded-xl border border-gray-200 p-6">
           <PipelineMap />
         </Card>
       </motion.div>
@@ -262,12 +262,14 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                 transition={{ duration: 0.25, delay: i * 0.04 }}
               >
                 <Card
-                  className={`transition-all duration-normal ${
+                  className={`transition-all duration-normal rounded-xl ${
                     isCurrent
-                      ? "border-accent-500/50 shadow-glow-sm"
+                      ? "bg-white border border-[#4F7DF3]/30 shadow-sm"
                       : !accessible
-                        ? "opacity-60"
-                        : ""
+                        ? "bg-gray-50/50 border border-gray-100 opacity-60"
+                        : completion === 100
+                          ? "bg-white border border-emerald-200"
+                          : "bg-white border border-gray-200"
                   }`}
                 >
                   {/* Phase Row — toggles expand/collapse */}
@@ -281,21 +283,21 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-heading font-semibold text-sm text-foreground">
+                        <span className="font-heading font-semibold text-sm text-gray-900">
                           {phase.name}
                         </span>
                         {!accessible && (
-                          <Lock className="h-3.5 w-3.5 text-muted-foreground" />
+                          <Lock className="h-3.5 w-3.5 text-gray-300" />
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground truncate mt-0.5">
+                      <p className="text-xs text-gray-500 truncate mt-0.5">
                         {phase.description}
                       </p>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
                       <div className="hidden sm:flex items-center gap-2 w-24">
                         <Progress value={completion} className="flex-1" />
-                        <span className="text-xs text-muted-foreground w-8 text-right">
+                        <span className="text-xs text-gray-400 w-8 text-right">
                           {completion}%
                         </span>
                       </div>
@@ -314,7 +316,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                                 navigateTo(phaseUrl);
                               }
                             }}
-                            className="inline-flex items-center gap-1.5 rounded-md bg-accent-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-accent-600 transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1.5 rounded-md bg-[#4F7DF3] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#3B63D4] transition-colors cursor-pointer"
                           >
                             <Play className="h-3.5 w-3.5" />
                             {completion > 0 ? "Continue" : "Start"}
@@ -339,7 +341,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="border-t border-border/50"
+                      className="border-t border-gray-100"
                     >
                       <div className="px-4 py-2 space-y-1">
                         {phase.stepNames.map((stepName, stepIdx) => {
@@ -356,12 +358,12 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                               onKeyDown={(e) => {
                                 if (e.key === "Enter" || e.key === " ") navigateTo(phaseUrl);
                               }}
-                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors cursor-pointer"
+                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-gray-50 transition-colors cursor-pointer"
                             >
-                              <span className="text-xs text-muted-foreground font-mono w-5">
+                              <span className="text-xs text-gray-400 font-mono w-5">
                                 {stepNum}
                               </span>
-                              <span className="text-sm text-foreground flex-1">
+                              <span className="text-sm text-gray-700 flex-1">
                                 {stepName}
                               </span>
                               <span
