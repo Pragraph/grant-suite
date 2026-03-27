@@ -1,2 +1,19 @@
-# SPA fallback for client-side dynamic routes
-/projects/*  /projects/_.html  200
+# Netlify _redirects — order matters, most specific first
+
+# Phase pages
+/projects/*/phase/1    /projects/_/phase/1.html    200
+/projects/*/phase/2    /projects/_/phase/2.html    200
+/projects/*/phase/3    /projects/_/phase/3.html    200
+/projects/*/phase/4    /projects/_/phase/4.html    200
+/projects/*/phase/5    /projects/_/phase/5.html    200
+/projects/*/phase/6    /projects/_/phase/6.html    200
+/projects/*/phase/7    /projects/_/phase/7.html    200
+
+# Document pages
+/projects/*/documents  /projects/_/documents.html  200
+
+# Project detail (catch-all for /projects/[id])
+/projects/*            /projects/_.html            200
+
+# General SPA fallback
+/*                     /index.html                 200
