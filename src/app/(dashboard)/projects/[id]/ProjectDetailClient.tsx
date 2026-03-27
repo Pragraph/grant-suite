@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Download,
@@ -62,6 +63,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
   const { progress, loadProgress, getPhaseCompletion, canAccessPhase } =
     useProgressStore();
   const { setBreadcrumbs } = useUiStore();
+  const router = useRouter();
 
   const [projectId] = useState(() => getProjectIdFromUrl());
   const [project, setProject] = useState<Project | null>(() =>
@@ -301,9 +303,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setExpandedPhase(
-                                isExpanded ? null : phase.id
-                              );
+                              router.push(`/projects/${projectId}/phase/${phase.id}`);
                             }}
                           >
                             <Play className="h-3.5 w-3.5" />
@@ -340,7 +340,8 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
                           return (
                             <div
                               key={stepNum}
-                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors"
+                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors cursor-pointer"
+                              onClick={() => router.push(`/projects/${projectId}/phase/${phase.id}`)}
                             >
                               <span className="text-xs text-muted-foreground font-mono w-5">
                                 {stepNum}
