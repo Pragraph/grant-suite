@@ -457,7 +457,7 @@ export default function SettingsPage() {
                         ({ project, docCount, estimatedSize }) => (
                           <div
                             key={project.id}
-                            className="flex items-center justify-between rounded-lg border border-border p-3"
+                            className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-lg border border-border p-3"
                           >
                             <div className="min-w-0 flex-1">
                               <p className="text-sm font-medium text-foreground truncate">
@@ -469,7 +469,7 @@ export default function SettingsPage() {
                                 {formatBytes(estimatedSize)}
                               </p>
                             </div>
-                            <div className="flex items-center gap-2 ml-4 shrink-0">
+                            <div className="flex items-center gap-2 shrink-0">
                               <Button
                                 variant="secondary"
                                 size="sm"
@@ -542,7 +542,7 @@ export default function SettingsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-between rounded-lg border border-red-200 bg-red-50/50 p-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-lg border border-red-200 bg-red-50/50 p-4">
                     <div>
                       <p className="text-sm font-medium text-foreground">
                         Clear All Data

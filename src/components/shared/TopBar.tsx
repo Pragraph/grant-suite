@@ -11,7 +11,7 @@ function TopBar() {
   const { breadcrumbs, actions, setMobileDrawerOpen } = useUiStore();
 
   return (
-    <header className="flex h-12 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4">
+    <header className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-card px-4">
       {/* Left: Mobile hamburger + Breadcrumbs */}
       <div className="flex items-center gap-2">
         {/* Hamburger — mobile only */}
@@ -84,7 +84,7 @@ function TopBar() {
           </div>
         )}
 
-        <div className="text-right ml-auto">
+        <div className="hidden sm:block text-right ml-auto">
           <p className="text-xs text-gray-500 font-extrabold leading-tight">
             Powered by <span className="animate-bounce-gentle">🎓</span> BelajarAI
           </p>

@@ -18,7 +18,7 @@ function StatusBar() {
   const { dotStatus, pulse } = appStatusMap[appStatus] ?? appStatusMap.idle;
 
   return (
-    <footer className="fixed inset-x-0 bottom-0 z-30 flex h-8 items-center justify-between border-t border-gray-200 bg-gray-50 px-4">
+    <footer className="fixed inset-x-0 bottom-0 z-30 flex h-8 items-center justify-between border-t border-border bg-card px-4">
       {/* Left: App status */}
       <div className="flex items-center gap-2">
         <StatusDot status={dotStatus} pulse={pulse} />

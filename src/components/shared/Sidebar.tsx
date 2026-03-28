@@ -89,9 +89,9 @@ function SidebarContent({
   const { activeProjectId } = useProjectStore();
 
   return (
-    <div className="flex h-full flex-col bg-white text-gray-900">
+    <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <div className="flex h-12 items-center justify-between border-b border-gray-200 px-3">
+      <div className="flex h-12 items-center justify-between border-b border-sidebar-border px-3">
         <AnimatePresence mode="wait">
           {!collapsed ? (
             <motion.div
@@ -103,7 +103,7 @@ function SidebarContent({
               className="flex items-center gap-2"
             >
               <img src="/logo.png" alt="Grant Suite" className="h-6" />
-              <span className="font-heading text-sm font-bold text-gray-900">
+              <span className="font-heading text-sm font-bold text-sidebar-foreground">
                 Grant Suite
               </span>
             </motion.div>
@@ -243,7 +243,7 @@ function SidebarContent({
             )}
 
             {collapsed && (
-              <div className="mx-auto my-2 h-px w-6 bg-gray-200" />
+              <div className="mx-auto my-2 h-px w-6 bg-sidebar-border" />
             )}
 
             <nav
@@ -303,7 +303,7 @@ function SidebarContent({
       </ScrollArea>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <div className="border-t border-gray-200 px-3 py-2">
+      <div className="border-t border-sidebar-border px-3 py-2">
         <div
           className={cn(
             "flex items-center",
@@ -442,7 +442,7 @@ function DesktopSidebar() {
       initial={false}
       animate={{ width: collapsed ? 64 : 240 }}
       transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-      className="hidden shrink-0 border-r border-gray-200 md:block"
+      className="hidden shrink-0 border-r border-sidebar-border md:block"
     >
       <SidebarContent collapsed={collapsed} />
     </motion.aside>

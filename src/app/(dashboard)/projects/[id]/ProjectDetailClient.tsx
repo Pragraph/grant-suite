@@ -237,7 +237,7 @@ export function ProjectDetailClient({ id: _idProp }: { id: string }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        <Card className="bg-white rounded-xl border border-gray-200 p-6">
+        <Card className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 overflow-x-auto">
           <PipelineMap />
         </Card>
       </motion.div>

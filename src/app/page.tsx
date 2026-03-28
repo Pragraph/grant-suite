@@ -138,37 +138,41 @@ export default function LandingPage() {
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
           {/* Left: Logo */}
           <div className="flex items-center">
             <img src="/logo.png" alt="Grant Suite" className="h-8 object-contain" />
             <span className="text-gray-900 font-bold text-lg ml-2">Grant Suite</span>
           </div>
 
-          {/* Center-right: Nav links (desktop) */}
-          <div className="hidden md:flex items-center gap-6">
-            <button
-              onClick={() => scrollToSection("features")}
-              className="text-gray-600 hover:text-gray-900 text-sm font-medium bg-transparent border-none cursor-pointer"
-            >
-              Features
-            </button>
-            <button
-              onClick={() => scrollToSection("how-it-works")}
-              className="text-gray-600 hover:text-gray-900 text-sm font-medium bg-transparent border-none cursor-pointer"
-            >
-              How It Works
-            </button>
-
-            {scrolled && (
+          {/* Right: Attribution (always) + Nav links (desktop) */}
+          <div className="flex items-center gap-4 md:gap-6">
+            {/* Nav links — desktop only */}
+            <div className="hidden md:flex items-center gap-6">
               <button
-                onClick={() => window.location.assign("/projects")}
-                className="px-4 py-2 bg-[#4F7DF3] text-white rounded-lg text-sm font-medium hover:bg-[#3B63D4] transition-colors"
+                onClick={() => scrollToSection("features")}
+                className="text-gray-600 hover:text-gray-900 text-sm font-medium bg-transparent border-none cursor-pointer"
               >
-                Start Now
+                Features
               </button>
-            )}
+              <button
+                onClick={() => scrollToSection("how-it-works")}
+                className="text-gray-600 hover:text-gray-900 text-sm font-medium bg-transparent border-none cursor-pointer"
+              >
+                How It Works
+              </button>
 
+              {scrolled && (
+                <button
+                  onClick={() => window.location.assign("/projects")}
+                  className="px-4 py-2 bg-[#4F7DF3] text-white rounded-lg text-sm font-medium hover:bg-[#3B63D4] transition-colors"
+                >
+                  Start Now
+                </button>
+              )}
+            </div>
+
+            {/* Attribution — always visible */}
             <div className="text-right">
               <p className="text-xs text-gray-500 font-extrabold leading-tight">
                 Powered by <span className="animate-bounce-gentle">🎓</span> BelajarAI
@@ -183,7 +187,7 @@ export default function LandingPage() {
 
       {/* ── SECTION 2: Hero ────────────────────────────────────────────────── */}
       <section
-        className="relative overflow-hidden pt-32 pb-28"
+        className="relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-28"
         style={{ background: "linear-gradient(180deg, #F0F4FF 0%, #E8EDF8 100%)" }}
       >
         {/* Decorative sparkles */}
@@ -194,11 +198,11 @@ export default function LandingPage() {
           ✦
         </div>
 
-        <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <span className="section-badge mb-6">Open-source · Free forever</span>
 
           <h1
-            className="text-5xl md:text-6xl font-bold text-gray-900 tracking-tight leading-tight mb-5"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight leading-tight mb-5"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Write winning grant proposals with{" "}
@@ -211,16 +215,16 @@ export default function LandingPage() {
             competition-ready proposal. From discovery to submission.
           </p>
 
-          <div className="flex items-center justify-center gap-4 flex-wrap">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => window.location.assign("/projects")}
-              className="px-8 py-3.5 bg-[#4F7DF3] text-white rounded-xl text-lg font-semibold hover:bg-[#3B63D4] hover:scale-105 transition-all flex items-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 bg-[#4F7DF3] text-white rounded-xl text-lg font-semibold hover:bg-[#3B63D4] hover:scale-105 transition-all flex items-center justify-center gap-2"
             >
               Get Started <ArrowRight className="w-5 h-5" />
             </button>
             <button
               onClick={() => scrollToSection("how-it-works")}
-              className="px-8 py-3.5 border border-gray-300 text-gray-700 rounded-xl text-lg font-medium hover:bg-white/80 transition-all flex items-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 border border-gray-300 text-gray-700 rounded-xl text-lg font-medium hover:bg-white/80 transition-all flex items-center justify-center gap-2"
             >
               See How It Works <ChevronDown className="w-5 h-5" />
             </button>
@@ -233,7 +237,7 @@ export default function LandingPage() {
 
       {/* ── SECTION 3: Trusted by Scholars ─────────────────────────────────── */}
       <section className="bg-white py-10">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <p className="text-center text-sm font-medium text-gray-500 uppercase tracking-wider mb-8">
             Trusted by scholars in top universities in Malaysia
           </p>
@@ -286,7 +290,7 @@ export default function LandingPage() {
             Each phase builds on the last — no gaps, no guesswork.
           </p>
 
-          <div className="max-w-6xl mx-auto mt-12 grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="max-w-6xl mx-auto mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {PHASES.map((phase, i) => {
               const Icon = phaseIcons[i];
               return (
@@ -367,7 +371,7 @@ export default function LandingPage() {
 
       {/* ── SECTION 8: Stats Banner ────────────────────────────────────────── */}
       <section className="bg-[#111827] py-12">
-        <div className="max-w-5xl mx-auto px-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-24">
             {stats.map((s) => (
               <div key={s.label} className="text-center">
@@ -381,7 +385,7 @@ export default function LandingPage() {
 
       {/* ── SECTION 9: Final CTA ───────────────────────────────────────────── */}
       <section className="bg-white py-20">
-        <div className="max-w-3xl mx-auto px-6 text-center">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Start building your proposal today
           </h2>
@@ -399,8 +403,8 @@ export default function LandingPage() {
 
       {/* ── SECTION 10: Footer ─────────────────────────────────────────────── */}
       <footer className="bg-[#111827] text-white py-12">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
             {/* Left: Logo + Attribution */}
             <div>
               <div className="flex items-center gap-2">
@@ -418,7 +422,7 @@ export default function LandingPage() {
             </div>
 
             {/* Center: Links */}
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center gap-4 md:gap-6">
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 className="text-gray-400 hover:text-white transition-colors text-sm bg-transparent border-none cursor-pointer"
