@@ -1,9 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import {
-  Sparkles,
   ArrowRight,
   ChevronDown,
   Zap,
@@ -12,36 +10,24 @@ import {
   ClipboardCopy,
   MessageSquare,
   FileCheck,
-  ExternalLink,
-  FileText,
+  PlayCircle,
   Search,
   PenTool,
+  FileText,
   FlaskConical,
   BarChart3,
   Layers,
   CheckCircle2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { PhaseIcon } from "@/components/ui/phase-icon";
 import { PHASES } from "@/lib/types";
-import type { Phase } from "@/components/ui/phase-icon";
 
-// ─── Animation variants ──────────────────────────────────────────────────────
+// ─── Scroll helper ──────────────────────────────────────────────────────────
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0 },
+const scrollToSection = (id: string) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 };
 
-const stagger = {
-  visible: { transition: { staggerChildren: 0.1 } },
-};
-
-const viewportOpts = { once: true, margin: "-80px" as const };
-
-// ─── Phase key documents ─────────────────────────────────────────────────────
+// ─── Phase data ─────────────────────────────────────────────────────────────
 
 const phaseDocuments = [
   "strategic-positioning.md",
@@ -55,264 +41,9 @@ const phaseDocuments = [
 
 const phaseIcons = [Search, PenTool, FileText, FlaskConical, BarChart3, Layers, CheckCircle2];
 
-// ─── Nav ─────────────────────────────────────────────────────────────────────
+const phaseColors = ["#3B82F6", "#7C3AED", "#DB2777", "#E11D48", "#EA580C", "#059669", "#0891B2"];
 
-function Nav() {
-  return (
-    <nav className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2 text-foreground">
-          <Sparkles className="h-5 w-5 text-accent-500" />
-          <span className="font-heading text-sm font-semibold tracking-tight">
-            Grant Suite
-          </span>
-        </Link>
-
-        <div className="hidden items-center gap-6 md:flex">
-          <a
-            href="#features"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Features
-          </a>
-          <a
-            href="#how-it-works"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            How It Works
-          </a>
-          <Button asChild size="sm">
-            <Link href="/projects">Start Now</Link>
-          </Button>
-        </div>
-      </div>
-    </nav>
-  );
-}
-
-// ─── Hero ────────────────────────────────────────────────────────────────────
-
-function Hero() {
-  return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-14">
-      {/* Radial gradient background */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 50% at 50% 40%, oklch(0.22 0.08 275 / 40%) 0%, transparent 100%)",
-        }}
-      />
-
-      <motion.div
-        className="relative z-10 flex max-w-3xl flex-col items-center text-center"
-        initial="hidden"
-        animate="visible"
-        variants={stagger}
-      >
-        <motion.div variants={fadeInUp} transition={{ duration: 0.5 }}>
-          <Badge className="mb-6">Open source &middot; Free forever</Badge>
-        </motion.div>
-
-        <motion.h1
-          className="font-display text-4xl leading-tight tracking-tight sm:text-5xl md:text-6xl"
-          variants={fadeInUp}
-          transition={{ duration: 0.5 }}
-        >
-          Write winning grant proposals with{" "}
-          <span className="text-gradient">AI-guided precision</span>
-        </motion.h1>
-
-        <motion.p
-          className="mt-6 max-w-xl text-lg text-muted-foreground"
-          variants={fadeInUp}
-          transition={{ duration: 0.5 }}
-        >
-          7-phase system that transforms your research idea into a
-          competition-ready proposal. From discovery to submission.
-        </motion.p>
-
-        <motion.div
-          className="mt-8 flex flex-wrap items-center justify-center gap-4"
-          variants={fadeInUp}
-          transition={{ duration: 0.5 }}
-        >
-          <Button asChild size="lg">
-            <Link href="/projects">
-              Get Started
-              <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
-          </Button>
-          <Button asChild variant="ghost" size="lg">
-            <a href="#phases">
-              See How It Works
-              <ChevronDown className="ml-1 h-4 w-4" />
-            </a>
-          </Button>
-        </motion.div>
-
-        {/* App mockup */}
-        <motion.div
-          className="mt-16 w-full max-w-2xl"
-          variants={fadeInUp}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <HeroMockup />
-        </motion.div>
-      </motion.div>
-    </section>
-  );
-}
-
-function HeroMockup() {
-  const mockPhases = [
-    { phase: 1 as Phase, name: "Discovery", progress: 100, status: "complete" },
-    { phase: 2 as Phase, name: "Framework", progress: 100, status: "complete" },
-    { phase: 3 as Phase, name: "Narrative", progress: 65, status: "active" },
-    { phase: 4 as Phase, name: "Technical", progress: 0, status: "pending" },
-    { phase: 5 as Phase, name: "Impact", progress: 0, status: "pending" },
-  ];
-
-  return (
-    <Card className="border-border/30 bg-card/80 shadow-glow-sm backdrop-blur">
-      <div className="flex items-center gap-2 border-b border-border/30 px-4 py-3">
-        <div className="flex gap-1.5">
-          <div className="h-2.5 w-2.5 rounded-full bg-error/60" />
-          <div className="h-2.5 w-2.5 rounded-full bg-warning/60" />
-          <div className="h-2.5 w-2.5 rounded-full bg-success/60" />
-        </div>
-        <span className="ml-2 font-mono text-xs text-muted-foreground">
-          grant-suite — My Research Proposal
-        </span>
-      </div>
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3 overflow-hidden">
-          {mockPhases.map((p) => (
-            <div
-              key={p.phase}
-              className="flex min-w-0 flex-1 flex-col items-center gap-2"
-            >
-              <PhaseIcon
-                phase={p.phase}
-                size="sm"
-                active={p.status === "active"}
-              />
-              <span className="truncate text-[10px] text-muted-foreground">
-                {p.name}
-              </span>
-              <div className="h-1 w-full rounded-full bg-muted">
-                <div
-                  className="h-full rounded-full transition-all"
-                  style={{
-                    width: `${p.progress}%`,
-                    backgroundColor:
-                      p.status === "complete"
-                        ? "oklch(0.68 0.17 152)"
-                        : p.status === "active"
-                          ? "oklch(0.59 0.24 275)"
-                          : "transparent",
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <div className="rounded-md border border-border/30 bg-muted/50 p-3">
-            <div className="mb-1 text-[10px] font-medium text-accent-400">
-              Current Step
-            </div>
-            <div className="text-xs text-foreground">Literature Review</div>
-            <div className="mt-1 text-[10px] text-muted-foreground">
-              Phase 3 &middot; Step 3 of 5
-            </div>
-          </div>
-          <div className="rounded-md border border-border/30 bg-muted/50 p-3">
-            <div className="mb-1 text-[10px] font-medium text-success">
-              Documents
-            </div>
-            <div className="text-xs text-foreground">12 generated</div>
-            <div className="mt-1 text-[10px] text-muted-foreground">
-              4 pending review
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-// ─── Phase Overview ──────────────────────────────────────────────────────────
-
-function PhaseOverview() {
-  return (
-    <section id="phases" className="px-6 py-32">
-      <div className="mx-auto max-w-6xl">
-        <motion.div
-          className="mb-12 text-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOpts}
-          variants={fadeInUp}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="font-display text-3xl tracking-tight sm:text-4xl">
-            Seven phases. One complete system.
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Each phase builds on the last — no gaps, no guesswork.
-          </p>
-        </motion.div>
-
-        <motion.div
-          className="flex gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-7 md:overflow-visible"
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOpts}
-          variants={stagger}
-        >
-          {PHASES.map((phase, i) => {
-            const Icon = phaseIcons[i];
-            return (
-              <motion.div
-                key={phase.id}
-                variants={fadeInUp}
-                transition={{ duration: 0.4 }}
-                className="min-w-50 md:min-w-0"
-              >
-                <Card className="h-full border-t-2 bg-card/60" style={{ borderTopColor: `var(--phase-${phase.id})` }}>
-                  <CardContent className="flex flex-col gap-3 p-4">
-                    <div className="flex items-center gap-2">
-                      <PhaseIcon phase={phase.id as Phase} size="sm" active />
-                      <Icon
-                        className="h-4 w-4"
-                        style={{ color: `var(--phase-${phase.id})` }}
-                      />
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold text-foreground">
-                        {phase.name}
-                      </div>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        {phase.description}
-                      </p>
-                    </div>
-                    <div className="mt-auto font-mono text-[10px] text-accent-400">
-                      {phaseDocuments[i]}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Key Features ────────────────────────────────────────────────────────────
+// ─── Feature data ───────────────────────────────────────────────────────────
 
 const features = [
   {
@@ -335,133 +66,48 @@ const features = [
   },
 ];
 
-function Features() {
-  return (
-    <section id="features" className="px-6 py-32">
-      <div className="mx-auto max-w-4xl">
-        <motion.div
-          className="mb-12 text-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOpts}
-          variants={fadeInUp}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="font-display text-3xl tracking-tight sm:text-4xl">
-            Built different
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Not another AI wrapper. A systematic proposal-building engine.
-          </p>
-        </motion.div>
-
-        <motion.div
-          className="grid gap-6 sm:grid-cols-3"
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOpts}
-          variants={stagger}
-        >
-          {features.map((f) => (
-            <motion.div
-              key={f.title}
-              variants={fadeInUp}
-              transition={{ duration: 0.4 }}
-            >
-              <Card className="h-full bg-card/60">
-                <CardContent className="flex flex-col gap-4 p-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-500/10">
-                    <f.icon className="h-5 w-5 text-accent-400" />
-                  </div>
-                  <div className="font-heading text-sm font-semibold text-foreground">
-                    {f.title}
-                  </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {f.description}
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ─── How It Works ────────────────────────────────────────────────────────────
+// ─── Steps data ─────────────────────────────────────────────────────────────
 
 const steps = [
   {
+    number: 1,
     icon: ClipboardCopy,
     title: "Fill in your project details",
-    description: "Discipline, country, funder, career stage — the app tailors everything to your context.",
+    description:
+      "Discipline, country, funder, career stage — the app tailors everything to your context.",
   },
   {
+    number: 2,
     icon: MessageSquare,
     title: "Copy compiled prompts to your AI tool",
-    description: "ChatGPT, Claude, Gemini — your choice. Prompts are pre-loaded with your project data.",
+    description:
+      "ChatGPT, Claude, Gemini — your choice. Prompts are pre-loaded with your project data.",
   },
   {
+    number: 3,
     icon: FileCheck,
     title: "Paste outputs back and build your proposal",
-    description: "The app tracks everything, enforces quality gates, and assembles your final document.",
+    description:
+      "The app tracks everything, enforces quality gates, and assembles your final document.",
   },
 ];
 
-function HowItWorks() {
-  return (
-    <section id="how-it-works" className="px-6 py-32">
-      <div className="mx-auto max-w-4xl">
-        <motion.div
-          className="mb-16 text-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOpts}
-          variants={fadeInUp}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="font-display text-3xl tracking-tight sm:text-4xl">
-            Three steps. That&apos;s it.
-          </h2>
-        </motion.div>
+// ─── University data ────────────────────────────────────────────────────────
 
-        <motion.div
-          className="relative grid gap-8 sm:grid-cols-3 sm:gap-6"
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOpts}
-          variants={stagger}
-        >
-          {/* Connecting line (desktop) */}
-          <div className="pointer-events-none absolute top-10 right-[calc(33.33%+12px)] left-[calc(33.33%-12px)] hidden h-px bg-border/60 sm:block" />
+const universities = [
+  { name: "Universiti Malaya", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/8/8f/University_of_Malaya_logo.svg/1280px-University_of_Malaya_logo.svg.png" },
+  { name: "UKM", logo: "https://www.ukm.my/pendaftar/wp-content/uploads/2021/08/ukm-logo-CB9D755C75-seeklogo.com_.png" },
+  { name: "USM", logo: "https://dsxi.perdanauniversity.edu.my/wp-content/uploads/2017/01/logo-usm-baru-transparent.png" },
+  { name: "UTM", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/UTM-LOGO-FULL.png/1280px-UTM-LOGO-FULL.png" },
+  { name: "UPM", logo: "https://uc.searca.org/templates/yootheme/cache/bb/UPM-revised%20logo-bbcf002e.png" },
+  { name: "IIUM", logo: "https://office.iium.edu.my/ocap/wp-content/uploads/sites/2/2023/08/logo-IIUM-ori-768x225-1.png" },
+  { name: "UNIMAS", logo: "https://www.unimas.my/images/logo/glow2.png" },
+  { name: "UiTM", logo: "https://korporat.uitm.edu.my/images/download/2019/LogoUiTM.png" },
+  { name: "Universiti Tenaga Nasional", logo: "https://vectorise.net/logo/wp-content/uploads/2019/08/Logo-Universiti-Tenaga-Nasional-UNITEN.png" },
+  { name: "Taylor's University", logo: "https://klt.edu.my/wp-content/uploads/2021/08/taylor-uni-logo.png" },
+];
 
-          {steps.map((s, i) => (
-            <motion.div
-              key={s.title}
-              className="flex flex-col items-center text-center"
-              variants={fadeInUp}
-              transition={{ duration: 0.4 }}
-            >
-              <div className="relative z-10 mb-6 flex h-10 w-10 items-center justify-center rounded-full border border-accent-500/30 bg-accent-500/10 font-heading text-sm font-semibold text-accent-400">
-                {i + 1}
-              </div>
-              <s.icon className="mb-3 h-5 w-5 text-muted-foreground" />
-              <div className="font-heading text-sm font-semibold text-foreground">
-                {s.title}
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {s.description}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Stats ───────────────────────────────────────────────────────────────────
+// ─── Stats data ─────────────────────────────────────────────────────────────
 
 const stats = [
   { value: "46", label: "AI prompt templates" },
@@ -469,140 +115,349 @@ const stats = [
   { value: "16", label: "Evaluator psychology triggers" },
 ];
 
-function Stats() {
-  return (
-    <section className="px-6 py-32">
-      <div className="mx-auto max-w-4xl">
-        <motion.div
-          className="text-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOpts}
-          variants={fadeInUp}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="font-display text-3xl tracking-tight sm:text-4xl">
-            Built for researchers, by researchers
-          </h2>
-        </motion.div>
-
-        <motion.div
-          className="mt-12 grid gap-6 sm:grid-cols-3"
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOpts}
-          variants={stagger}
-        >
-          {stats.map((s) => (
-            <motion.div
-              key={s.label}
-              variants={fadeInUp}
-              transition={{ duration: 0.4 }}
-            >
-              <Card className="bg-card/60 text-center">
-                <CardContent className="py-8">
-                  <div className="text-gradient font-display text-4xl">
-                    {s.value}
-                  </div>
-                  <div className="mt-2 text-sm text-muted-foreground">
-                    {s.label}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ─── CTA ─────────────────────────────────────────────────────────────────────
-
-function CtaSection() {
-  return (
-    <section className="px-6 py-32">
-      <motion.div
-        className="mx-auto max-w-2xl text-center"
-        initial="hidden"
-        whileInView="visible"
-        viewport={viewportOpts}
-        variants={fadeInUp}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="font-display text-3xl tracking-tight sm:text-4xl">
-          Start building your proposal today
-        </h2>
-        <p className="mt-4 text-muted-foreground">
-          Free to use. No account needed. No API keys required.
-        </p>
-        <div className="mt-8">
-          <Button asChild size="lg">
-            <Link href="/projects">
-              Start Now
-              <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
-// ─── Footer ──────────────────────────────────────────────────────────────────
-
-function Footer() {
-  return (
-    <footer className="border-t border-border/50 px-6 py-8">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Sparkles className="h-4 w-4 text-accent-500" />
-          <span className="text-sm">
-            &copy; {new Date().getFullYear()} Grant Suite
-          </span>
-        </div>
-        <div className="flex items-center gap-6">
-          <a
-            href="https://github.com/Pragraph/grant-suite"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            title="GitHub"
-          >
-            <ExternalLink className="h-4 w-4" />
-            <span className="sr-only">GitHub</span>
-          </a>
-          <a
-            href="#"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Docs
-          </a>
-          <a
-            href="#"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Privacy
-          </a>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-// ─── Page ────────────────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+// LANDING PAGE
+// ═════════════════════════════════════════════════════════════════════════════
 
 export default function LandingPage() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 80);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background text-foreground" style={{ scrollBehavior: "smooth" }}>
-      <Nav />
-      <Hero />
-      <PhaseOverview />
-      <Features />
-      <HowItWorks />
-      <Stats />
-      <CtaSection />
-      <Footer />
+    <div className="min-h-screen bg-white text-gray-900" style={{ scrollBehavior: "smooth" }}>
+      {/* ── SECTION 1: Navbar ──────────────────────────────────────────────── */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-white/95 backdrop-blur-md shadow-sm"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+          {/* Left: Logo */}
+          <div className="flex items-center">
+            <img src="/logo.png" alt="Grant Suite" className="h-8 object-contain" />
+            <span className="text-gray-900 font-bold text-lg ml-2">Grant Suite</span>
+          </div>
+
+          {/* Center-right: Nav links (desktop) */}
+          <div className="hidden md:flex items-center gap-6">
+            <button
+              onClick={() => scrollToSection("features")}
+              className="text-gray-600 hover:text-gray-900 text-sm font-medium bg-transparent border-none cursor-pointer"
+            >
+              Features
+            </button>
+            <button
+              onClick={() => scrollToSection("how-it-works")}
+              className="text-gray-600 hover:text-gray-900 text-sm font-medium bg-transparent border-none cursor-pointer"
+            >
+              How It Works
+            </button>
+
+            {scrolled && (
+              <button
+                onClick={() => window.location.assign("/projects")}
+                className="px-4 py-2 bg-[#4F7DF3] text-white rounded-lg text-sm font-medium hover:bg-[#3B63D4] transition-colors"
+              >
+                Start Now
+              </button>
+            )}
+
+            <div className="text-right">
+              <p className="text-xs text-gray-500 font-extrabold leading-tight">
+                Powered by <span className="animate-bounce-gentle">🎓</span> BelajarAI
+              </p>
+              <p className="text-[10px] text-gray-400 font-bold leading-tight">
+                by Adam Linoby
+              </p>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* ── SECTION 2: Hero ────────────────────────────────────────────────── */}
+      <section
+        className="relative overflow-hidden pt-32 pb-28"
+        style={{ background: "linear-gradient(180deg, #F0F4FF 0%, #E8EDF8 100%)" }}
+      >
+        {/* Decorative sparkles */}
+        <div className="absolute left-[15%] top-1/3 text-blue-200 opacity-40 text-2xl select-none pointer-events-none">
+          ✦
+        </div>
+        <div className="absolute right-[15%] top-1/3 text-blue-200 opacity-40 text-2xl select-none pointer-events-none">
+          ✦
+        </div>
+
+        <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
+          <span className="section-badge mb-6">Open-source · Free forever</span>
+
+          <h1
+            className="text-5xl md:text-6xl font-bold text-gray-900 tracking-tight leading-tight mb-5"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Write winning grant proposals with{" "}
+            <br />
+            <span className="text-gradient-blue">AI-guided precision</span>
+          </h1>
+
+          <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed mb-8">
+            7-phase system that transforms your research idea into a
+            competition-ready proposal. From discovery to submission.
+          </p>
+
+          <div className="flex items-center justify-center gap-4 flex-wrap">
+            <button
+              onClick={() => window.location.assign("/projects")}
+              className="px-8 py-3.5 bg-[#4F7DF3] text-white rounded-xl text-lg font-semibold hover:bg-[#3B63D4] hover:scale-105 transition-all flex items-center gap-2"
+            >
+              Get Started <ArrowRight className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => scrollToSection("how-it-works")}
+              className="px-8 py-3.5 border border-gray-300 text-gray-700 rounded-xl text-lg font-medium hover:bg-white/80 transition-all flex items-center gap-2"
+            >
+              See How It Works <ChevronDown className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white" />
+      </section>
+
+      {/* ── SECTION 3: Trusted by Scholars ─────────────────────────────────── */}
+      <section className="bg-white py-10">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-center text-sm font-medium text-gray-500 uppercase tracking-wider mb-8">
+            Trusted by scholars in top universities in Malaysia
+          </p>
+
+          <div className="overflow-hidden py-8">
+            <div className="logo-track">
+              {[...universities, ...universities].map((uni, i) => (
+                <img
+                  key={`${uni.name}-${i}`}
+                  src={uni.logo}
+                  alt={uni.name}
+                  title={uni.name}
+                  className="h-12 max-w-[160px] object-contain opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 4: See It In Action ────────────────────────────────────── */}
+      <section id="how-it-works" className="bg-white py-20">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <span className="section-badge">✦ See It In Action</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-4 mb-3">
+            How Grant Suite Works
+          </h2>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Watch how Grant Suite guides you from research idea to submission-ready proposal.
+          </p>
+
+          <div className="max-w-4xl mx-auto mt-12 rounded-2xl overflow-hidden shadow-2xl border border-gray-200 aspect-video bg-gray-100 flex items-center justify-center">
+            <div className="text-center text-gray-400">
+              <PlayCircle className="w-16 h-16 mx-auto mb-3 opacity-40" />
+              <p className="text-sm font-medium">Video walkthrough coming soon</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 5: Seven Phases ────────────────────────────────────────── */}
+      <section id="features" className="bg-[#F9FAFB] py-20">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <span className="section-badge">✦ The Pipeline</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-4 mb-3">
+            Seven phases. One complete system.
+          </h2>
+          <p className="text-gray-500">
+            Each phase builds on the last — no gaps, no guesswork.
+          </p>
+
+          <div className="max-w-6xl mx-auto mt-12 grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {PHASES.map((phase, i) => {
+              const Icon = phaseIcons[i];
+              return (
+                <div
+                  key={phase.id}
+                  className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-shadow text-left"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <span
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold"
+                      style={{ backgroundColor: phaseColors[i] }}
+                    >
+                      {phase.id}
+                    </span>
+                    <Icon className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-gray-900 mb-1">{phase.name}</h3>
+                  <p className="text-xs text-gray-500 mb-3">{phase.description}</p>
+                  <p className="font-mono text-[10px] text-gray-400">{phaseDocuments[i]}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 6: Built Different ─────────────────────────────────────── */}
+      <section className="bg-white py-20">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <span className="section-badge">✦ Why Grant Suite</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-4 mb-3">
+            Built different
+          </h2>
+          <p className="text-gray-500">
+            Not another AI wrapper. A systematic proposal-building engine.
+          </p>
+
+          <div className="max-w-4xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {features.map((f) => (
+              <div
+                key={f.title}
+                className="bg-[#F9FAFB] rounded-xl p-6 border border-gray-100 text-left"
+              >
+                <div className="w-10 h-10 rounded-lg bg-[#F0F4FF] flex items-center justify-center mb-4">
+                  <f.icon className="w-5 h-5 text-[#4F7DF3]" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">{f.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{f.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 7: Three Steps ─────────────────────────────────────────── */}
+      <section className="bg-[#F9FAFB] py-20">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+            Three steps. That&apos;s it.
+          </h2>
+
+          <div className="max-w-4xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+            {steps.map((step) => (
+              <div key={step.number} className="text-center">
+                <span className="inline-flex w-10 h-10 rounded-full bg-[#4F7DF3] text-white font-bold items-center justify-center mb-4">
+                  {step.number}
+                </span>
+                <div className="w-10 h-10 rounded-lg bg-[#F0F4FF] flex items-center justify-center mx-auto mb-3">
+                  <step.icon className="w-5 h-5 text-[#4F7DF3]" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">{step.title}</h3>
+                <p className="text-sm text-gray-500">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 8: Stats Banner ────────────────────────────────────────── */}
+      <section className="bg-[#111827] py-12">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-24">
+            {stats.map((s) => (
+              <div key={s.label} className="text-center">
+                <span className="text-5xl font-extrabold text-[#7B9AF8]">{s.value}</span>
+                <p className="text-gray-400 text-sm mt-1">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 9: Final CTA ───────────────────────────────────────────── */}
+      <section className="bg-white py-20">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Start building your proposal today
+          </h2>
+          <p className="text-gray-500 mb-8">
+            Free to use. No account needed. No API keys required.
+          </p>
+          <button
+            onClick={() => window.location.assign("/projects")}
+            className="px-8 py-3.5 bg-[#4F7DF3] text-white rounded-xl text-lg font-semibold hover:bg-[#3B63D4] hover:scale-105 transition-all inline-flex items-center gap-2"
+          >
+            Start Now <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
+      </section>
+
+      {/* ── SECTION 10: Footer ─────────────────────────────────────────────── */}
+      <footer className="bg-[#111827] text-white py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+            {/* Left: Logo + Attribution */}
+            <div>
+              <div className="flex items-center gap-2">
+                <img
+                  src="/logo.png"
+                  alt="Grant Suite"
+                  className="h-7 object-contain brightness-0 invert"
+                />
+                <span className="text-white font-bold">Grant Suite</span>
+              </div>
+              <p className="text-gray-400 text-sm mt-2">
+                Powered by <span className="animate-bounce-gentle">🎓</span> BelajarAI
+              </p>
+              <p className="text-gray-500 text-xs">by Adam Linoby</p>
+            </div>
+
+            {/* Center: Links */}
+            <div className="flex items-center gap-6">
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="text-gray-400 hover:text-white transition-colors text-sm bg-transparent border-none cursor-pointer"
+              >
+                Home
+              </button>
+              <button
+                onClick={() => scrollToSection("features")}
+                className="text-gray-400 hover:text-white transition-colors text-sm bg-transparent border-none cursor-pointer"
+              >
+                Features
+              </button>
+              <a
+                href="https://github.com/Pragraph/grant-suite"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white transition-colors text-sm no-underline"
+              >
+                Docs
+              </a>
+              <button className="text-gray-400 hover:text-white transition-colors text-sm bg-transparent border-none cursor-pointer">
+                Privacy
+              </button>
+            </div>
+
+            {/* Right: Privacy note */}
+            <p className="text-gray-400 text-sm max-w-xs">
+              Grant Suite runs entirely in your browser. No data leaves your device.
+            </p>
+          </div>
+
+          {/* Bottom */}
+          <div className="border-t border-gray-800 mt-8 pt-4">
+            <p className="text-gray-500 text-xs text-center">
+              © {new Date().getFullYear()} Grant Suite. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
