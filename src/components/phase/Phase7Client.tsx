@@ -134,14 +134,14 @@ function FeedbackAnalysisResultUI({ content }: { content: string }) {
       <div className="grid gap-3 sm:grid-cols-2">
         {/* Strengths */}
         {strengths.length > 0 && (
-          <Card className="border-success/20 bg-success/5">
+          <Card className="border-emerald-200 bg-emerald-50">
             <CardContent className="p-3 space-y-2">
-              <p className="text-xs font-medium text-success flex items-center gap-1.5">
+              <p className="text-xs font-medium text-emerald-600 flex items-center gap-1.5">
                 <CheckCircle2 className="h-3 w-3" />
                 Strengths ({strengths.length})
               </p>
               {strengths.map((s, i) => (
-                <p key={i} className="text-[11px] text-foreground bg-success/5 rounded px-2 py-1">{s}</p>
+                <p key={i} className="text-[11px] text-gray-900 bg-emerald-50 rounded px-2 py-1">{s}</p>
               ))}
             </CardContent>
           </Card>
@@ -149,9 +149,9 @@ function FeedbackAnalysisResultUI({ content }: { content: string }) {
 
         {/* Weaknesses */}
         {weaknesses.length > 0 && (
-          <Card className="border-error/20 bg-error/5">
+          <Card className="border-red-200 bg-red-50">
             <CardContent className="p-3 space-y-2">
-              <p className="text-xs font-medium text-error flex items-center gap-1.5">
+              <p className="text-xs font-medium text-red-600 flex items-center gap-1.5">
                 <AlertTriangle className="h-3 w-3" />
                 Weaknesses ({weaknesses.length})
               </p>
@@ -161,15 +161,15 @@ function FeedbackAnalysisResultUI({ content }: { content: string }) {
                     className={cn(
                       "text-[8px] shrink-0 mt-0.5",
                       w.severity === "CRITICAL"
-                        ? "bg-error/30 text-error"
+                        ? "bg-red-100 text-red-500"
                         : w.severity === "MAJOR"
-                          ? "bg-warning/20 text-warning"
-                          : "bg-muted/30 text-muted-foreground",
+                          ? "bg-amber-100 text-amber-500"
+                          : "bg-gray-100 text-gray-500",
                     )}
                   >
                     {w.severity}
                   </Badge>
-                  <span className="text-foreground">{w.text}</span>
+                  <span className="text-gray-900">{w.text}</span>
                 </div>
               ))}
             </CardContent>
@@ -178,14 +178,14 @@ function FeedbackAnalysisResultUI({ content }: { content: string }) {
 
         {/* Required Changes */}
         {changes.length > 0 && (
-          <Card className="border-warning/20 bg-warning/5">
+          <Card className="border-amber-200 bg-amber-50">
             <CardContent className="p-3 space-y-2">
-              <p className="text-xs font-medium text-warning flex items-center gap-1.5">
+              <p className="text-xs font-medium text-amber-500 flex items-center gap-1.5">
                 <FileEdit className="h-3 w-3" />
                 Required Changes ({changes.length})
               </p>
               {changes.map((c, i) => (
-                <p key={i} className="text-[11px] text-foreground bg-warning/5 rounded px-2 py-1">{c}</p>
+                <p key={i} className="text-[11px] text-gray-900 bg-amber-50 rounded px-2 py-1">{c}</p>
               ))}
             </CardContent>
           </Card>
@@ -193,14 +193,14 @@ function FeedbackAnalysisResultUI({ content }: { content: string }) {
 
         {/* Suggestions */}
         {suggestions.length > 0 && (
-          <Card className="border-info/20 bg-info/5">
+          <Card className="border-blue-200 bg-blue-50">
             <CardContent className="p-3 space-y-2">
-              <p className="text-xs font-medium text-info flex items-center gap-1.5">
+              <p className="text-xs font-medium text-blue-500 flex items-center gap-1.5">
                 <Info className="h-3 w-3" />
                 Suggestions ({suggestions.length})
               </p>
               {suggestions.map((s, i) => (
-                <p key={i} className="text-[11px] text-foreground bg-info/5 rounded px-2 py-1">{s}</p>
+                <p key={i} className="text-[11px] text-gray-900 bg-blue-50 rounded px-2 py-1">{s}</p>
               ))}
             </CardContent>
           </Card>
@@ -227,8 +227,8 @@ function ResubmissionForkUI({
       >
         <CardContent className="p-5 text-center space-y-3">
           <RotateCcw className="h-8 w-8 text-phase-7 mx-auto" />
-          <h3 className="text-sm font-medium text-foreground">Same Funder</h3>
-          <p className="text-[11px] text-muted-foreground">
+          <h3 className="text-sm font-medium text-gray-900">Same Funder</h3>
+          <p className="text-[11px] text-gray-500">
             Continue with a resubmission strategy addressing reviewer concerns for the same grant program.
           </p>
           <Button size="sm" className="bg-phase-7 hover:bg-phase-7/90 text-white">
@@ -238,11 +238,11 @@ function ResubmissionForkUI({
         </CardContent>
       </Card>
 
-      <Card className="border-border/30 bg-muted/5">
+      <Card className="border-gray-200 bg-white">
         <CardContent className="p-5 text-center space-y-3">
-          <ExternalLink className="h-8 w-8 text-muted-foreground/50 mx-auto" />
-          <h3 className="text-sm font-medium text-foreground">Different Funder</h3>
-          <p className="text-[11px] text-muted-foreground">
+          <ExternalLink className="h-8 w-8 text-gray-400 mx-auto" />
+          <h3 className="text-sm font-medium text-gray-900">Different Funder</h3>
+          <p className="text-[11px] text-gray-500">
             Return to Phase 1 Step 2 (Grant Matching) with your existing research topic to find a better-suited funder.
           </p>
           <Button
@@ -286,29 +286,29 @@ function ResponseResultUI({
       {/* Structured responses */}
       {responses.length > 0 && (
         <div className="space-y-3">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
             Response to Reviewers ({responses.length} points)
           </p>
           {responses.slice(0, 10).map((r, i) => (
-            <Card key={i} className="border-border/20">
+            <Card key={i} className="border-gray-200">
               <CardContent className="p-3 space-y-2">
                 <div className="flex items-start gap-2">
-                  <Badge className="bg-error/20 text-error text-[9px] shrink-0 mt-0.5">Comment</Badge>
-                  <p className="text-[11px] text-muted-foreground italic">{r.comment}</p>
+                  <Badge className="bg-red-100 text-red-500 text-[9px] shrink-0 mt-0.5">Comment</Badge>
+                  <p className="text-[11px] text-gray-500 italic">{r.comment}</p>
                 </div>
                 <div className="flex items-start gap-2">
                   <Badge className="bg-phase-7/20 text-phase-7 text-[9px] shrink-0 mt-0.5">Response</Badge>
-                  <p className="text-[11px] text-foreground">{r.response}</p>
+                  <p className="text-[11px] text-gray-900">{r.response}</p>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Badge className="bg-success/20 text-success text-[9px] shrink-0 mt-0.5">Change</Badge>
-                  <p className="text-[11px] text-foreground">{r.change}</p>
+                  <Badge className="bg-emerald-100 text-emerald-500 text-[9px] shrink-0 mt-0.5">Change</Badge>
+                  <p className="text-[11px] text-gray-900">{r.change}</p>
                 </div>
               </CardContent>
             </Card>
           ))}
           {responses.length > 10 && (
-            <p className="text-[10px] text-muted-foreground/70 italic">
+            <p className="text-[10px] text-gray-400 italic">
               ...and {responses.length - 10} more response points (see full document)
             </p>
           )}
@@ -320,8 +320,8 @@ function ResponseResultUI({
         <CardContent className="p-4 flex items-center gap-3">
           <RotateCcw className="h-5 w-5 text-phase-6 shrink-0" />
           <div className="flex-1">
-            <p className="text-xs font-medium text-foreground">Re-run Phase 6 with revised proposal?</p>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs font-medium text-gray-900">Re-run Phase 6 with revised proposal?</p>
+            <p className="text-[11px] text-gray-500">
               Run the review cycle again on the revised proposal for additional optimization.
             </p>
           </div>
@@ -449,8 +449,8 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
         <div className="flex items-center gap-4">
           <PhaseIcon phase={7} size="lg" active />
           <div className="flex-1">
-            <h1 className="text-2xl font-heading font-bold text-foreground">{PHASE_7.name}</h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h1 className="text-2xl font-bold text-gray-900">{PHASE_7.name}</h1>
+            <p className="text-sm text-gray-500 mt-1">
               Analyze reviewer feedback, develop a resubmission strategy, and produce a revised
               proposal with a formal response to reviewers.
             </p>
@@ -459,9 +459,9 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
 
         {/* ── Progress Bar ───────────────────────────────────────────────── */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>Phase Progress</span>
-            <span>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-500 font-medium">Phase Progress</span>
+            <span className="text-sm text-gray-400">
               {phase7Steps.filter((s) => getStepStatus(s.step) === "complete").length} of{" "}
               {phase7Steps.length} steps
             </span>
@@ -474,8 +474,8 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
           <CardContent className="p-3">
             <div className="flex items-start gap-2">
               <Info className="h-3.5 w-3.5 text-phase-7 mt-0.5 shrink-0" />
-              <div className="text-[11px] text-muted-foreground">
-                <p className="font-medium text-foreground mb-1">Post-submission workflow</p>
+              <div className="text-[11px] text-gray-500">
+                <p className="font-medium text-gray-900 mb-1">Post-submission workflow</p>
                 <p>
                   Use this phase after receiving reviewer feedback. It helps you systematically
                   analyze feedback, decide on a resubmission strategy, and produce a revised
@@ -488,20 +488,20 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
 
         {/* ── Proposal Source Indicator ──────────────────────────────────── */}
         {proposalSource ? (
-          <Card className="border-success/20 bg-success/5">
+          <Card className="border-emerald-200 bg-emerald-50">
             <CardContent className="p-3 flex items-center gap-2">
-              <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
-              <p className="text-xs text-foreground">
-                Using <span className="font-mono text-[11px] text-success">{proposalSource}</span> from Phase 6
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+              <p className="text-xs text-gray-900">
+                Using <span className="font-mono text-[11px] text-emerald-500">{proposalSource}</span> from Phase 6
                 as the submitted proposal reference.
               </p>
             </CardContent>
           </Card>
         ) : (
-          <Card className="border-warning/20 bg-warning/5">
+          <Card className="border-amber-200 bg-amber-50">
             <CardContent className="p-3 flex items-center gap-2">
-              <AlertTriangle className="h-3.5 w-3.5 text-warning shrink-0" />
-              <p className="text-xs text-muted-foreground">
+              <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+              <p className="text-xs text-gray-500">
                 No submitted proposal found. Complete Phase 5 or 6 first to have a proposal to reference.
               </p>
             </CardContent>
@@ -525,7 +525,7 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
                   <div
                     className={cn(
                       "absolute left-3.75 top-9 w-0.5 h-[calc(100%-20px)]",
-                      isComplete ? "bg-phase-7" : "bg-border/50",
+                      isComplete ? "bg-phase-7" : "bg-gray-200",
                     )}
                   />
                 )}
@@ -535,7 +535,7 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
                   onClick={() => setActiveStep(isActive ? null : stepDef.step)}
                   className={cn(
                     "flex w-full items-center gap-3 py-3 text-left transition-colors",
-                    "hover:bg-muted/50 rounded-lg px-2 -mx-2",
+                    "hover:bg-gray-50 rounded-xl px-2 -mx-2",
                   )}
                 >
                   <div
@@ -546,8 +546,8 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
                         : isCurrent
                           ? "border-phase-7 bg-transparent text-phase-7"
                           : unlocked
-                            ? "border-border/50 bg-transparent text-muted-foreground/50"
-                            : "border-border/30 bg-transparent text-muted-foreground/30",
+                            ? "border-gray-200 bg-transparent text-gray-400"
+                            : "border-gray-200 bg-transparent text-gray-300",
                     )}
                   >
                     {isComplete ? (
@@ -563,18 +563,18 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
                         className={cn(
                           "text-sm font-medium",
                           isComplete
-                            ? "text-foreground"
+                            ? "text-gray-900"
                             : isCurrent
-                              ? "text-foreground"
+                              ? "text-gray-900"
                               : unlocked
-                                ? "text-muted-foreground"
-                                : "text-muted-foreground/50",
+                                ? "text-gray-600"
+                                : "text-gray-400",
                         )}
                       >
                         {stepDef.name}
                       </p>
                       {!unlocked && (
-                        <Badge variant="outline" className="text-[10px] border-border/30 text-muted-foreground/50">
+                        <Badge variant="outline" className="text-[10px] border-gray-200 text-gray-400">
                           <Lock className="h-2.5 w-2.5 mr-0.5" />
                           Locked
                         </Badge>
@@ -587,20 +587,20 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
                             ? "border-phase-7/30 text-phase-7"
                             : isCurrent
                               ? "border-phase-7/20 text-phase-7/70"
-                              : "border-border/30 text-muted-foreground/50",
+                              : "border-gray-200 text-gray-400",
                         )}
                       >
                         {stepStatusLabels[status]}
                       </Badge>
                     </div>
-                    <p className="text-[11px] text-muted-foreground/70 mt-0.5 line-clamp-1">
+                    <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-1">
                       {meta?.description}
                     </p>
                   </div>
 
                   <ChevronDown
                     className={cn(
-                      "h-4 w-4 text-muted-foreground/50 transition-transform shrink-0",
+                      "h-4 w-4 text-gray-400 transition-transform shrink-0",
                       isActive && "rotate-180",
                     )}
                   />
@@ -619,10 +619,10 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
                     >
                       <div className="space-y-4 pb-6">
                         {!unlocked ? (
-                          <Card className="border-border/30 bg-muted/5">
+                          <Card className="border-gray-200 bg-white">
                             <CardContent className="p-4 text-center">
-                              <Lock className="h-5 w-5 text-muted-foreground/30 mx-auto mb-2" />
-                              <p className="text-xs text-muted-foreground/50">
+                              <Lock className="h-5 w-5 text-gray-300 mx-auto mb-2" />
+                              <p className="text-xs text-gray-400">
                                 Complete step {stepDef.step - 1} to unlock this step.
                               </p>
                             </CardContent>
@@ -636,7 +636,7 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
                                   <Card className="border-phase-7/15 bg-phase-7/5">
                                     <CardContent className="p-3 flex items-center gap-2">
                                       <Info className="h-3.5 w-3.5 text-phase-7 shrink-0" />
-                                      <p className="text-[11px] text-muted-foreground">
+                                      <p className="text-[11px] text-gray-500">
                                         The prompt will automatically include{" "}
                                         <span className="font-mono text-phase-7">{proposalSource}</span>{" "}
                                         as the submitted proposal reference.
@@ -769,10 +769,10 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
                 </motion.div>
 
                 <div className="space-y-2">
-                  <h2 className="text-xl font-heading font-bold text-foreground">
+                  <h2 className="text-xl font-bold text-gray-900">
                     Congratulations! Your grant proposal is complete.
                   </h2>
-                  <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                  <p className="text-sm text-gray-500 max-w-md mx-auto">
                     You&apos;ve successfully completed all 7 phases — from discovery through
                     post-submission. Your proposal has been written, reviewed, optimized, and
                     your resubmission materials are ready.
@@ -783,14 +783,14 @@ export function Phase7Client({ projectId: _projectIdProp }: { projectId: string 
                 <div className="flex items-center justify-center gap-6 pt-2">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-phase-7">7</p>
-                    <p className="text-[11px] text-muted-foreground">Phases Completed</p>
+                    <p className="text-[11px] text-gray-500">Phases Completed</p>
                   </div>
-                  <div className="h-8 w-px bg-border/50" />
+                  <div className="h-8 w-px bg-gray-200" />
                   <div className="text-center">
                     <p className="text-2xl font-bold text-phase-7">
                       {documents.filter((d) => d.projectId === projectId && d.isCurrent).length}
                     </p>
-                    <p className="text-[11px] text-muted-foreground">Documents Generated</p>
+                    <p className="text-[11px] text-gray-500">Documents Generated</p>
                   </div>
                 </div>
 
