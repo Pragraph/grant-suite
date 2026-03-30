@@ -14,7 +14,6 @@ import {
   Circle,
   CircleDot,
   CheckCircle2,
-  Sparkles,
   Download,
   ShieldCheck,
   ShieldX,
@@ -103,8 +102,8 @@ function SidebarContent({
               transition={{ duration: 0.15 }}
               className="flex items-center gap-2"
             >
-              <Sparkles className="h-5 w-5 text-accent-500" />
-              <span className="font-heading text-sm font-semibold">
+              <img src="/logo.png" alt="Grant Suite" className="h-6" />
+              <span className="font-heading text-sm font-bold text-sidebar-foreground">
                 Grant Suite
               </span>
             </motion.div>
@@ -116,7 +115,7 @@ function SidebarContent({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
             >
-              <Sparkles className="h-5 w-5 text-accent-500" />
+              <img src="/logo.png" alt="Grant Suite" className="h-6" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -124,7 +123,7 @@ function SidebarContent({
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 text-muted-foreground hover:text-foreground"
+          className="h-7 w-7 text-gray-400 hover:text-gray-600"
           onClick={toggleSidebar}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
@@ -141,7 +140,7 @@ function SidebarContent({
         <div className="px-3">
           {/* Pipeline Group */}
           {!collapsed && (
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
               Pipeline
             </p>
           )}
@@ -163,10 +162,10 @@ function SidebarContent({
               const item = (
                 <div
                   className={cn(
-                    "group relative flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors duration-fast",
+                    "group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-fast",
                     isActive || isCurrentRoute
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                      : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
+                      ? "text-[#4F7DF3] bg-[#F0F4FF] font-semibold"
+                      : "text-gray-600 hover:bg-gray-50",
                     disabled && "pointer-events-none opacity-40",
                     collapsed && "justify-center px-0"
                   )}
@@ -204,7 +203,7 @@ function SidebarContent({
                           status === "complete" && "text-success",
                           status === "in-progress" && "text-warning",
                           status === "not-started" &&
-                            "text-muted-foreground/50"
+                            "text-gray-300"
                         )}
                       />
                     </>
@@ -238,7 +237,7 @@ function SidebarContent({
           {/* Workspace Group */}
           <div className="mt-6">
             {!collapsed && (
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
                 Workspace
               </p>
             )}
@@ -263,10 +262,10 @@ function SidebarContent({
                 const item = (
                   <div
                     className={cn(
-                      "flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors duration-fast",
+                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-fast",
                       isCurrentRoute
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                        : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
+                        ? "text-gray-900 bg-gray-100 font-medium"
+                        : "text-gray-600 hover:bg-gray-50",
                       collapsed && "justify-center px-0"
                     )}
                   >
@@ -314,7 +313,7 @@ function SidebarContent({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-muted-foreground hover:text-foreground"
+            className="h-7 w-7 text-gray-400 hover:text-gray-600"
             onClick={toggleTheme}
             aria-label={
               theme === "dark"
@@ -332,7 +331,7 @@ function SidebarContent({
           {!collapsed ? (
             <Link
               href="/export"
-              className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors duration-fast hover:text-foreground"
+              className="flex items-center gap-1.5 text-xs text-gray-500 transition-colors duration-fast hover:text-gray-700"
             >
               <Download className="h-3.5 w-3.5" />
               Export/Import Data
@@ -343,7 +342,7 @@ function SidebarContent({
                 <TooltipTrigger asChild>
                   <Link
                     href="/export"
-                    className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:text-foreground"
+                    className="flex h-7 w-7 items-center justify-center text-gray-400 hover:text-gray-600"
                   >
                     <Download className="h-3.5 w-3.5" />
                   </Link>
@@ -411,7 +410,7 @@ function MobileSidebar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             onClick={() => setMobileDrawerOpen(false)}
           />
           {/* Drawer */}

@@ -104,10 +104,10 @@ export default function ProjectsPage() {
     <>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-heading font-bold text-foreground">
+        <h1 className="text-3xl font-heading font-bold text-gray-900">
           Projects
         </h1>
-        <Button onClick={() => setDrawerOpen(true)}>
+        <Button onClick={() => setDrawerOpen(true)} className="bg-[#4F7DF3] hover:bg-[#3B63D4] text-white rounded-lg px-5 py-2.5 font-semibold">
           <Plus className="h-4 w-4" />
           New Project
         </Button>
@@ -142,17 +142,17 @@ export default function ProjectsPage() {
               >
                 <a href={`/projects/${project.id}`} className="no-underline text-inherit block">
                   <Card
-                    className="group cursor-pointer hover:shadow-card-hover hover:border-border transition-all duration-normal"
+                    className="group bg-white rounded-xl border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
                   >
                     {/* Phase color strip */}
                     <div
-                      className={`h-0.75 ${phaseStripColors[project.currentPhase] ?? "bg-accent-500"}`}
+                      className="h-0.5 bg-[#4F7DF3]"
                     />
 
-                    <CardContent className="pt-4">
+                    <CardContent className="pt-4 p-6">
                       {/* Title */}
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-heading text-lg font-semibold text-foreground line-clamp-2">
+                        <h3 className="font-heading text-lg font-semibold text-gray-900 line-clamp-2">
                           {project.title}
                         </h3>
                         <DropdownMenu>
@@ -196,27 +196,27 @@ export default function ProjectsPage() {
 
                       {/* Funder badge */}
                       {project.targetFunder && (
-                        <Badge className="mt-2">{project.targetFunder}</Badge>
+                        <Badge className="mt-2 bg-[#F0F4FF] text-[#4F7DF3] rounded-full px-3 py-1 text-xs font-semibold">{project.targetFunder}</Badge>
                       )}
 
                       {/* Progress */}
                       <div className="mt-3">
-                        <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
-                          <span>
+                        <div className="flex items-center justify-between text-xs mb-1.5">
+                          <span className="text-sm text-gray-500">
                             Phase {project.currentPhase} of 7
                           </span>
-                          <span>{phaseCompletion}%</span>
+                          <span className="text-sm text-gray-400">{phaseCompletion}%</span>
                         </div>
                         <Progress value={phaseCompletion} />
                       </div>
 
                       {/* Meta */}
                       <div className="mt-3 flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-sm text-gray-500">
                           {project.discipline}
                           {project.country ? ` · ${project.country}` : ""}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-sm text-gray-400">
                           {formatDistanceToNow(new Date(project.updatedAt), {
                             addSuffix: true,
                           })}

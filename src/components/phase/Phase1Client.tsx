@@ -451,10 +451,10 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
       <div className="flex items-center gap-4">
         <PhaseIcon phase={1} size="lg" active />
         <div className="flex-1">
-          <h1 className="text-2xl font-heading font-bold text-foreground">
+          <h1 className="text-2xl font-bold text-gray-900">
             {PHASE_1.name}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-gray-500 mt-1">
             Discover your research direction through systematic exploration of gaps, trends, and funding landscapes.
           </p>
         </div>
@@ -462,9 +462,9 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
 
       {/* ── Progress Bar ───────────────────────────────────────────────── */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>Phase Progress</span>
-          <span>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-500 font-medium">Phase Progress</span>
+          <span className="text-sm text-gray-400">
             {phase1Steps.filter((s) => getStepStatus(s.step) === "complete").length} of{" "}
             {phase1Steps.length} steps
           </span>
@@ -489,7 +489,7 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                 <div
                   className={cn(
                     "absolute left-3.75 top-9 w-0.5 h-[calc(100%-20px)]",
-                    isComplete ? "bg-phase-1" : "bg-border/50",
+                    isComplete ? "bg-phase-1" : "bg-gray-200",
                   )}
                 />
               )}
@@ -499,7 +499,7 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                 onClick={() => setActiveStep(isActive ? null : stepDef.step)}
                 className={cn(
                   "flex w-full items-center gap-3 py-3 text-left transition-colors",
-                  "hover:bg-muted/50 rounded-lg px-2 -mx-2",
+                  "hover:bg-gray-50 rounded-xl px-2 -mx-2",
                 )}
               >
                 {/* Timeline dot */}
@@ -511,8 +511,8 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                       : isCurrent
                         ? "border-phase-1 bg-transparent text-phase-1"
                         : unlocked
-                          ? "border-border/50 bg-transparent text-muted-foreground/50"
-                          : "border-border/30 bg-transparent text-muted-foreground/30",
+                          ? "border-gray-200 bg-transparent text-gray-400"
+                          : "border-gray-200 bg-transparent text-gray-300",
                   )}
                 >
                   {isComplete ? (
@@ -525,14 +525,14 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                 <div className="flex-1 min-w-0">
                   <p
                     className={cn(
-                      "text-sm font-medium",
+                      "text-sm font-semibold",
                       isComplete
-                        ? "text-foreground"
+                        ? "text-gray-900"
                         : isCurrent
-                          ? "text-foreground"
+                          ? "text-gray-900"
                           : unlocked
-                            ? "text-muted-foreground"
-                            : "text-muted-foreground/50",
+                            ? "text-gray-600"
+                            : "text-gray-400",
                     )}
                   >
                     {stepDef.name}
@@ -543,7 +543,7 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                     )}
                   </p>
                   {isComplete && stepDocs.length > 0 && (
-                    <p className="text-xs text-muted-foreground/70 mt-0.5 truncate">
+                    <p className="text-xs text-gray-400 mt-0.5 truncate">
                       {stepDocs.map((d) => d.canonicalName).join(", ")} —{" "}
                       {stepDocs.reduce((sum, d) => sum + d.wordCount, 0).toLocaleString()} words
                     </p>
@@ -561,7 +561,7 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                   )}
                   <ChevronDown
                     className={cn(
-                      "h-4 w-4 text-muted-foreground transition-transform",
+                      "h-4 w-4 text-gray-400 transition-transform",
                       isActive && "rotate-180",
                     )}
                   />
@@ -599,8 +599,8 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                           <div className="space-y-4">
                             {/* Completed methods summary */}
                             {completedMethods.length > 0 && (
-                              <div className="rounded-lg border border-success/20 bg-success/5 p-3">
-                                <p className="text-xs font-medium text-success mb-1">
+                              <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                                <p className="text-xs font-medium text-emerald-600 mb-1">
                                   Completed Methods
                                 </p>
                                 <div className="flex flex-wrap gap-2">
@@ -627,8 +627,8 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                                   <Card
                                     key={method.id}
                                     className={cn(
-                                      "cursor-pointer transition-all hover:ring-2 hover:ring-phase-1/30",
-                                      isCompleted && "ring-1 ring-success/30",
+                                      "cursor-pointer transition-all hover:ring-2 hover:ring-phase-1/30 hover:border-[#4F7DF3]/40 hover:shadow-sm",
+                                      isCompleted && "ring-1 ring-emerald-200",
                                       isLocked && "opacity-50 cursor-not-allowed hover:ring-0",
                                     )}
                                     onClick={() => {
@@ -640,7 +640,7 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                                       <div className="flex items-start gap-3">
                                         <div
                                           className={cn(
-                                            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted",
+                                            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100",
                                             method.color,
                                           )}
                                         >
@@ -648,18 +648,18 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                                         </div>
                                         <div className="flex-1 min-w-0">
                                           <div className="flex items-center gap-2">
-                                            <p className="text-sm font-medium text-foreground">
+                                            <p className="text-sm font-semibold text-gray-900">
                                               {method.name}
                                             </p>
                                             {isCompleted && (
-                                              <Check className="h-3.5 w-3.5 text-success" />
+                                              <Check className="h-3.5 w-3.5 text-emerald-500" />
                                             )}
                                           </div>
-                                          <p className="text-xs text-muted-foreground mt-0.5">
+                                          <p className="text-xs text-gray-500 mt-0.5">
                                             {method.description}
                                           </p>
                                           {isLocked && (
-                                            <p className="text-[10px] text-warning mt-1">
+                                            <p className="text-[10px] text-red-500 mt-1">
                                               Requires 2+ completed methods
                                             </p>
                                           )}
@@ -674,14 +674,14 @@ export function Phase1Client({ projectId: _projectIdProp }: { projectId: string 
                             {/* Skip option */}
                             <button
                               onClick={() => handleSkipToStep(2)}
-                              className="flex w-full items-center gap-3 rounded-lg border border-dashed border-border/50 p-3 text-left transition-colors hover:bg-muted/50"
+                              className="flex w-full items-center gap-3 rounded-lg border border-dashed border-gray-200 p-3 text-left transition-colors hover:bg-gray-50"
                             >
-                              <SkipForward className="h-4 w-4 text-muted-foreground" />
+                              <SkipForward className="h-4 w-4 text-gray-500" />
                               <div>
-                                <p className="text-sm font-medium text-muted-foreground">
+                                <p className="text-sm font-medium text-gray-500">
                                   I already have a research topic
                                 </p>
-                                <p className="text-xs text-muted-foreground/60">
+                                <p className="text-xs text-gray-400">
                                   Skip discovery and go directly to Step 2: Grant Matching
                                 </p>
                               </div>

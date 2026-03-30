@@ -759,7 +759,7 @@ function VerticalPipeline({
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
-                className="ml-12 mb-1 rounded-lg border border-border/50 bg-secondary p-3"
+                className="ml-12 mb-1 rounded-lg border border-gray-200 bg-white p-3"
               >
                 <div className="text-xs font-semibold text-foreground mb-1.5">
                   Documents

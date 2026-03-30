@@ -137,12 +137,12 @@ export function DocumentInventory({
 
   return (
     <>
-      <Card className={className}>
+      <Card className={cn("bg-white border border-gray-200 rounded-xl", className)}>
         <CardHeader className="py-3">
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="flex items-center gap-2 text-gray-900 font-semibold">
+            <FileText className="h-4 w-4 text-gray-400" />
             Documents
-            <Badge variant="outline" className="ml-1">
+            <Badge variant="outline" className="ml-1 bg-gray-100 text-gray-600 rounded-full">
               {currentDocs.length}
             </Badge>
           </CardTitle>
@@ -151,12 +151,12 @@ export function DocumentInventory({
         <CardContent className="pt-0 space-y-3">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
             <Input
               placeholder="Filter documents..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-8 pl-8 text-xs"
+              className="h-8 pl-8 text-xs border-gray-200 bg-gray-50 rounded-lg"
             />
           </div>
 
@@ -164,12 +164,12 @@ export function DocumentInventory({
           <ScrollArea className={scrollHeight}>
             {currentDocs.length === 0 ? (
               <div className="flex flex-col items-center gap-3 py-12 text-center">
-                <PackageOpen className="h-10 w-10 text-muted-foreground/40" />
+                <PackageOpen className="h-10 w-10 text-gray-300" />
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-sm font-medium text-gray-500">
                     No documents generated yet
                   </p>
-                  <p className="text-xs text-muted-foreground/60 mt-1">
+                  <p className="text-xs text-gray-400 mt-1">
                     Start with Phase 1 to generate your first documents.
                   </p>
                 </div>
@@ -230,7 +230,7 @@ export function DocumentInventory({
                               {phaseDocs.map((doc) => (
                                 <div
                                   key={doc.id}
-                                  className="group/doc flex items-center rounded-md px-2 py-1.5 hover:bg-muted/50 transition-colors cursor-pointer"
+                                  className="group/doc flex items-center rounded-lg px-3 py-2 hover:bg-gray-50 transition-colors cursor-pointer"
                                   onClick={() => handleDocClick(doc)}
                                   onMouseEnter={() =>
                                     setHoveredDocId(doc.id)
@@ -240,7 +240,7 @@ export function DocumentInventory({
                                   }
                                 >
                                   <FileText className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0 mr-2" />
-                                  <span className="text-sm text-foreground truncate flex-1">
+                                  <span className="text-sm text-gray-900 font-medium truncate flex-1">
                                     {doc.name}
                                   </span>
 

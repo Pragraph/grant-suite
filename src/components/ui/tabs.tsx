@@ -14,7 +14,7 @@ const TabsList = React.forwardRef<
   <RadixTabs.List
     ref={ref}
     className={cn(
-      "inline-flex h-10 items-center gap-4",
+      "inline-flex h-10 items-center gap-4 border-b border-gray-200",
       className
     )}
     {...props}
@@ -29,7 +29,7 @@ const TabsTrigger = React.forwardRef<
   <RadixTabs.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap border-b-2 border-transparent px-1 pb-2 text-sm font-medium text-muted-foreground transition-all duration-fast hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:border-accent-500 data-[state=active]:text-foreground",
+      "inline-flex items-center justify-center whitespace-nowrap border-b-2 border-transparent px-1 pb-2 text-sm font-medium text-gray-500 transition-all duration-fast hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F7DF3] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:border-[#4F7DF3] data-[state=active]:text-[#4F7DF3] data-[state=active]:font-semibold",
       className
     )}
     {...props}

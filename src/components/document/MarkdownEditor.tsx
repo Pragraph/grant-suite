@@ -60,7 +60,7 @@ export function MarkdownEditor({
     return (
       <div className={cn("flex flex-col", className)}>
         <div
-          className="overflow-auto rounded-lg border border-border/50 bg-secondary p-6"
+          className="overflow-auto rounded-lg border border-gray-200 bg-white p-6"
           style={{ minHeight }}
         >
           <MarkdownRenderer content={content} />
@@ -88,9 +88,9 @@ export function MarkdownEditor({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               className={cn(
-                "w-full resize-y rounded-lg border border-border/50 bg-muted p-4",
-                "font-mono text-sm text-foreground placeholder:text-muted-foreground/50",
-                "focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-background",
+                "w-full resize-y rounded-lg border border-gray-200 bg-gray-50 p-4",
+                "font-mono text-sm text-gray-900 placeholder:text-gray-400",
+                "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white",
                 "transition-colors duration-fast"
               )}
               style={{ minHeight }}
@@ -99,7 +99,7 @@ export function MarkdownEditor({
 
           <TabsContent value="preview">
             <div
-              className="overflow-auto rounded-lg border border-border/50 bg-secondary p-6"
+              className="overflow-auto rounded-lg border border-gray-200 bg-white p-6"
               style={{ minHeight }}
             >
               {content ? (
@@ -119,9 +119,9 @@ export function MarkdownEditor({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className={cn(
-            "w-full resize-y rounded-lg border border-border/50 bg-muted p-4",
-            "font-mono text-sm text-foreground placeholder:text-muted-foreground/50",
-            "focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-background",
+            "w-full resize-y rounded-lg border border-gray-200 bg-gray-50 p-4",
+            "font-mono text-sm text-gray-900 placeholder:text-gray-400",
+            "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white",
             "transition-colors duration-fast"
           )}
           style={{ minHeight }}

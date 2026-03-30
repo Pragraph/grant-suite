@@ -22,7 +22,7 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 const STORAGE_KEY = "grant-suite-theme";
 
 function getServerSnapshot(): Theme {
-  return "dark";
+  return "light";
 }
 
 function subscribe(callback: () => void) {
@@ -32,7 +32,7 @@ function subscribe(callback: () => void) {
 
 function getSnapshot(): Theme {
   const stored = localStorage.getItem(STORAGE_KEY);
-  return stored === "light" ? "light" : "dark";
+  return stored === "dark" ? "dark" : "light";
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {

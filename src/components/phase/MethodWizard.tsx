@@ -348,8 +348,8 @@ export function MethodWizard({
         return (
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="wizard-discipline" className="text-xs font-medium text-muted-foreground">
-                Field / Discipline <span className="text-error">*</span>
+              <Label htmlFor="wizard-discipline" className="text-xs font-medium text-gray-500">
+                Field / Discipline <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="wizard-discipline"
@@ -360,8 +360,8 @@ export function MethodWizard({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="wizard-area" className="text-xs font-medium text-muted-foreground">
-                Area of Interest <span className="text-error">*</span>
+              <Label htmlFor="wizard-area" className="text-xs font-medium text-gray-500">
+                Area of Interest <span className="text-red-500">*</span>
               </Label>
               <textarea
                 id="wizard-area"
@@ -369,16 +369,16 @@ export function MethodWizard({
                 onChange={(e) => setFormValue("areaOfInterest", e.target.value)}
                 placeholder="Describe the specific area you want to explore..."
                 className={cn(
-                  "w-full min-h-25 resize-y rounded-lg border border-border/50 bg-muted p-3",
-                  "font-mono text-sm text-foreground placeholder:text-muted-foreground/50",
-                  "focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-background",
+                  "w-full min-h-25 resize-y rounded-lg border border-gray-200 bg-gray-50 p-3",
+                  "font-mono text-sm text-gray-800 placeholder:text-gray-400",
+                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white",
                 )}
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="wizard-type" className="text-xs font-medium text-muted-foreground">
-                Research Type <span className="text-error">*</span>
+              <Label htmlFor="wizard-type" className="text-xs font-medium text-gray-500">
+                Research Type <span className="text-red-500">*</span>
               </Label>
               <select
                 id="wizard-type"
@@ -386,9 +386,9 @@ export function MethodWizard({
                 onChange={(e) => setFormValue("researchType", e.target.value)}
                 aria-label="Research Type"
                 className={cn(
-                  "w-full h-9 rounded-md border border-border/50 bg-muted px-3",
-                  "text-sm text-foreground",
-                  "focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-background",
+                  "w-full h-9 rounded-md border border-gray-200 bg-gray-50 px-3",
+                  "text-sm text-gray-800",
+                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white",
                 )}
               >
                 <option value="">Select...</option>
@@ -401,7 +401,7 @@ export function MethodWizard({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="wizard-country" className="text-xs font-medium text-muted-foreground">
+                <Label htmlFor="wizard-country" className="text-xs font-medium text-gray-500">
                   Country
                 </Label>
                 <Input
@@ -413,7 +413,7 @@ export function MethodWizard({
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="wizard-career" className="text-xs font-medium text-muted-foreground">
+                <Label htmlFor="wizard-career" className="text-xs font-medium text-gray-500">
                   Career Stage
                 </Label>
                 <Input
@@ -434,7 +434,7 @@ export function MethodWizard({
         if (!compiled && step.templateId) {
           return (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">{step.description}</p>
+              <p className="text-sm text-gray-500">{step.description}</p>
               <Button onClick={() => handleCompile(step.templateId!, step.id)}>
                 Compile Prompt
               </Button>
@@ -444,8 +444,8 @@ export function MethodWizard({
 
         return (
           <div className="space-y-4">
-            <div className="max-h-80 overflow-auto rounded-lg bg-muted p-4">
-              <pre className="whitespace-pre-wrap font-mono text-sm text-foreground leading-relaxed">
+            <div className="max-h-80 overflow-auto rounded-xl bg-gray-50 border border-gray-200 p-4">
+              <pre className="whitespace-pre-wrap font-mono text-sm text-gray-800 leading-relaxed">
                 {compiled}
               </pre>
             </div>
@@ -468,7 +468,7 @@ export function MethodWizard({
                 )}
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground/70">
+            <p className="text-xs text-gray-400">
               Paste this prompt into your preferred AI tool and copy the response.
             </p>
           </div>
@@ -481,10 +481,10 @@ export function MethodWizard({
 
         return (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">{step.description}</p>
+            <p className="text-sm text-gray-500">{step.description}</p>
 
             {previewMode && output ? (
-              <div className="min-h-50 overflow-auto rounded-lg border border-border/50 bg-secondary p-6">
+              <div className="min-h-50 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-6">
                 <MarkdownRenderer content={output} />
               </div>
             ) : (
@@ -498,9 +498,9 @@ export function MethodWizard({
                 }
                 placeholder="Paste the AI output here..."
                 className={cn(
-                  "w-full min-h-50 resize-y rounded-lg border border-border/50 bg-muted p-4",
-                  "font-mono text-sm text-foreground placeholder:text-muted-foreground/50",
-                  "focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-background",
+                  "w-full min-h-50 resize-y rounded-lg border border-gray-200 bg-gray-50 p-4",
+                  "font-mono text-sm text-gray-800 placeholder:text-gray-400",
+                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white",
                 )}
               />
             )}
@@ -526,14 +526,14 @@ export function MethodWizard({
 
         return (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">{step.description}</p>
+            <p className="text-sm text-gray-500">{step.description}</p>
 
             {tool && (
               <a
                 href={tool.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-md bg-accent-500/10 px-4 py-2.5 text-sm font-medium text-accent-400 transition-colors hover:bg-accent-500/20"
+                className="inline-flex items-center gap-2 rounded-md bg-[#F0F4FF] px-4 py-2.5 text-sm font-medium text-[#4F7DF3] transition-colors hover:bg-[#4F7DF3]/10"
               >
                 <ExternalLink className="h-4 w-4" />
                 Open {tool.name}
@@ -541,20 +541,20 @@ export function MethodWizard({
             )}
 
             {tool?.instructions && (
-              <div className="rounded-lg border border-border/50 bg-muted/50 p-4 text-sm text-muted-foreground">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
                 {tool.instructions}
               </div>
             )}
 
             {queries.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">Search queries to use:</p>
+                <p className="text-xs font-medium text-gray-500">Search queries to use:</p>
                 {queries.map((query, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-2 rounded-md bg-muted px-3 py-2"
+                    className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg"
                   >
-                    <code className="flex-1 text-sm text-foreground">{query}</code>
+                    <code className="flex-1 text-sm text-gray-800">{query}</code>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -562,7 +562,7 @@ export function MethodWizard({
                       onClick={() => handleCopy(query, `query-${i}`)}
                     >
                       {copyFeedback === `query-${i}` ? (
-                        <Check className="h-3.5 w-3.5 text-success" />
+                        <Check className="h-3.5 w-3.5 text-emerald-500" />
                       ) : (
                         <Copy className="h-3.5 w-3.5" />
                       )}
@@ -583,13 +583,13 @@ export function MethodWizard({
 
         return (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">{step.description}</p>
+            <p className="text-sm text-gray-500">{step.description}</p>
 
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">
+              <Label className="text-xs font-medium text-gray-500">
                 {step.collectionLabel || "Items"}{" "}
                 {step.collectionMinItems && (
-                  <span className="text-muted-foreground/60">
+                  <span className="text-gray-400">
                     (minimum {step.collectionMinItems})
                   </span>
                 )}
@@ -599,17 +599,17 @@ export function MethodWizard({
                 onChange={(e) => setFormValue(inputName, e.target.value)}
                 placeholder="Enter one item per line..."
                 className={cn(
-                  "w-full min-h-50 resize-y rounded-lg border border-border/50 bg-muted p-4",
-                  "font-mono text-sm text-foreground placeholder:text-muted-foreground/50",
-                  "focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-background",
+                  "w-full min-h-50 resize-y rounded-lg border border-gray-200 bg-gray-50 p-4",
+                  "font-mono text-sm text-gray-800 placeholder:text-gray-400",
+                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white",
                 )}
               />
             </div>
 
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-gray-500">
               {lines.length} item{lines.length !== 1 ? "s" : ""} entered
               {step.collectionMinItems && lines.length < step.collectionMinItems && (
-                <span className="text-warning">
+                <span className="text-amber-500">
                   {" "}— need {step.collectionMinItems - lines.length} more
                 </span>
               )}
@@ -626,11 +626,11 @@ export function MethodWizard({
   // ── Render stepper ────────────────────────────────────────────────────────
 
   return (
-    <Card className="border-l-[3px] border-l-phase-1">
+    <Card className="border-l-[3px] border-l-phase-1 bg-white border border-gray-200 rounded-xl shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base">{methodName}</CardTitle>
-          <Badge variant="outline" className="text-[10px] shrink-0">
+          <CardTitle className="text-base text-gray-900">{methodName}</CardTitle>
+          <Badge variant="outline" className="text-[10px] shrink-0 text-gray-500 border-gray-200">
             Step {state.currentStep + 1} of {steps.length}
           </Badge>
         </div>
@@ -654,10 +654,10 @@ export function MethodWizard({
                   i === state.currentStep
                     ? "bg-phase-1 text-white"
                     : state.completedSteps.includes(i)
-                      ? "bg-success/20 text-success"
-                      : "bg-muted text-muted-foreground",
+                      ? "bg-emerald-100 text-emerald-500"
+                      : "bg-gray-100 text-gray-400",
                   i <= Math.max(...state.completedSteps, state.currentStep, 0)
-                    ? "cursor-pointer hover:ring-2 hover:ring-phase-1/30"
+                    ? "cursor-pointer hover:ring-2 hover:ring-[#4F7DF3]/30"
                     : "cursor-not-allowed opacity-50",
                 )}
               >
@@ -671,7 +671,7 @@ export function MethodWizard({
                 <div
                   className={cn(
                     "h-0.5 flex-1",
-                    state.completedSteps.includes(i) ? "bg-success/40" : "bg-border/50",
+                    state.completedSteps.includes(i) ? "bg-emerald-300" : "bg-gray-200",
                   )}
                 />
               )}
@@ -681,7 +681,7 @@ export function MethodWizard({
 
         {/* ── Step title ──────────────────────────────────────────────── */}
         <div>
-          <h3 className="text-sm font-medium text-foreground">
+          <h3 className="text-sm font-medium text-gray-900">
             {currentStepConfig.title}
           </h3>
         </div>
@@ -702,7 +702,7 @@ export function MethodWizard({
         </AnimatePresence>
 
         {/* ── Navigation ─────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between border-t border-border/50 pt-4">
+        <div className="flex items-center justify-between border-t border-gray-200 pt-4">
           <div className="flex items-center gap-2">
             {state.currentStep > 0 && (
               <Button variant="secondary" size="sm" onClick={goBack}>

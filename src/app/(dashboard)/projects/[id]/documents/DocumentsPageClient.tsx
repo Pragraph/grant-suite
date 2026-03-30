@@ -90,10 +90,10 @@ export function DocumentsPageClient({ id: _idProp }: { id: string }) {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-2xl font-heading font-bold text-foreground">
+          <h1 className="text-2xl font-heading font-bold text-gray-900">
             Documents
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-gray-500 mt-1">
             {project.title} &middot; {currentDocs.length} document
             {currentDocs.length !== 1 ? "s" : ""}
           </p>

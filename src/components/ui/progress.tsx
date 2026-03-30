@@ -12,13 +12,13 @@ const Progress = React.forwardRef<
   <RadixProgress.Root
     ref={ref}
     className={cn(
-      "relative h-1 w-full overflow-hidden rounded-full bg-muted",
+      "relative h-1 w-full overflow-hidden rounded-full bg-gray-200",
       className
     )}
     {...props}
   >
     <RadixProgress.Indicator
-      className="h-full rounded-full bg-gradient-to-r from-accent-500 to-accent-400 transition-all duration-[600ms] ease-out"
+      className="h-full rounded-full bg-[#4F7DF3] transition-all duration-[600ms] ease-out"
       style={{ width: `${value ?? 0}%` }}
     />
   </RadixProgress.Root>

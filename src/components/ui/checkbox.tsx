@@ -13,7 +13,7 @@ const Checkbox = React.forwardRef<
   <RadixCheckbox.Root
     ref={ref}
     className={cn(
-      "peer h-4 w-4 shrink-0 rounded-sm border border-border shadow-xs transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-accent-500 data-[state=checked]:bg-accent-500 data-[state=checked]:text-white",
+      "peer h-4 w-4 shrink-0 rounded-sm border border-gray-200 shadow-xs transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F7DF3] focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-[#4F7DF3] data-[state=checked]:bg-[#4F7DF3] data-[state=checked]:text-white",
       className
     )}
     {...props}

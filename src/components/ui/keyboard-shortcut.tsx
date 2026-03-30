@@ -11,7 +11,7 @@ function KeyboardShortcut({ keys, className }: KeyboardShortcutProps) {
       {keys.map((key, i) => (
         <kbd
           key={i}
-          className="inline-flex h-5 min-w-[20px] items-center justify-center rounded border border-border/50 bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
+          className="inline-flex h-5 min-w-[20px] items-center justify-center rounded border border-gray-200 bg-gray-50 px-1.5 font-mono text-[10px] font-medium text-gray-500"
         >
           {key}
         </kbd>

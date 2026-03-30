@@ -343,10 +343,10 @@ export function VersionHistory({
                       initial={{ opacity: 0, y: 4 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.03 }}
-                      className={`group flex items-center gap-3 rounded-md px-3 py-2.5 transition-colors ${
+                      className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors ${
                         isSelected
-                          ? "bg-accent-500/10 border border-accent-500/30"
-                          : "hover:bg-muted/50"
+                          ? "bg-[#F0F4FF] border border-[#4F7DF3]/30"
+                          : "hover:bg-gray-50"
                       } ${diffMode ? "cursor-pointer" : ""}`}
                       onClick={diffMode ? () => handleDiffSelect(ver) : undefined}
                     >

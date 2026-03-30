@@ -252,7 +252,7 @@ function RoleMatrixUI({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-phase-4" />
-            <p className="text-sm font-medium text-foreground">Role Matrix</p>
+            <p className="text-sm font-medium text-gray-900">Role Matrix</p>
             <Badge className="text-[10px] bg-phase-4/20 text-phase-4">
               {roles.length} roles
             </Badge>
@@ -265,15 +265,15 @@ function RoleMatrixUI({
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-phase-4/20">
-                <th className="text-left py-1.5 px-2 text-muted-foreground font-medium">Role</th>
-                <th className="text-left py-1.5 px-2 text-muted-foreground font-medium">Name</th>
-                <th className="text-left py-1.5 px-2 text-muted-foreground font-medium">
+                <th className="text-left py-1.5 px-2 text-gray-500 font-medium">Role</th>
+                <th className="text-left py-1.5 px-2 text-gray-500 font-medium">Name</th>
+                <th className="text-left py-1.5 px-2 text-gray-500 font-medium">
                   Institution
                 </th>
-                <th className="text-left py-1.5 px-2 text-muted-foreground font-medium">
+                <th className="text-left py-1.5 px-2 text-gray-500 font-medium">
                   Responsibility
                 </th>
-                <th className="text-left py-1.5 px-2 text-muted-foreground font-medium w-20">
+                <th className="text-left py-1.5 px-2 text-gray-500 font-medium w-20">
                   Effort %
                 </th>
                 <th className="w-8" />
@@ -281,7 +281,7 @@ function RoleMatrixUI({
             </thead>
             <tbody>
               {roles.map((role) => (
-                <tr key={role.id} className="border-b border-border/30">
+                <tr key={role.id} className="border-b border-gray-100">
                   <td className="py-1.5 px-1">
                     <Input
                       value={role.role}
@@ -329,7 +329,7 @@ function RoleMatrixUI({
                       size="sm"
                       variant="ghost"
                       onClick={() => removeRole(role.id)}
-                      className="h-6 w-6 p-0 text-muted-foreground hover:text-error"
+                      className="h-6 w-6 p-0 text-gray-500 hover:text-red-500"
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -340,7 +340,7 @@ function RoleMatrixUI({
           </table>
         </div>
         {roles.length === 0 && (
-          <p className="text-xs text-muted-foreground text-center py-4">
+          <p className="text-xs text-gray-500 text-center py-4">
             No roles parsed. Click &quot;Add Role&quot; to add team members manually.
           </p>
         )}
@@ -373,16 +373,16 @@ function LettersTrackerUI({
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-3">
           <Mail className="h-4 w-4 text-phase-4" />
-          <p className="text-sm font-medium text-foreground">Letters of Support Tracker</p>
+          <p className="text-sm font-medium text-gray-900">Letters of Support Tracker</p>
           <Badge className="text-[10px] bg-phase-4/20 text-phase-4">
             {completedCount}/{letters.length} received
           </Badge>
         </div>
 
         {hasPartnership && (
-          <div className="flex items-start gap-2 rounded-md border border-info/30 bg-info/5 p-2.5 mb-3">
-            <Sparkles className="h-3.5 w-3.5 text-info mt-0.5 shrink-0" />
-            <p className="text-[11px] text-muted-foreground">
+          <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-2.5 mb-3">
+            <Sparkles className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
+            <p className="text-[11px] text-gray-500">
               Partnership letters from Phase 3A are tracked separately in the Partnership module.
             </p>
           </div>
@@ -393,9 +393,9 @@ function LettersTrackerUI({
             {letters.map((letter) => (
               <div
                 key={letter.id}
-                className="flex items-center gap-3 rounded-md border border-border/30 bg-background/50 px-3 py-2"
+                className="flex items-center gap-3 rounded-md border border-gray-200 bg-white px-3 py-2"
               >
-                <span className="text-xs font-medium text-foreground flex-1 truncate">
+                <span className="text-xs font-medium text-gray-900 flex-1 truncate">
                   {letter.memberName || "Unnamed"}
                 </span>
                 <div className="flex items-center gap-3 shrink-0">
@@ -404,14 +404,14 @@ function LettersTrackerUI({
                       checked={letter.drafted}
                       onCheckedChange={() => toggleLetter(letter.id, "drafted")}
                     />
-                    <span className="text-[10px] text-muted-foreground">Drafted</span>
+                    <span className="text-[10px] text-gray-500">Drafted</span>
                   </label>
                   <label className="flex items-center gap-1.5 cursor-pointer">
                     <Checkbox
                       checked={letter.sent}
                       onCheckedChange={() => toggleLetter(letter.id, "sent")}
                     />
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-[10px] text-gray-500">
                       <Send className="h-2.5 w-2.5 inline mr-0.5" />
                       Sent
                     </span>
@@ -421,7 +421,7 @@ function LettersTrackerUI({
                       checked={letter.received}
                       onCheckedChange={() => toggleLetter(letter.id, "received")}
                     />
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-[10px] text-gray-500">
                       <Inbox className="h-2.5 w-2.5 inline mr-0.5" />
                       Received
                     </span>
@@ -431,7 +431,7 @@ function LettersTrackerUI({
             ))}
           </div>
         ) : (
-          <p className="text-xs text-muted-foreground text-center py-4">
+          <p className="text-xs text-gray-500 text-center py-4">
             Complete Step 1 and add team roles to populate letter tracking.
           </p>
         )}
@@ -544,7 +544,7 @@ function BudgetTableUI({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <DollarSign className="h-4 w-4 text-phase-4" />
-            <p className="text-sm font-medium text-foreground">Budget Table</p>
+            <p className="text-sm font-medium text-gray-900">Budget Table</p>
           </div>
           <Button size="sm" variant="ghost" onClick={exportCSV} className="h-7 text-xs gap-1">
             <Download className="h-3 w-3" /> Export CSV
@@ -557,8 +557,8 @@ function BudgetTableUI({
             className={cn(
               "flex items-center justify-between rounded-md border px-3 py-2 mb-3 text-xs",
               isOverBudget
-                ? "border-error/30 bg-error/5 text-error"
-                : "border-success/30 bg-success/5 text-success",
+                ? "border-red-200 bg-red-50 text-red-600"
+                : "border-emerald-200 bg-emerald-50 text-emerald-600",
             )}
           >
             <span>
@@ -587,9 +587,9 @@ function BudgetTableUI({
             return (
               <div key={cat}>
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs font-medium text-foreground">{cat}</p>
+                  <p className="text-xs font-medium text-gray-900">{cat}</p>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-[10px] text-gray-500">
                       {currency} {fmt(catTotal)}
                     </span>
                     <Button
@@ -606,21 +606,21 @@ function BudgetTableUI({
                   <table className="w-full text-xs mb-1">
                     <thead>
                       <tr className="border-b border-phase-4/20">
-                        <th className="text-left py-1 px-1 text-muted-foreground font-medium w-32">
+                        <th className="text-left py-1 px-1 text-gray-500 font-medium w-32">
                           Item
                         </th>
                         {Array.from({ length: years }, (_, i) => (
                           <th
                             key={i}
-                            className="text-right py-1 px-1 text-muted-foreground font-medium w-24"
+                            className="text-right py-1 px-1 text-gray-500 font-medium w-24"
                           >
                             Year {i + 1}
                           </th>
                         ))}
-                        <th className="text-right py-1 px-1 text-muted-foreground font-medium w-24">
+                        <th className="text-right py-1 px-1 text-gray-500 font-medium w-24">
                           Total
                         </th>
-                        <th className="text-left py-1 px-1 text-muted-foreground font-medium">
+                        <th className="text-left py-1 px-1 text-gray-500 font-medium">
                           Justification
                         </th>
                         <th className="w-6" />
@@ -630,7 +630,7 @@ function BudgetTableUI({
                       {catRows.map((row) => {
                         const rowTotal = row.amounts.reduce((a, b) => a + b, 0);
                         return (
-                          <tr key={row.id} className="border-b border-border/20">
+                          <tr key={row.id} className="border-b border-gray-100">
                             <td className="py-1 px-0.5">
                               <Input
                                 value={row.item}
@@ -652,7 +652,7 @@ function BudgetTableUI({
                                 />
                               </td>
                             ))}
-                            <td className="py-1 px-1 text-right text-foreground font-medium">
+                            <td className="py-1 px-1 text-right text-gray-900 font-medium">
                               {fmt(rowTotal)}
                             </td>
                             <td className="py-1 px-0.5">
@@ -670,7 +670,7 @@ function BudgetTableUI({
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => removeRow(row.id)}
-                                className="h-5 w-5 p-0 text-muted-foreground hover:text-error"
+                                className="h-5 w-5 p-0 text-gray-500 hover:text-red-500"
                               >
                                 <Trash2 className="h-2.5 w-2.5" />
                               </Button>
@@ -682,7 +682,7 @@ function BudgetTableUI({
                   </table>
                 )}
                 {catRows.length === 0 && (
-                  <p className="text-[10px] text-muted-foreground/50 mb-1 pl-1">
+                  <p className="text-[10px] text-gray-400 mb-1 pl-1">
                     No items. Click Add to add a row.
                   </p>
                 )}
@@ -694,16 +694,16 @@ function BudgetTableUI({
         {/* Grand totals */}
         <div className="mt-3 pt-3 border-t border-phase-4/20">
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-medium text-foreground flex-1">Grand Total</span>
+            <span className="font-medium text-gray-900 flex-1">Grand Total</span>
             {yearTotals.map((yt, i) => (
-              <span key={i} className="w-24 text-right text-muted-foreground">
+              <span key={i} className="w-24 text-right text-gray-500">
                 {fmt(yt)}
               </span>
             ))}
             <span
               className={cn(
                 "w-24 text-right font-bold",
-                isOverBudget ? "text-error" : "text-foreground",
+                isOverBudget ? "text-red-500" : "text-gray-900",
               )}
             >
               {currency} {fmt(grandTotal)}
@@ -1139,8 +1139,8 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
       <div className="flex items-center gap-4">
         <PhaseIcon phase={4} size="lg" active />
         <div className="flex-1">
-          <h1 className="text-2xl font-heading font-bold text-foreground">{PHASE_4.name}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-2xl font-bold text-gray-900">{PHASE_4.name}</h1>
+          <p className="text-sm text-gray-500 mt-1">
             Define your team composition, construct a detailed budget, and assemble the
             Budget_Team_Plan.md — the financial backbone of your proposal.
           </p>
@@ -1149,7 +1149,7 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
 
       {/* ── Progress Bar ───────────────────────────────────────────────── */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center justify-between text-sm text-gray-500 font-medium">
           <span>Phase Progress</span>
           <span>
             {phase4Steps.filter((s) => getStepStatus(s.step) === "complete").length} of{" "}
@@ -1178,7 +1178,7 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                 <div
                   className={cn(
                     "absolute left-3.75 top-9 w-0.5 h-[calc(100%-20px)]",
-                    isComplete ? "bg-phase-4" : "bg-border/50",
+                    isComplete ? "bg-phase-4" : "bg-gray-200",
                   )}
                 />
               )}
@@ -1188,7 +1188,7 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                 onClick={() => setActiveStep(isActive ? null : stepDef.step)}
                 className={cn(
                   "flex w-full items-center gap-3 py-3 text-left transition-colors",
-                  "hover:bg-muted/50 rounded-lg px-2 -mx-2",
+                  "hover:bg-gray-50 rounded-xl px-2 -mx-2",
                 )}
               >
                 {/* Timeline dot */}
@@ -1200,8 +1200,8 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                       : isCurrent
                         ? "border-phase-4 bg-transparent text-phase-4"
                         : unlocked
-                          ? "border-border/50 bg-transparent text-muted-foreground/50"
-                          : "border-border/30 bg-transparent text-muted-foreground/30",
+                          ? "border-gray-200 bg-transparent text-gray-400"
+                          : "border-gray-200 bg-transparent text-gray-300",
                   )}
                 >
                   {isComplete ? (
@@ -1217,12 +1217,12 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                       className={cn(
                         "text-sm font-medium",
                         isComplete
-                          ? "text-foreground"
+                          ? "text-gray-900"
                           : isCurrent
-                            ? "text-foreground"
+                            ? "text-gray-900"
                             : unlocked
-                              ? "text-muted-foreground"
-                              : "text-muted-foreground/50",
+                              ? "text-gray-600"
+                              : "text-gray-400",
                       )}
                     >
                       {stepDef.name}
@@ -1237,7 +1237,7 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                     )}
                   </div>
                   {isComplete && stepDocs.length > 0 && (
-                    <p className="text-xs text-muted-foreground/70 mt-0.5 truncate">
+                    <p className="text-xs text-gray-400 mt-0.5 truncate">
                       {stepDocs.map((d) => d.canonicalName).join(", ")} —{" "}
                       {stepDocs.reduce((sum, d) => sum + d.wordCount, 0).toLocaleString()} words
                     </p>
@@ -1249,7 +1249,7 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                     <StepIcon
                       className={cn(
                         "h-4 w-4",
-                        isComplete ? "text-phase-4" : "text-muted-foreground/40",
+                        isComplete ? "text-phase-4" : "text-gray-300",
                       )}
                     />
                   )}
@@ -1260,7 +1260,7 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                   )}
                   <ChevronDown
                     className={cn(
-                      "h-4 w-4 text-muted-foreground transition-transform",
+                      "h-4 w-4 text-gray-400 transition-transform",
                       isActive && "rotate-180",
                     )}
                   />
@@ -1322,12 +1322,12 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                           {/* Budget meta inputs (shown before StepExecutor) */}
                           <Card className="border-phase-4/20">
                             <CardContent className="p-4 space-y-3">
-                              <p className="text-xs font-medium text-muted-foreground">
+                              <p className="text-xs font-medium text-gray-500">
                                 Budget Parameters
                               </p>
                               <div className="grid grid-cols-3 gap-3">
                                 <div className="space-y-1">
-                                  <Label className="text-xs text-muted-foreground">
+                                  <Label className="text-xs text-gray-500">
                                     Budget Limit
                                   </Label>
                                   <Input
@@ -1344,7 +1344,7 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                                   />
                                 </div>
                                 <div className="space-y-1">
-                                  <Label className="text-xs text-muted-foreground">
+                                  <Label className="text-xs text-gray-500">
                                     Duration (years)
                                   </Label>
                                   <Input
@@ -1362,13 +1362,13 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                                   />
                                 </div>
                                 <div className="space-y-1">
-                                  <Label className="text-xs text-muted-foreground">Currency</Label>
+                                  <Label className="text-xs text-gray-500">Currency</Label>
                                   <select
                                     value={budgetMeta.currency}
                                     onChange={(e) =>
                                       setBudgetMeta((m) => ({ ...m, currency: e.target.value }))
                                     }
-                                    className="w-full h-8 rounded-md border border-border/50 bg-muted px-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-accent-500"
+                                    className="w-full h-8 rounded-md border border-gray-200 bg-gray-50 px-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-accent-500"
                                   >
                                     <option value="USD">USD ($)</option>
                                     <option value="EUR">EUR (€)</option>
@@ -1439,11 +1439,11 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                             >
                               <div className="flex items-center gap-2 mb-2">
                                 <Sparkles className="h-5 w-5 text-accent-400" />
-                                <p className="text-sm font-medium text-foreground">
+                                <p className="text-sm font-medium text-gray-900">
                                   Budget_Team_Plan.md Assembled
                                 </p>
                               </div>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-xs text-gray-500">
                                 The combined team strategy, budget, and justification document is
                                 ready. This feeds into Phase 5 proposal writing.
                               </p>

@@ -18,7 +18,7 @@ const Command = React.forwardRef<
   <CommandPrimitive
     ref={ref}
     className={cn(
-      "flex h-full w-full flex-col overflow-hidden rounded-lg bg-secondary text-foreground",
+      "flex h-full w-full flex-col overflow-hidden rounded-lg bg-popover text-popover-foreground",
       className
     )}
     {...props}
@@ -46,12 +46,12 @@ const CommandInput = React.forwardRef<
   React.ComponentRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className="flex items-center border-b border-border/50 px-3">
-    <Search className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
+  <div className="flex items-center border-b border-border px-3">
+    <Search className="mr-2 h-4 w-4 shrink-0 text-gray-400" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        "flex h-11 w-full rounded-md bg-transparent py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-11 w-full rounded-md bg-transparent py-3 text-sm text-gray-900 outline-none placeholder:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}
@@ -108,7 +108,7 @@ const CommandSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 h-px bg-border/50", className)}
+    className={cn("-mx-1 h-px bg-border", className)}
     {...props}
   />
 ));
@@ -121,7 +121,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default gap-2 select-none items-center rounded-md px-2 py-1.5 text-sm text-foreground outline-none data-[selected=true]:bg-muted data-[selected=true]:text-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      "relative flex cursor-default gap-2 select-none items-center rounded-md px-2 py-1.5 text-sm text-gray-700 outline-none data-[selected=true]:bg-gray-50 data-[selected=true]:text-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
       className
     )}
     {...props}
