@@ -396,7 +396,7 @@ export default function LandingPage() {
 
             {/* Right: Privacy note */}
             <p className="text-gray-400 text-sm max-w-xs">
-              Research Grant Suite runs entirely in your browser. No data leaves your device. Built for Malaysian and SEA researchers.
+              Research Grant Suite runs entirely in your browser. Your proposals, grant data, and research details never leave your device — nothing is stored on any server.
             </p>
           </div>
 
