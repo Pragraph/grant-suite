@@ -266,7 +266,8 @@ function PsychologyHighlightsUI({ content }: { content: string }) {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase2Client({ projectId: _projectIdProp }: { projectId: string }) {
+export function Phase2Client({ projectId: _pid }: { projectId: string }) {
+  void _pid; // extracted from URL instead
   const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();

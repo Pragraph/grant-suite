@@ -167,7 +167,8 @@ type PatentSubStep = "search" | "novelty";
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase3Client({ projectId: _projectIdProp }: { projectId: string }) {
+export function Phase3Client({ projectId: _pid }: { projectId: string }) {
+  void _pid; // extracted from URL instead
   const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress } = useProgressStore();

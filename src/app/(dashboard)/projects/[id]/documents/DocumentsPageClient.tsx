@@ -16,7 +16,8 @@ import type { Project } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { DocumentInventory } from "@/components/document/DocumentInventory";
 
-export function DocumentsPageClient({ id: _idProp }: { id: string }) {
+export function DocumentsPageClient({ id: _id }: { id: string }) {
+  void _id; // extracted from URL instead
   const { setActiveProject, activeProject } = useProjectStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();

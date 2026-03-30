@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
   ChevronDown,
-  ClipboardCheck,
   Eye,
-  FileSearch,
   BrainCircuit,
   Shield,
   Sparkles,
@@ -36,10 +34,7 @@ import { Badge } from "@/components/ui/badge";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Progress } from "@/components/ui/progress";
 import {
-  Tooltip,
-  TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { StepExecutor } from "@/components/phase/StepExecutor";
 import { MarkdownRenderer } from "@/components/document/MarkdownRenderer";
@@ -592,13 +587,11 @@ function ComplianceResultUI({ content }: { content: string }) {
 function OptimizationDiffView({
   originalContent,
   optimizedContent,
-  projectId,
   onAccept,
   onKeepOriginal,
 }: {
   originalContent: string;
   optimizedContent: string;
-  projectId: string;
   onAccept: () => void;
   onKeepOriginal: () => void;
 }) {
@@ -691,7 +684,8 @@ function OptimizationDiffView({
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase6Client({ projectId: _projectIdProp }: { projectId: string }) {
+export function Phase6Client({ projectId: _pid }: { projectId: string }) {
+  void _pid; // extracted from URL instead
   const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion, updateStepStatus } = useProgressStore();
@@ -727,15 +721,6 @@ export function Phase6Client({ projectId: _projectIdProp }: { projectId: string 
       return progress.phases[6]?.steps[stepNum] || "not-started";
     },
     [progress],
-  );
-
-  const getStepDocuments = useCallback(
-    (stepNum: number) => {
-      return documents.filter(
-        (d) => d.projectId === projectId && d.phase === 6 && d.step === stepNum && d.isCurrent,
-      );
-    },
-    [documents, projectId],
   );
 
   const isStepUnlocked = useCallback(
@@ -852,8 +837,6 @@ export function Phase6Client({ projectId: _projectIdProp }: { projectId: string 
             const isCurrent = status !== "not-started" && status !== "complete";
             const unlocked = isStepUnlocked(stepDef.step);
             const meta = STEP_META[stepDef.step];
-            const StepIcon = meta?.icon;
-
             return (
               <div key={stepDef.step} className="relative">
                 {/* Timeline line */}
@@ -1009,7 +992,6 @@ export function Phase6Client({ projectId: _projectIdProp }: { projectId: string 
                               <OptimizationDiffView
                                 originalContent={originalProposal}
                                 optimizedContent={getDocContent("Final_Proposal.md") || ""}
-                                projectId={projectId}
                                 onAccept={handleAcceptOptimized}
                                 onKeepOriginal={handleKeepOriginal}
                               />

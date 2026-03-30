@@ -33,14 +33,10 @@ import type { StepStatus } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Progress } from "@/components/ui/progress";
 import {
-  Tooltip,
-  TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { StepExecutor, type FormFieldConfig } from "@/components/phase/StepExecutor";
 
@@ -342,7 +338,8 @@ function ResponseResultUI({
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase7Client({ projectId: _projectIdProp }: { projectId: string }) {
+export function Phase7Client({ projectId: _pid }: { projectId: string }) {
+  void _pid; // extracted from URL instead
   const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();

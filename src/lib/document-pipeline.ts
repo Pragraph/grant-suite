@@ -78,6 +78,7 @@ class DocumentPipeline {
    * Returns all current documents for a project from the store.
    */
   getAvailableDocuments(_projectId: string): Document[] {
+    void _projectId; // documents are filtered from store, not by project
     const { documents } = useDocumentStore.getState();
     return documents.filter((d: Document) => d.isCurrent);
   }

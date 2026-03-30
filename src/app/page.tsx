@@ -141,6 +141,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
           {/* Left: Logo */}
           <div className="flex items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="Grant Suite" className="h-8 object-contain" />
             <span className="text-gray-900 font-bold text-lg ml-2">Grant Suite</span>
           </div>
@@ -245,6 +246,7 @@ export default function LandingPage() {
           <div className="overflow-hidden py-8">
             <div className="logo-track">
               {[...universities, ...universities].map((uni, i) => (
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   key={`${uni.name}-${i}`}
                   src={uni.logo}
@@ -408,6 +410,7 @@ export default function LandingPage() {
             {/* Left: Logo + Attribution */}
             <div>
               <div className="flex items-center gap-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/logo.png"
                   alt="Grant Suite"

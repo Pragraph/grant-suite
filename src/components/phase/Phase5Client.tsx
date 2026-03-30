@@ -361,7 +361,8 @@ function CitationHighlights({ content }: { content: string }) {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase5Client({ projectId: _projectIdProp }: { projectId: string }) {
+export function Phase5Client({ projectId: _pid }: { projectId: string }) {
+  void _pid; // extracted from URL instead
   const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();

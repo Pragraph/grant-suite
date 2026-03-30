@@ -102,6 +102,7 @@ function SidebarContent({
               transition={{ duration: 0.15 }}
               className="flex items-center gap-2"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.png" alt="Grant Suite" className="h-6" />
               <span className="font-heading text-sm font-bold text-sidebar-foreground">
                 Grant Suite
@@ -115,6 +116,7 @@ function SidebarContent({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.png" alt="Grant Suite" className="h-6" />
             </motion.div>
           )}
