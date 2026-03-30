@@ -50,19 +50,19 @@ const features = [
     icon: Zap,
     title: "Smart Prompt Compilation",
     description:
-      "Your project details are automatically injected into expert-crafted prompts. Copy, paste into any AI tool, get precision results.",
+      "Your grant details — FRGS criteria, MyGRANTS fields, evaluator weights — are injected into expert-crafted prompts. Copy, paste into any AI tool, get precision results.",
   },
   {
     icon: Brain,
     title: "Evaluator Psychology Engine",
     description:
-      "16 evidence-based psychological triggers mapped to your proposal. Not just writing — strategic persuasion.",
+      "16 evidence-based psychological triggers mapped to your proposal. Optimised for MOHE panel review dynamics and scoring rubrics.",
   },
   {
     icon: FileOutput,
     title: "Document Pipeline",
     description:
-      "Every output feeds the next phase. Track progress, version documents, export when ready. Zero manual copying between phases.",
+      "Every output feeds the next phase. From Grant_Intelligence.md through to your final proposal — track progress, version documents, and export when ready.",
   },
 ];
 
@@ -74,21 +74,21 @@ const steps = [
     icon: ClipboardCopy,
     title: "Fill in your project details",
     description:
-      "Discipline, country, funder, career stage — the app tailors everything to your context.",
+      "Select your grant scheme (FRGS, PRGS, TRGS, LRGS, or international), discipline, and career stage. The app tailors everything to your context.",
   },
   {
     number: 2,
     icon: MessageSquare,
     title: "Copy compiled prompts to your AI tool",
     description:
-      "ChatGPT, Claude, Gemini — your choice. Prompts are pre-loaded with your project data.",
+      "ChatGPT, Claude, Gemini — your choice. Prompts come pre-loaded with your grant criteria and MyGRANTS requirements.",
   },
   {
     number: 3,
     icon: FileCheck,
     title: "Paste outputs back and build your proposal",
     description:
-      "The app tracks everything, enforces quality gates, and assembles your final document.",
+      "The app tracks everything, enforces quality gates, and assembles your final document ready for MyGRANTS submission.",
   },
 ];
 
@@ -100,11 +100,11 @@ const universities = [
   { name: "USM", logo: "https://dsxi.perdanauniversity.edu.my/wp-content/uploads/2017/01/logo-usm-baru-transparent.png" },
   { name: "UTM", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/UTM-LOGO-FULL.png/1280px-UTM-LOGO-FULL.png" },
   { name: "UPM", logo: "https://uc.searca.org/templates/yootheme/cache/bb/UPM-revised%20logo-bbcf002e.png" },
-  { name: "IIUM", logo: "https://office.iium.edu.my/ocap/wp-content/uploads/sites/2/2023/08/logo-IIUM-ori-768x225-1.png" },
-  { name: "UNIMAS", logo: "https://www.unimas.my/images/logo/glow2.png" },
   { name: "UiTM", logo: "https://korporat.uitm.edu.my/images/download/2019/LogoUiTM.png" },
-  { name: "Universiti Tenaga Nasional", logo: "https://vectorise.net/logo/wp-content/uploads/2019/08/Logo-Universiti-Tenaga-Nasional-UNITEN.png" },
-  { name: "Taylor's University", logo: "https://klt.edu.my/wp-content/uploads/2021/08/taylor-uni-logo.png" },
+  { name: "UNIMAS", logo: "https://www.unimas.my/images/logo/glow2.png" },
+  { name: "IIUM", logo: "https://office.iium.edu.my/ocap/wp-content/uploads/sites/2/2023/08/logo-IIUM-ori-768x225-1.png" },
+  { name: "UniSZA", logo: "https://www.unisza.edu.my/images/logo/logo-unisza.png" },
+  { name: "UMS", logo: "https://www.ums.edu.my/v5/images/logo-ums.png" },
 ];
 
 // ─── Stats data ─────────────────────────────────────────────────────────────
@@ -112,7 +112,7 @@ const universities = [
 const stats = [
   { value: "46", label: "AI prompt templates" },
   { value: "7", label: "Systematic phases" },
-  { value: "16", label: "Evaluator psychology triggers" },
+  { value: "5+", label: "Malaysian grant schemes supported" },
 ];
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -200,20 +200,20 @@ export default function LandingPage() {
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <span className="section-badge mb-6">Open-source · Free forever</span>
+          <span className="section-badge mb-6">Open-source · Free forever · Built for Malaysian researchers</span>
 
           <h1
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight leading-tight mb-5"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Write winning grant proposals with{" "}
+            Win FRGS, PRGS & competitive grants with{" "}
             <br />
             <span className="text-gradient-blue">AI-guided precision</span>
           </h1>
 
           <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed mb-8">
-            7-phase system that transforms your research idea into a
-            competition-ready proposal. From discovery to submission.
+            7-phase system built for Malaysian and SEA researchers. From research
+            idea to MyGRANTS-ready proposal — FRGS, PRGS, TRGS, LRGS, and beyond.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -240,7 +240,7 @@ export default function LandingPage() {
       <section className="bg-white py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <p className="text-center text-sm font-medium text-gray-500 uppercase tracking-wider mb-8">
-            Trusted by scholars in top universities in Malaysia
+            Trusted by researchers across Malaysian public universities
           </p>
 
           <div className="overflow-hidden py-8">
@@ -289,7 +289,7 @@ export default function LandingPage() {
             Seven phases. One complete system.
           </h2>
           <p className="text-gray-500">
-            Each phase builds on the last — no gaps, no guesswork.
+            Each phase builds on the last — from discovery to MyGRANTS submission.
           </p>
 
           <div className="max-w-6xl mx-auto mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -327,7 +327,7 @@ export default function LandingPage() {
             Built different
           </h2>
           <p className="text-gray-500">
-            Not another AI wrapper. A systematic proposal-building engine.
+            Not another AI wrapper. A systematic proposal-building engine built for MOHE grant applications.
           </p>
 
           <div className="max-w-4xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -392,7 +392,7 @@ export default function LandingPage() {
             Start building your proposal today
           </h2>
           <p className="text-gray-500 mb-8">
-            Free to use. No account needed. No API keys required.
+            Free to use. No account needed. No API keys required. Your data never leaves your browser.
           </p>
           <button
             onClick={() => window.location.assign("/projects")}
@@ -453,7 +453,7 @@ export default function LandingPage() {
 
             {/* Right: Privacy note */}
             <p className="text-gray-400 text-sm max-w-xs">
-              Grant Suite runs entirely in your browser. No data leaves your device.
+              Grant Suite runs entirely in your browser. No data leaves your device. Built for Malaysian and SEA researchers.
             </p>
           </div>
 

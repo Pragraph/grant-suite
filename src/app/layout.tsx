@@ -25,8 +25,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Grant Suite — Write winning grant proposals with AI-guided precision',
-  description: '7-phase system that transforms your research idea into a competition-ready proposal. From discovery to submission.',
+  title: 'Grant Suite — AI-Powered Grant Proposal Builder for Malaysian Researchers',
+  description: 'Build winning FRGS, PRGS, TRGS, and LRGS proposals with a 7-phase AI-guided system. Trusted by Malaysian university researchers. Free and open-source.',
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
