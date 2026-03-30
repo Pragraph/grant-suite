@@ -167,7 +167,10 @@ export default function LandingPage() {
           >
             Win research grants with{" "}
             <br />
-            <span className="text-gradient-blue">AI-guided precision</span>
+            <span
+  className="text-gradient-blue"
+  style={{ background: "linear-gradient(135deg, #2B49C7, #5A7CEB)", WebkitBackgroundClip: "text", backgroundClip: "text" }}
+>AI-guided precision</span>
           </h1>
 
           <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed mb-8">
