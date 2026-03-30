@@ -389,9 +389,22 @@ export default function LandingPage() {
               >
                 Docs
               </a>
-              <button className="text-gray-400 hover:text-white transition-colors text-sm bg-transparent border-none cursor-pointer">
+              <a
+                href="https://www.workcyte.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white transition-colors text-sm no-underline"
+              >
                 Privacy
-              </button>
+              </a>
+              <a
+                href="https://www.workcyte.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white transition-colors text-sm no-underline"
+              >
+                Buy Access
+              </a>
             </div>
 
             {/* Right: Privacy note */}
