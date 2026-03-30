@@ -6,6 +6,7 @@ export interface Project {
   discipline: string;
   country: string;
   careerStage: string;
+  grantScheme?: GrantScheme;
   targetFunder?: string;
   budgetRange?: string;
   currentPhase: number;
@@ -14,6 +15,40 @@ export interface Project {
   metadata: Record<string, unknown>;
   createdAt: string; // ISO date
   updatedAt: string;
+}
+
+// ─── Grant Schemes ──────────────────────────────────────────────────────────
+
+export type MalaysianGrantScheme =
+  | "FRGS"
+  | "PRGS"
+  | "TRGS"
+  | "LRGS"
+  | "PPRN";
+
+export type InternationalGrantScheme =
+  | "MTSF-STRG"
+  | "Fulbright-Scholar"
+  | "ISPF-Collab"
+  | "Merdeka-Award"
+  | "Newton-Institutional-Links"
+  | "International-Other";
+
+export type GrantScheme = MalaysianGrantScheme | InternationalGrantScheme | "Other";
+
+export interface GrantSchemeInfo {
+  id: GrantScheme;
+  name: string;
+  fullName: string;
+  funder: string;
+  country: string;
+  category: "malaysian" | "international";
+  defaultBudgetRange?: string;
+  requiresPatentSearch?: boolean;
+  requiresMyGrants?: boolean;
+  requiresTurnitin?: boolean;
+  maxSimilarityIndex?: number;
+  description: string;
 }
 
 // ─── Document ───────────────────────────────────────────────────────────────

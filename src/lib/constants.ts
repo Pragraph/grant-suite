@@ -1,4 +1,155 @@
-import type { DependencyEntry, PhaseDefinition } from "./types";
+import type { DependencyEntry, PhaseDefinition, GrantSchemeInfo } from "./types";
+
+// ─── Grant Scheme Registry ──────────────────────────────────────────────────
+// Last verified: March 2026. Check MyGRANTS (mygrants.gov.my) for latest guidelines.
+
+export const GRANT_SCHEMES: GrantSchemeInfo[] = [
+  // ── Malaysian MOHE Competitive Grants ──────────────────────────────────
+  {
+    id: "FRGS",
+    name: "FRGS",
+    fullName: "Fundamental Research Grant Scheme",
+    funder: "Ministry of Higher Education (MOHE)",
+    country: "Malaysia",
+    category: "malaysian",
+    defaultBudgetRange: "RM 100,000 – RM 250,000",
+    requiresPatentSearch: true,
+    requiresMyGrants: true,
+    requiresTurnitin: true,
+    maxSimilarityIndex: 20,
+    description:
+      "Funds fundamental research across all disciplines in Malaysian public universities. Maximum RM250,000 for 2–3 years. Evaluated via MyGRANTS with emphasis on novelty, methodology, and researcher competency. Simplified Patent Search Report is mandatory.",
+  },
+  {
+    id: "PRGS",
+    name: "PRGS",
+    fullName: "Prototype Research Grant Scheme",
+    funder: "Ministry of Higher Education (MOHE)",
+    country: "Malaysia",
+    category: "malaysian",
+    defaultBudgetRange: "RM 100,000 – RM 500,000",
+    requiresPatentSearch: true,
+    requiresMyGrants: true,
+    requiresTurnitin: true,
+    maxSimilarityIndex: 20,
+    description:
+      "Supports prototype development and proof-of-concept research. Requires clear TRL progression and commercialisation pathway. Patent Search Report is mandatory.",
+  },
+  {
+    id: "TRGS",
+    name: "TRGS",
+    fullName: "Trans-disciplinary Research Grant Scheme",
+    funder: "Ministry of Higher Education (MOHE)",
+    country: "Malaysia",
+    category: "malaysian",
+    defaultBudgetRange: "RM 500,000 – RM 2,000,000",
+    requiresPatentSearch: false,
+    requiresMyGrants: true,
+    requiresTurnitin: true,
+    maxSimilarityIndex: 20,
+    description:
+      "Funds large-scale trans-disciplinary research involving multiple institutions. Requires cross-faculty or cross-university collaboration.",
+  },
+  {
+    id: "LRGS",
+    name: "LRGS",
+    fullName: "Long-term Research Grant Scheme",
+    funder: "Ministry of Higher Education (MOHE)",
+    country: "Malaysia",
+    category: "malaysian",
+    defaultBudgetRange: "RM 1,000,000 – RM 5,000,000",
+    requiresPatentSearch: false,
+    requiresMyGrants: true,
+    requiresTurnitin: true,
+    maxSimilarityIndex: 20,
+    description:
+      "Supports long-term, high-impact national priority research programmes. Consortium-based with strong policy alignment requirements.",
+  },
+  {
+    id: "PPRN",
+    name: "PPRN",
+    fullName: "Jaringan Penyelidikan Awam-Swasta (Public-Private Research Network)",
+    funder: "Ministry of Higher Education (MOHE)",
+    country: "Malaysia",
+    category: "malaysian",
+    defaultBudgetRange: "Up to RM 350,000 (matching grant)",
+    requiresPatentSearch: false,
+    requiresMyGrants: false,
+    requiresTurnitin: false,
+    description:
+      "Industry-academia matching grant for demand-driven innovation projects. Applied via the PPRN portal (pprn.mohe.gov.my), not MyGRANTS. Requires an SSM-registered industry partner. Grant amount matched against company commitment based on company size.",
+  },
+
+  // ── International Grants Popular with Malaysian Academicians ───────────
+  {
+    id: "MTSF-STRG",
+    name: "MTSF STRG",
+    fullName: "MTSF Science & Technology Research Grant",
+    funder: "Malaysian Toray Science Foundation",
+    country: "Malaysia",
+    category: "international",
+    defaultBudgetRange: "Up to RM 60,000",
+    description:
+      "Annual grant for basic research in natural sciences by Malaysian researchers below 40 years of age. Excludes clinical medicine and mathematics. Applications open January–May annually via mtsf.org.",
+  },
+  {
+    id: "Fulbright-Scholar",
+    name: "Fulbright Scholar",
+    fullName: "Fulbright Malaysian Scholar Program",
+    funder: "Malaysian-American Commission on Educational Exchange (MACEE)",
+    country: "United States",
+    category: "international",
+    description:
+      "Prestigious exchange programme funding Malaysian scholars for research or teaching at US institutions.",
+  },
+  {
+    id: "ISPF-Collab",
+    name: "ISPF Research Collab",
+    fullName: "ISPF Research Collaborations",
+    funder: "International Science Partnerships Fund (UK)",
+    country: "United Kingdom",
+    category: "international",
+    description:
+      "UK government fund supporting international science partnerships. Malaysian researchers partner with UK institutions on collaborative research.",
+  },
+  {
+    id: "Merdeka-Award",
+    name: "Merdeka Award Grant",
+    fullName: "Merdeka Award Grant for International Attachment",
+    funder: "Merdeka Award Trust (PETRONAS & Shell)",
+    country: "Malaysia",
+    category: "international",
+    description:
+      "Fully-funded 3-month international attachment at world-class institutions. For Malaysians aged 22–35 only. Covers travel and accommodation — not a research fund. Opens every two years via merdekaaward.my.",
+  },
+  {
+    id: "Newton-Institutional-Links",
+    name: "Newton Institutional Links",
+    fullName: "Newton Fund Institutional Links (UK–Malaysia)",
+    funder: "British Council / UK Research & Innovation",
+    country: "United Kingdom",
+    category: "international",
+    description:
+      "Supports research and innovation partnerships between UK and Malaysian institutions. Typically funds joint workshops, researcher exchanges, and collaborative pilot studies.",
+  },
+  {
+    id: "International-Other",
+    name: "Other International",
+    fullName: "Other International Grant",
+    funder: "",
+    country: "",
+    category: "international",
+    description:
+      "Any other international grant not listed above. You will provide grant details manually.",
+  },
+];
+
+export const GRANT_SCHEME_MAP: Record<string, GrantSchemeInfo> = Object.fromEntries(
+  GRANT_SCHEMES.map((g) => [g.id, g]),
+);
+
+export const MALAYSIAN_SCHEMES = GRANT_SCHEMES.filter((g) => g.category === "malaysian");
+export const INTERNATIONAL_SCHEMES = GRANT_SCHEMES.filter((g) => g.category === "international");
 
 // ─── Document Dependency Graph ──────────────────────────────────────────────
 
