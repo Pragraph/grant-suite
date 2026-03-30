@@ -5,6 +5,12 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Prevent Chrome "Access other devices on your local network" prompt
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Permissions-Policy = "local-network=()"
+
 # Serve pre-rendered shells for dynamic routes (order matters — first match wins)
 
 # RSC payload rewrites (safety net for any remaining client-side navigation)
