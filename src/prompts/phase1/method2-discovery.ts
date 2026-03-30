@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Analyze publication and citation trends to identify emerging research frontiers with high funding potential.",
   requiredInputs: ["discipline", "areaOfInterest", "researchType", "trendData"],
-  optionalInputs: ["country", "careerStage"],
+  optionalInputs: ["country", "careerStage", "grantScheme"],
   outputName: "Method2_Trend_Discovery.md",
   epTags: ["EP-01"],
   estimatedWords: 2500,
@@ -20,6 +20,7 @@ export const template: PromptTemplate = {
 - **Research Type:** {{researchType}}
 {{#if country}}- **Country:** {{country}}{{/if}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ## TREND DATA FROM PUBLISH OR PERISH
 The user has collected the following bibliometric data using Publish or Perish:

@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Identify and rank grant opportunities that best match your research profile and topic.",
   requiredInputs: ["discipline", "country"],
-  optionalInputs: ["researchTopic", "careerStage", "budgetRange", "keywords"],
+  optionalInputs: ["researchTopic", "careerStage", "budgetRange", "keywords", "grantScheme"],
   outputName: "Grant_Matching.md",
   epTags: ["EP-01"],
   estimatedWords: 2500,
@@ -21,6 +21,38 @@ export const template: PromptTemplate = {
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if budgetRange}}- **Funding Range Sought:** {{budgetRange}}{{/if}}
 {{#if keywords}}- **Keywords:** {{keywords}}{{/if}}
+
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if grantScheme}}
+## MALAYSIAN GRANT LANDSCAPE CONTEXT
+If the target grant scheme is one of the MOHE competitive grants (FRGS, PRGS, TRGS, LRGS, PPRN), prioritise the following Malaysian grant databases in your search:
+
+**Primary Malaysian Databases:**
+- [MyGRANTS](https://mygrants.gov.my/) — MOHE's official grant application and management portal for all competitive research grants
+- [Dimensions.ai](https://app.dimensions.ai/discover/grant) — filter by Funder = "Ministry of Higher Education, Malaysia" for funded project history
+- [NIH Malaysia (NMRR)](https://www.nmrr.gov.my/) — for health/medical research grants
+
+**Key Malaysian Funders to Include:**
+- Ministry of Higher Education (MOHE) — FRGS, PRGS, TRGS, LRGS, PPRN
+- Ministry of Science, Technology and Innovation (MOSTI)
+- Malaysian Toray Science Foundation (MTSF)
+- Academy of Sciences Malaysia (ASM)
+- Yayasan Khazanah
+- Cradle Fund / MTDC — for commercialisation-oriented research
+- University-level internal grants (Dana Dalaman, GPUI, etc.)
+
+**International Grants Popular with Malaysian Researchers:**
+- MTSF Science & Technology Research Grant (STRG)
+- Fulbright Malaysian Scholar Program
+- ISPF Research Collaborations (UK–Malaysia)
+- Merdeka Award Grant for International Attachment
+- International Foundation for Science (IFS) Grants
+- Newton Fund / British Council partnerships
+- JSPS (Japan) and DAAD (Germany) bilateral programmes
+
+When the grant scheme is a MOHE grant, frame your match scores relative to the selected scheme's requirements and evaluation criteria. Note any specific eligibility requirements (e.g., FRGS requires the PI to be a full-time academic at a Malaysian public university).
+{{/if}}
 
 {{#if convergence_output}}
 ## RESEARCH DIRECTION CONTEXT

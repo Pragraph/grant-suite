@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Synthesize outputs from multiple discovery methods to identify convergent themes and recommend top research directions.",
   requiredInputs: ["discipline"],
-  optionalInputs: ["areaOfInterest", "country", "careerStage"],
+  optionalInputs: ["areaOfInterest", "country", "careerStage", "grantScheme"],
   outputName: "Method4_Convergence_Synthesis.md",
   epTags: ["EP-01"],
   estimatedWords: 3000,
@@ -19,6 +19,17 @@ export const template: PromptTemplate = {
 {{#if areaOfInterest}}- **Area of Interest:** {{areaOfInterest}}{{/if}}
 {{#if country}}- **Country:** {{country}}{{/if}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if grantScheme}}
+## GRANT SCHEME CONTEXT
+When scoring convergence and ranking research directions, factor in the specific priorities of the {{grantScheme}} scheme:
+- For MOHE grants (FRGS, PRGS, TRGS, LRGS, PPRN): prioritise directions that align with Malaysian national research priority areas and the 13th Malaysia Plan (RMKe-13)
+- For FRGS: favour fundamental research with clear novelty claims supportable by patent search evidence
+- For PRGS: favour directions with clear prototype/product potential and TRL progression narrative
+- For TRGS/LRGS: favour directions requiring multi-disciplinary or multi-institutional collaboration
+- For international grants: prioritise directions with strong international collaboration potential
+{{/if}}
 
 ## DISCOVERY METHOD OUTPUTS
 

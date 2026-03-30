@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Synthesize research gaps collected from Google Scholar into refined, actionable research directions.",
   requiredInputs: ["discipline", "areaOfInterest", "researchType", "collectedGaps"],
-  optionalInputs: ["country", "careerStage"],
+  optionalInputs: ["country", "careerStage", "grantScheme"],
   outputName: "Method1_Gap_Synthesis.md",
   epTags: ["EP-01"],
   estimatedWords: 2000,
@@ -20,6 +20,7 @@ export const template: PromptTemplate = {
 - **Research Type:** {{researchType}}
 {{#if country}}- **Country:** {{country}}{{/if}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ## COLLECTED RESEARCH GAPS
 The user has identified the following gaps from their literature search:

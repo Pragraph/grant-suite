@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Identify research gaps in your field to discover compelling, fundable research ideas.",
   requiredInputs: ["discipline", "areaOfInterest", "researchType"],
-  optionalInputs: ["country", "careerStage"],
+  optionalInputs: ["country", "careerStage", "grantScheme"],
   outputName: "Method1_Gap_Discovery.md",
   epTags: ["EP-01"],
   estimatedWords: 2500,
@@ -20,6 +20,7 @@ export const template: PromptTemplate = {
 - **Research Type:** {{researchType}}
 {{#if country}}- **Country:** {{country}}{{/if}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ## INSTRUCTIONS
 

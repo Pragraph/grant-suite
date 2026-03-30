@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Analyze funded project databases to discover research directions aligned with active funding priorities.",
   requiredInputs: ["discipline", "areaOfInterest", "researchType", "fundingData"],
-  optionalInputs: ["country", "careerStage"],
+  optionalInputs: ["country", "careerStage", "grantScheme"],
   outputName: "Method3_Funding_Discovery.md",
   epTags: ["EP-01"],
   estimatedWords: 2500,
@@ -20,6 +20,7 @@ export const template: PromptTemplate = {
 - **Research Type:** {{researchType}}
 {{#if country}}- **Country:** {{country}}{{/if}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ## FUNDED PROJECT DATA FROM DIMENSIONS.AI
 The user has collected the following data on funded projects:

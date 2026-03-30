@@ -15,6 +15,7 @@ export const template: PromptTemplate = {
     "application_form_text",
     "careerStage",
     "targetFunder",
+    "grantScheme",
   ],
   outputName: "Grant_Intelligence.md",
   epTags: ["EP-01", "EP-02", "EP-04"],
@@ -28,6 +29,42 @@ export const template: PromptTemplate = {
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
 {{#if grant_url}}- **Grant URL:** {{grant_url}}{{/if}}
+{{#if grantScheme}}- **Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if grantScheme}}
+## MYRANTS & MOHE CONTEXT
+If this is a MOHE competitive grant (FRGS, PRGS, TRGS, LRGS, PPRN), incorporate the following into your intelligence gathering:
+
+**MyGRANTS System:**
+- All MOHE grants are submitted via [MyGRANTS](https://mygrants.gov.my/)
+- The portal has specific form fields, character limits, and required sections — identify these
+- Researcher profiles in MyGRANTS are evaluated as part of the application (H-index, publication record, prior grant completion rate)
+- MyGRANTS requires a Turnitin similarity report (typically <20% for FRGS/PRGS)
+
+**MOHE Evaluation Framework:**
+- FRGS: evaluated on Novelty, Research Methodology, Researcher Competency, and Expected Outcomes
+- PRGS: evaluated on Innovation/Novelty, Prototype Feasibility, Commercialisation Potential, and TRL Progression
+- TRGS: evaluated on Trans-disciplinary Integration, National Impact, Multi-institutional Collaboration Quality
+- LRGS: evaluated on Strategic National Priority Alignment, Research Programme Quality, Consortium Strength
+- PPRN: evaluated on Industry Relevance, Partnership Strength, Applied Research Quality
+
+**Key Malaysian Policy Documents to Reference:**
+- 13th Malaysia Plan (RMKe-13)
+- National Policy on Science, Technology and Innovation (NPSTI) 2021–2030
+- Madani Economy Framework
+- Malaysia Education Blueprint 2015–2025 (Higher Education)
+- National Technology and Innovation Sandbox (NTIS)
+
+**Required Attachments for MOHE Grants (verify against current guidelines):**
+- Simplified Patent Search Report (FRGS, PRGS — mandatory)
+- Turnitin Similarity Report
+- Gantt chart
+- Detailed budget using MOHE template
+- Letters of support (if applicable)
+- Researcher CV in MyGRANTS profile format
+
+Search for the latest MyGRANTS guidelines and any recent changes to the evaluation criteria for the {{grantScheme}} scheme specifically.
+{{/if}}
 
 {{#if grant_guidelines_text}}
 ## GRANT GUIDELINES (PROVIDED BY USER)
