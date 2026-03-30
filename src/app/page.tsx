@@ -125,7 +125,7 @@ export default function LandingPage() {
               {scrolled && (
                 <button
                   onClick={() => window.location.assign("/projects")}
-                  className="px-4 py-2 bg-[#4F7DF3] text-white rounded-lg text-sm font-medium hover:bg-[#3B63D4] transition-colors"
+                  className="px-4 py-2 bg-[#2B49C7] text-white rounded-lg text-sm font-medium hover:bg-[#1E3494] transition-colors"
                 >
                   Start Now
                 </button>
@@ -148,7 +148,7 @@ export default function LandingPage() {
       {/* ── SECTION 2: Hero ────────────────────────────────────────────────── */}
       <section
         className="relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-28"
-        style={{ background: "linear-gradient(180deg, #F0F4FF 0%, #E8EDF8 100%)" }}
+        style={{ background: "linear-gradient(180deg, #EAEDFA 0%, #E8EDF8 100%)" }}
       >
         {/* Decorative sparkles */}
         <div className="absolute left-[15%] top-1/3 text-blue-200 opacity-40 text-2xl select-none pointer-events-none">
@@ -178,7 +178,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => window.location.assign("/projects")}
-              className="w-full sm:w-auto px-8 py-3.5 bg-[#4F7DF3] text-white rounded-xl text-lg font-semibold hover:bg-[#3B63D4] hover:scale-105 transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 bg-[#2B49C7] text-white rounded-xl text-lg font-semibold hover:bg-[#1E3494] hover:scale-105 transition-all flex items-center justify-center gap-2"
             >
               Get Started <ArrowRight className="w-5 h-5" />
             </button>
@@ -252,7 +252,7 @@ export default function LandingPage() {
             discovery to submission preparation.
           </p>
 
-          <div className="max-w-5xl mx-auto mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="max-w-5xl mx-auto mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 [&>*:last-child]:sm:col-start-1 [&>*:last-child]:lg:col-start-2">
             {PHASES.map((phase, i) => {
               const Icon = phaseIcons[i];
               return (
@@ -306,8 +306,8 @@ export default function LandingPage() {
                 key={f.title}
                 className="group bg-white rounded-2xl p-8 border border-gray-200/80 hover:shadow-lg hover:border-gray-300 transition-all duration-300 text-left"
               >
-                <div className="w-14 h-14 rounded-2xl bg-[#F0F4FF] flex items-center justify-center mb-5 group-hover:bg-[#4F7DF3] transition-colors duration-300">
-                  <f.icon className="w-7 h-7 text-[#4F7DF3] group-hover:text-white transition-colors duration-300" />
+                <div className="w-14 h-14 rounded-2xl bg-[#EAEDFA] flex items-center justify-center mb-5 group-hover:bg-[#2B49C7] transition-colors duration-300">
+                  <f.icon className="w-7 h-7 text-[#2B49C7] group-hover:text-white transition-colors duration-300" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-3">{f.title}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">{f.description}</p>
@@ -342,7 +342,7 @@ export default function LandingPage() {
           </p>
           <button
             onClick={() => window.location.assign("/projects")}
-            className="px-8 py-3.5 bg-[#4F7DF3] text-white rounded-xl text-lg font-semibold hover:bg-[#3B63D4] hover:scale-105 transition-all inline-flex items-center gap-2"
+            className="px-8 py-3.5 bg-[#2B49C7] text-white rounded-xl text-lg font-semibold hover:bg-[#1E3494] hover:scale-105 transition-all inline-flex items-center gap-2"
           >
             Start Now <ArrowRight className="w-5 h-5" />
           </button>
