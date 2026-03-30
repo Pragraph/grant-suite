@@ -700,6 +700,12 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                           description="Identify and rank grant opportunities that best match your research profile and topic."
                           additionalFields={[
                             {
+                              name: "grantScheme",
+                              label: "Grant Scheme",
+                              type: "text",
+                              placeholder: activeProject?.grantScheme || "e.g., FRGS",
+                            },
+                            {
                               name: "researchTopic",
                               label: "Research Topic / Title",
                               type: "text",
@@ -715,13 +721,13 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                               name: "country",
                               label: "Country",
                               type: "text",
-                              placeholder: activeProject?.country || "e.g., United States",
+                              placeholder: activeProject?.country || "e.g., Malaysia",
                             },
                             {
                               name: "careerStage",
                               label: "Career Stage",
                               type: "text",
-                              placeholder: activeProject?.careerStage || "e.g., Early Career Researcher",
+                              placeholder: activeProject?.careerStage || "e.g., Associate Professor",
                             },
                             {
                               name: "budgetRange",
@@ -757,10 +763,16 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                           description="Analyze grant guidelines to produce the foundational Grant_Intelligence.md document. This is the most important step in Phase 1 — every subsequent phase depends on it."
                           additionalFields={[
                             {
+                              name: "grantScheme",
+                              label: "Grant Scheme",
+                              type: "text",
+                              placeholder: activeProject?.grantScheme || "e.g., FRGS",
+                            },
+                            {
                               name: "grantName",
                               label: "Grant Program Name",
                               type: "text",
-                              placeholder: "e.g., ERC Starting Grant",
+                              placeholder: activeProject?.grantScheme ? `e.g., ${activeProject.grantScheme}` : "e.g., FRGS, ERC Starting Grant",
                               required: true,
                             },
                             {

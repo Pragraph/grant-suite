@@ -183,10 +183,19 @@ export default function ProjectsPage() {
                         </DropdownMenu>
                       </div>
 
-                      {/* Funder badge */}
-                      {project.targetFunder && (
-                        <Badge className="mt-2 bg-[#F0F4FF] text-[#4F7DF3] rounded-full px-3 py-1 text-xs font-semibold">{project.targetFunder}</Badge>
-                      )}
+                      {/* Grant scheme & funder badges */}
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {project.grantScheme && (
+                          <Badge className="bg-[#F0F4FF] text-[#4F7DF3] rounded-full px-3 py-1 text-xs font-semibold">
+                            {project.grantScheme}
+                          </Badge>
+                        )}
+                        {project.targetFunder && !project.grantScheme && (
+                          <Badge className="bg-[#F0F4FF] text-[#4F7DF3] rounded-full px-3 py-1 text-xs font-semibold">
+                            {project.targetFunder}
+                          </Badge>
+                        )}
+                      </div>
 
                       {/* Progress */}
                       <div className="mt-3">
