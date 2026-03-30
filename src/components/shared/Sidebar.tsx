@@ -15,6 +15,7 @@ import {
   CircleDot,
   CheckCircle2,
   Download,
+  Home,
   ShieldCheck,
   ShieldX,
   ShieldAlert,
@@ -100,13 +101,19 @@ function SidebarContent({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="flex items-center gap-2"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Research Grant Suite" className="h-6" />
-              <span className="font-heading text-sm font-bold text-sidebar-foreground">
-                Research Grant Suite
-              </span>
+              <button
+                type="button"
+                onClick={() => window.location.assign("/")}
+                className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+                aria-label="Back to home page"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.png" alt="Research Grant Suite" className="h-6" />
+                <span className="font-heading text-sm font-bold text-sidebar-foreground">
+                  Research Grant Suite
+                </span>
+              </button>
             </motion.div>
           ) : (
             <motion.div
@@ -116,8 +123,15 @@ function SidebarContent({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Research Grant Suite" className="h-6" />
+              <button
+                type="button"
+                onClick={() => window.location.assign("/")}
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+                aria-label="Back to home page"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.png" alt="Research Grant Suite" className="h-6" />
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -351,6 +365,43 @@ function SidebarContent({
                 </TooltipTrigger>
                 <TooltipContent side="right">
                   Export/Import Data
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+
+        {/* ── Back to Home ───────────────────────────────────────────── */}
+        <div
+          className={cn(
+            "flex items-center pt-1",
+            collapsed ? "justify-center" : ""
+          )}
+        >
+          {!collapsed ? (
+            <button
+              type="button"
+              onClick={() => window.location.assign("/")}
+              className="flex items-center gap-1.5 text-xs text-gray-500 transition-colors duration-fast hover:text-gray-700"
+            >
+              <Home className="h-3.5 w-3.5" />
+              Back to Home
+            </button>
+          ) : (
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    onClick={() => window.location.assign("/")}
+                    className="flex h-7 w-7 items-center justify-center text-gray-400 hover:text-gray-600"
+                    aria-label="Back to Home"
+                  >
+                    <Home className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  Back to Home
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

@@ -6,6 +6,7 @@ export interface Project {
   discipline: string;
   country: string;
   careerStage: string;
+  currency?: string;
   grantScheme?: GrantScheme;
   targetFunder?: string;
   budgetRange?: string;
@@ -44,6 +45,8 @@ export interface GrantSchemeInfo {
   country: string;
   category: "malaysian" | "international";
   defaultBudgetRange?: string;
+  maxBudget?: number;
+  defaultCurrency?: string;
   requiresPatentSearch?: boolean;
   requiresMyGrants?: boolean;
   requiresTurnitin?: boolean;

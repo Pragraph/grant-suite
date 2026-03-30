@@ -131,8 +131,8 @@ export function MethodWizard({
       if (!initial.formValues.country && project.country) {
         updates.country = project.country;
       }
-      if (!initial.formValues.careerStage && project.careerStage) {
-        updates.careerStage = project.careerStage;
+      if (!initial.formValues.currency && project.currency) {
+        updates.currency = project.currency;
       }
       if (Object.keys(updates).length > 0) {
         initial = { ...initial, formValues: { ...initial.formValues, ...updates } };
@@ -188,7 +188,8 @@ export function MethodWizard({
           title: activeProject.title,
           discipline: activeProject.discipline,
           country: activeProject.country,
-          careerStage: activeProject.careerStage,
+          careerStage: activeProject.careerStage || "",
+          currency: activeProject.currency || "",
           targetFunder: activeProject.targetFunder,
           budgetRange: activeProject.budgetRange,
         },

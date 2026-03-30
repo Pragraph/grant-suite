@@ -13,6 +13,8 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     country: "Malaysia",
     category: "malaysian",
     defaultBudgetRange: "RM 100,000 – RM 250,000",
+    maxBudget: 250000,
+    defaultCurrency: "MYR",
     requiresPatentSearch: true,
     requiresMyGrants: true,
     requiresTurnitin: true,
@@ -28,6 +30,8 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     country: "Malaysia",
     category: "malaysian",
     defaultBudgetRange: "RM 100,000 – RM 500,000",
+    maxBudget: 500000,
+    defaultCurrency: "MYR",
     requiresPatentSearch: true,
     requiresMyGrants: true,
     requiresTurnitin: true,
@@ -43,6 +47,8 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     country: "Malaysia",
     category: "malaysian",
     defaultBudgetRange: "RM 500,000 – RM 2,000,000",
+    maxBudget: 2000000,
+    defaultCurrency: "MYR",
     requiresPatentSearch: false,
     requiresMyGrants: true,
     requiresTurnitin: true,
@@ -58,6 +64,8 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     country: "Malaysia",
     category: "malaysian",
     defaultBudgetRange: "RM 1,000,000 – RM 5,000,000",
+    maxBudget: 5000000,
+    defaultCurrency: "MYR",
     requiresPatentSearch: false,
     requiresMyGrants: true,
     requiresTurnitin: true,
@@ -73,6 +81,8 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     country: "Malaysia",
     category: "malaysian",
     defaultBudgetRange: "Up to RM 350,000 (matching grant)",
+    maxBudget: 350000,
+    defaultCurrency: "MYR",
     requiresPatentSearch: false,
     requiresMyGrants: false,
     requiresTurnitin: false,
@@ -89,6 +99,8 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     country: "Malaysia",
     category: "international",
     defaultBudgetRange: "Up to RM 60,000",
+    maxBudget: 60000,
+    defaultCurrency: "MYR",
     description:
       "Annual grant for basic research in natural sciences by Malaysian researchers below 40 years of age. Excludes clinical medicine and mathematics. Applications open January–May annually via mtsf.org.",
   },
@@ -99,6 +111,7 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     funder: "Malaysian-American Commission on Educational Exchange (MACEE)",
     country: "United States",
     category: "international",
+    defaultCurrency: "USD",
     description:
       "Prestigious exchange programme funding Malaysian scholars for research or teaching at US institutions.",
   },
@@ -109,6 +122,7 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     funder: "International Science Partnerships Fund (UK)",
     country: "United Kingdom",
     category: "international",
+    defaultCurrency: "GBP",
     description:
       "UK government fund supporting international science partnerships. Malaysian researchers partner with UK institutions on collaborative research.",
   },
@@ -119,6 +133,7 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     funder: "Merdeka Award Trust (PETRONAS & Shell)",
     country: "Malaysia",
     category: "international",
+    defaultCurrency: "MYR",
     description:
       "Fully-funded 3-month international attachment at world-class institutions. For Malaysians aged 22–35 only. Covers travel and accommodation — not a research fund. Opens every two years via merdekaaward.my.",
   },
@@ -129,6 +144,7 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     funder: "British Council / UK Research & Innovation",
     country: "United Kingdom",
     category: "international",
+    defaultCurrency: "GBP",
     description:
       "Supports research and innovation partnerships between UK and Malaysian institutions. Typically funds joint workshops, researcher exchanges, and collaborative pilot studies.",
   },
@@ -150,6 +166,20 @@ export const GRANT_SCHEME_MAP: Record<string, GrantSchemeInfo> = Object.fromEntr
 
 export const MALAYSIAN_SCHEMES = GRANT_SCHEMES.filter((g) => g.category === "malaysian");
 export const INTERNATIONAL_SCHEMES = GRANT_SCHEMES.filter((g) => g.category === "international");
+
+// ─── Currencies ────────────────────────────────────────────────────────────
+
+export const CURRENCIES = [
+  { code: "MYR", name: "Malaysian Ringgit (RM)", symbol: "RM" },
+  { code: "USD", name: "US Dollar ($)", symbol: "$" },
+  { code: "GBP", name: "British Pound (£)", symbol: "£" },
+  { code: "EUR", name: "Euro (€)", symbol: "€" },
+  { code: "SGD", name: "Singapore Dollar (S$)", symbol: "S$" },
+  { code: "IDR", name: "Indonesian Rupiah (Rp)", symbol: "Rp" },
+  { code: "SAR", name: "Saudi Riyal (SAR)", symbol: "SAR" },
+  { code: "AUD", name: "Australian Dollar (A$)", symbol: "A$" },
+  { code: "JPY", name: "Japanese Yen (¥)", symbol: "¥" },
+] as const;
 
 // ─── Document Dependency Graph ──────────────────────────────────────────────
 
