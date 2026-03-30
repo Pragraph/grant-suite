@@ -159,7 +159,7 @@ export default function LandingPage() {
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <span className="section-badge mb-6">🤖 AI-Powered Research Grant Web App Suite</span>
+          <span className="section-badge mb-6">🤖 AI-Powered Research Grant Proposal Builder</span>
 
           <h1
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight leading-tight mb-5"
