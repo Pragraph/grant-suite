@@ -12,6 +12,7 @@ import {
   PackageOpen,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { cn } from "@/lib/utils";
 
 import { useDocumentStore } from "@/stores/document-store";
 import { PHASES } from "@/lib/types";
