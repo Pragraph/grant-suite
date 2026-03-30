@@ -14,6 +14,7 @@ export const template: PromptTemplate = {
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
     "Research_Design.md",
+    "grantScheme",
   ],
   outputName: "KPI_Plan.md",
   epTags: ["EP-04", "EP-05", "EP-07"],
@@ -38,6 +39,21 @@ export const template: PromptTemplate = {
 {{#if Research_Design.md}}
 ## RESEARCH DESIGN (from Phase 3)
 {{> Research_Design.md}}
+{{/if}}
+
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if grantScheme}}
+## MOHE KPI EXPECTATIONS
+For MOHE grants, KPIs are evaluated strictly. MyGRANTS requires specific targets:
+- **Publications:** Number of Scopus/WoS-indexed journal articles (Q1/Q2 preferred). Typical FRGS target: 2–4 publications for a 2–3 year grant.
+- **Postgraduate Training:** Number of PhD and Masters students supported. MOHE values capacity building highly.
+- **Conference Presentations:** International and national conferences with indexed proceedings.
+- **Intellectual Property:** Patent filings (especially for PRGS), copyrights, utility innovations.
+- **Community/Industry Engagement:** Workshops, consultations, MoUs (especially for PPRN).
+- **Commercialisation:** For PRGS — prototype completion, licensing discussions, industry adoption.
+- Format KPIs in a Year 1 / Year 2 / Year 3 / Cumulative table matching the MyGRANTS form fields.
+- Be realistic — over-promising with undelivered prior KPIs damages future applications.
 {{/if}}
 
 ## INSTRUCTIONS

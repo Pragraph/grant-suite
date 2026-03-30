@@ -16,6 +16,7 @@ export const template: PromptTemplate = {
     "careerStage",
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
+    "grantScheme",
   ],
   outputName: "Research_Design.md",
   epTags: ["EP-01", "EP-03", "EP-05", "EP-07"],
@@ -38,6 +39,19 @@ export const template: PromptTemplate = {
 {{#if Proposal_Blueprint.md}}
 ## PROPOSAL BLUEPRINT (from Phase 2)
 {{> Proposal_Blueprint.md}}
+{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if grantScheme}}
+## MOHE METHODOLOGY EXPECTATIONS
+For MOHE grants, evaluators have specific methodology expectations:
+- Clear research questions/hypotheses mapped to specific objectives
+- Justified sample size (power analysis for quantitative, saturation argument for qualitative)
+- Named and validated instruments with citations
+- Detailed analytical plan with specific statistical tests or qualitative frameworks
+- Ethical approval timeline (mention MREC/institutional ethics committee)
+- For PRGS: include prototype development methodology and testing protocol
+- Gantt chart data that maps to the MOHE-standard project timeline format
 {{/if}}
 
 ## INSTRUCTIONS

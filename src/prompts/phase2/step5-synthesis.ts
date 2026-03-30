@@ -16,6 +16,7 @@ export const template: PromptTemplate = {
     "Competitive_Analysis.md",
     "Evaluator_Psychology.md",
     "Impact_Framework.md",
+    "grantScheme",
   ],
   outputName: "Proposal_Blueprint.md",
   epTags: ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-07", "EP-09", "EP-10"],
@@ -54,6 +55,7 @@ This document is the second foundational pillar (after Grant_Intelligence.md). E
 ## IMPACT FRAMEWORK (from Phase 2, Step 4)
 {{> Impact_Framework.md}}
 {{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ## INSTRUCTIONS
 

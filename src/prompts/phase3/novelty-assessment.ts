@@ -12,6 +12,7 @@ export const template: PromptTemplate = {
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
     "Research_Design.md",
+    "grantScheme",
   ],
   outputName: "Patent_Analysis.md",
   epTags: ["EP-01", "EP-03", "EP-05"],
@@ -38,6 +39,8 @@ export const template: PromptTemplate = {
 ## RESEARCH DESIGN (from Phase 3)
 {{> Research_Design.md}}
 {{/if}}
+
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ## INSTRUCTIONS
 

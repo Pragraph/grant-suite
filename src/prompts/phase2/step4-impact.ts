@@ -15,6 +15,7 @@ export const template: PromptTemplate = {
     "Requirements_Analysis.md",
     "Competitive_Analysis.md",
     "Evaluator_Psychology.md",
+    "grantScheme",
   ],
   outputName: "Impact_Framework.md",
   epTags: ["EP-04", "EP-07", "EP-10"],
@@ -45,6 +46,18 @@ export const template: PromptTemplate = {
 {{#if Evaluator_Psychology.md}}
 ## EVALUATOR PSYCHOLOGY (from Phase 2, Step 3)
 {{> Evaluator_Psychology.md}}
+{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if grantScheme}}
+## MALAYSIAN IMPACT FRAMING
+For MOHE grants, frame impact using these dimensions that Malaysian evaluators specifically look for:
+- **National Development Contribution:** Alignment with RMKe-13 (13th Malaysia Plan, 2026–2030) thrusts and Madani Economy priorities
+- **Capacity Building:** Number of postgraduates trained (PhD, Masters), skills transferred
+- **Publication Outputs:** Target journals with impact factor and quartile (Q1/Q2 Scopus-indexed preferred)
+- **Commercialisation Potential:** For PRGS — TRL advancement, patents, licensing
+- **Community/Industry Impact:** Tangible benefits to Malaysian society or industry partners
+- **International Visibility:** How the research positions Malaysia in the global research landscape
 {{/if}}
 
 ## INSTRUCTIONS

@@ -11,6 +11,7 @@ export const template: PromptTemplate = {
   optionalInputs: [
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
+    "grantScheme",
   ],
   outputName: "Originality_Check.md",
   epTags: ["EP-01", "EP-10"],
@@ -31,6 +32,18 @@ export const template: PromptTemplate = {
 {{#if Proposal_Blueprint.md}}
 ## PROPOSAL BLUEPRINT (from Phase 2)
 {{> Proposal_Blueprint.md}}
+{{/if}}
+
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if grantScheme}}
+## MYGRANTS TURNITIN REQUIREMENT
+MOHE grants require a Turnitin similarity report. Key thresholds:
+- FRGS/PRGS: similarity index must be **below 20%**
+- Flag any passages likely to trigger high similarity (common AI-generated phrasing, standard methodology descriptions, widely-used frameworks)
+- The check should be run on the COMPLETE proposal text, not individual sections
+- Provide specific rewriting suggestions for any flagged passages
+- Remind user to run the final check through institutional Turnitin access before MyGRANTS submission
 {{/if}}
 
 ## INSTRUCTIONS

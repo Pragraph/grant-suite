@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
     "Research_Design.md",
+    "grantScheme",
   ],
   outputName: "Patent_Search_Queries.md",
   epTags: ["EP-01"],
@@ -36,6 +37,20 @@ export const template: PromptTemplate = {
 {{#if Research_Design.md}}
 ## RESEARCH DESIGN (from Phase 3)
 {{> Research_Design.md}}
+{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if grantScheme}}
+## MYGRANTS PATENT SEARCH REQUIREMENTS
+For MOHE grants (especially FRGS and PRGS), a Simplified Patent Search Report is **mandatory**. The report must follow the MyGRANTS template format:
+- Search must cover at least 2–3 patent databases (Lens.org, Google Patents, MyIPO recommended)
+- Include: search date, databases searched, search strings used, number of results
+- List the most relevant patents found (title, patent number, applicant, filing date)
+- Provide a clear novelty conclusion: what the proposed research contributes beyond existing patents
+- MyIPO (Malaysian Intellectual Property Office at https://www.myipo.gov.my/) should be included as one of the databases for Malaysian patent coverage
+- The report format must match the MOHE-prescribed template available in MyGRANTS guidelines
+
+Generate search strings that work in Lens.org (the recommended free tool) and Google Patents.
 {{/if}}
 
 ## INSTRUCTIONS

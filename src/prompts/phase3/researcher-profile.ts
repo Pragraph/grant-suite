@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "country",
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
+    "grantScheme",
   ],
   outputName: "Researcher_Profile.md",
   epTags: ["EP-02", "EP-06", "EP-09"],
@@ -35,6 +36,19 @@ export const template: PromptTemplate = {
 {{#if Proposal_Blueprint.md}}
 ## PROPOSAL BLUEPRINT (from Phase 2)
 {{> Proposal_Blueprint.md}}
+{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if grantScheme}}
+## MYGRANTS PROFILE CONTEXT
+For MOHE grants submitted via MyGRANTS, the researcher profile is evaluated directly as part of the application:
+- **H-index** and **publication count** (Scopus-indexed) are visible to reviewers
+- **Prior grant completion rate** is tracked — flag if below 100% and prepare mitigation language
+- **Postgraduate supervision record** is valued (number of PhD/Masters students supervised to completion)
+- **International collaboration evidence** strengthens the profile
+- Ensure ORCID profile is up-to-date and linked to MyGRANTS
+- List publications strategically: prioritise those most relevant to the proposed research, not just highest impact factor
+- For senior researchers: highlight leadership of prior funded projects and their outcomes
 {{/if}}
 
 ## INSTRUCTIONS

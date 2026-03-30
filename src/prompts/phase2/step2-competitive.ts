@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "country",
     "Grant_Intelligence.md",
     "Requirements_Analysis.md",
+    "grantScheme",
   ],
   outputName: "Competitive_Analysis.md",
   epTags: ["EP-04", "EP-06", "EP-08"],
@@ -24,6 +25,7 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if country}}- **Country:** {{country}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 {{#if Grant_Intelligence.md}}
 ## GRANT INTELLIGENCE (from Phase 1)

@@ -11,6 +11,7 @@ export const template: PromptTemplate = {
   optionalInputs: [
     "careerStage",
     "Grant_Intelligence.md",
+    "grantScheme",
   ],
   outputName: "Evaluator_Psychology.md",
   epTags: ["EP-02", "EP-03", "EP-05", "EP-09", "EP-10"],
@@ -23,10 +24,36 @@ This is a KEY DIFFERENTIATOR of this proposal system. Most applicants focus only
 - **Field/Discipline:** {{discipline}}
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 {{#if Grant_Intelligence.md}}
 ## GRANT INTELLIGENCE (from Phase 1)
 {{> Grant_Intelligence.md}}
+{{/if}}
+
+{{#if grantScheme}}
+## MOHE PANEL REVIEW CONTEXT
+For Malaysian MOHE grants (FRGS, PRGS, TRGS, LRGS, PPRN), the evaluation panel has specific characteristics:
+
+**Panel Composition:**
+- Evaluators are typically senior Malaysian academics (Professors and Associate Professors) from related disciplines
+- Each proposal receives 2–3 independent reviews via MyGRANTS
+- A panel meeting may consolidate scores, but individual reviewer scores dominate
+- Reviewers evaluate 20–50+ proposals per cycle — fatigue is a real factor
+
+**Malaysian Reviewer Priorities (by scheme):**
+- **FRGS:** Novelty is king. Reviewers look for clear evidence that this research has not been done before (patent search report is mandatory). Methodology rigor is second. National relevance is valued but secondary to scientific merit.
+- **PRGS:** Prototype feasibility and TRL progression are paramount. Reviewers want to see a realistic path from concept to working prototype within the grant period.
+- **TRGS:** Trans-disciplinary integration quality matters most. Reviewers assess whether the collaboration is genuine or tokenistic.
+- **LRGS:** National strategic alignment and consortium governance are critical. Reviewers evaluate programme-level coherence across sub-projects.
+- **PPRN:** Industry partner commitment and applied relevance are the main criteria. Note: PPRN is submitted via pprn.mohe.gov.my, not MyGRANTS.
+
+**Cultural Considerations for Malaysian Academic Panels:**
+- Respect for institutional hierarchy — demonstrate senior researcher oversight
+- Strong emphasis on capacity building (postgraduate training counts heavily)
+- National service framing resonates — position research as serving Malaysia's development
+- Publications in indexed journals (Scopus/WoS) are expected as key outputs
+- Prior grant completion rate is checked — address any gaps proactively
 {{/if}}
 
 ## INSTRUCTIONS
