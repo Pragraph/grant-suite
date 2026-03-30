@@ -15,6 +15,7 @@ export const template: PromptTemplate = {
     "Research_Design.md",
     "Proposal_Blueprint.md",
     "Grant_Intelligence.md",
+    "grantScheme",
   ],
   outputName: "Team_Strategy.md",
   epTags: ["EP-04", "EP-06"],
@@ -26,6 +27,7 @@ export const template: PromptTemplate = {
 {{#if country}}- **Country:** {{country}}{{/if}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 {{#if Research_Design.md}}
 ## RESEARCH DESIGN (from Phase 3)
@@ -40,6 +42,18 @@ export const template: PromptTemplate = {
 {{#if Grant_Intelligence.md}}
 ## GRANT INTELLIGENCE (from Phase 1)
 {{> Grant_Intelligence.md}}
+{{/if}}
+
+{{#if grantScheme}}
+## MOHE TEAM COMPOSITION NORMS
+For Malaysian MOHE grants:
+- **PI Requirements:** Must be a full-time academic staff at a Malaysian public university. For FRGS, PI should hold PhD and demonstrate active research track record.
+- **Co-PI/Members:** Can include researchers from other Malaysian public universities. International collaborators strengthen the proposal but cannot be PI.
+- **Postgraduates:** Include PhD and Masters students as research members — this demonstrates capacity building, which MOHE values highly.
+- **Research Assistants:** Budget for 1–2 RAs is standard. Justify their role in specific research activities.
+- **Team Balance:** Show complementary expertise — avoid teams where all members have the same specialisation.
+- **Prior Collaboration:** If team members have published together before, mention this as evidence of a working relationship.
+- **For TRGS/LRGS:** Multi-institutional teams are expected. Include governance structure (steering committee, work package leads).
 {{/if}}
 
 ## INSTRUCTIONS

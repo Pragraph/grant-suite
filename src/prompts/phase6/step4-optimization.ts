@@ -15,6 +15,7 @@ export const template: PromptTemplate = {
     "Mock_Review_Report.md",
     "EP_Audit_Report.md",
     "Compliance_Report.md",
+    "grantScheme",
   ],
   outputName: "Final_Proposal.md",
   epTags: [
@@ -30,6 +31,7 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ---
 

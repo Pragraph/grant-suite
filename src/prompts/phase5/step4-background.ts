@@ -14,6 +14,7 @@ export const template: PromptTemplate = {
     "keyReferences",
     "Proposal_Data.md",
     "Executive_Summary_Draft.md",
+    "grantScheme",
   ],
   outputName: "Background_Draft.md",
   epTags: ["EP-01", "EP-02", "EP-03", "EP-10"],
@@ -26,6 +27,7 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 - **Word Limit:** {{wordLimit}} words
 
 {{#if keyReferences}}

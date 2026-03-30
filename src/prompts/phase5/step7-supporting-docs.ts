@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "targetFunder",
     "customDocumentTypes",
     "Proposal_Data.md",
+    "grantScheme",
   ],
   outputName: "Supporting_Documents.md",
   epTags: ["EP-05", "EP-06", "EP-08", "EP-09", "EP-10"],
@@ -25,6 +26,7 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ## DOCUMENTS REQUESTED
 {{selectedDocuments}}

@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Draft a compelling executive summary that establishes the narrative arc for the entire proposal.",
   requiredInputs: ["discipline", "grantName", "country", "wordLimit"],
-  optionalInputs: ["careerStage", "targetFunder", "Proposal_Data.md"],
+  optionalInputs: ["careerStage", "targetFunder", "Proposal_Data.md", "grantScheme"],
   outputName: "Executive_Summary_Draft.md",
   epTags: ["EP-01", "EP-02", "EP-03", "EP-10"],
   estimatedWords: 1500,
@@ -20,12 +20,23 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 - **Word Limit:** {{wordLimit}} words
 
 ## PROPOSAL DATA
 {{> Proposal_Data.md}}
 
 ---
+
+{{#if grantScheme}}
+## MOHE EXECUTIVE SUMMARY FORMAT
+For MyGRANTS applications:
+- The abstract/executive summary field in MyGRANTS has a character limit (typically 300–500 words) — verify the exact limit from Grant_Intelligence.md
+- Must include: research problem, objectives, methodology overview, expected outcomes, and significance
+- Opening sentence should establish national relevance — connect to RMKe-13 or NPSTI where defensible
+- Close with a concrete impact statement using measurable outcomes
+- Avoid jargon that a non-specialist reviewer may struggle with — MOHE panels include generalists
+{{/if}}
 
 ## INSTRUCTIONS
 

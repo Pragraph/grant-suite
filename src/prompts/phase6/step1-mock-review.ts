@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "targetFunder",
     "Complete_Proposal.md",
     "Grant_Intelligence.md",
+    "grantScheme",
   ],
   outputName: "Mock_Review_Report.md",
   epTags: ["EP-01", "EP-03", "EP-06", "EP-09", "EP-10"],
@@ -25,6 +26,7 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ---
 
@@ -38,6 +40,16 @@ export const template: PromptTemplate = {
 {{/if}}
 
 ---
+
+{{#if grantScheme}}
+## MOHE REVIEWER SIMULATION
+For MOHE grants, simulate reviewers with these Malaysian academic profiles:
+- **Reviewer 1 (Domain Expert):** Senior Professor from a related discipline at a different Malaysian university. Evaluates methodology rigor and novelty. Checks patent search report against claims. Values Scopus-indexed publication track record.
+- **Reviewer 2 (Generalist):** Associate Professor who may be from a tangentially related field. Evaluates clarity, national relevance, and capacity building. Likely to skim — reward clear signposting.
+- **Reviewer 3 (Policy-Oriented):** Senior academic or administrator who evaluates alignment with national priorities, value for money, and institutional support. Checks budget reasonableness.
+
+Score using the MOHE evaluation criteria specific to the {{grantScheme}} scheme (from Grant_Intelligence.md). Use a 1–10 scale per criterion if specific weights are not available.
+{{/if}}
 
 ## INSTRUCTIONS
 

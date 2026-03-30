@@ -14,6 +14,7 @@ export const template: PromptTemplate = {
     "Research_Design.md",
     "Grant_Intelligence.md",
     "Team_Strategy.md",
+    "grantScheme",
   ],
   outputName: "Budget_Draft.md",
   epTags: ["EP-08", "EP-09"],
@@ -27,6 +28,7 @@ export const template: PromptTemplate = {
 - **Currency:** {{currency}}
 {{#if country}}- **Country:** {{country}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 {{#if Research_Design.md}}
 ## RESEARCH DESIGN (from Phase 3)
@@ -41,6 +43,35 @@ export const template: PromptTemplate = {
 {{#if Team_Strategy.md}}
 ## TEAM STRATEGY (from Phase 4, Step 1)
 {{> Team_Strategy.md}}
+{{/if}}
+
+{{#if grantScheme}}
+## MOHE BUDGET FRAMEWORK
+For Malaysian MOHE grants, budgets follow a prescribed structure:
+- **Vote Categories (standard MOHE format):**
+  - Vote 11000: Emolumen (Salaries — RA/postgraduate allowances)
+  - Vote 21000: Perjalanan & Pengangkutan (Travel & Transportation)
+  - Vote 24000: Sewaan (Rentals)
+  - Vote 27000: Bekalan & Bahan-Bahan (Supplies & Materials — consumables, reagents, software)
+  - Vote 28000: Penyelenggaraan & Pembaikan (Maintenance & Repair)
+  - Vote 29000: Perkhidmatan Iktisas & Lain Perbelanjaan (Professional Services — data collection, analysis, printing)
+  - Vote 35000: Harta Modal (Capital Assets — equipment >RM500 per unit)
+
+- **Budget Norms (verify against current guidelines):**
+  - FRGS: RM 100K–300K total for 24–36 months
+  - PRGS: RM 100K–500K total
+  - Travel: domestic conferences and fieldwork justified; international travel requires strong justification
+  - Equipment: major items need 3 quotations from different suppliers
+  - No entertainment, gifts, or office renovation costs
+  - Overhead/management fees are typically NOT included (absorbed by the university)
+
+- **Common Budget Mistakes to Avoid:**
+  - Requesting amounts at the exact ceiling (signals lack of genuine costing)
+  - Under-budgeting postgraduate allowances
+  - Including items that are already available at the institution
+  - Not linking every budget line to a specific research activity
+
+Format the budget using the MOHE Vote structure above. Include a column for Year 1 / Year 2 / Year 3 breakdown.
 {{/if}}
 
 ## INSTRUCTIONS

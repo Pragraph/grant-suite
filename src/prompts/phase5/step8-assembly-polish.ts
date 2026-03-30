@@ -12,6 +12,7 @@ export const template: PromptTemplate = {
     "careerStage",
     "targetFunder",
     "assembledProposal",
+    "grantScheme",
   ],
   outputName: "Complete_Proposal.md",
   epTags: ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-06", "EP-07", "EP-08", "EP-09", "EP-10"],
@@ -24,11 +25,27 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ## ASSEMBLED PROPOSAL
 {{assembledProposal}}
 
 ---
+
+{{#if grantScheme}}
+## MYGRANTS COMPLIANCE CHECKLIST
+Before finalising, verify the assembled proposal against MyGRANTS requirements:
+- [ ] All required MyGRANTS form fields are addressable from proposal content
+- [ ] Abstract within character limit
+- [ ] Budget follows MOHE Vote structure
+- [ ] Gantt chart data is ready for MyGRANTS timeline format
+- [ ] All [CITATION NEEDED] placeholders resolved
+- [ ] Turnitin similarity report prepared (target <20%)
+- [ ] Simplified Patent Search Report included (if FRGS/PRGS)
+- [ ] Letters of support attached (if applicable)
+- [ ] Researcher profiles in MyGRANTS are up-to-date
+- [ ] KPI targets are realistic and formatted per MyGRANTS fields
+{{/if}}
 
 ## INSTRUCTIONS
 

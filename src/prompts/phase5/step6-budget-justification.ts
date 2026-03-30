@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "targetFunder",
     "Proposal_Data.md",
     "Methods_Draft.md",
+    "grantScheme",
   ],
   outputName: "Budget_Justification_Draft.md",
   epTags: ["EP-07", "EP-08", "EP-09", "EP-10"],
@@ -25,6 +26,7 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 - **Word Limit:** {{wordLimit}} words
 
 ## PROPOSAL DATA (includes budget details from Phase 4)

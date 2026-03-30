@@ -14,6 +14,7 @@ export const template: PromptTemplate = {
     "Team_Strategy.md",
     "Budget_Draft.md",
     "Grant_Intelligence.md",
+    "grantScheme",
   ],
   outputName: "Budget_Justification.md",
   epTags: ["EP-08", "EP-09", "EP-10"],
@@ -24,6 +25,7 @@ export const template: PromptTemplate = {
 - **Field/Discipline:** {{discipline}}
 {{#if country}}- **Country:** {{country}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 {{#if Team_Strategy.md}}
 ## TEAM STRATEGY (from Phase 4, Step 1)
@@ -38,6 +40,18 @@ export const template: PromptTemplate = {
 {{#if Grant_Intelligence.md}}
 ## GRANT INTELLIGENCE (from Phase 1)
 {{> Grant_Intelligence.md}}
+{{/if}}
+
+{{#if grantScheme}}
+## MOHE BUDGET JUSTIFICATION NORMS
+For MOHE grants, every ringgit must be justified:
+- Link each expenditure to a specific research objective and activity
+- For equipment: explain why the item is essential and not available at the institution
+- For travel: state destination, purpose, number of days, and per diem rate
+- For consumables: list items with unit costs and quantities
+- Reference institutional procurement policies where relevant
+- Demonstrate value for money — show the budget is lean but sufficient
+- If requesting postgraduate scholarships, state the stipend rate and duration per student
 {{/if}}
 
 ## INSTRUCTIONS

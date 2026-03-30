@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "targetFunder",
     "Complete_Proposal.md",
     "Final_Proposal.md",
+    "grantScheme",
   ],
   outputName: "Feedback_Analysis.md",
   epTags: ["EP-03", "EP-07", "EP-09"],
@@ -25,6 +26,7 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ---
 
@@ -46,6 +48,15 @@ export const template: PromptTemplate = {
 {{/if}}
 
 ---
+
+{{#if grantScheme}}
+## MOHE FEEDBACK CONTEXT
+MOHE grants typically provide reviewer comments through MyGRANTS. Key considerations:
+- Comments may be in English or Malay — analyse both languages
+- MOHE reviewers sometimes provide scores without detailed comments — infer issues from low scores
+- Common MOHE rejection reasons: insufficient novelty evidence, weak methodology, unrealistic KPIs, poor national alignment, PI track record concerns
+- Resubmission to the same scheme in the next cycle is common and often successful if reviewer feedback is substantively addressed
+{{/if}}
 
 ## INSTRUCTIONS
 

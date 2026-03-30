@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "targetFunder",
     "Complete_Proposal.md",
     "Grant_Intelligence.md",
+    "grantScheme",
   ],
   outputName: "Compliance_Report.md",
   epTags: ["EP-07", "EP-08", "EP-11"],
@@ -25,6 +26,7 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ---
 
@@ -38,6 +40,20 @@ export const template: PromptTemplate = {
 {{/if}}
 
 ---
+
+{{#if grantScheme}}
+## MYGRANTS COMPLIANCE VERIFICATION
+For MOHE grants, verify:
+- All MyGRANTS-required sections are present and within word/character limits
+- Budget uses correct MOHE Vote categories
+- Turnitin similarity index target (<20%) is achievable
+- Patent search report is present (FRGS/PRGS)
+- KPI table matches MyGRANTS format (Year 1/2/3 + Cumulative)
+- Researcher profile completeness (H-index, publications, prior grants)
+- All co-researchers listed with correct institutions and roles
+- Gantt chart covers the full grant duration with milestones
+- Ethics approval plan is stated (even if approval is pending at submission)
+{{/if}}
 
 ## INSTRUCTIONS
 

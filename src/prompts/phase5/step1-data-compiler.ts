@@ -21,6 +21,7 @@ export const template: PromptTemplate = {
     "SDG_Alignment.md",
     "National_Alignment.md",
     "KPI_Plan.md",
+    "grantScheme",
   ],
   outputName: "Proposal_Data.md",
   epTags: ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-06", "EP-07", "EP-08", "EP-09", "EP-10"],
@@ -34,6 +35,7 @@ export const template: PromptTemplate = {
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
 {{#if budgetRange}}- **Budget Range:** {{budgetRange}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ---
 

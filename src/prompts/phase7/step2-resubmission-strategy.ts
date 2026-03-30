@@ -12,6 +12,7 @@ export const template: PromptTemplate = {
     "careerStage",
     "targetFunder",
     "Feedback_Analysis.md",
+    "grantScheme",
   ],
   outputName: "Resubmission_Strategy.md",
   epTags: ["EP-03", "EP-04", "EP-07", "EP-09", "EP-10"],
@@ -24,6 +25,7 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
 ---
 
@@ -31,6 +33,18 @@ export const template: PromptTemplate = {
 {{> Feedback_Analysis.md}}
 
 ---
+
+{{#if grantScheme}}
+## MOHE RESUBMISSION NORMS
+For MOHE grant resubmissions:
+- MyGRANTS allows resubmission in subsequent cycles (typically biannual)
+- Address EVERY reviewer comment — even minor ones
+- Strengthen the patent search report if novelty was questioned
+- Update the researcher profile if new publications have appeared since last submission
+- If the research direction has evolved, clearly articulate what changed and why
+- Consider changing the research title slightly to signal substantive revision to reviewers
+- Resubmission success rates for FRGS are typically higher than first-submission rates
+{{/if}}
 
 ## INSTRUCTIONS
 

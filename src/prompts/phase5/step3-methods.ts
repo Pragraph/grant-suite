@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Draft the methods/methodology section with detailed procedures, work packages, and timeline.",
   requiredInputs: ["discipline", "grantName", "country", "wordLimit"],
-  optionalInputs: ["careerStage", "targetFunder", "Proposal_Data.md"],
+  optionalInputs: ["careerStage", "targetFunder", "Proposal_Data.md", "grantScheme"],
   outputName: "Methods_Draft.md",
   epTags: ["EP-03", "EP-04", "EP-05", "EP-08"],
   estimatedWords: 3000,
@@ -20,6 +20,7 @@ export const template: PromptTemplate = {
 - **Grant Name:** {{grantName}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if targetFunder}}- **Target Funder:** {{targetFunder}}{{/if}}
+{{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 - **Word Limit:** {{wordLimit}} words
 
 ## PROPOSAL DATA
