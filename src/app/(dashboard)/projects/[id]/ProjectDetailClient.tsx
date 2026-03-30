@@ -44,12 +44,6 @@ function navigateTo(url: string) {
   window.location.assign(url);
 }
 
-const statusBadgeVariant = {
-  active: "success" as const,
-  completed: "default" as const,
-  archived: "outline" as const,
-};
-
 const stepStatusLabels: Record<StepStatus, string> = {
   "not-started": "Not Started",
   "in-progress": "In Progress",
@@ -66,7 +60,8 @@ const stepStatusColors: Record<StepStatus, string> = {
   complete: "text-success",
 };
 
-export function ProjectDetailClient({ id: _idProp }: { id: string }) {
+export function ProjectDetailClient({ id: _id }: { id: string }) {
+  void _id; // extracted from URL instead
   const { setActiveProject, activeProject, updateProject } =
     useProjectStore();
   const { documents, loadDocuments } = useDocumentStore();

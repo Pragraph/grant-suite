@@ -40,17 +40,6 @@ import {
 
 import { CreateProjectDrawer } from "@/components/shared/CreateProjectDrawer";
 
-// Phase color classes for the top strip
-const phaseStripColors: Record<number, string> = {
-  1: "bg-phase-1",
-  2: "bg-phase-2",
-  3: "bg-phase-3",
-  4: "bg-phase-4",
-  5: "bg-phase-5",
-  6: "bg-phase-6",
-  7: "bg-phase-7",
-};
-
 export default function ProjectsPage() {
   const { projects, loadProjects, deleteProject, updateProject } =
     useProjectStore();

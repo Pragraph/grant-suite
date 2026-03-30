@@ -45,7 +45,6 @@ import {
 } from "@/components/ui/dialog";
 import { MarkdownRenderer } from "@/components/document/MarkdownRenderer";
 import { StepExecutor } from "@/components/phase/StepExecutor";
-import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
 
 // ─── Phase 4 definition ────────────────────────────────────────────────────
 
@@ -214,11 +213,9 @@ function parseRoleMatrix(content: string): TeamRole[] {
 // ─── Role Matrix UI ────────────────────────────────────────────────────────
 
 function RoleMatrixUI({
-  projectId,
   roles,
   setRoles,
 }: {
-  projectId: string;
   roles: TeamRole[];
   setRoles: (roles: TeamRole[]) => void;
 }) {
@@ -831,7 +828,8 @@ function budgetToMarkdown(rows: BudgetRow[], years: number, currency: string): s
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Phase4Client({ projectId: _projectIdProp }: { projectId: string }) {
+export function Phase4Client({ projectId: _pid }: { projectId: string }) {
+  void _pid; // extracted from URL instead
   const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
@@ -1302,7 +1300,6 @@ export function Phase4Client({ projectId: _projectIdProp }: { projectId: string 
                               className="space-y-4"
                             >
                               <RoleMatrixUI
-                                projectId={projectId}
                                 roles={roles}
                                 setRoles={setRoles}
                               />
