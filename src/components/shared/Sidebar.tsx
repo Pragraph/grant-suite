@@ -103,9 +103,9 @@ function SidebarContent({
               className="flex items-center gap-2"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Grant Suite" className="h-6" />
+              <img src="/logo.png" alt="Research Grant Suite" className="h-6" />
               <span className="font-heading text-sm font-bold text-sidebar-foreground">
-                Grant Suite
+                Research Grant Suite
               </span>
             </motion.div>
           ) : (
@@ -117,7 +117,7 @@ function SidebarContent({
               transition={{ duration: 0.15 }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Grant Suite" className="h-6" />
+              <img src="/logo.png" alt="Research Grant Suite" className="h-6" />
             </motion.div>
           )}
         </AnimatePresence>

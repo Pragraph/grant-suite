@@ -7,9 +7,6 @@ import {
   Zap,
   Brain,
   FileOutput,
-  ClipboardCopy,
-  MessageSquare,
-  FileCheck,
   PlayCircle,
   Search,
   PenTool,
@@ -29,14 +26,15 @@ const scrollToSection = (id: string) => {
 
 // ─── Phase data ─────────────────────────────────────────────────────────────
 
-const phaseDocuments = [
-  "strategic-positioning.md",
-  "conceptual-framework.md",
-  "proposal-narrative.md",
-  "work-plan-timeline.md",
-  "budget-justification.md",
-  "full-draft-assembly.md",
-  "final-export-package.md",
+// Landing page uses simplified, accessible descriptions (overrides PHASES.description)
+const phaseDescriptions = [
+  "Find your research direction and match it with the right grant opportunity.",
+  "Build a winning strategy based on what evaluators actually look for.",
+  "Design your methodology, timeline, and feasibility plan.",
+  "Assemble your team and build a justified, line-by-line budget.",
+  "Write every section of your proposal with AI-assisted precision.",
+  "Stress-test your draft with a simulated panel review and compliance check.",
+  "Analyse feedback, plan revisions, and prepare your resubmission.",
 ];
 
 const phaseIcons = [Search, PenTool, FileText, FlaskConical, BarChart3, Layers, CheckCircle2];
@@ -50,45 +48,19 @@ const features = [
     icon: Zap,
     title: "Smart Prompt Compilation",
     description:
-      "Your grant details — FRGS criteria, MyGRANTS fields, evaluator weights — are injected into expert-crafted prompts. Copy, paste into any AI tool, get precision results.",
+      "Your project details are automatically woven into expert-crafted AI prompts. Copy them into any AI tool — ChatGPT, Claude, Gemini — and get structured, grant-ready output every time.",
   },
   {
     icon: Brain,
     title: "Evaluator Psychology Engine",
     description:
-      "16 evidence-based psychological triggers mapped to your proposal. Optimised for MOHE panel review dynamics and scoring rubrics.",
+      "16 evidence-based persuasion strategies are embedded into your proposal. Each section is engineered to score higher with real grant reviewers — not just sound impressive.",
   },
   {
     icon: FileOutput,
     title: "Document Pipeline",
     description:
-      "Every output feeds the next phase. From Grant_Intelligence.md through to your final proposal — track progress, version documents, and export when ready.",
-  },
-];
-
-// ─── Steps data ─────────────────────────────────────────────────────────────
-
-const steps = [
-  {
-    number: 1,
-    icon: ClipboardCopy,
-    title: "Fill in your project details",
-    description:
-      "Select your grant scheme (FRGS, PRGS, TRGS, LRGS, or international), discipline, and career stage. The app tailors everything to your context.",
-  },
-  {
-    number: 2,
-    icon: MessageSquare,
-    title: "Copy compiled prompts to your AI tool",
-    description:
-      "ChatGPT, Claude, Gemini — your choice. Prompts come pre-loaded with your grant criteria and MyGRANTS requirements.",
-  },
-  {
-    number: 3,
-    icon: FileCheck,
-    title: "Paste outputs back and build your proposal",
-    description:
-      "The app tracks everything, enforces quality gates, and assembles your final document ready for MyGRANTS submission.",
+      "Every phase produces a document that feeds the next. Track your progress, version your outputs, and export a complete proposal package when you are ready to submit.",
   },
 ];
 
@@ -142,27 +114,14 @@ export default function LandingPage() {
           {/* Left: Logo */}
           <div className="flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Grant Suite" className="h-8 object-contain" />
-            <span className="text-gray-900 font-bold text-lg ml-2">Grant Suite</span>
+            <img src="/logo.png" alt="Research Grant Suite" className="h-8 object-contain" />
+            <span className="text-gray-900 font-bold text-lg ml-2">Research Grant Suite</span>
           </div>
 
-          {/* Right: Attribution (always) + Nav links (desktop) */}
+          {/* Right: Attribution (always) + CTA (desktop) */}
           <div className="flex items-center gap-4 md:gap-6">
-            {/* Nav links — desktop only */}
-            <div className="hidden md:flex items-center gap-6">
-              <button
-                onClick={() => scrollToSection("features")}
-                className="text-gray-600 hover:text-gray-900 text-sm font-medium bg-transparent border-none cursor-pointer"
-              >
-                Features
-              </button>
-              <button
-                onClick={() => scrollToSection("how-it-works")}
-                className="text-gray-600 hover:text-gray-900 text-sm font-medium bg-transparent border-none cursor-pointer"
-              >
-                How It Works
-              </button>
-
+            {/* CTA — desktop only, appears on scroll */}
+            <div className="hidden md:flex items-center">
               {scrolled && (
                 <button
                   onClick={() => window.location.assign("/projects")}
@@ -200,20 +159,20 @@ export default function LandingPage() {
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <span className="section-badge mb-6">Open-source · Free forever · Built for Malaysian researchers</span>
+          <span className="section-badge mb-6">🤖 AI-Powered Research Grant Web App Suite</span>
 
           <h1
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight leading-tight mb-5"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Win FRGS, PRGS & competitive grants with{" "}
+            Win research grants with{" "}
             <br />
             <span className="text-gradient-blue">AI-guided precision</span>
           </h1>
 
           <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed mb-8">
-            7-phase system built for Malaysian and SEA researchers. From research
-            idea to MyGRANTS-ready proposal — FRGS, PRGS, TRGS, LRGS, and beyond.
+            An easy-to-follow 7-phase system — from topic discovery to submission
+            preparation and resubmission. No guesswork, no blank pages.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -240,7 +199,7 @@ export default function LandingPage() {
       <section className="bg-white py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <p className="text-center text-sm font-medium text-gray-500 uppercase tracking-wider mb-8">
-            Trusted by researchers across Malaysian public universities
+            Trusted by researchers across Malaysia&apos;s top universities
           </p>
 
           <div className="overflow-hidden py-8">
@@ -266,10 +225,10 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 text-center">
           <span className="section-badge">✦ See It In Action</span>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-4 mb-3">
-            How Grant Suite Works
+            How Research Grant Suite Works
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto">
-            Watch how Grant Suite guides you from research idea to submission-ready proposal.
+            Watch how Research Grant Suite guides you from research idea to submission-ready proposal.
           </p>
 
           <div className="max-w-4xl mx-auto mt-12 rounded-2xl overflow-hidden shadow-2xl border border-gray-200 aspect-video bg-gray-100 flex items-center justify-center">
@@ -288,30 +247,41 @@ export default function LandingPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-4 mb-3">
             Seven phases. One complete system.
           </h2>
-          <p className="text-gray-500">
-            Each phase builds on the last — from discovery to MyGRANTS submission.
+          <p className="text-gray-500 max-w-xl mx-auto">
+            Guiding you to complete your research grant proposal — from topic
+            discovery to submission preparation.
           </p>
 
-          <div className="max-w-6xl mx-auto mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="max-w-5xl mx-auto mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {PHASES.map((phase, i) => {
               const Icon = phaseIcons[i];
               return (
                 <div
                   key={phase.id}
-                  className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-shadow text-left"
+                  className="group relative bg-white rounded-2xl border border-gray-200/80 p-7 hover:shadow-lg hover:border-gray-300 transition-all duration-300 text-left"
+                  style={{ borderTopColor: phaseColors[i], borderTopWidth: "3px" }}
                 >
-                  <div className="flex items-center gap-2 mb-3">
+                  {/* Phase number + icon */}
+                  <div className="flex items-center gap-3 mb-4">
                     <span
-                      className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold"
+                      className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-sm"
                       style={{ backgroundColor: phaseColors[i] }}
                     >
                       {phase.id}
                     </span>
-                    <Icon className="w-4 h-4 text-gray-400" />
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center"
+                      style={{ backgroundColor: `${phaseColors[i]}12` }}
+                    >
+                      <Icon className="w-5 h-5" style={{ color: phaseColors[i] }} />
+                    </div>
                   </div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-1">{phase.name}</h3>
-                  <p className="text-xs text-gray-500 mb-3">{phase.description}</p>
-                  <p className="font-mono text-[10px] text-gray-400">{phaseDocuments[i]}</p>
+
+                  {/* Title */}
+                  <h3 className="text-base font-bold text-gray-900 mb-2">{phase.name}</h3>
+
+                  {/* Accessible description */}
+                  <p className="text-sm text-gray-500 leading-relaxed">{phaseDescriptions[i]}</p>
                 </div>
               );
             })}
@@ -322,49 +292,25 @@ export default function LandingPage() {
       {/* ── SECTION 6: Built Different ─────────────────────────────────────── */}
       <section className="bg-white py-20">
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <span className="section-badge">✦ Why Grant Suite</span>
+          <span className="section-badge">✦ Why Research Grant Suite</span>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-4 mb-3">
             Built different
           </h2>
-          <p className="text-gray-500">
-            Not another AI wrapper. A systematic proposal-building engine built for MOHE grant applications.
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Not another AI wrapper. A systematic, research-backed proposal-building engine.
           </p>
 
-          <div className="max-w-4xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="max-w-5xl mx-auto mt-14 grid grid-cols-1 md:grid-cols-3 gap-6">
             {features.map((f) => (
               <div
                 key={f.title}
-                className="bg-[#F9FAFB] rounded-xl p-6 border border-gray-100 text-left"
+                className="group bg-white rounded-2xl p-8 border border-gray-200/80 hover:shadow-lg hover:border-gray-300 transition-all duration-300 text-left"
               >
-                <div className="w-10 h-10 rounded-lg bg-[#F0F4FF] flex items-center justify-center mb-4">
-                  <f.icon className="w-5 h-5 text-[#4F7DF3]" />
+                <div className="w-14 h-14 rounded-2xl bg-[#F0F4FF] flex items-center justify-center mb-5 group-hover:bg-[#4F7DF3] transition-colors duration-300">
+                  <f.icon className="w-7 h-7 text-[#4F7DF3] group-hover:text-white transition-colors duration-300" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{f.title}</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">{f.title}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">{f.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── SECTION 7: Three Steps ─────────────────────────────────────────── */}
-      <section className="bg-[#F9FAFB] py-20">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-            Three steps. That&apos;s it.
-          </h2>
-
-          <div className="max-w-4xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-            {steps.map((step) => (
-              <div key={step.number} className="text-center">
-                <span className="inline-flex w-10 h-10 rounded-full bg-[#4F7DF3] text-white font-bold items-center justify-center mb-4">
-                  {step.number}
-                </span>
-                <div className="w-10 h-10 rounded-lg bg-[#F0F4FF] flex items-center justify-center mx-auto mb-3">
-                  <step.icon className="w-5 h-5 text-[#4F7DF3]" />
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-sm text-gray-500">{step.description}</p>
               </div>
             ))}
           </div>
@@ -412,11 +358,11 @@ export default function LandingPage() {
               <div className="flex items-center gap-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/logo.png"
-                  alt="Grant Suite"
-                  className="h-7 object-contain brightness-0 invert"
+                  src="/logo_footer.png"
+                  alt="Research Grant Suite"
+                  className="h-7 object-contain"
                 />
-                <span className="text-white font-bold">Grant Suite</span>
+                <span className="text-white font-bold">Research Grant Suite</span>
               </div>
               <p className="text-gray-400 text-sm mt-2">
                 Powered by <span className="animate-bounce-gentle">🎓</span> BelajarAI
@@ -431,12 +377,6 @@ export default function LandingPage() {
                 className="text-gray-400 hover:text-white transition-colors text-sm bg-transparent border-none cursor-pointer"
               >
                 Home
-              </button>
-              <button
-                onClick={() => scrollToSection("features")}
-                className="text-gray-400 hover:text-white transition-colors text-sm bg-transparent border-none cursor-pointer"
-              >
-                Features
               </button>
               <a
                 href="https://github.com/Pragraph/grant-suite"
@@ -453,14 +393,14 @@ export default function LandingPage() {
 
             {/* Right: Privacy note */}
             <p className="text-gray-400 text-sm max-w-xs">
-              Grant Suite runs entirely in your browser. No data leaves your device. Built for Malaysian and SEA researchers.
+              Research Grant Suite runs entirely in your browser. No data leaves your device. Built for Malaysian and SEA researchers.
             </p>
           </div>
 
           {/* Bottom */}
           <div className="border-t border-gray-800 mt-8 pt-4">
             <p className="text-gray-500 text-xs text-center">
-              © {new Date().getFullYear()} Grant Suite. All rights reserved.
+              © {new Date().getFullYear()} Research Grant Suite. All rights reserved.
             </p>
           </div>
         </div>
