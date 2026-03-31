@@ -90,7 +90,7 @@ function SidebarContent({
   const { activeProjectId } = useProjectStore();
 
   return (
-    <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
+    <div className="flex h-full flex-col pb-8 bg-sidebar text-sidebar-foreground">
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="flex h-12 items-center justify-between border-b border-sidebar-border px-3">
         <AnimatePresence mode="wait">
@@ -319,7 +319,7 @@ function SidebarContent({
       </ScrollArea>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <div className="border-t border-sidebar-border px-3 py-2">
+      <div className="border-t border-sidebar-border px-3 py-3">
         <div
           className={cn(
             "flex items-center",
