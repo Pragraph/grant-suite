@@ -10,7 +10,9 @@ import {
   Copy,
   ExternalLink,
   Eye,
+  Plus,
   Save,
+  Trash2,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -34,7 +36,7 @@ export interface WizardStepConfig {
   id: string;
   title: string;
   description: string;
-  type: "context-form" | "prompt-compile" | "paste-output" | "external-tool" | "paste-collection";
+  type: "context-form" | "prompt-compile" | "paste-output" | "external-tool" | "paste-collection" | "gap-citation-collection";
   templateId?: string;
   externalTool?: {
     name: string;
@@ -331,6 +333,20 @@ export function MethodWizard({
           return lines.length >= step.collectionMinItems;
         }
         return true;
+      case "gap-citation-collection": {
+        const inputName = step.formInputName || step.id;
+        const minItems = step.collectionMinItems || 5;
+        try {
+          const entries = JSON.parse(state.formValues[inputName] || "[]");
+          const filled = entries.filter(
+            (e: { gap: string; citation: string }) =>
+              e.gap.trim().length > 10 && e.citation.trim().length > 10,
+          );
+          return filled.length >= minItems;
+        } catch {
+          return false;
+        }
+      }
       default:
         return true;
     }
@@ -606,6 +622,179 @@ export function MethodWizard({
                 </span>
               )}
             </p>
+          </div>
+        );
+      }
+
+      // ── Gap + Citation Collection ─────────────────────────────────────
+      case "gap-citation-collection": {
+        const inputName = step.formInputName || step.id;
+        const minItems = step.collectionMinItems || 5;
+
+        // Parse existing data from formValues (stored as JSON string)
+        let entries: { gap: string; citation: string }[] = [];
+        try {
+          const stored = state.formValues[inputName];
+          if (stored) {
+            entries = JSON.parse(stored);
+          }
+        } catch {
+          entries = [];
+        }
+
+        // Ensure at least one empty entry
+        if (entries.length === 0) {
+          entries = [{ gap: "", citation: "" }];
+        }
+
+        const filledEntries = entries.filter(
+          (e) => e.gap.trim().length > 10 && e.citation.trim().length > 10,
+        );
+
+        const updateEntries = (newEntries: { gap: string; citation: string }[]) => {
+          // Store JSON for the UI to re-parse on re-render
+          setFormValue(inputName, JSON.stringify(newEntries));
+
+          // Also store a human-readable version for the prompt template
+          const formatted = newEntries
+            .filter((e) => e.gap.trim() && e.citation.trim())
+            .map(
+              (e, i) =>
+                `${i + 1}. Research Gap: ${e.gap.trim()}\n   Source: ${e.citation.trim()}`,
+            )
+            .join("\n\n");
+          setFormValue(`${inputName}_formatted`, formatted);
+        };
+
+        const updateEntry = (index: number, field: "gap" | "citation", value: string) => {
+          const updated = [...entries];
+          updated[index] = { ...updated[index], [field]: value };
+          updateEntries(updated);
+        };
+
+        const addEntry = () => {
+          updateEntries([...entries, { gap: "", citation: "" }]);
+        };
+
+        const removeEntry = (index: number) => {
+          if (entries.length <= 1) return;
+          const updated = entries.filter((_, i) => i !== index);
+          updateEntries(updated);
+        };
+
+        return (
+          <div className="space-y-4">
+            <p className="text-sm text-gray-500">{step.description}</p>
+
+            {/* Entry cards */}
+            <div className="space-y-3">
+              {entries.map((entry, index) => (
+                <div
+                  key={index}
+                  className="rounded-lg border border-gray-200 bg-gray-50/50 p-4 space-y-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Gap {index + 1}
+                    </span>
+                    {entries.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeEntry(index)}
+                        className="flex h-6 w-6 items-center justify-center rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                        aria-label={`Remove gap ${index + 1}`}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor={`gap-text-${index}`}
+                      className="text-xs font-medium text-gray-600"
+                    >
+                      Research Gap <span className="text-red-500">*</span>
+                    </Label>
+                    <textarea
+                      id={`gap-text-${index}`}
+                      value={entry.gap}
+                      onChange={(e) => updateEntry(index, "gap", e.target.value)}
+                      placeholder="Paste the research gap or future research recommendation from Scholar Labs..."
+                      className={cn(
+                        "w-full min-h-20 resize-y rounded-lg border border-gray-200 bg-white p-3",
+                        "text-sm text-gray-800 placeholder:text-gray-400",
+                        "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
+                      )}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor={`gap-cite-${index}`}
+                      className="text-xs font-medium text-gray-600"
+                    >
+                      APA Citation <span className="text-red-500">*</span>
+                    </Label>
+                    <textarea
+                      id={`gap-cite-${index}`}
+                      value={entry.citation}
+                      onChange={(e) => updateEntry(index, "citation", e.target.value)}
+                      placeholder="Paste the APA citation here (click Cite → APA in Scholar Labs)..."
+                      className={cn(
+                        "w-full min-h-14 resize-y rounded-lg border border-gray-200 bg-white p-3",
+                        "font-mono text-xs text-gray-700 placeholder:text-gray-400",
+                        "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
+                      )}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Add button */}
+            <button
+              type="button"
+              onClick={addEntry}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-200 py-3 text-sm text-gray-500 transition-colors hover:border-[#4F7DF3]/40 hover:text-[#4F7DF3] hover:bg-[#F0F4FF]/50"
+            >
+              <Plus className="h-4 w-4" />
+              Add Another Gap
+            </button>
+
+            {/* Counter */}
+            <div
+              className={cn(
+                "flex items-center gap-2 rounded-lg p-3 border",
+                filledEntries.length >= minItems
+                  ? "bg-emerald-50 border-emerald-200"
+                  : "bg-gray-50 border-gray-200",
+              )}
+            >
+              <span
+                className={cn(
+                  "text-xl font-bold",
+                  filledEntries.length >= minItems ? "text-emerald-600" : "text-gray-400",
+                )}
+              >
+                {filledEntries.length}
+              </span>
+              <div>
+                <p
+                  className={cn(
+                    "text-sm font-medium",
+                    filledEntries.length >= minItems ? "text-emerald-700" : "text-gray-600",
+                  )}
+                >
+                  gaps collected
+                </p>
+                <p className="text-xs text-gray-500">
+                  {filledEntries.length >= minItems
+                    ? "✓ Ready to proceed"
+                    : `Minimum ${minItems} required — need ${minItems - filledEntries.length} more`}
+                </p>
+              </div>
+            </div>
           </div>
         );
       }

@@ -7,7 +7,7 @@ export const template: PromptTemplate = {
   name: "Gap-Based Discovery — Synthesis & Direction",
   description:
     "Synthesize expert-identified research gaps from Scholar Labs into feasible, fundable research directions with full citation trails.",
-  requiredInputs: ["discipline", "areaOfInterest", "researchType", "selectedTopic", "collectedGapsWithCitations"],
+  requiredInputs: ["discipline", "areaOfInterest", "researchType", "selectedTopic", "collectedGapsWithCitations_formatted"],
   optionalInputs: ["grantScheme"],
   outputName: "Method1_Gap_Synthesis.md",
   epTags: ["EP-01"],
@@ -25,7 +25,7 @@ export const template: PromptTemplate = {
 **Source of Gaps:** The following research gaps and future study recommendations were extracted from recent systematic reviews and meta-analyses identified via Google Scholar Labs. Each gap includes its source citation.
 
 **Expert-Identified Research Gaps with Citations:**
-{{collectedGapsWithCitations}}
+{{collectedGapsWithCitations_formatted}}
 
 ---
 

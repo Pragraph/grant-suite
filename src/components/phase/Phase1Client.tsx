@@ -131,8 +131,8 @@ function getMethod1Steps(): WizardStepConfig[] {
     {
       id: "m1-gaps-collection",
       title: "Collect Research Gaps with Citations",
-      description: "Paste the research gaps you found in Scholar Labs. For each gap, include the APA citation on the next line. Separate each gap-citation pair with a blank line.",
-      type: "paste-collection",
+      description: "Add research gaps from Scholar Labs. For each gap, paste the research recommendation in the first field and the APA citation (click Cite → APA in Scholar Labs) in the second field.",
+      type: "gap-citation-collection",
       formInputName: "collectedGapsWithCitations",
       collectionLabel: "Research Gaps with APA Citations",
       collectionMinItems: 5,
