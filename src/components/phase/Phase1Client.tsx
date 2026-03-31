@@ -97,14 +97,7 @@ function getMethod1Steps(): WizardStepConfig[] {
       type: "prompt-compile",
       templateId: "phase1.method1-gap-discovery",
     },
-    // Step 3: Paste AI output (emerging topics table)
-    {
-      id: "m1-paste-topics",
-      title: "Paste AI Output",
-      description: "Paste the complete emerging topics analysis from your AI tool below. It should contain tables of topics with citation trends.",
-      type: "paste-output",
-    },
-    // Step 4: Select topic + Scholar Labs search
+    // Step 3: Select topic + Scholar Labs search
     {
       id: "m1-scholar-labs",
       title: "Scholar Labs Search",
