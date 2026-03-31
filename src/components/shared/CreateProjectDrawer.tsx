@@ -227,7 +227,7 @@ export function CreateProjectDrawer({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-red-500">
               Optional — you can name your project later after topic discovery.
             </p>
           </div>

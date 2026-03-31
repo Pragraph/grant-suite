@@ -14,7 +14,7 @@ import {
   Circle,
   CircleDot,
   CheckCircle2,
-  Download,
+
   Home,
   ShieldCheck,
   ShieldX,
@@ -345,47 +345,13 @@ function SidebarContent({
           </Button>
 
           {!collapsed ? (
-            <Link
-              href="/export"
-              className="flex items-center gap-1.5 text-xs text-gray-500 transition-colors duration-fast hover:text-gray-700"
-            >
-              <Download className="h-3.5 w-3.5" />
-              Export/Import Data
-            </Link>
-          ) : (
-            <TooltipProvider delayDuration={300}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    href="/export"
-                    className="flex h-7 w-7 items-center justify-center text-gray-400 hover:text-gray-600"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  Export/Import Data
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </div>
-
-        {/* ── Back to Home ───────────────────────────────────────────── */}
-        <div
-          className={cn(
-            "flex items-center pt-1",
-            collapsed ? "justify-center" : ""
-          )}
-        >
-          {!collapsed ? (
             <button
               type="button"
               onClick={() => window.location.assign("/")}
               className="flex items-center gap-1.5 text-xs text-gray-500 transition-colors duration-fast hover:text-gray-700"
             >
               <Home className="h-3.5 w-3.5" />
-              Back to Home
+              Main Page
             </button>
           ) : (
             <TooltipProvider delayDuration={300}>
@@ -395,18 +361,19 @@ function SidebarContent({
                     type="button"
                     onClick={() => window.location.assign("/")}
                     className="flex h-7 w-7 items-center justify-center text-gray-400 hover:text-gray-600"
-                    aria-label="Back to Home"
+                    aria-label="Main Page"
                   >
                     <Home className="h-3.5 w-3.5" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  Back to Home
+                  Main Page
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           )}
         </div>
+
       </div>
     </div>
   );
