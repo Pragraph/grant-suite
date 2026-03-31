@@ -43,11 +43,6 @@ When scoring convergence and ranking research directions, factor in the specific
 {{method2_output}}
 {{/if}}
 
-{{#if method3_output}}
-### Method 3: Funding-Landscape Discovery
-{{method3_output}}
-{{/if}}
-
 ## INSTRUCTIONS
 
 ### 1. Cross-Method Theme Mapping (EP-01)
@@ -58,9 +53,9 @@ Identify themes, topics, or research directions that appear across multiple meth
 
 ### 2. Convergence Matrix
 Create a table scoring each identified theme:
-| Theme | Gap Evidence (1-5) | Trend Support (1-5) | Funding Alignment (1-5) | Feasibility (1-5) | Total |
+| Theme | Gap Evidence (1-5) | Trend Support (1-5) | Feasibility (1-5) | Total |
 
-Score 0 if that method was not available, and note it.
+Score 0 if that method was not used, and note it.
 
 ### 3. Top 3 Research Directions
 For each of the top 3 ranked directions, provide:

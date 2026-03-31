@@ -264,7 +264,6 @@ export function MethodWizard({
       const outputNames: Record<string, string> = {
         method1: "Method1_Gap_Synthesis.md",
         method2: "Method2_Trend_Discovery.md",
-        method3: "Method3_Funding_Discovery.md",
         method4: "Method4_Convergence_Synthesis.md",
       };
 

@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Search,
   TrendingUp,
-  DollarSign,
   GitMerge,
   SkipForward,
   Check,
@@ -58,13 +57,6 @@ const METHODS: MethodDef[] = [
     description: "Analyze publication trends and citation patterns to spot emerging frontiers.",
     icon: TrendingUp,
     color: "text-accent-400",
-  },
-  {
-    id: "method3",
-    name: "Funding-Landscape Discovery",
-    description: "Map funded project data to align your research with active funder priorities.",
-    icon: DollarSign,
-    color: "text-success",
   },
   {
     id: "method4",
@@ -210,60 +202,6 @@ function getMethod2Steps(): WizardStepConfig[] {
   ];
 }
 
-function getMethod3Steps(): WizardStepConfig[] {
-  return [
-    {
-      id: "m3-context",
-      title: "Research Context",
-      description: "Tell us about your research area so we can explore funding opportunities.",
-      type: "context-form",
-    },
-    {
-      id: "m3-dimensions",
-      title: "Dimensions.ai Search",
-      description: "Search Dimensions.ai for funded projects in your area. Copy the results including project titles, funders, amounts, and abstracts.",
-      type: "external-tool",
-      externalTool: {
-        name: "Dimensions.ai",
-        url: "https://app.dimensions.ai/discover/grant",
-        instructions: "Use the free version of Dimensions.ai. Filter by Grants, then search using the queries below. Sort by start date (newest first). For the top 15-20 results, copy: project title, funder, funding amount, start year, and a summary of the research focus.",
-      },
-      generateQueries: (formValues) => {
-        const d = formValues.discipline || "research";
-        const a = formValues.areaOfInterest || "";
-        const country = formValues.country || "";
-        return [
-          `${d} ${a}`,
-          `${d} ${a} ${country}`,
-          `${d} ${a} innovation`,
-          `${d} ${a} interdisciplinary`,
-        ];
-      },
-    },
-    {
-      id: "m3-paste-data",
-      title: "Paste Funding Data",
-      description: "Paste the funded project data you collected from Dimensions.ai.",
-      type: "paste-output",
-      formInputName: "fundingData",
-    },
-    {
-      id: "m3-analysis-prompt",
-      title: "Landscape Analysis Prompt",
-      description: "We'll analyze the funding landscape to identify opportunities. Copy this prompt.",
-      type: "prompt-compile",
-      templateId: "phase1.method3-funding-discovery",
-    },
-    {
-      id: "m3-final",
-      title: "Paste Analysis Output",
-      description: "Paste the funding landscape analysis from your AI tool. This will be saved as your Method 3 result.",
-      type: "paste-output",
-      templateId: "phase1.method3-funding-discovery",
-    },
-  ];
-}
-
 function getMethod4Steps(): WizardStepConfig[] {
   // Method 4 is a simpler wizard: compile the convergence prompt with injected outputs, then paste
   return [
@@ -341,9 +279,6 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
     if (methodDocs.some((d) => d.canonicalName === "Method2_Trend_Discovery.md")) {
       completed.push("method2");
     }
-    if (methodDocs.some((d) => d.canonicalName === "Method3_Funding_Discovery.md")) {
-      completed.push("method3");
-    }
     if (methodDocs.some((d) => d.canonicalName === "Method4_Convergence_Synthesis.md")) {
       completed.push("method4");
     }
@@ -377,9 +312,6 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
       }
       if (doc.canonicalName === "Method2_Trend_Discovery.md") {
         outputs.method2_output = doc.content;
-      }
-      if (doc.canonicalName === "Method3_Funding_Discovery.md") {
-        outputs.method3_output = doc.content;
       }
     }
     return outputs;
@@ -425,8 +357,6 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
         return getMethod1Steps();
       case "method2":
         return getMethod2Steps();
-      case "method3":
-        return getMethod3Steps();
       case "method4":
         return getMethod4Steps();
       default:
@@ -456,7 +386,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
             {PHASE_1.name}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Discover your research direction through systematic exploration of gaps, trends, and funding landscapes.
+            Discover your research direction through systematic exploration of gaps, trends, and emerging frontiers.
           </p>
         </div>
       </div>

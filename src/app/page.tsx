@@ -82,7 +82,7 @@ const universities = [
 // ─── Stats data ─────────────────────────────────────────────────────────────
 
 const stats = [
-  { value: "46", label: "AI prompt templates" },
+  { value: "45", label: "AI prompt templates" },
   { value: "7", label: "Systematic phases" },
   { value: "5+", label: "Malaysian grant schemes supported" },
 ];
