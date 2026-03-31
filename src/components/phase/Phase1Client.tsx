@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { generateScholarLabsPrompt, getScholarLabsCharInfo, SCHOLAR_LABS_URL } from "@/lib/scholar-labs";
 import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
 import { useProjectStore } from "@/stores/project-store";
@@ -81,67 +82,74 @@ const stepStatusLabels: Record<StepStatus, string> = {
 
 function getMethod1Steps(): WizardStepConfig[] {
   return [
+    // Step 1: Research Context (simplified — no country/career stage shown)
     {
       id: "m1-context",
       title: "Research Context",
-      description: "Tell us about your research area so we can identify relevant gaps.",
+      description: "Tell us about your research area so we can identify emerging topics.",
       type: "context-form",
     },
+    // Step 2: Topic Discovery Prompt (produces table of emerging areas)
     {
-      id: "m1-prompt",
-      title: "Gap Discovery Prompt",
-      description: "We've compiled a prompt to identify research gaps. Copy it and paste into your AI tool.",
+      id: "m1-topic-prompt",
+      title: "Topic Discovery Prompt",
+      description: "We've compiled a prompt to identify emerging research topics. Copy it and paste into your AI tool (ChatGPT, Claude, Gemini). Use a thinking/reasoning model for best results.",
       type: "prompt-compile",
       templateId: "phase1.method1-gap-discovery",
     },
+    // Step 3: Paste AI output (emerging topics table)
     {
-      id: "m1-paste-initial",
+      id: "m1-paste-topics",
       title: "Paste AI Output",
-      description: "Paste the complete gap analysis output from your AI tool below.",
+      description: "Paste the complete emerging topics analysis from your AI tool below. It should contain tables of topics with citation trends.",
       type: "paste-output",
     },
+    // Step 4: Select topic + Scholar Labs search
     {
-      id: "m1-scholar",
-      title: "Google Scholar Search",
-      description: "Use these search queries in Google Scholar Labs to validate and expand the identified gaps. Copy each query, run the search, and collect the most relevant gaps you find.",
+      id: "m1-scholar-labs",
+      title: "Scholar Labs Search",
+      description: "Copy exactly from the 'Emerging Keyword/Topic' or 'Recommended Topic' column in the AI output above.",
       type: "external-tool",
+      formInputName: "selectedTopic",
+      collectionLabel: "Your Selected Topic",
+      collectionMinItems: 1,
       externalTool: {
-        name: "Google Scholar",
-        url: "https://scholar.google.com/",
-        instructions: "Search for each query below. Look for systematic reviews, meta-analyses, and recent papers that explicitly mention research gaps, limitations, or future directions. Note any gaps that appear frequently across studies.",
+        name: "Google Scholar Labs",
+        url: SCHOLAR_LABS_URL,
+        instructions: "1. Copy the generated search prompt below.\n2. Open Scholar Labs (AI-powered Google Scholar).\n3. Paste the prompt and search.\n4. Scroll through ALL results — look for bullet points describing research gaps, future research recommendations, and limitations.\n5. For each relevant gap, ALSO copy the citation (click 'Cite' → select APA format).\n6. Collect 5+ gaps with their APA citations to paste in the next step.",
       },
       generateQueries: (formValues) => {
-        const d = formValues.discipline || "research";
-        const a = formValues.areaOfInterest || "";
-        return [
-          `"research gap" "${d}" ${a} systematic review`,
-          `"future research" "${d}" ${a} limitations`,
-          `"underexplored" OR "understudied" "${d}" ${a}`,
-          `"calls for research" "${d}" ${a}`,
-          `${d} ${a} "remains unclear" OR "poorly understood"`,
-        ];
+        const topic = formValues.selectedTopic || "";
+        const discipline = formValues.discipline || "";
+        if (!topic.trim()) return [];
+        const prompt = generateScholarLabsPrompt(topic, discipline);
+        const charInfo = getScholarLabsCharInfo(prompt);
+        return [`${prompt}  [${charInfo.length}/${charInfo.max} chars]`];
       },
     },
+    // Step 5: Collect research gaps WITH citations
     {
       id: "m1-gaps-collection",
-      title: "Collect Research Gaps",
-      description: "Enter the research gaps you've discovered from the AI analysis and Google Scholar search. List each gap on a separate line.",
+      title: "Collect Research Gaps with Citations",
+      description: "Paste the research gaps you found in Scholar Labs. For each gap, include the APA citation on the next line. Separate each gap-citation pair with a blank line.",
       type: "paste-collection",
-      formInputName: "collectedGaps",
-      collectionLabel: "Research Gaps",
+      formInputName: "collectedGapsWithCitations",
+      collectionLabel: "Research Gaps with APA Citations",
       collectionMinItems: 5,
     },
+    // Step 6: Synthesis Prompt
     {
       id: "m1-synthesis-prompt",
-      title: "Synthesis Prompt",
-      description: "We'll synthesize your collected gaps into refined research directions. Copy this prompt.",
+      title: "Gap Synthesis Prompt",
+      description: "We'll synthesise your collected gaps and citations into refined research directions. Copy this prompt.",
       type: "prompt-compile",
       templateId: "phase1.method1-gap-synthesis",
     },
+    // Step 7: Paste final synthesis
     {
       id: "m1-final",
       title: "Final Synthesis Output",
-      description: "Paste the synthesis output from your AI tool. This will be saved as your Method 1 result.",
+      description: "Paste the synthesis output from your AI tool. This will be saved as your Gap-Based Discovery result.",
       type: "paste-output",
       templateId: "phase1.method1-gap-synthesis",
     },

@@ -4,57 +4,82 @@ export const template: PromptTemplate = {
   id: "phase1.method1-gap-discovery",
   phase: 1,
   step: 1,
-  name: "Gap-Based Research Discovery",
+  name: "Topic Discovery — Emerging Areas",
   description:
-    "Identify research gaps in your field to discover compelling, fundable research ideas.",
+    "Identify emerging research topics with strong citation momentum to guide your gap exploration.",
   requiredInputs: ["discipline", "areaOfInterest", "researchType"],
-  optionalInputs: ["country", "careerStage", "grantScheme"],
+  optionalInputs: ["grantScheme"],
   outputName: "Method1_Gap_Discovery.md",
   epTags: ["EP-01"],
   estimatedWords: 2500,
-  template: `You are a senior research strategist specializing in identifying high-impact research gaps. Your task is to conduct a comprehensive gap analysis in the user's field and surface the most promising, fundable research directions.
+  template: `You are a research trends analyst with expertise in bibliometric analysis and academic publishing patterns.
 
-## USER CONTEXT
+**TASK:** Conduct a comprehensive analysis to identify EMERGING areas of interest within the specified field that have demonstrated strong citation impact over the past 5 years.
+
+**PARAMETERS:**
 - **Field/Discipline:** {{discipline}}
 - **Area of Interest:** {{areaOfInterest}}
-- **Research Type:** {{researchType}}
-{{#if country}}- **Country:** {{country}}{{/if}}
-{{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
+- **Target Research Type:** {{researchType}}
 {{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
-## INSTRUCTIONS
+**SEARCH STRATEGY:**
+1. Search for highly-cited recent publications, citation trend reports, and bibliometric analyses in {{discipline}} related to {{areaOfInterest}}
+2. Identify topics showing upward citation trajectories (high citations-per-year)
+3. Look for emerging themes in recent conference proceedings, special issues, and research agenda publications
+4. Cross-reference with funding agency priority areas and journal call-for-papers themes
+{{#if grantScheme}}5. Consider alignment with {{grantScheme}} funding priorities and evaluation criteria{{/if}}
 
-### 1. Field Landscape Overview (EP-01)
-Provide a concise overview of the current state of research in the specified area:
-- Key active research themes (last 3-5 years)
-- Major breakthroughs and seminal papers
-- Dominant methodological approaches
-- Leading research groups and institutions
+**OUTPUT REQUIREMENTS:**
+Generate a comprehensive list of 10-15 specific emerging areas of interest. Each must be:
+- Specific enough to be searchable in academic databases
+- Demonstrating recent citation momentum (not saturated legacy topics)
+- Appropriate for {{researchType}} methodology
+- Within the scope of {{areaOfInterest}}
 
-### 2. Identified Research Gaps
-For each gap (identify at least 5-7), provide:
-- **Gap Title** — a concise, descriptive name
-- **Description** — what is missing or underexplored
-- **Evidence of Gap** — why this is a genuine gap (cite lack of studies, conflicting findings, unexplored populations, methodological limitations, etc.)
-- **Potential Impact** — why filling this gap matters (scientific, societal, economic)
-- **Feasibility Assessment** — realistic for the user's career stage and context
-- **Funding Potential** — likelihood of attracting grant funding (High/Medium/Low)
+---
 
-### 3. Gap Prioritization Matrix
-Rank the identified gaps using these criteria:
-| Gap | Novelty (1-5) | Impact (1-5) | Feasibility (1-5) | Funding Potential (1-5) | Total |
-Create a table scoring each gap and provide a recommendation for the top 3.
+## OUTPUT FORMAT (STRICTLY FOLLOW THIS TABLE STRUCTURE)
 
-### 4. Recommended Search Queries
-Generate 5-10 specific search queries the user can run on Google Scholar, Scopus, or Web of Science to validate these gaps and explore them further.
+### EMERGING AREAS IN {{discipline}} — {{areaOfInterest}} (EP-01)
+**Citation Momentum Period:** 2021–present
 
-### 5. Next Steps
-Suggest concrete actions to refine the chosen gap into a research question:
-- Specific papers to read
-- Researchers to follow
-- Conferences to monitor
-- Databases to search
+| # | Emerging Keyword/Topic | Brief Description (1 sentence) | Citation Trend |
+|---|------------------------|--------------------------------|----------------|
+| 1 | [Specific keyword/topic] | [What it covers and why it matters] | 🔥 High / 📈 Rising / ⭐ Emerging |
+| 2 | ... | ... | ... |
+| ... | Continue for 10-15 entries | ... | ... |
 
-## OUTPUT FORMAT
-Structure your response as a well-organized markdown document with clear headings, tables, and bullet points. Be specific and actionable — avoid generic advice.`,
+**Legend:**
+- 🔥 High = Established high-citation area with sustained momentum
+- 📈 Rising = Rapidly increasing citation trajectory
+- ⭐ Emerging = New area with early strong signals
+
+---
+
+### TRENDING INTERSECTIONS (Cross-Disciplinary Opportunities)
+
+| # | Intersection Topic | Disciplines Combined | Research Potential |
+|---|-------------------|---------------------|-------------------|
+| 1 | [Topic] | [Field A] + [Field B] | High / Medium |
+| 2 | ... | ... | ... |
+| ... | Continue for 5 entries | ... | ... |
+
+---
+
+### TOP 5 RECOMMENDATIONS FOR {{researchType}}
+
+Based on the analysis, these topics offer the best combination of citation momentum, gap availability, and methodological fit:
+
+| Rank | Recommended Topic | Why This Topic |
+|------|-------------------|----------------|
+| 1 | [Topic] | [1-sentence rationale including gap availability] |
+| 2 | [Topic] | [1-sentence rationale] |
+| 3 | [Topic] | [1-sentence rationale] |
+| 4 | [Topic] | [1-sentence rationale] |
+| 5 | [Topic] | [1-sentence rationale] |
+
+---
+
+**NEXT STEP:**
+From the tables above, please select ONE specific topic you want to explore further. Type your selection exactly as shown in the "Emerging Keyword/Topic" or "Intersection Topic" column, and I will help you refine it for research exploration.`,
 };

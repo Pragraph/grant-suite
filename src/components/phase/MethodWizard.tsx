@@ -318,7 +318,10 @@ export function MethodWizard({
       case "paste-output":
         return !!state.pastedOutputs[step.id]?.trim();
       case "external-tool":
-        return true; // Always optional to proceed
+        if (step.formInputName) {
+          return !!(state.formValues[step.formInputName]?.trim());
+        }
+        return true;
       case "paste-collection":
         if (!state.formValues[step.formInputName || step.id]) return false;
         if (step.collectionMinItems) {
@@ -363,16 +366,11 @@ export function MethodWizard({
               <Label htmlFor="wizard-area" className="text-xs font-medium text-gray-500">
                 Area of Interest <span className="text-red-500">*</span>
               </Label>
-              <textarea
+              <Input
                 id="wizard-area"
                 value={state.formValues.areaOfInterest || ""}
                 onChange={(e) => setFormValue("areaOfInterest", e.target.value)}
-                placeholder="Describe the specific area you want to explore..."
-                className={cn(
-                  "w-full min-h-25 resize-y rounded-lg border border-gray-200 bg-gray-50 p-3",
-                  "font-mono text-sm text-gray-800 placeholder:text-gray-400",
-                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white",
-                )}
+                placeholder="e.g., AI in disability sports, Student motivation in online learning"
               />
             </div>
 
@@ -399,31 +397,6 @@ export function MethodWizard({
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="wizard-country" className="text-xs font-medium text-gray-500">
-                  Country
-                </Label>
-                <Input
-                  id="wizard-country"
-                  value={state.formValues.country || ""}
-                  onChange={(e) => setFormValue("country", e.target.value)}
-                  placeholder="e.g., United States"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="wizard-career" className="text-xs font-medium text-gray-500">
-                  Career Stage
-                </Label>
-                <Input
-                  id="wizard-career"
-                  value={state.formValues.careerStage || ""}
-                  onChange={(e) => setFormValue("careerStage", e.target.value)}
-                  placeholder="e.g., Early Career"
-                />
-              </div>
-            </div>
           </div>
         );
 
@@ -527,6 +500,25 @@ export function MethodWizard({
         return (
           <div className="space-y-4">
             <p className="text-sm text-gray-500">{step.description}</p>
+
+            {step.formInputName && (
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 mb-4">
+                <Label htmlFor={`wizard-${step.formInputName}`} className="text-xs font-medium text-gray-700 mb-2 block">
+                  {step.collectionLabel || "Input"} <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id={`wizard-${step.formInputName}`}
+                  value={state.formValues[step.formInputName] || ""}
+                  onChange={(e) => setFormValue(step.formInputName!, e.target.value)}
+                  placeholder={step.description}
+                />
+                {step.collectionMinItems && (
+                  <p className="text-xs text-blue-600 mt-2">
+                    Copy exactly from the &ldquo;Emerging Keyword/Topic&rdquo; or &ldquo;Recommended Topic&rdquo; column in the AI output
+                  </p>
+                )}
+              </div>
+            )}
 
             {tool && (
               <a
