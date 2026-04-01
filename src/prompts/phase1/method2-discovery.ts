@@ -4,15 +4,15 @@ export const template: PromptTemplate = {
   id: "phase1.method2-trend-discovery",
   phase: 1,
   step: 1,
-  name: "Trend Discovery — Final Research Exploration",
+  name: "Trend Discovery — Synthesis & Direction",
   description:
-    "Comprehensive 5-stage research analysis: literature landscape, gap identification, topic generation, feasibility validation, and final title generation. Uses bibliometric data and curated high-impact titles.",
-  requiredInputs: ["discipline", "areaOfInterest", "researchType", "selectedTrendTopic", "curatedTitles"],
-  optionalInputs: ["country", "careerStage", "grantScheme", "trendData"],
+    "Synthesise bibliometric search results into feasible, fundable research directions with citation-trend evidence.",
+  requiredInputs: ["discipline", "areaOfInterest", "researchType", "selectedTrendTopic", "trendSearchResults"],
+  optionalInputs: ["country", "careerStage", "grantScheme"],
   outputName: "Method2_Trend_Discovery.md",
   epTags: ["EP-01"],
-  estimatedWords: 4000,
-  template: `You are an experienced {{discipline}} expert with over 30 years of experience. You are adept at analysing scientific literature to identify key themes, trends, and gaps. Your expertise lies in generating novel and impactful research titles that can significantly contribute to the field. You also possess strong methodological knowledge across research designs and understand practical constraints that determine whether a research topic is viable.
+  estimatedWords: 3500,
+  template: `You are an experienced {{discipline}} research strategist with expertise in bibliometric trend analysis, citation pattern interpretation, and research gap identification.
 
 ## CONTEXT & INPUTS
 
@@ -24,39 +24,35 @@ export const template: PromptTemplate = {
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
 
-**List of Highly Cited and Recent Publications (curated via Publish or Perish — sorted by Cites/Year):**
-{{curatedTitles}}
+**Bibliometric Search Results (from Publish or Perish or Citation Impact Analyzer — sorted by citations per year):**
+The user collected the following high-impact publications related to their selected topic. The data may be in APA reference format or tabular (Excel) format. Analyse all entries regardless of format.
 
-{{#if trendData}}
-**Raw Bibliometric Data from Publish or Perish:**
-{{trendData}}
-{{/if}}
+{{trendSearchResults}}
 
 ---
 
-## STAGE 1: LITERATURE ANALYSIS (EP-01)
+## STAGE 1: PUBLICATION ANALYSIS (EP-01)
 
-Analyse the provided publications to establish the current state of knowledge.
+Analyse the provided publications to map the current research landscape.
 
 ### 1.1 — Thematic Mapping
-- Identify the dominant themes appearing across multiple publications
-- Map the conceptual clusters and how they relate
-- Note which themes are receiving increasing attention (trending upward)
+- Identify dominant themes appearing across multiple publications
+- Map conceptual clusters and their relationships
+- Flag themes with increasing recent attention (trending upward)
 
 ### 1.2 — Methodological Patterns
-- What research designs dominate the literature?
-- What populations, samples, or contexts are most frequently studied?
-- What measurement instruments or analytical approaches are commonly used?
+- What research designs dominate?
+- What populations, samples, or contexts appear most?
+- What measurement instruments or analytical approaches are common?
 
 ### 1.3 — Theoretical Frameworks
-- What theories or models underpin the existing research?
-- Are there competing theoretical perspectives?
+- What theories or models underpin the research?
 - Which frameworks appear underutilised or emerging?
 
-### 1.4 — Temporal Trends
-- How has the research focus shifted over time?
-- What topics are gaining momentum in recent publications?
-- What established topics show declining attention?
+### 1.4 — Citation Velocity Signals
+- Which papers have the highest citations-per-year?
+- What do the most-cited recent papers have in common?
+- What topics are accelerating vs plateauing?
 
 **Output Format:**
 \`\`\`
@@ -81,91 +77,75 @@ THEORETICAL FOUNDATION
 
 ## STAGE 2: GAP IDENTIFICATION
 
-### 2.1 — Empirical Gaps
-- What phenomena lack sufficient empirical investigation?
-- What relationships between variables remain untested?
-- What contexts or populations are underrepresented?
+Based on Stage 1, identify specific research gaps.
 
-### 2.2 — Methodological Gaps
-- What research designs are underutilised for this topic?
-- What measurement or analytical limitations exist?
+| Gap Type | Specific Gap Identified | Evidence from Publications | Opportunity Level |
+|----------|-------------------------|---------------------------|-------------------|
+| Empirical | [Description] | [Which papers reveal this gap] | High/Medium/Low |
+| Methodological | [Description] | [Which papers reveal this gap] | High/Medium/Low |
+| Theoretical | [Description] | [Which papers reveal this gap] | High/Medium/Low |
+| Practical | [Description] | [Which papers reveal this gap] | High/Medium/Low |
 
-### 2.3 — Theoretical Gaps
-- What theoretical explanations are incomplete or contested?
-- What theories from adjacent fields could be applied but have not been?
-
-### 2.4 — Practical/Applied Gaps
-- What real-world applications lack research support?
-- What intervention effectiveness remains unknown?
-
-**Output Format:**
-| Gap Type | Specific Gap Identified | Opportunity Level |
-|----------|-------------------------|-------------------|
-| Empirical | [Description] | High/Medium/Low |
-| Methodological | [Description] | High/Medium/Low |
-| Theoretical | [Description] | High/Medium/Low |
-| Practical | [Description] | High/Medium/Low |
+Identify at least 6-8 gaps total across all categories.
 
 ---
 
-## STAGE 3: POTENTIAL TOPICS GENERATION
+## STAGE 3: RESEARCH DIRECTION SYNTHESIS
 
-Generate 8-10 specific research questions based on identified gaps, adapted for {{researchType}}.
+Generate 3-5 viable research directions based on identified gaps, adapted for {{researchType}}.
 {{#if grantScheme}}Ensure alignment with {{grantScheme}} evaluation criteria and funding priorities.{{/if}}
 
-| # | Topic/Question | Type | Gap Addressed |
-|---|----------------|------|---------------|
-| 1 | [Specific question] | [Empirical/Comparative/Intervention/Validation] | [Gap from Stage 2] |
-| ... | ... | ... | ... |
+For each direction:
 
----
-
-## STAGE 4: RED FLAGS VALIDATION
-
-Validate each potential topic against feasibility criteria.
-
-### Checks:
-- **Saturation Check** — >1 recent review on the exact topic suggests saturation
-- **Primary Literature Volume** — <10 studies may be insufficient for meta-analysis
-- **Data Accessibility** — Proprietary data or restricted access?
-- **Methodological Feasibility** — Requires resources beyond typical capacity?
-- **Ethical Considerations** — Complex IRB requirements?
-
-| Potential Topic | Saturation | Literature Volume | Data Access | Methods | Ethics | VERDICT |
-|-----------------|------------|-------------------|-------------|---------|--------|---------|
-| Topic 1 | ✓/✗ | ✓/✗ | ✓/✗ | ✓/✗ | ✓/✗ | VIABLE/REVISE/DROP |
-| ... | ... | ... | ... | ... | ... | ... |
-
----
-
-## STAGE 5: FINAL TITLE GENERATION
-
-From the validated topics, generate 5 polished, publication-ready working titles.
-
-For each title:
-- **Title** — Clear, concise, signals methodology
-- **Gap Addressed** — Specific gap from Stage 2
-- **Innovation Angle** — What makes this novel
-- **Feasibility Score** — High/Medium based on Stage 4
-- **Potential Impact** — Why this matters to the field
-- **Suggested Research Design** — Brief methodological direction
+**Direction [N]: [Proposed Title]**
+- **Core Research Question** — Specific, testable question
+- **Gaps Addressed** — Which gaps from Stage 2 (reference the source publications)
+- **Novelty Statement** — What makes this direction original
+- **Methodological Approach** — Suitable for {{researchType}}
+- **Expected Outcomes** — What success looks like
+- **Funding Fit** — Which types of grants this suits
 {{#if grantScheme}}- **{{grantScheme}} Alignment** — How this maps to the grant scheme's priorities{{/if}}
+- **Key Supporting Papers** — Specific publications from the input that support this direction
 
-### RANKING & RECOMMENDATION
+---
 
-| Rank | Title # | Novelty (1-5) | Feasibility (1-5) | Impact (1-5) | Overall |
-|------|---------|---------------|--------------------|--------------| --------|
-| 1 | [#] | [score] | [score] | [score] | [avg] |
-| ... | ... | ... | ... | ... | ... |
+## STAGE 4: FEASIBILITY & RED FLAGS
 
-**Primary Recommendation:** Title [#]
-[2-3 sentence justification]
+Validate each direction:
 
-**Alternative if Constraints Exist:** Title [#]
+| Direction | Saturation Risk | Literature Volume | Data Access | Methods Feasibility | Ethics | VERDICT |
+|-----------|----------------|-------------------|-------------|---------------------|--------|---------|
+| Dir 1 | ✓/✗ | ✓/✗ | ✓/✗ | ✓/✗ | ✓/✗ | VIABLE/REVISE/DROP |
+| Dir 2 | ... | ... | ... | ... | ... | ... |
+
+**Red flag rules:**
+- >1 recent review on the exact topic → saturation risk
+- <10 primary studies → may be insufficient for meta-analysis
+- Proprietary data required → flag access concerns
+
+---
+
+## STAGE 5: RANKING & RECOMMENDATION
+
+| Rank | Direction | Gap Alignment (1-5) | Feasibility (1-5) | Impact (1-5) | Funding Fit (1-5) | Overall |
+|------|-----------|---------------------|--------------------|--------------|--------------------|---------|
+
+**Primary Recommendation:** Direction [N]
+[2-3 sentence justification referencing specific papers from the input]
+
+**Alternative Recommendation:** Direction [N]
 [Brief rationale]
 
 ---
 
+## NEXT STEPS
+For the top-ranked direction:
+1. Validate novelty — search Google Scholar for the proposed title
+2. Key literature to review (5-10 papers from the input)
+3. Potential collaborators based on the cited authors
+4. Suitable grant programmes to target
+5. Timeline estimate for proposal development
+
 ## OUTPUT FORMAT
-Structure your response as a clear markdown document with data-driven insights. Include tables for comparative analysis. Reference specific publications from the curated titles wherever possible.`,
+Structure as a clear markdown document with tables, clear headings, and explicit references to the input publications throughout. Every recommendation must trace back to specific papers the user collected.`,
 };

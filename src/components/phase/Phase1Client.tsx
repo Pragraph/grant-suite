@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { buildTitleWordsWithExclusions, buildKeywordsString } from "@/lib/boolean-exclusions";
 import { generateScholarLabsPrompt, getScholarLabsCharInfo, SCHOLAR_LABS_URL } from "@/lib/scholar-labs";
 import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
@@ -153,14 +152,14 @@ function getMethod1Steps(): WizardStepConfig[] {
 function getMethod2Steps(): WizardStepConfig[] {
   const currentYear = new Date().getFullYear();
   return [
-    // Step 1: Research Context
+    // ── Step 1: Research Context ────────────────────────────────────
     {
       id: "m2-context",
       title: "Research Context",
       description: "Tell us about your research area so we can identify emerging trends.",
       type: "context-form",
     },
-    // Step 2: Topic Discovery Prompt (AI identifies 15-25 emerging topics)
+    // ── Step 2: Topic Discovery Prompt ──────────────────────────────
     {
       id: "m2-topic-prompt",
       title: "Topic Discovery Prompt",
@@ -169,120 +168,123 @@ function getMethod2Steps(): WizardStepConfig[] {
       type: "prompt-compile",
       templateId: "phase1.method2-topic-discovery",
     },
-    // Step 3: Select topic + generate search strings
+    // ── Step 3: Select Topic + Search String Prompt ─────────────────
+    // User enters their selected topic. The app dynamically builds
+    // a search-string prompt they copy into the SAME AI chat.
+    // No external tool link. No exclusion operators.
     {
-      id: "m2-select-topic",
-      title: "Select Topic & Generate Search Strings",
+      id: "m2-select-and-search",
+      title: "Select Topic & Get Search Strings",
       description:
-        "Copy exactly from the 'Emerging Keyword/Topic' or 'Recommended Topic' column in the AI output above.",
+        "Paste your selected topic below. Then copy the generated prompt and paste it into the SAME AI chat you used in the previous step.",
       type: "external-tool",
       formInputName: "selectedTrendTopic",
       collectionLabel: "Your Selected Topic",
       collectionMinItems: 1,
-      externalTool: {
-        name: "Your AI Tool",
-        url: "https://chatgpt.com",
-        instructions:
-          "1. Enter your selected topic above.\n2. Copy the Search String prompt below.\n3. Paste it into the SAME AI chat session.\n4. The AI will generate two options of Boolean search strings.\n5. Copy the Title Words string from your preferred option.\n6. Copy the Keywords string.\n7. Paste them in the next step.",
-      },
       generateQueries: (formValues) => {
         const topic = formValues.selectedTrendTopic || "";
-        if (!topic.trim()) return [];
-        return [
-          `Topic selected: "${topic}" — Copy the Search String prompt above, paste into the SAME AI chat, and follow the instructions to get your PoP search strings.`,
-        ];
-      },
-    },
-    // Step 4: Search String Prompt (AI generates Boolean strings)
-    {
-      id: "m2-search-prompt",
-      title: "Search String Prompt",
-      description:
-        "This prompt will generate optimised Boolean search strings for Publish or Perish. Copy and paste into the SAME AI chat.",
-      type: "prompt-compile",
-      templateId: "phase1.method2-search-strings",
-    },
-    // Step 5: Paste Title Words from AI output
-    {
-      id: "m2-paste-strings",
-      title: "Paste Search Strings from AI",
-      description:
-        "Paste the Title Words and Keywords strings from the AI output. Review exclusion operators and your discipline/interest will be auto-appended.",
-      type: "paste-collection",
-      formInputName: "trendTitleWords",
-      collectionLabel: "Title Words string from AI output (Option 1 or Option 2)",
-      collectionMinItems: 1,
-    },
-    // Step 6: Paste Keywords (optional)
-    {
-      id: "m2-paste-keywords",
-      title: "Paste Keywords String (Optional)",
-      description:
-        "Paste the Keywords string from the AI output. Your Field/Discipline and Area of Interest will be auto-appended. Leave empty if the AI only provided Title Words.",
-      type: "paste-collection",
-      formInputName: "trendKeywords",
-      collectionLabel: "Keywords string from AI output (optional)",
-    },
-    // Step 7: PoP Configuration (displays generated config with copy buttons)
-    {
-      id: "m2-pop-config",
-      title: "Publish or Perish Search",
-      description:
-        "Apply these settings in Publish or Perish. Title Words include auto-appended exclusion operators. Sort results by Cites/Year. Select 4-6 high-impact original studies and copy their titles.",
-      type: "external-tool",
-      externalTool: {
-        name: "Publish or Perish",
-        url: "https://harzing.com/resources/publish-or-perish",
-        instructions: `Configure Publish or Perish with these settings:\n• Date Range: ${currentYear - 2} — (leave end year empty)\n• Max Results: 200\n• Uncheck: CITATION records\n• Uncheck: Patents\n\nAfter running the search:\n1. Click the "Cites/Year" column header to sort by citation velocity\n2. Select 4-6 high-impact original studies (Ctrl+Click or Cmd+Click)\n3. Right-click → "Copy Results" → "Results for Excel"\n4. Paste into Excel/Google Sheets\n5. Copy the Title column values`,
-      },
-      generateQueries: (formValues) => {
-        const titleWords = formValues.trendTitleWords || "";
-        const aiKeywords = formValues.trendKeywords || "";
         const discipline = formValues.discipline || "";
         const area = formValues.areaOfInterest || "";
+        const researchType = formValues.researchType || "";
+        if (!topic.trim()) return [];
 
-        const queries: string[] = [];
+        return [`Based on the user's selected topic: "${topic}"
 
-        if (titleWords.trim()) {
-          queries.push(
-            `TITLE WORDS (with exclusions):\n${buildTitleWordsWithExclusions(titleWords)}`,
-          );
-        }
+Context:
+- Field/Discipline: ${discipline}
+- Area of Interest: ${area}
+- Research Type: ${researchType}
 
-        const keywords = buildKeywordsString(aiKeywords, discipline, area);
-        if (keywords) {
-          queries.push(`KEYWORDS:\n${keywords}`);
-        }
+TASK: Generate optimized search strings for bibliometric validation. The strings will be used in BOTH Publish or Perish desktop software (Google Scholar) and Citation Impact Analyzer web tool (Semantic Scholar).
 
-        return queries;
+CRITICAL RULES:
+1. Generate TWO versions:
+   a) FULL VERSION (for Publish or Perish / Google Scholar) — can handle longer Boolean queries with OR/AND operators
+   b) SIMPLE VERSION (for Citation Impact Analyzer / Semantic Scholar) — MUST be short and simple, under 200 characters total, minimal Boolean operators. Semantic Scholar does not support lengthy Boolean queries.
+2. Intelligently adapt scope: if the topic is niche with likely few publications, use BROADER terms to capture more papers. If well-established, use more precise terms.
+3. Do NOT include review exclusion operators (no -"review", -"meta-analysis", etc.) — users will screen results manually.
+4. Title Words: maximum ONE AND operator. OR-only chains preferred.
+5. Keywords: OR-only chains for broad context filtering.
+6. Each string must be a SINGLE LINE with no line breaks.
+7. Multi-word phrases in double quotes. Single-word abbreviations without quotes.
+
+OUTPUT FORMAT (follow this structure exactly):
+
+## SEARCH STRINGS: ${topic}
+
+### FOR PUBLISH OR PERISH (Google Scholar)
+| Field | Value (copy exactly) |
+|-------|---------------------|
+| Title Words | [Boolean string with OR/AND operators] |
+| Keywords | [OR-only context string] |
+
+### FOR CITATION IMPACT ANALYZER (Semantic Scholar)
+| Field | Value (copy exactly) |
+|-------|---------------------|
+| Title Words | [short simple string, under 200 chars] |
+| Keywords | [short string or leave empty] |
+
+### SEARCH SETTINGS
+| Setting | Recommendation |
+|---------|---------------|
+| Years | Start with ${currentYear - 2}–${currentYear}. If too few results, expand to ${currentYear - 4}–${currentYear}, or set both to 0 for all years. |
+| Max results | 200 to 500 |
+| Sort by | Citations per year (Per Year) — identifies trending high-impact papers |
+
+### AFTER SEARCHING
+**Publish or Perish users:**
+1. Sort by "Per Year" column header
+2. Cmd+Click (Mac) or Ctrl+Click (Windows) to select relevant papers
+3. Right-click → Copy Results → Results as APA Reference
+
+**Citation Impact Analyzer users (citationimpact.online):**
+1. Results are auto-sorted. Tick relevant papers using checkboxes on the left.
+2. Click "Copy Excel" button at the top.
+
+Return to the Research Grant Suite app and paste your results in the next step.`];
       },
     },
-    // Step 8: Paste curated titles
+    // ── Step 4: Bibliometric Search ─────────────────────────────────
+    // Instruction step with links to both search tools.
+    // canProceed() returns true automatically (no formInputName).
     {
-      id: "m2-paste-titles",
-      title: "Paste Selected Publication Titles",
+      id: "m2-bibliometric-search",
+      title: "Run Bibliometric Search",
       description:
-        "Paste 4-10 publication titles you selected from Publish or Perish (one title per line). These will feed into the final research exploration prompt.",
-      type: "paste-collection",
-      formInputName: "curatedTitles",
-      collectionLabel: "Publication titles (one per line, 4-10 titles)",
-      collectionMinItems: 4,
+        "Use the search strings from the AI output in one of the tools below. Select relevant high-impact papers, then copy your results.",
+      type: "external-tool",
+      externalTool: {
+        name: "Citation Impact Analyzer",
+        url: "https://citationimpact.online/",
+        instructions: `Choose ONE of these two search tools:\n\n═══ OPTION A: Citation Impact Analyzer (Web — Recommended) ═══\n1. Open Citation Impact Analyzer using the link above.\n2. Paste the SIMPLE VERSION search strings from the AI output.\n3. Start with year range ${currentYear - 2}–${currentYear}. If too few results, widen to ${currentYear - 4} or leave years empty.\n4. Results are automatically sorted by Per Year.\n5. Tick checkboxes on relevant papers → Click "Copy Excel".\n\n═══ OPTION B: Publish or Perish (Desktop Software) ═══\n1. Download from harzing.com/resources/publish-or-perish if not installed.\n2. Paste the FULL VERSION search strings.\n3. Set years: start with ${currentYear - 2}–${currentYear}. Widen if needed.\n4. Max results: 200. Sort by "Per Year" column.\n5. Cmd+Click (Mac) / Ctrl+Click (Win) to select relevant papers.\n6. Right-click → Copy Results → Results as APA Reference.\n\nProceed to the next step when you have your results copied.`,
+      },
     },
-    // Step 9: Final comprehensive research exploration prompt
+    // ── Step 5: Paste Search Results ────────────────────────────────
     {
-      id: "m2-final-prompt",
-      title: "Research Exploration Prompt",
+      id: "m2-paste-results",
+      title: "Paste Search Results",
       description:
-        "This 5-stage prompt analyses your curated publications, identifies gaps, generates validated research directions, and proposes ranked titles. Copy and paste into your AI tool.",
+        "Paste the results you copied from Publish or Perish (APA references) or Citation Impact Analyzer (Excel data). These will feed into the synthesis prompt.",
+      type: "paste-collection",
+      formInputName: "trendSearchResults",
+      collectionLabel: "Search results (APA references or Excel data)",
+      collectionMinItems: 3,
+    },
+    // ── Step 6: Trend Synthesis Prompt ──────────────────────────────
+    {
+      id: "m2-synthesis-prompt",
+      title: "Trend Synthesis Prompt",
+      description:
+        "We'll synthesise your collected publications into refined research directions. Copy this prompt and paste into your AI tool.",
       type: "prompt-compile",
       templateId: "phase1.method2-trend-discovery",
     },
-    // Step 10: Paste final output → save
+    // ── Step 7: Final Synthesis Output ──────────────────────────────
     {
       id: "m2-final",
-      title: "Paste Exploration Output",
+      title: "Final Synthesis Output",
       description:
-        "Paste the research exploration output from your AI tool. This will be saved as your Trend-Based Discovery result.",
+        "Paste the trend synthesis output from your AI tool. This will be saved as your Trend-Based Discovery result.",
       type: "paste-output",
       templateId: "phase1.method2-trend-discovery",
     },

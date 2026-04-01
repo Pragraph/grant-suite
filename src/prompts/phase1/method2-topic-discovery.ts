@@ -30,7 +30,7 @@ export const template: PromptTemplate = {
 {{#if grantScheme}}5. Consider alignment with {{grantScheme}} funding priorities and evaluation criteria{{/if}}
 
 **OUTPUT REQUIREMENTS:**
-Generate a comprehensive list of 15-25 specific emerging areas. Each must be:
+Generate a focused list of 10-15 specific emerging areas. Each must be:
 - Specific enough to be searchable in academic databases
 - Demonstrating recent citation momentum (not saturated legacy topics)
 - Appropriate for {{researchType}} methodology
@@ -46,7 +46,7 @@ Generate a comprehensive list of 15-25 specific emerging areas. Each must be:
 | # | Emerging Keyword/Topic | Brief Description (1 sentence) | Citation Trend |
 |---|------------------------|--------------------------------|----------------|
 | 1 | [Specific keyword/topic] | [What it covers] | 🔥 High / 📈 Rising / ⭐ Emerging |
-| ... | Continue for 15-25 entries | ... | ... |
+| ... | Continue for 10-15 entries | ... | ... |
 
 **Legend:**
 - 🔥 High = Established high-citation area with sustained momentum
@@ -76,6 +76,9 @@ Generate a comprehensive list of 15-25 specific emerging areas. Each must be:
 
 ---
 
-**NEXT STEP:**
-From the tables above, select ONE specific topic you want to explore further. Type your selection exactly as shown in the "Emerging Keyword/Topic" or "Recommended Topic" column, and I will generate optimised Publish or Perish search strings for bibliometric validation.`,
+**NEXT STEP FOR THE USER:**
+1. Select ONE specific topic from the tables above that you want to explore further.
+2. Go back to the Research Grant Suite app and proceed to the next step in the wizard.
+3. Paste your selected topic exactly as shown in the "Emerging Keyword/Topic" or "Recommended Topic" column.
+4. The app will generate a search string prompt for you — copy it and paste it back into this same AI chat to get your bibliometric search strings.`,
 };
