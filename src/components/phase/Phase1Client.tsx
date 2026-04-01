@@ -168,19 +168,19 @@ function getMethod2Steps(): WizardStepConfig[] {
       type: "prompt-compile",
       templateId: "phase1.method2-topic-discovery",
     },
-    // ── Step 3: Select Topic + Search String Prompt ─────────────────
-    // User enters their selected topic. The app dynamically builds
-    // a search-string prompt they copy into the SAME AI chat.
-    // No external tool link. No exclusion operators.
+    // ── Step 3: Select Topic + Copy Search String Prompt ────────────
+    // User enters topic. Prompt is hidden behind a copy button.
+    // User copies it and pastes into the SAME AI chat from Step 2.
     {
       id: "m2-select-and-search",
       title: "Select Topic & Get Search Strings",
       description:
-        "Paste your selected topic below. Then copy the generated prompt and paste it into the SAME AI chat you used in the previous step.",
+        "Paste your selected topic below. Then click the button to copy the search strings prompt and paste it into the SAME AI chat you used in the previous step.",
       type: "external-tool",
       formInputName: "selectedTrendTopic",
       collectionLabel: "Your Selected Topic",
       collectionMinItems: 1,
+      hideQueryText: true,
       generateQueries: (formValues) => {
         const topic = formValues.selectedTrendTopic || "";
         const discipline = formValues.discipline || "";
@@ -229,27 +229,11 @@ OUTPUT FORMAT (follow this structure exactly):
 |---------|---------------|
 | Years | Start with ${currentYear - 2}–${currentYear}. If too few results, expand to ${currentYear - 4}–${currentYear}, or set both to 0 for all years. |
 | Max results | 200 to 500 |
-| Sort by | Citations per year (Per Year) — identifies trending high-impact papers |
-
-### AFTER SEARCHING
-**Publish or Perish users:**
-1. Sort by "Per Year" column header
-2. Cmd+Click (Mac) or Ctrl+Click (Windows) to select relevant papers
-3. Right-click → Copy Results → Results as APA Reference
-
-**Citation Impact Analyzer users (citationimpact.online):**
-1. Results are auto-sorted. Tick relevant papers using checkboxes on the left.
-2. Click "Copy Excel" button at the top.
-
-Return to the Research Grant Suite app and paste your results in the next step.`];
+| Sort by | Citations per year (Per Year) |`];
       },
     },
     // ── Step 4: Bibliometric Search ─────────────────────────────────
-    // Instruction step. canProceed() returns true (no formInputName).
-    // Detailed instructions already given in Step 3's AI output.
-    // ── Step 4: Bibliometric Search ─────────────────────────────────
-    // Two clear options. No formInputName = canProceed() returns true.
-    // User reads instructions, does search externally, clicks Next.
+    // Dual-path instructions in separate cards using --- separator.
     {
       id: "m2-bibliometric-search",
       title: "Run Bibliometric Search",
@@ -259,7 +243,7 @@ Return to the Research Grant Suite app and paste your results in the next step.`
       externalTool: {
         name: "Citation Impact Analyzer",
         url: "https://citationimpact.online/",
-        instructions: `OPTION A — Citation Impact Analyzer (Web, Recommended)\n\n1. Click "Open Citation Impact Analyzer" above.\n2. Paste the SIMPLE VERSION search strings from the AI output into the Title Words field.\n3. Set year range: start with the last 3 years (e.g., ${new Date().getFullYear() - 2}–${new Date().getFullYear()}).\n4. If too few results appear, widen to 5 years or leave both year fields empty to search all.\n5. Results are automatically sorted by Per Year (citation impact).\n6. Tick the checkboxes next to relevant papers (aim for 5–15 papers).\n7. Click the "Copy Excel" button at the top right.\n8. Proceed to the next step and paste your results.\n\n────────────────────────────────\n\nOPTION B — Publish or Perish (Desktop Software)\n\n1. Download and install Publish or Perish from harzing.com/resources/publish-or-perish (free).\n2. Open the software and select "Google Scholar" as the data source.\n3. Paste the FULL VERSION search strings into the Title Words and Keywords fields.\n4. Set year range: start with the last 3 years. Widen if too few results.\n5. Set max results to 200.\n6. Click Search, then sort results by the "Per Year" column.\n7. Hold Cmd (Mac) or Ctrl (Windows) and click to select relevant papers.\n8. Right-click your selection → Copy Results → Results as APA Reference.\n9. Proceed to the next step and paste your results.`,
+        instructions: `OPTION A — Citation Impact Analyzer (Web, Recommended)\n\n1. Click "Open Citation Impact Analyzer" above.\n2. Paste the SIMPLE VERSION search strings from the AI output into the Title Words field.\n3. Set year range: start with the last 3 years (e.g., ${new Date().getFullYear() - 2}–${new Date().getFullYear()}).\n4. If too few results, widen to 5 years or leave both year fields empty to search all.\n5. Results are automatically sorted by Per Year (citation impact).\n6. Tick the checkboxes next to relevant papers (aim for 5–15 papers).\n7. Click the "Copy Excel" button at the top right.\n8. Proceed to the next step and paste your results.\n---\nOPTION B — Publish or Perish (Desktop Software)\n\n1. Download and install from harzing.com/resources/publish-or-perish (free).\n2. Open the software and select "Google Scholar" as the data source.\n3. Paste the FULL VERSION search strings into the Title Words and Keywords fields.\n4. Set year range: start with the last 3 years. Widen if too few results.\n5. Set max results to 200.\n6. Click Search, then sort results by the "Per Year" column.\n7. Hold Cmd (Mac) or Ctrl (Windows) and click to select relevant papers.\n8. Right-click your selection → Copy Results → Results as APA Reference.\n9. Proceed to the next step and paste your results.`,
       },
     },
     // ── Step 5: Paste Search Results ────────────────────────────────

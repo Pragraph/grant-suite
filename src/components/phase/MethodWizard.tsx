@@ -47,6 +47,7 @@ export interface WizardStepConfig {
   collectionLabel?: string;
   collectionMinItems?: number;
   formInputName?: string;
+  hideQueryText?: boolean;
 }
 
 interface MethodWizardProps {
@@ -549,34 +550,86 @@ export function MethodWizard({
             )}
 
             {tool?.instructions && (
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600 whitespace-pre-line">
-                {tool.instructions}
-              </div>
+              tool.instructions.includes("\n---\n") ? (
+                /* Split mode: render each block as a separate styled card */
+                <div className="space-y-4">
+                  {tool.instructions.split("\n---\n").map((block, i) => {
+                    const lines = block.trim().split("\n");
+                    const heading = lines[0];
+                    const body = lines.slice(1).join("\n").trim();
+                    return (
+                      <div
+                        key={i}
+                        className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+                      >
+                        <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                          {heading}
+                        </h4>
+                        <div className="text-sm text-gray-600 whitespace-pre-line leading-relaxed">
+                          {body}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                /* Default: single block */
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600 whitespace-pre-line">
+                  {tool.instructions}
+                </div>
+              )
             )}
 
             {queries.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-medium text-gray-500">Search queries to use:</p>
-                {queries.map((query, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg"
-                  >
-                    <code className="flex-1 text-sm text-gray-800">{query}</code>
+                {step.hideQueryText ? (
+                  /* Hidden mode: show only a copy button, not the full text */
+                  queries.map((query, i) => (
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 w-7 p-0 shrink-0"
+                      key={i}
+                      size="lg"
                       onClick={() => handleCopy(query, `query-${i}`)}
+                      className="min-w-45"
                     >
                       {copyFeedback === `query-${i}` ? (
-                        <Check className="h-3.5 w-3.5 text-emerald-500" />
+                        <>
+                          <Check className="h-4 w-4" />
+                          Copied!
+                        </>
                       ) : (
-                        <Copy className="h-3.5 w-3.5" />
+                        <>
+                          <Copy className="h-4 w-4" />
+                          Copy Search Strings Prompt
+                        </>
                       )}
                     </Button>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  /* Default mode: show query text with copy button */
+                  <>
+                    <p className="text-xs font-medium text-gray-500">Search queries to use:</p>
+                    {queries.map((query, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg"
+                      >
+                        <code className="flex-1 text-sm text-gray-800">{query}</code>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 w-7 p-0 shrink-0"
+                          onClick={() => handleCopy(query, `query-${i}`)}
+                        >
+                          {copyFeedback === `query-${i}` ? (
+                            <Check className="h-3.5 w-3.5 text-emerald-500" />
+                          ) : (
+                            <Copy className="h-3.5 w-3.5" />
+                          )}
+                        </Button>
+                      </div>
+                    ))}
+                  </>
+                )}
               </div>
             )}
           </div>
