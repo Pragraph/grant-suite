@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { buildTitleWordsWithExclusions, buildKeywordsString } from "@/lib/boolean-exclusions";
 import { generateScholarLabsPrompt, getScholarLabsCharInfo, SCHOLAR_LABS_URL } from "@/lib/scholar-labs";
 import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
@@ -150,53 +151,138 @@ function getMethod1Steps(): WizardStepConfig[] {
 }
 
 function getMethod2Steps(): WizardStepConfig[] {
+  const currentYear = new Date().getFullYear();
   return [
+    // Step 1: Research Context
     {
       id: "m2-context",
       title: "Research Context",
-      description: "Tell us about your research area so we can identify relevant trends.",
+      description: "Tell us about your research area so we can identify emerging trends.",
       type: "context-form",
     },
+    // Step 2: Topic Discovery Prompt (AI identifies 15-25 emerging topics)
     {
-      id: "m2-pop",
+      id: "m2-topic-prompt",
+      title: "Topic Discovery Prompt",
+      description:
+        "We've compiled a prompt to identify emerging research topics with citation momentum. Copy it and paste into your AI tool (ChatGPT, Claude, Gemini). Use a thinking/reasoning model for best results.",
+      type: "prompt-compile",
+      templateId: "phase1.method2-topic-discovery",
+    },
+    // Step 3: Select topic + generate search strings
+    {
+      id: "m2-select-topic",
+      title: "Select Topic & Generate Search Strings",
+      description:
+        "Copy exactly from the 'Emerging Keyword/Topic' or 'Recommended Topic' column in the AI output above.",
+      type: "external-tool",
+      formInputName: "selectedTrendTopic",
+      collectionLabel: "Your Selected Topic",
+      collectionMinItems: 1,
+      externalTool: {
+        name: "Your AI Tool",
+        url: "https://chatgpt.com",
+        instructions:
+          "1. Enter your selected topic above.\n2. Copy the Search String prompt below.\n3. Paste it into the SAME AI chat session.\n4. The AI will generate two options of Boolean search strings.\n5. Copy the Title Words string from your preferred option.\n6. Copy the Keywords string.\n7. Paste them in the next step.",
+      },
+      generateQueries: (formValues) => {
+        const topic = formValues.selectedTrendTopic || "";
+        if (!topic.trim()) return [];
+        return [
+          `Topic selected: "${topic}" — Copy the Search String prompt above, paste into the SAME AI chat, and follow the instructions to get your PoP search strings.`,
+        ];
+      },
+    },
+    // Step 4: Search String Prompt (AI generates Boolean strings)
+    {
+      id: "m2-search-prompt",
+      title: "Search String Prompt",
+      description:
+        "This prompt will generate optimised Boolean search strings for Publish or Perish. Copy and paste into the SAME AI chat.",
+      type: "prompt-compile",
+      templateId: "phase1.method2-search-strings",
+    },
+    // Step 5: Paste Title Words from AI output
+    {
+      id: "m2-paste-strings",
+      title: "Paste Search Strings from AI",
+      description:
+        "Paste the Title Words and Keywords strings from the AI output. Review exclusion operators and your discipline/interest will be auto-appended.",
+      type: "paste-collection",
+      formInputName: "trendTitleWords",
+      collectionLabel: "Title Words string from AI output (Option 1 or Option 2)",
+      collectionMinItems: 1,
+    },
+    // Step 6: Paste Keywords (optional)
+    {
+      id: "m2-paste-keywords",
+      title: "Paste Keywords String (Optional)",
+      description:
+        "Paste the Keywords string from the AI output. Your Field/Discipline and Area of Interest will be auto-appended. Leave empty if the AI only provided Title Words.",
+      type: "paste-collection",
+      formInputName: "trendKeywords",
+      collectionLabel: "Keywords string from AI output (optional)",
+    },
+    // Step 7: PoP Configuration (displays generated config with copy buttons)
+    {
+      id: "m2-pop-config",
       title: "Publish or Perish Search",
-      description: "Use these queries in Publish or Perish to collect bibliometric data. Copy results including h-index, citation counts, and publication counts.",
+      description:
+        "Apply these settings in Publish or Perish. Title Words include auto-appended exclusion operators. Sort results by Cites/Year. Select 4-6 high-impact original studies and copy their titles.",
       type: "external-tool",
       externalTool: {
         name: "Publish or Perish",
         url: "https://harzing.com/resources/publish-or-perish",
-        instructions: "Download and run Publish or Perish. Use Google Scholar or Scopus as the data source. For each query below, run the search and note: total papers, total citations, h-index, papers per year trend, and the top 5 most-cited papers. Copy all results.",
+        instructions: `Configure Publish or Perish with these settings:\n• Date Range: ${currentYear - 2} — (leave end year empty)\n• Max Results: 200\n• Uncheck: CITATION records\n• Uncheck: Patents\n\nAfter running the search:\n1. Click the "Cites/Year" column header to sort by citation velocity\n2. Select 4-6 high-impact original studies (Ctrl+Click or Cmd+Click)\n3. Right-click → "Copy Results" → "Results for Excel"\n4. Paste into Excel/Google Sheets\n5. Copy the Title column values`,
       },
       generateQueries: (formValues) => {
-        const d = formValues.discipline || "research";
-        const a = formValues.areaOfInterest || "";
-        return [
-          `${d} ${a}`,
-          `${d} ${a} (2022-2025)`,
-          `${d} ${a} emerging trends`,
-          `${d} ${a} novel approach`,
-          `${d} ${a} machine learning OR AI`,
-        ];
+        const titleWords = formValues.trendTitleWords || "";
+        const aiKeywords = formValues.trendKeywords || "";
+        const discipline = formValues.discipline || "";
+        const area = formValues.areaOfInterest || "";
+
+        const queries: string[] = [];
+
+        if (titleWords.trim()) {
+          queries.push(
+            `TITLE WORDS (with exclusions):\n${buildTitleWordsWithExclusions(titleWords)}`,
+          );
+        }
+
+        const keywords = buildKeywordsString(aiKeywords, discipline, area);
+        if (keywords) {
+          queries.push(`KEYWORDS:\n${keywords}`);
+        }
+
+        return queries;
       },
     },
+    // Step 8: Paste curated titles
     {
-      id: "m2-paste-data",
-      title: "Paste Trend Data",
-      description: "Paste the bibliometric data you collected from Publish or Perish.",
-      type: "paste-output",
-      formInputName: "trendData",
+      id: "m2-paste-titles",
+      title: "Paste Selected Publication Titles",
+      description:
+        "Paste 4-10 publication titles you selected from Publish or Perish (one title per line). These will feed into the final research exploration prompt.",
+      type: "paste-collection",
+      formInputName: "curatedTitles",
+      collectionLabel: "Publication titles (one per line, 4-10 titles)",
+      collectionMinItems: 4,
     },
+    // Step 9: Final comprehensive research exploration prompt
     {
-      id: "m2-analysis-prompt",
-      title: "Trend Analysis Prompt",
-      description: "We'll analyze your trend data to identify research opportunities. Copy this prompt.",
+      id: "m2-final-prompt",
+      title: "Research Exploration Prompt",
+      description:
+        "This 5-stage prompt analyses your curated publications, identifies gaps, generates validated research directions, and proposes ranked titles. Copy and paste into your AI tool.",
       type: "prompt-compile",
       templateId: "phase1.method2-trend-discovery",
     },
+    // Step 10: Paste final output → save
     {
       id: "m2-final",
-      title: "Paste Analysis Output",
-      description: "Paste the trend analysis output from your AI tool. This will be saved as your Method 2 result.",
+      title: "Paste Exploration Output",
+      description:
+        "Paste the research exploration output from your AI tool. This will be saved as your Trend-Based Discovery result.",
       type: "paste-output",
       templateId: "phase1.method2-trend-discovery",
     },
