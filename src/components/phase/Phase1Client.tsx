@@ -245,19 +245,23 @@ Return to the Research Grant Suite app and paste your results in the next step.`
       },
     },
     // ── Step 4: Bibliometric Search ─────────────────────────────────
-    // Instruction step with links to both search tools.
-    // canProceed() returns true automatically (no formInputName).
+    // Instruction step. canProceed() returns true (no formInputName).
+    // Detailed instructions already given in Step 3's AI output.
     {
       id: "m2-bibliometric-search",
       title: "Run Bibliometric Search",
       description:
-        "Use the search strings from the AI output in one of the tools below. Select relevant high-impact papers, then copy your results.",
+        "Use the search strings from the AI output to find relevant papers. Choose one of the two tools below, select 5-15 high-impact papers, then copy your results and proceed to the next step.",
       type: "external-tool",
       externalTool: {
         name: "Citation Impact Analyzer",
         url: "https://citationimpact.online/",
-        instructions: `Choose ONE of these two search tools:\n\n═══ OPTION A: Citation Impact Analyzer (Web — Recommended) ═══\n1. Open Citation Impact Analyzer using the link above.\n2. Paste the SIMPLE VERSION search strings from the AI output.\n3. Start with year range ${currentYear - 2}–${currentYear}. If too few results, widen to ${currentYear - 4} or leave years empty.\n4. Results are automatically sorted by Per Year.\n5. Tick checkboxes on relevant papers → Click "Copy Excel".\n\n═══ OPTION B: Publish or Perish (Desktop Software) ═══\n1. Download from harzing.com/resources/publish-or-perish if not installed.\n2. Paste the FULL VERSION search strings.\n3. Set years: start with ${currentYear - 2}–${currentYear}. Widen if needed.\n4. Max results: 200. Sort by "Per Year" column.\n5. Cmd+Click (Mac) / Ctrl+Click (Win) to select relevant papers.\n6. Right-click → Copy Results → Results as APA Reference.\n\nProceed to the next step when you have your results copied.`,
+        instructions:
+          "Option A (Recommended): Paste the SIMPLE VERSION strings. Tick relevant papers. Click Copy Excel.",
       },
+      generateQueries: () => [
+        "Option B: Use Publish or Perish desktop — download from harzing.com/resources/publish-or-perish — paste the FULL VERSION strings — sort by Per Year — select papers with Cmd+Click (Mac) / Ctrl+Click (Win) — Right-click → Copy Results → Results as APA Reference.",
+      ],
     },
     // ── Step 5: Paste Search Results ────────────────────────────────
     {
