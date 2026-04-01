@@ -247,21 +247,20 @@ Return to the Research Grant Suite app and paste your results in the next step.`
     // ── Step 4: Bibliometric Search ─────────────────────────────────
     // Instruction step. canProceed() returns true (no formInputName).
     // Detailed instructions already given in Step 3's AI output.
+    // ── Step 4: Bibliometric Search ─────────────────────────────────
+    // Two clear options. No formInputName = canProceed() returns true.
+    // User reads instructions, does search externally, clicks Next.
     {
       id: "m2-bibliometric-search",
       title: "Run Bibliometric Search",
       description:
-        "Use the search strings from the AI output to find relevant papers. Choose one of the two tools below, select 5-15 high-impact papers, then copy your results and proceed to the next step.",
+        "Use the search strings from the AI output to find relevant papers. Choose one of the two options below.",
       type: "external-tool",
       externalTool: {
         name: "Citation Impact Analyzer",
         url: "https://citationimpact.online/",
-        instructions:
-          "Option A (Recommended): Paste the SIMPLE VERSION strings. Tick relevant papers. Click Copy Excel.",
+        instructions: `OPTION A — Citation Impact Analyzer (Web, Recommended)\n\n1. Click "Open Citation Impact Analyzer" above.\n2. Paste the SIMPLE VERSION search strings from the AI output into the Title Words field.\n3. Set year range: start with the last 3 years (e.g., ${new Date().getFullYear() - 2}–${new Date().getFullYear()}).\n4. If too few results appear, widen to 5 years or leave both year fields empty to search all.\n5. Results are automatically sorted by Per Year (citation impact).\n6. Tick the checkboxes next to relevant papers (aim for 5–15 papers).\n7. Click the "Copy Excel" button at the top right.\n8. Proceed to the next step and paste your results.\n\n────────────────────────────────\n\nOPTION B — Publish or Perish (Desktop Software)\n\n1. Download and install Publish or Perish from harzing.com/resources/publish-or-perish (free).\n2. Open the software and select "Google Scholar" as the data source.\n3. Paste the FULL VERSION search strings into the Title Words and Keywords fields.\n4. Set year range: start with the last 3 years. Widen if too few results.\n5. Set max results to 200.\n6. Click Search, then sort results by the "Per Year" column.\n7. Hold Cmd (Mac) or Ctrl (Windows) and click to select relevant papers.\n8. Right-click your selection → Copy Results → Results as APA Reference.\n9. Proceed to the next step and paste your results.`,
       },
-      generateQueries: () => [
-        "Option B: Use Publish or Perish desktop — download from harzing.com/resources/publish-or-perish — paste the FULL VERSION strings — sort by Per Year — select papers with Cmd+Click (Mac) / Ctrl+Click (Win) — Right-click → Copy Results → Results as APA Reference.",
-      ],
     },
     // ── Step 5: Paste Search Results ────────────────────────────────
     {

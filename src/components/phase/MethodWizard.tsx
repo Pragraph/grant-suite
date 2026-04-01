@@ -549,7 +549,7 @@ export function MethodWizard({
             )}
 
             {tool?.instructions && (
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600 whitespace-pre-line">
                 {tool.instructions}
               </div>
             )}
