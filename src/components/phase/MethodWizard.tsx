@@ -395,27 +395,75 @@ export function MethodWizard({
               />
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="wizard-type" className="text-xs font-medium text-gray-500">
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-gray-500">
                 Research Type <span className="text-red-500">*</span>
               </Label>
-              <select
-                id="wizard-type"
-                value={state.formValues.researchType || ""}
-                onChange={(e) => setFormValue("researchType", e.target.value)}
-                aria-label="Research Type"
-                className={cn(
-                  "w-full h-9 rounded-md border border-gray-200 bg-gray-50 px-3",
-                  "text-sm text-gray-800",
-                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white",
-                )}
-              >
-                <option value="">Select...</option>
-                <option value="fundamental">Fundamental / Basic</option>
-                <option value="applied">Applied</option>
-                <option value="translational">Translational</option>
-                <option value="mixed">Mixed</option>
-              </select>
+              <div className="grid gap-2">
+                {[
+                  {
+                    value: "fundamental",
+                    label: "Fundamental / Basic",
+                    description: "Builds new knowledge or theory without immediate practical use.",
+                    example: "e.g., FRGS",
+                  },
+                  {
+                    value: "applied",
+                    label: "Applied",
+                    description: "Uses existing knowledge to solve a specific real-world problem.",
+                    example: "e.g., PRGS, industry-partnered grants",
+                  },
+                  {
+                    value: "translational",
+                    label: "Translational",
+                    description: "Turns laboratory or theoretical findings into real-world applications.",
+                    example: "e.g., TRGS",
+                  },
+                  {
+                    value: "mixed",
+                    label: "Mixed Methods",
+                    description: "Combines fundamental understanding with practical application in one study.",
+                    example: "e.g., LRGS, multi-phase grants",
+                  },
+                ].map((option) => {
+                  const isSelected = state.formValues.researchType === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setFormValue("researchType", option.value)}
+                      className={cn(
+                        "w-full text-left rounded-lg border p-3 transition-all",
+                        isSelected
+                          ? "border-[#4F7DF3] bg-[#F0F4FF] ring-1 ring-[#4F7DF3]/30"
+                          : "border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100",
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className={cn(
+                            "text-sm font-medium",
+                            isSelected ? "text-[#4F7DF3]" : "text-gray-800",
+                          )}>
+                            {option.label}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {option.description}
+                          </p>
+                          <p className="text-[10px] text-gray-400 mt-1">
+                            {option.example}
+                          </p>
+                        </div>
+                        {isSelected && (
+                          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#4F7DF3] mt-0.5">
+                            <Check className="h-3 w-3 text-white" />
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
           </div>
