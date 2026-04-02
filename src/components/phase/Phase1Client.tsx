@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { generateScholarLabsPrompt, getScholarLabsCharInfo, SCHOLAR_LABS_URL } from "@/lib/scholar-labs";
+import { generateScholarLabsPrompt, SCHOLAR_LABS_URL } from "@/lib/scholar-labs";
 import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
 import { useProjectStore } from "@/stores/project-store";
@@ -115,9 +115,7 @@ function getMethod1Steps(): WizardStepConfig[] {
         const topic = formValues.selectedTopic || "";
         const discipline = formValues.discipline || "";
         if (!topic.trim()) return [];
-        const prompt = generateScholarLabsPrompt(topic, discipline);
-        const charInfo = getScholarLabsCharInfo(prompt);
-        return [`${prompt}  [${charInfo.length}/${charInfo.max} chars]`];
+        return [generateScholarLabsPrompt(topic, discipline)];
       },
     },
     // Step 5: Collect research gaps WITH citations
