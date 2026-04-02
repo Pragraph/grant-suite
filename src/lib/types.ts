@@ -4,6 +4,7 @@ export interface Project {
   id: string;
   title: string;
   discipline: string;
+  areaOfInterest?: string;
   country: string;
   careerStage: string;
   currency?: string;

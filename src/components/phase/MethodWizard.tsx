@@ -131,6 +131,9 @@ export function MethodWizard({
       if (!initial.formValues.discipline && project.discipline) {
         updates.discipline = project.discipline;
       }
+      if (!initial.formValues.areaOfInterest && project.areaOfInterest) {
+        updates.areaOfInterest = project.areaOfInterest;
+      }
       if (!initial.formValues.country && project.country) {
         updates.country = project.country;
       }
@@ -190,6 +193,7 @@ export function MethodWizard({
         project: {
           title: activeProject.title,
           discipline: activeProject.discipline,
+          areaOfInterest: activeProject.areaOfInterest || "",
           country: activeProject.country,
           careerStage: activeProject.careerStage || "",
           currency: activeProject.currency || "",

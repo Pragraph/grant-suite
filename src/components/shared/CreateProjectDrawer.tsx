@@ -128,6 +128,7 @@ export function CreateProjectDrawer({
   const createProject = useProjectStore((s) => s.createProject);
 
   const [discipline, setDiscipline] = useState("");
+  const [areaOfInterest, setAreaOfInterest] = useState("");
   const [title, setTitle] = useState("");
   const [country, setCountry] = useState("");
   const [grantScheme, setGrantScheme] = useState<GrantScheme | "">("");
@@ -173,6 +174,7 @@ export function CreateProjectDrawer({
     const project = createProject({
       title: title.trim() || "Untitled Project",
       discipline: discipline.trim(),
+      areaOfInterest: areaOfInterest.trim() || undefined,
       country,
       careerStage: "",
       currency: currency || undefined,
@@ -183,6 +185,7 @@ export function CreateProjectDrawer({
 
     // Reset form
     setDiscipline("");
+    setAreaOfInterest("");
     setTitle("");
     setCountry("");
     setGrantScheme("");
@@ -218,7 +221,21 @@ export function CreateProjectDrawer({
             />
           </div>
 
-          {/* 2. Title (optional) */}
+          {/* 2. Area of Interest (optional) */}
+          <div className="space-y-2">
+            <Label htmlFor="areaOfInterest">Area of Interest</Label>
+            <Input
+              id="areaOfInterest"
+              placeholder="e.g., AI in disability sports, Student motivation in online learning"
+              value={areaOfInterest}
+              onChange={(e) => setAreaOfInterest(e.target.value)}
+            />
+            <p className="text-xs text-gray-500">
+              Optional — helps pre-fill research context in later steps.
+            </p>
+          </div>
+
+          {/* 3. Title (optional) */}
           <div className="space-y-2">
             <Label htmlFor="title">Project Title</Label>
             <Input
@@ -232,7 +249,7 @@ export function CreateProjectDrawer({
             </p>
           </div>
 
-          {/* 3. Country */}
+          {/* 4. Country */}
           <div className="space-y-2">
             <Label htmlFor="country">
               Country <span className="text-error">*</span>
@@ -251,7 +268,7 @@ export function CreateProjectDrawer({
             </Select>
           </div>
 
-          {/* 4. Grant Scheme */}
+          {/* 5. Grant Scheme */}
           <div className="space-y-2">
             <Label htmlFor="grant-scheme">Grant Scheme</Label>
             <Select value={grantScheme} onValueChange={handleGrantSchemeChange}>
@@ -288,7 +305,7 @@ export function CreateProjectDrawer({
             )}
           </div>
 
-          {/* 5. Target Funder */}
+          {/* 6. Target Funder */}
           <div className="space-y-2">
             <Label htmlFor="funder">Target Funder</Label>
             <Input
@@ -299,7 +316,7 @@ export function CreateProjectDrawer({
             />
           </div>
 
-          {/* 6. Currency */}
+          {/* 7. Currency */}
           <div className="space-y-2">
             <Label htmlFor="currency">Currency</Label>
             <Select value={currency} onValueChange={setCurrency}>
@@ -316,7 +333,7 @@ export function CreateProjectDrawer({
             </Select>
           </div>
 
-          {/* 7. Budget Range */}
+          {/* 8. Budget Range */}
           <div className="space-y-2">
             <Label htmlFor="budget">Budget Range</Label>
             <Select value={budgetRange} onValueChange={setBudgetRange}>
