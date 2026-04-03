@@ -194,7 +194,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
             />
           ) : (
             <h1
-              className="text-2xl font-heading font-bold text-gray-900 truncate cursor-pointer hover:text-[#4F7DF3] transition-colors"
+              className="text-2xl font-heading font-bold text-foreground truncate cursor-pointer hover:text-[#4F7DF3] transition-colors"
               onClick={() => setEditingTitle(true)}
               title="Click to edit"
             >
@@ -232,7 +232,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        <Card className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 overflow-x-auto">
+        <Card className="bg-card rounded-xl border border-border p-4 sm:p-6 overflow-x-auto">
           <PipelineMap />
         </Card>
       </motion.div>
@@ -259,12 +259,12 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                 <Card
                   className={`transition-all duration-normal rounded-xl ${
                     isCurrent
-                      ? "bg-white border border-[#4F7DF3]/30 shadow-sm"
+                      ? "bg-card border border-[#4F7DF3]/30 shadow-sm"
                       : !accessible
-                        ? "bg-gray-50/50 border border-gray-100 opacity-60"
+                        ? "bg-muted/50 border border-border opacity-60"
                         : completion === 100
-                          ? "bg-white border border-emerald-200"
-                          : "bg-white border border-gray-200"
+                          ? "bg-card border border-emerald-200"
+                          : "bg-card border border-border"
                   }`}
                 >
                   {/* Phase Row — toggles expand/collapse */}
@@ -278,14 +278,14 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-heading font-semibold text-sm text-gray-900">
+                        <span className="font-heading font-semibold text-sm text-foreground">
                           {phase.name}
                         </span>
                         {!accessible && (
                           <Lock className="h-3.5 w-3.5 text-gray-300" />
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 truncate mt-0.5">
+                      <p className="text-xs text-muted-foreground truncate mt-0.5">
                         {phase.description}
                       </p>
                     </div>
@@ -353,12 +353,12 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                               onKeyDown={(e) => {
                                 if (e.key === "Enter" || e.key === " ") navigateTo(phaseUrl);
                               }}
-                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-gray-50 transition-colors cursor-pointer"
+                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors cursor-pointer"
                             >
                               <span className="text-xs text-gray-400 font-mono w-5">
                                 {stepNum}
                               </span>
-                              <span className="text-sm text-gray-700 flex-1">
+                              <span className="text-sm text-foreground/80 flex-1">
                                 {stepName}
                               </span>
                               <span

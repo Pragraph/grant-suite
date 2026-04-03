@@ -180,8 +180,8 @@ function SidebarContent({
                   className={cn(
                     "group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-fast",
                     isActive || isCurrentRoute
-                      ? "text-[#4F7DF3] bg-[#F0F4FF] font-semibold"
-                      : "text-gray-600 hover:bg-gray-50",
+                      ? "text-[#4F7DF3] bg-accent-50 dark:bg-accent-900/30 font-semibold"
+                      : "text-muted-foreground hover:bg-muted/50",
                     disabled && "pointer-events-none opacity-40",
                     collapsed && "justify-center px-0"
                   )}
@@ -280,8 +280,8 @@ function SidebarContent({
                     className={cn(
                       "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-fast",
                       isCurrentRoute
-                        ? "text-gray-900 bg-gray-100 font-medium"
-                        : "text-gray-600 hover:bg-gray-50",
+                        ? "text-foreground bg-muted font-medium"
+                        : "text-muted-foreground hover:bg-muted/50",
                       collapsed && "justify-center px-0"
                     )}
                   >
@@ -348,7 +348,7 @@ function SidebarContent({
             <button
               type="button"
               onClick={() => window.location.assign("/")}
-              className="flex items-center gap-1.5 text-xs text-gray-500 transition-colors duration-fast hover:text-gray-700"
+              className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors duration-fast hover:text-foreground"
             >
               <Home className="h-3.5 w-3.5" />
               Main Page

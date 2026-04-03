@@ -36,7 +36,7 @@ export type InternationalGrantScheme =
   | "Newton-Institutional-Links"
   | "International-Other";
 
-export type GrantScheme = MalaysianGrantScheme | InternationalGrantScheme | "Other";
+export type GrantScheme = MalaysianGrantScheme | InternationalGrantScheme | "Other" | "Undecided";
 
 export interface GrantSchemeInfo {
   id: GrantScheme;

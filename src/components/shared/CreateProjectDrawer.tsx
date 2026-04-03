@@ -168,11 +168,29 @@ export function CreateProjectDrawer({
 
   const isValid = discipline.trim() && country;
 
+  const generateDraftTitle = (): string => {
+    const schemeInfo = grantScheme ? GRANT_SCHEME_MAP[grantScheme] : null;
+    const schemePart =
+      grantScheme && grantScheme !== "Undecided" && grantScheme !== "Other"
+        ? schemeInfo?.name || grantScheme
+        : "Untitled";
+
+    const areaWords = areaOfInterest.trim().split(/\s+/);
+    const areaPart =
+      areaWords.length >= 2
+        ? `${areaWords[0]} ${areaWords[1]}`
+        : areaWords[0] || "Untitled";
+
+    const yearPart = new Date().getFullYear();
+
+    return `${schemePart}_${areaPart}_${yearPart}`;
+  };
+
   const handleSubmit = () => {
     if (!isValid) return;
 
     const project = createProject({
-      title: title.trim() || "Untitled Project",
+      title: title.trim() || generateDraftTitle(),
       discipline: discipline.trim(),
       areaOfInterest: areaOfInterest.trim() || undefined,
       country,
@@ -244,8 +262,8 @@ export function CreateProjectDrawer({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <p className="text-xs text-red-500">
-              Optional — you can name your project later after topic discovery.
+            <p className="text-xs text-gray-500">
+              Optional — a draft title will be generated automatically if left empty.
             </p>
           </div>
 
@@ -294,6 +312,7 @@ export function CreateProjectDrawer({
                 </SelectGroup>
                 <SelectGroup>
                   <SelectLabel>Other</SelectLabel>
+                  <SelectItem value="Undecided">Undecided — I need grant matching help</SelectItem>
                   <SelectItem value="Other">Other / Not listed</SelectItem>
                 </SelectGroup>
               </SelectContent>

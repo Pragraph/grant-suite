@@ -403,7 +403,17 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
   // ── Phase progress ────────────────────────────────────────────────────────
 
   const phaseCompletion = getPhaseCompletion(1);
-  const phase1Steps = PHASE_1.steps;
+
+  // ── Conditionally filter Phase 1 steps ──────────────────────────────────
+  const phase1Steps = useMemo(() => {
+    const scheme = activeProject?.grantScheme;
+    const needsGrantMatching = !scheme || scheme === "Other" || scheme === "Undecided";
+    if (needsGrantMatching) {
+      return PHASE_1.steps;
+    }
+    // Hide Step 2 (Grant Matching) when user already has a specific scheme
+    return PHASE_1.steps.filter(s => s.step !== 2);
+  }, [activeProject?.grantScheme]);
 
   const getStepStatus = useCallback(
     (stepNum: number): StepStatus => {
@@ -453,15 +463,21 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
         const step1Status = getStepStatus(1);
         return completedMethods.length > 0 || step1Status !== "not-started";
       }
-      // Step 3 unlocks after Step 2 is complete (or skipped)
+      // Step 3 unlocks after Step 2 is complete (or skipped), or if Step 2 is hidden
       if (stepNum === 3) {
+        const scheme = activeProject?.grantScheme;
+        const grantMatchingHidden = scheme && scheme !== "Other" && scheme !== "Undecided";
+        if (grantMatchingHidden) {
+          // Step 2 is hidden, so step 3 unlocks based on step 1
+          return completedMethods.length > 0 || getStepStatus(1) !== "not-started";
+        }
         const step2Status = getStepStatus(2);
         const step1Status = getStepStatus(1);
         return step2Status !== "not-started" || completedMethods.length > 0 || step1Status !== "not-started";
       }
       return true;
     },
-    [getStepStatus, completedMethods],
+    [getStepStatus, completedMethods, activeProject?.grantScheme],
   );
 
   // ── Method wizard config ──────────────────────────────────────────────────
@@ -495,10 +511,10 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
       <div className="flex items-center gap-4">
         <PhaseIcon phase={1} size="lg" active />
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-foreground">
             {PHASE_1.name}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Discover your research direction through systematic exploration of gaps, trends, and emerging frontiers.
           </p>
         </div>
@@ -507,8 +523,8 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
       {/* ── Progress Bar ───────────────────────────────────────────────── */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-500 font-medium">Phase Progress</span>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-muted-foreground font-medium">Phase Progress</span>
+          <span className="text-sm text-muted-foreground/70">
             {phase1Steps.filter((s) => getStepStatus(s.step) === "complete").length} of{" "}
             {phase1Steps.length} steps
           </span>
@@ -533,7 +549,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                 <div
                   className={cn(
                     "absolute left-3.75 top-9 w-0.5 h-[calc(100%-20px)]",
-                    isComplete ? "bg-phase-1" : "bg-gray-200",
+                    isComplete ? "bg-phase-1" : "bg-border",
                   )}
                 />
               )}
@@ -543,7 +559,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                 onClick={() => setActiveStep(isActive ? null : stepDef.step)}
                 className={cn(
                   "flex w-full items-center gap-3 py-3 text-left transition-colors",
-                  "hover:bg-gray-50 rounded-xl px-2 -mx-2",
+                  "hover:bg-muted/50 rounded-xl px-2 -mx-2",
                 )}
               >
                 {/* Timeline dot */}
@@ -555,8 +571,8 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                       : isCurrent
                         ? "border-phase-1 bg-transparent text-phase-1"
                         : unlocked
-                          ? "border-gray-200 bg-transparent text-gray-400"
-                          : "border-gray-200 bg-transparent text-gray-300",
+                          ? "border-border bg-transparent text-muted-foreground"
+                          : "border-border bg-transparent text-muted-foreground/50",
                   )}
                 >
                   {isComplete ? (
@@ -571,12 +587,12 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                     className={cn(
                       "text-sm font-semibold",
                       isComplete
-                        ? "text-gray-900"
+                        ? "text-foreground"
                         : isCurrent
-                          ? "text-gray-900"
+                          ? "text-foreground"
                           : unlocked
-                            ? "text-gray-600"
-                            : "text-gray-400",
+                            ? "text-foreground/70"
+                            : "text-muted-foreground/50",
                     )}
                   >
                     {stepDef.name}
@@ -587,7 +603,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                     )}
                   </p>
                   {isComplete && stepDocs.length > 0 && (
-                    <p className="text-xs text-gray-400 mt-0.5 truncate">
+                    <p className="text-xs text-muted-foreground/60 mt-0.5 truncate">
                       {stepDocs.map((d) => d.canonicalName).join(", ")} —{" "}
                       {stepDocs.reduce((sum, d) => sum + d.wordCount, 0).toLocaleString()} words
                     </p>
@@ -605,7 +621,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                   )}
                   <ChevronDown
                     className={cn(
-                      "h-4 w-4 text-gray-400 transition-transform",
+                      "h-4 w-4 text-muted-foreground transition-transform",
                       isActive && "rotate-180",
                     )}
                   />
@@ -684,7 +700,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                       <div className="flex items-start gap-3">
                                         <div
                                           className={cn(
-                                            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100",
+                                            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted",
                                             method.color,
                                           )}
                                         >
@@ -692,14 +708,14 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                           <div className="flex items-center gap-2">
-                                            <p className="text-sm font-semibold text-gray-900">
+                                            <p className="text-sm font-semibold text-foreground">
                                               {method.name}
                                             </p>
                                             {isCompleted && (
                                               <Check className="h-3.5 w-3.5 text-emerald-500" />
                                             )}
                                           </div>
-                                          <p className="text-xs text-gray-500 mt-0.5">
+                                          <p className="text-xs text-muted-foreground mt-0.5">
                                             {method.description}
                                           </p>
                                           {isLocked && (
@@ -719,24 +735,24 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                             <button
                               onClick={() => setActiveMethod("method3")}
                               className={cn(
-                                "flex w-full items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 text-left transition-all",
+                                "flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 text-left transition-all",
                                 "hover:ring-2 hover:ring-phase-1/30 hover:border-[#4F7DF3]/40 hover:shadow-sm",
                                 completedMethods.includes("method3") && "ring-1 ring-emerald-200",
                               )}
                             >
-                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-500">
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                                 <PenLine className="h-4.5 w-4.5" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
-                                  <p className="text-sm font-semibold text-gray-900">
+                                  <p className="text-sm font-semibold text-foreground">
                                     I already have a research topic
                                   </p>
                                   {completedMethods.includes("method3") && (
                                     <Check className="h-3.5 w-3.5 text-emerald-500" />
                                   )}
                                 </div>
-                                <p className="text-xs text-gray-500 mt-0.5">
+                                <p className="text-xs text-muted-foreground mt-0.5">
                                   Provide your existing topic, research questions, and key references to generate a Research Direction Brief.
                                 </p>
                               </div>
