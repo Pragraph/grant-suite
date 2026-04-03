@@ -6,6 +6,7 @@ import { template as method1Discovery } from "./phase1/method1-discovery";
 import { template as method1Synthesis } from "./phase1/method1-synthesis";
 import { template as method2Discovery } from "./phase1/method2-discovery";
 import { template as method2TopicDiscovery } from "./phase1/method2-topic-discovery";
+import { template as method3TopicBrief } from "./phase1/method3-topic-brief";
 import { template as method4Convergence } from "./phase1/method4-convergence";
 import { template as step1Requirements } from "./phase2/step1-requirements";
 import { template as step2Competitive } from "./phase2/step2-competitive";
@@ -52,6 +53,7 @@ export const templates: PromptTemplate[] = [
   method1Synthesis,
   method2Discovery,
   method2TopicDiscovery,
+  method3TopicBrief,
   method4Convergence,
   step1Requirements,
   step2Competitive,

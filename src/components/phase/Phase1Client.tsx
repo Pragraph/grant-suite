@@ -6,7 +6,7 @@ import {
   Search,
   TrendingUp,
   GitMerge,
-  SkipForward,
+  PenLine,
   Check,
   ChevronDown,
 } from "lucide-react";
@@ -62,7 +62,7 @@ const METHODS: MethodDef[] = [
   {
     id: "method4",
     name: "Convergence Synthesis",
-    description: "Combine outputs from 2+ methods into a unified research direction.",
+    description: "Combine Gap-Based and Trend-Based Discovery outputs into a unified research direction.",
     icon: GitMerge,
     color: "text-warning",
   },
@@ -298,6 +298,44 @@ function getMethod4Steps(): WizardStepConfig[] {
   ];
 }
 
+function getMethod3Steps(): WizardStepConfig[] {
+  return [
+    // Step 1: Research Context (same as Method 1/2)
+    {
+      id: "m3-context",
+      title: "Research Context",
+      description: "Tell us about your research area.",
+      type: "context-form",
+    },
+    // Step 2: Topic Brief Form (new step type)
+    {
+      id: "m3-topic-input",
+      title: "Your Research Topic",
+      description:
+        "Provide the details of your existing research topic. The more specific you are, the better the analysis will be.",
+      type: "topic-brief-form",
+    },
+    // Step 3: Direction Brief Prompt
+    {
+      id: "m3-brief-prompt",
+      title: "Research Direction Brief Prompt",
+      description:
+        "We've compiled a prompt to analyze your topic and produce a structured Research Direction Brief. Copy it and paste into your AI tool (ChatGPT, Claude, Gemini). Use a thinking/reasoning model for best results.",
+      type: "prompt-compile",
+      templateId: "phase1.method3-topic-brief",
+    },
+    // Step 4: Paste output
+    {
+      id: "m3-final",
+      title: "Paste Direction Brief Output",
+      description:
+        "Paste the Research Direction Brief from your AI tool. This will be saved as your research direction document.",
+      type: "paste-output",
+      templateId: "phase1.method3-topic-brief",
+    },
+  ];
+}
+
 // ─── Animation variants ─────────────────────────────────────────────────────
 
 const fadeInUp = {
@@ -353,6 +391,9 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
     if (methodDocs.some((d) => d.canonicalName === "Method2_Trend_Discovery.md")) {
       completed.push("method2");
     }
+    if (methodDocs.some((d) => d.canonicalName === "Method3_Research_Direction_Brief.md")) {
+      completed.push("method3");
+    }
     if (methodDocs.some((d) => d.canonicalName === "Method4_Convergence_Synthesis.md")) {
       completed.push("method4");
     }
@@ -373,7 +414,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
 
   // ── Method 4 availability ─────────────────────────────────────────────────
 
-  const method4Available = completedMethods.filter((m) => m !== "method4").length >= 2;
+  const method4Available = completedMethods.includes("method1") && completedMethods.includes("method2");
 
   // ── Collect method outputs for convergence ────────────────────────────────
 
@@ -431,6 +472,8 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
         return getMethod1Steps();
       case "method2":
         return getMethod2Steps();
+      case "method3":
+        return getMethod3Steps();
       case "method4":
         return getMethod4Steps();
       default:
@@ -442,11 +485,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
     return METHODS.find((m) => m.id === methodId)?.name || methodId;
   };
 
-  // ── Skip handlers ─────────────────────────────────────────────────────────
 
-  const handleSkipToStep = (stepNum: number) => {
-    setActiveStep(stepNum);
-  };
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -665,7 +704,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                           </p>
                                           {isLocked && (
                                             <p className="text-[10px] text-red-500 mt-1">
-                                              Requires 2+ completed methods
+                                              Only needed if you complete both Gap-Based and Trend-Based Discovery
                                             </p>
                                           )}
                                         </div>
@@ -676,18 +715,29 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                               })}
                             </div>
 
-                            {/* Skip option */}
+                            {/* Method 3: I already have a topic */}
                             <button
-                              onClick={() => handleSkipToStep(2)}
-                              className="flex w-full items-center gap-3 rounded-lg border border-dashed border-gray-200 p-3 text-left transition-colors hover:bg-gray-50"
+                              onClick={() => setActiveMethod("method3")}
+                              className={cn(
+                                "flex w-full items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 text-left transition-all",
+                                "hover:ring-2 hover:ring-phase-1/30 hover:border-[#4F7DF3]/40 hover:shadow-sm",
+                                completedMethods.includes("method3") && "ring-1 ring-emerald-200",
+                              )}
                             >
-                              <SkipForward className="h-4 w-4 text-gray-500" />
-                              <div>
-                                <p className="text-sm font-medium text-gray-500">
-                                  I already have a research topic
-                                </p>
-                                <p className="text-xs text-gray-400">
-                                  Skip discovery and go directly to Step 2: Grant Matching
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-500">
+                                <PenLine className="h-4.5 w-4.5" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <p className="text-sm font-semibold text-gray-900">
+                                    I already have a research topic
+                                  </p>
+                                  {completedMethods.includes("method3") && (
+                                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                  )}
+                                </div>
+                                <p className="text-xs text-gray-500 mt-0.5">
+                                  Provide your existing topic, research questions, and key references to generate a Research Direction Brief.
                                 </p>
                               </div>
                             </button>
