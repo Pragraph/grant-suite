@@ -190,14 +190,14 @@ export const DOCUMENT_DEPENDENCIES: DependencyEntry[] = [
   { phase: 1, step: 3, produces: "Grant_Intelligence.md", requires: [], optional: [] },
 
   // Phase 2 — Strategic Positioning
-  { phase: 2, step: 1, produces: "Requirements_Analysis.md", requires: ["Grant_Intelligence.md"], optional: [] },
+  { phase: 2, step: 1, produces: "Requirements_Analysis.md", requires: ["Grant_Intelligence.md"], optional: ["Method4_Convergence_Synthesis.md", "Method1_Gap_Synthesis.md", "Method2_Trend_Discovery.md", "Method3_Research_Direction_Brief.md"] },
   { phase: 2, step: 2, produces: "Competitive_Analysis.md", requires: ["Grant_Intelligence.md"], optional: ["Requirements_Analysis.md"] },
   { phase: 2, step: 3, produces: "Evaluator_Psychology.md", requires: ["Grant_Intelligence.md"], optional: [] },
   { phase: 2, step: 4, produces: "Impact_Framework.md", requires: ["Grant_Intelligence.md"], optional: ["Requirements_Analysis.md", "Competitive_Analysis.md", "Evaluator_Psychology.md"] },
-  { phase: 2, step: 5, produces: "Proposal_Blueprint.md", requires: ["Grant_Intelligence.md"], optional: ["Requirements_Analysis.md", "Competitive_Analysis.md", "Evaluator_Psychology.md", "Impact_Framework.md"] },
+  { phase: 2, step: 5, produces: "Proposal_Blueprint.md", requires: ["Grant_Intelligence.md"], optional: ["Requirements_Analysis.md", "Competitive_Analysis.md", "Evaluator_Psychology.md", "Impact_Framework.md", "Method4_Convergence_Synthesis.md", "Method1_Gap_Synthesis.md", "Method2_Trend_Discovery.md", "Method3_Research_Direction_Brief.md"] },
 
   // Phase 3 — Research Design & Optional Modules
-  { phase: 3, step: 1, produces: "Research_Design.md", requires: ["Grant_Intelligence.md", "Proposal_Blueprint.md"], optional: [] },
+  { phase: 3, step: 1, produces: "Research_Design.md", requires: ["Grant_Intelligence.md", "Proposal_Blueprint.md"], optional: ["Method4_Convergence_Synthesis.md", "Method1_Gap_Synthesis.md", "Method2_Trend_Discovery.md", "Method3_Research_Direction_Brief.md"] },
   { phase: 3, step: 10, produces: "Partnership_Plan.md", requires: [], optional: [], isOptional: true },
   { phase: 3, step: 11, produces: "Patent_Analysis.md", requires: [], optional: [], isOptional: true },
   { phase: 3, step: 12, produces: "SDG_Alignment.md", requires: [], optional: [], isOptional: true },
@@ -213,7 +213,7 @@ export const DOCUMENT_DEPENDENCIES: DependencyEntry[] = [
   { phase: 4, step: 3, produces: "Budget_Team_Plan.md", requires: ["Team_Strategy.md", "Budget_Draft.md", "Grant_Intelligence.md"], optional: [] },
 
   // Phase 5 — Proposal Writing
-  { phase: 5, step: 1, produces: "Proposal_Data.md", requires: ["Grant_Intelligence.md", "Proposal_Blueprint.md", "Research_Design.md", "Budget_Team_Plan.md"], optional: ["Partnership_Plan.md", "Patent_Analysis.md", "SDG_Alignment.md", "National_Alignment.md", "KPI_Plan.md"] },
+  { phase: 5, step: 1, produces: "Proposal_Data.md", requires: ["Grant_Intelligence.md", "Proposal_Blueprint.md", "Research_Design.md", "Budget_Team_Plan.md"], optional: ["Partnership_Plan.md", "Patent_Analysis.md", "SDG_Alignment.md", "National_Alignment.md", "KPI_Plan.md", "Method4_Convergence_Synthesis.md", "Method1_Gap_Synthesis.md", "Method2_Trend_Discovery.md", "Method3_Research_Direction_Brief.md"] },
   { phase: 5, step: 2, produces: "Executive_Summary_Draft.md", requires: ["Proposal_Data.md"], optional: [] },
   { phase: 5, step: 3, produces: "Methods_Draft.md", requires: ["Proposal_Data.md"], optional: [] },
   { phase: 5, step: 4, produces: "Background_Draft.md", requires: ["Proposal_Data.md", "Executive_Summary_Draft.md"], optional: [] },

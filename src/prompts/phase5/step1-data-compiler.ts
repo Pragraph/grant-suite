@@ -22,6 +22,10 @@ export const template: PromptTemplate = {
     "National_Alignment.md",
     "KPI_Plan.md",
     "grantScheme",
+    "Method4_Convergence_Synthesis.md",
+    "Method1_Gap_Synthesis.md",
+    "Method2_Trend_Discovery.md",
+    "Method3_Research_Direction_Brief.md",
   ],
   outputName: "Proposal_Data.md",
   epTags: ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-06", "EP-07", "EP-08", "EP-09", "EP-10"],
@@ -79,6 +83,28 @@ export const template: PromptTemplate = {
 ## OPTIONAL: KPI Plan (Phase 3C)
 {{> KPI_Plan.md}}
 {{/if}}
+
+{{#if Method4_Convergence_Synthesis.md}}
+## OPTIONAL: Research Discovery — Convergence Synthesis (Phase 1)
+{{> Method4_Convergence_Synthesis.md}}
+{{/if}}
+
+{{#unless Method4_Convergence_Synthesis.md}}
+{{#if Method1_Gap_Synthesis.md}}
+## OPTIONAL: Research Discovery — Gap-Based Discovery (Phase 1)
+{{> Method1_Gap_Synthesis.md}}
+{{/if}}
+
+{{#if Method2_Trend_Discovery.md}}
+## OPTIONAL: Research Discovery — Trend-Based Discovery (Phase 1)
+{{> Method2_Trend_Discovery.md}}
+{{/if}}
+
+{{#if Method3_Research_Direction_Brief.md}}
+## OPTIONAL: Research Discovery — Research Direction Brief (Phase 1)
+{{> Method3_Research_Direction_Brief.md}}
+{{/if}}
+{{/unless}}
 
 ---
 

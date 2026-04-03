@@ -14,6 +14,10 @@ export const template: PromptTemplate = {
     "cvSummary",
     "Grant_Intelligence.md",
     "grantScheme",
+    "Method4_Convergence_Synthesis.md",
+    "Method1_Gap_Synthesis.md",
+    "Method2_Trend_Discovery.md",
+    "Method3_Research_Direction_Brief.md",
   ],
   outputName: "Requirements_Analysis.md",
   epTags: ["EP-01", "EP-02", "EP-04"],
@@ -36,6 +40,29 @@ export const template: PromptTemplate = {
 {{> Grant_Intelligence.md}}
 {{/if}}
 {{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if Method4_Convergence_Synthesis.md}}
+## RESEARCH DISCOVERY CONTEXT (Convergence Synthesis from Phase 1)
+The following synthesizes the researcher's Gap-Based and Trend-Based Discovery outputs into a unified research direction. Use this to align requirements analysis with the researcher's established direction.
+{{> Method4_Convergence_Synthesis.md}}
+{{/if}}
+
+{{#unless Method4_Convergence_Synthesis.md}}
+{{#if Method1_Gap_Synthesis.md}}
+## RESEARCH DISCOVERY CONTEXT (Gap-Based Discovery from Phase 1)
+{{> Method1_Gap_Synthesis.md}}
+{{/if}}
+
+{{#if Method2_Trend_Discovery.md}}
+## RESEARCH DISCOVERY CONTEXT (Trend-Based Discovery from Phase 1)
+{{> Method2_Trend_Discovery.md}}
+{{/if}}
+
+{{#if Method3_Research_Direction_Brief.md}}
+## RESEARCH DISCOVERY CONTEXT (Research Direction Brief from Phase 1)
+{{> Method3_Research_Direction_Brief.md}}
+{{/if}}
+{{/unless}}
 
 ## INSTRUCTIONS
 

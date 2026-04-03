@@ -17,6 +17,10 @@ export const template: PromptTemplate = {
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
     "grantScheme",
+    "Method4_Convergence_Synthesis.md",
+    "Method1_Gap_Synthesis.md",
+    "Method2_Trend_Discovery.md",
+    "Method3_Research_Direction_Brief.md",
   ],
   outputName: "Research_Design.md",
   epTags: ["EP-01", "EP-03", "EP-05", "EP-07"],
@@ -41,6 +45,29 @@ export const template: PromptTemplate = {
 {{> Proposal_Blueprint.md}}
 {{/if}}
 {{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if Method4_Convergence_Synthesis.md}}
+## RESEARCH DISCOVERY CONTEXT (Convergence Synthesis from Phase 1)
+The following is the researcher's unified research direction. The research design should operationalize the recommended direction, research questions, and methodological suggestions from this document.
+{{> Method4_Convergence_Synthesis.md}}
+{{/if}}
+
+{{#unless Method4_Convergence_Synthesis.md}}
+{{#if Method1_Gap_Synthesis.md}}
+## RESEARCH DISCOVERY CONTEXT (Gap-Based Discovery from Phase 1)
+{{> Method1_Gap_Synthesis.md}}
+{{/if}}
+
+{{#if Method2_Trend_Discovery.md}}
+## RESEARCH DISCOVERY CONTEXT (Trend-Based Discovery from Phase 1)
+{{> Method2_Trend_Discovery.md}}
+{{/if}}
+
+{{#if Method3_Research_Direction_Brief.md}}
+## RESEARCH DISCOVERY CONTEXT (Research Direction Brief from Phase 1)
+{{> Method3_Research_Direction_Brief.md}}
+{{/if}}
+{{/unless}}
 
 {{#if grantScheme}}
 ## MOHE METHODOLOGY EXPECTATIONS

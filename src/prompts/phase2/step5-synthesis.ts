@@ -17,6 +17,10 @@ export const template: PromptTemplate = {
     "Evaluator_Psychology.md",
     "Impact_Framework.md",
     "grantScheme",
+    "Method4_Convergence_Synthesis.md",
+    "Method1_Gap_Synthesis.md",
+    "Method2_Trend_Discovery.md",
+    "Method3_Research_Direction_Brief.md",
   ],
   outputName: "Proposal_Blueprint.md",
   epTags: ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-07", "EP-09", "EP-10"],
@@ -56,6 +60,29 @@ This document is the second foundational pillar (after Grant_Intelligence.md). E
 {{> Impact_Framework.md}}
 {{/if}}
 {{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+
+{{#if Method4_Convergence_Synthesis.md}}
+## RESEARCH DISCOVERY CONTEXT (Convergence Synthesis from Phase 1)
+The following is the researcher's unified research direction from their discovery process. The Proposal Blueprint should be strategically aligned with this direction.
+{{> Method4_Convergence_Synthesis.md}}
+{{/if}}
+
+{{#unless Method4_Convergence_Synthesis.md}}
+{{#if Method1_Gap_Synthesis.md}}
+## RESEARCH DISCOVERY CONTEXT (Gap-Based Discovery from Phase 1)
+{{> Method1_Gap_Synthesis.md}}
+{{/if}}
+
+{{#if Method2_Trend_Discovery.md}}
+## RESEARCH DISCOVERY CONTEXT (Trend-Based Discovery from Phase 1)
+{{> Method2_Trend_Discovery.md}}
+{{/if}}
+
+{{#if Method3_Research_Direction_Brief.md}}
+## RESEARCH DISCOVERY CONTEXT (Research Direction Brief from Phase 1)
+{{> Method3_Research_Direction_Brief.md}}
+{{/if}}
+{{/unless}}
 
 ## INSTRUCTIONS
 
