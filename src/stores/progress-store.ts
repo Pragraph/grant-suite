@@ -29,6 +29,7 @@ interface ProgressState {
   getGateResult: (phase: number) => GateResult | undefined;
   getPhaseCompletion: (phase: number) => number;
   canAccessPhase: (phase: number) => boolean;
+  bypassPhases: (projectId: string, phases: number[]) => void;
   clearProgress: () => void;
 }
 
@@ -83,14 +84,32 @@ export const useProgressStore = create<ProgressState>()((set, get) => ({
 
   canAccessPhase: (phase) => {
     if (phase === 1) return true;
+
     const { progress } = get();
+
+    // Check if this phase was the starting phase or earlier phases were bypassed
     const prevPhase = progress.phases[phase - 1];
-    if (!prevPhase) return false;
-    // Allow access if previous phase gate is passed or overridden
-    return (
-      prevPhase.gateStatus === "passed" ||
-      prevPhase.gateStatus === "overridden"
-    );
+
+    // Allow access if previous phase gate passed/overridden (existing behavior)
+    if (prevPhase?.gateStatus === "passed" || prevPhase?.gateStatus === "overridden") {
+      return true;
+    }
+
+    // Allow access if previous phase was bypassed
+    if (prevPhase?.gateStatus === "bypassed") {
+      return true;
+    }
+
+    // Allow access if any step in the CURRENT phase has progress
+    const currentPhaseProgress = progress.phases[phase];
+    if (currentPhaseProgress) {
+      const hasAnyProgress = Object.values(currentPhaseProgress.steps).some(
+        (s) => s !== "not-started"
+      );
+      if (hasAnyProgress) return true;
+    }
+
+    return false;
   },
 
   recordGateResult: (projectId, phase, result) => {
@@ -104,6 +123,20 @@ export const useProgressStore = create<ProgressState>()((set, get) => ({
 
   getGateResult: (phase) => {
     return get().gateResults[phase];
+  },
+
+  bypassPhases: (projectId, phases) => {
+    const progress = { ...get().progress, phases: { ...get().progress.phases } };
+    for (const phase of phases) {
+      if (!progress.phases[phase]) {
+        progress.phases[phase] = { steps: {}, gateStatus: "bypassed" };
+      } else {
+        progress.phases[phase] = { ...progress.phases[phase], gateStatus: "bypassed" };
+      }
+    }
+    const key = `grant-suite-progress-${projectId}`;
+    localStorage.setItem(key, JSON.stringify(progress));
+    set({ progress });
   },
 
   clearProgress: () => {

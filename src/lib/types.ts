@@ -1,3 +1,21 @@
+// ─── Journey Modes ──────────────────────────────────────────────────────────
+
+export type JourneyMode =
+  | "explore"         // Starting from scratch — needs topic discovery + grant matching
+  | "directed"        // Has a research topic — skip discovery, go to Method 3 + Grant Intelligence
+  | "planned"         // Has topic + grant + design — needs writing, budget, team
+  | "review"          // Has a complete draft — needs Phase 6 optimization
+  | "resubmit";       // Has rejected proposal + feedback — needs Phase 7
+
+export interface JourneyModeInfo {
+  id: JourneyMode;
+  label: string;
+  description: string;
+  icon: string;            // lucide-react icon name
+  startingPhase: number;
+  bypassedPhases: number[]; // phases marked as "bypassed" (skipped but accessible later)
+}
+
 // ─── Project ────────────────────────────────────────────────────────────────
 
 export interface Project {
@@ -9,6 +27,8 @@ export interface Project {
   careerStage: string;
   currency?: string;
   grantScheme?: GrantScheme;
+  journeyMode?: JourneyMode;
+  startingPhase?: number;     // the phase the user begins at
   targetFunder?: string;
   budgetRange?: string;
   currentPhase: number;
@@ -81,7 +101,7 @@ export type StepStatus =
   | "output-pasted"
   | "complete";
 
-export type GateStatus = "not-checked" | "passed" | "failed" | "overridden";
+export type GateStatus = "not-checked" | "passed" | "failed" | "overridden" | "bypassed";
 
 export interface PhaseProgress {
   phases: Record<

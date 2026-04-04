@@ -1,4 +1,4 @@
-import type { DependencyEntry, PhaseDefinition, GrantSchemeInfo } from "./types";
+import type { DependencyEntry, PhaseDefinition, GrantSchemeInfo, JourneyModeInfo } from "./types";
 
 // ─── Grant Scheme Registry ──────────────────────────────────────────────────
 // Last verified: March 2026. Check MyGRANTS (mygrants.gov.my) for latest guidelines.
@@ -180,6 +180,56 @@ export const CURRENCIES = [
   { code: "AUD", name: "Australian Dollar (A$)", symbol: "A$" },
   { code: "JPY", name: "Japanese Yen (¥)", symbol: "¥" },
 ] as const;
+
+// ─── Journey Modes ──────────────────────────────────────────────────────────
+
+export const JOURNEY_MODES: JourneyModeInfo[] = [
+  {
+    id: "explore",
+    label: "Explore & Discover",
+    description:
+      "I'm starting fresh. Help me find a research direction and the right grant to pursue.",
+    icon: "Compass",
+    startingPhase: 1,
+    bypassedPhases: [],
+  },
+  {
+    id: "directed",
+    label: "I Have My Direction",
+    description:
+      "I already have a research topic. Help me build the full proposal from here.",
+    icon: "Target",
+    startingPhase: 1,
+    bypassedPhases: [],
+  },
+  {
+    id: "planned",
+    label: "I Have My Plan",
+    description:
+      "I have my topic, grant, and research design. Help me write and plan the budget.",
+    icon: "FileText",
+    startingPhase: 3,
+    bypassedPhases: [1, 2],
+  },
+  {
+    id: "review",
+    label: "Review My Draft",
+    description:
+      "I have a complete or near-complete proposal. Help me review and optimize it.",
+    icon: "CheckSquare",
+    startingPhase: 6,
+    bypassedPhases: [1, 2, 3, 4, 5],
+  },
+  {
+    id: "resubmit",
+    label: "Revise & Resubmit",
+    description:
+      "I have reviewer feedback on a rejected proposal. Help me strengthen and resubmit.",
+    icon: "RotateCcw",
+    startingPhase: 7,
+    bypassedPhases: [1, 2, 3, 4, 5, 6],
+  },
+];
 
 // ─── Document Dependency Graph ──────────────────────────────────────────────
 

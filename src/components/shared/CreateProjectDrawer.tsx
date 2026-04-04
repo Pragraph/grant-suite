@@ -3,8 +3,17 @@
 import { useState } from "react";
 
 import { useProjectStore } from "@/stores/project-store";
-import { MALAYSIAN_SCHEMES, INTERNATIONAL_SCHEMES, GRANT_SCHEME_MAP, CURRENCIES } from "@/lib/constants";
-import type { GrantScheme } from "@/lib/types";
+import { useProgressStore } from "@/stores/progress-store";
+import { MALAYSIAN_SCHEMES, INTERNATIONAL_SCHEMES, GRANT_SCHEME_MAP, CURRENCIES, JOURNEY_MODES } from "@/lib/constants";
+import type { GrantScheme, JourneyMode } from "@/lib/types";
+import {
+  Compass,
+  Target,
+  FileText,
+  CheckSquare,
+  RotateCcw,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import {
   Drawer,
@@ -126,6 +135,7 @@ export function CreateProjectDrawer({
   onOpenChange,
 }: CreateProjectDrawerProps) {
   const createProject = useProjectStore((s) => s.createProject);
+  const bypassPhases = useProgressStore((s) => s.bypassPhases);
 
   const [discipline, setDiscipline] = useState("");
   const [areaOfInterest, setAreaOfInterest] = useState("");
@@ -135,6 +145,16 @@ export function CreateProjectDrawer({
   const [targetFunder, setTargetFunder] = useState("");
   const [currency, setCurrency] = useState("");
   const [budgetRange, setBudgetRange] = useState("");
+  const [drawerStep, setDrawerStep] = useState<"info" | "journey">("info");
+  const [journeyMode, setJourneyMode] = useState<JourneyMode | null>(null);
+
+  const journeyIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+    Compass,
+    Target,
+    FileText,
+    CheckSquare,
+    RotateCcw,
+  };
 
   // ── Auto-fill when grant scheme changes ──────────────────────────────────
 
@@ -186,8 +206,11 @@ export function CreateProjectDrawer({
     return `${schemePart}_${areaPart}_${yearPart}`;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (selectedMode: JourneyMode) => {
     if (!isValid) return;
+
+    const modeInfo = JOURNEY_MODES.find((m) => m.id === selectedMode);
+    const startPhase = modeInfo?.startingPhase ?? 1;
 
     const project = createProject({
       title: title.trim() || generateDraftTitle(),
@@ -199,7 +222,15 @@ export function CreateProjectDrawer({
       grantScheme: grantScheme || undefined,
       targetFunder: targetFunder.trim() || undefined,
       budgetRange: budgetRange || undefined,
+      journeyMode: selectedMode,
+      startingPhase: startPhase,
+      currentPhase: startPhase,
     });
+
+    // Bypass skipped phases
+    if (modeInfo && modeInfo.bypassedPhases.length > 0) {
+      bypassPhases(project.id, modeInfo.bypassedPhases);
+    }
 
     // Reset form
     setDiscipline("");
@@ -210,13 +241,18 @@ export function CreateProjectDrawer({
     setTargetFunder("");
     setCurrency("");
     setBudgetRange("");
+    setDrawerStep("info");
+    setJourneyMode(null);
     onOpenChange(false);
 
-    window.location.href = `/projects/${project.id}`;
+    window.location.assign(`/projects/${project.id}`);
   };
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
+    <Drawer open={open} onOpenChange={(isOpen) => {
+        if (!isOpen) setDrawerStep("info");
+        onOpenChange(isOpen);
+      }}>
       <DrawerContent className="w-[480px]">
         <DrawerHeader>
           <DrawerTitle>New Project</DrawerTitle>
@@ -225,6 +261,59 @@ export function CreateProjectDrawer({
           </DrawerDescription>
         </DrawerHeader>
 
+        {drawerStep === "journey" && (
+          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+            <div>
+              <h3 className="text-base font-semibold text-foreground">
+                Where are you in your grant journey?
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                This determines your starting point. You can always go back to earlier phases later.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {JOURNEY_MODES.map((mode) => {
+                const Icon = journeyIcons[mode.icon];
+                const isSelected = journeyMode === mode.id;
+
+                return (
+                  <button
+                    key={mode.id}
+                    onClick={() => handleSubmit(mode.id)}
+                    className={cn(
+                      "flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-all",
+                      "hover:border-[#4F7DF3]/40 hover:shadow-sm hover:bg-muted/30",
+                      isSelected
+                        ? "border-[#4F7DF3] bg-[#F0F4FF]"
+                        : "border-border bg-card"
+                    )}
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#F0F4FF] text-[#4F7DF3]">
+                      {Icon && <Icon className="h-5 w-5" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground">
+                        {mode.label}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {mode.description}
+                      </p>
+                      {mode.bypassedPhases.length > 0 && (
+                        <p className="text-[10px] text-muted-foreground/70 mt-1">
+                          Starts at Phase {mode.startingPhase} · Phases{" "}
+                          {mode.bypassedPhases.join(", ")} available later
+                        </p>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {drawerStep === "info" && (
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5">
           {/* 1. Discipline */}
           <div className="space-y-2">
@@ -383,15 +472,26 @@ export function CreateProjectDrawer({
             </div>
           )}
         </div>
+        )}
 
         <DrawerFooter>
-          <Button
-            className="w-full"
-            disabled={!isValid}
-            onClick={handleSubmit}
-          >
-            Create Project
-          </Button>
+          {drawerStep === "info" ? (
+            <Button
+              className="w-full"
+              disabled={!isValid}
+              onClick={() => setDrawerStep("journey")}
+            >
+              Next
+            </Button>
+          ) : (
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() => setDrawerStep("info")}
+            >
+              Back
+            </Button>
+          )}
           <DrawerClose asChild>
             <Button variant="secondary" className="w-full">
               Cancel

@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Progress } from "@/components/ui/progress";
 import { StepExecutor } from "@/components/phase/StepExecutor";
+import { QuickFillGI } from "@/components/shared/QuickFillGI";
 import { MethodWizard, type WizardStepConfig } from "@/components/phase/MethodWizard";
 import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
 
@@ -399,6 +400,18 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
     }
     return completed;
   }, [documents, projectId]);
+
+  // ── Auto-open Method 3 for "directed" journey mode ────────────────────────
+  // Runs as a synchronous state derivation during render (not in an effect)
+  // to avoid the react-hooks/set-state-in-effect lint rule.
+
+  if (
+    activeProject?.journeyMode === "directed" &&
+    !completedMethods.includes("method3") &&
+    activeMethod === null
+  ) {
+    setActiveMethod("method3");
+  }
 
   // ── Phase progress ────────────────────────────────────────────────────────
 
@@ -824,56 +837,97 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                         />
                       ) : stepDef.step === 3 ? (
                         // ── Step 3: Grant Intelligence (uses StepExecutor) ──
-                        <StepExecutor
-                          templateId="phase1.grant-intelligence"
-                          projectId={projectId}
-                          phase={1}
-                          step={3}
-                          title="Grant Intelligence Gathering"
-                          description="Analyze grant guidelines to produce the foundational Grant_Intelligence.md document. This is the most important step in Phase 1 — every subsequent phase depends on it."
-                          additionalFields={[
-                            {
-                              name: "grantScheme",
-                              label: "Grant Scheme",
-                              type: "text",
-                              placeholder: activeProject?.grantScheme || "e.g., FRGS",
-                            },
-                            {
-                              name: "grantName",
-                              label: "Grant Program Name",
-                              type: "text",
-                              placeholder: activeProject?.grantScheme ? `e.g., ${activeProject.grantScheme}` : "e.g., FRGS, ERC Starting Grant",
-                              required: true,
-                            },
-                            {
-                              name: "grant_guidelines_text",
-                              label: "Paste Grant Guidelines",
-                              type: "file-upload-text",
-                              placeholder: "Paste the full grant guidelines text here (from PDF or website)...",
-                            },
-                            {
-                              name: "grant_url",
-                              label: "Grant URL",
-                              type: "text",
-                              placeholder: "e.g., https://erc.europa.eu/apply-grant/starting-grant",
-                            },
-                            {
-                              name: "evaluation_criteria_text",
-                              label: "Paste Evaluation Criteria",
-                              type: "file-upload-text",
-                              placeholder: "Paste specific evaluation criteria text here...",
-                            },
-                            {
-                              name: "application_form_text",
-                              label: "Paste Application Form Details",
-                              type: "file-upload-text",
-                              placeholder: "Paste application form or template requirements here...",
-                            },
-                          ]}
-                          onComplete={() => {
-                            loadDocuments(projectId);
-                          }}
-                        />
+                        <div className="space-y-4">
+                          {/* Quick-Fill option for users who bypassed this phase */}
+                          {activeProject?.journeyMode &&
+                            activeProject.journeyMode !== "explore" &&
+                            activeProject.journeyMode !== "directed" &&
+                            !getStepDocuments(3).some(
+                              (d) => d.canonicalName === "Grant_Intelligence.md"
+                            ) && (
+                              <QuickFillGI
+                                projectId={projectId}
+                                defaults={{
+                                  grantName: activeProject?.grantScheme || "",
+                                  funder: activeProject?.targetFunder || "",
+                                  country: activeProject?.country || "",
+                                  budgetRange: activeProject?.budgetRange || "",
+                                  grantScheme: activeProject?.grantScheme || "",
+                                }}
+                                onComplete={() => loadDocuments(projectId)}
+                              />
+                            )}
+
+                          {/* Divider if Quick-Fill is shown */}
+                          {activeProject?.journeyMode &&
+                            activeProject.journeyMode !== "explore" &&
+                            activeProject.journeyMode !== "directed" &&
+                            !getStepDocuments(3).some(
+                              (d) => d.canonicalName === "Grant_Intelligence.md"
+                            ) && (
+                              <div className="relative py-2">
+                                <div className="absolute inset-0 flex items-center">
+                                  <div className="w-full border-t border-border" />
+                                </div>
+                                <div className="relative flex justify-center">
+                                  <span className="bg-background px-3 text-xs text-muted-foreground">
+                                    or use the full Grant Intelligence workflow
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+
+                          <StepExecutor
+                            templateId="phase1.grant-intelligence"
+                            projectId={projectId}
+                            phase={1}
+                            step={3}
+                            title="Grant Intelligence Gathering"
+                            description="Analyze grant guidelines to produce the foundational Grant_Intelligence.md document. This is the most important step in Phase 1 — every subsequent phase depends on it."
+                            additionalFields={[
+                              {
+                                name: "grantScheme",
+                                label: "Grant Scheme",
+                                type: "text",
+                                placeholder: activeProject?.grantScheme || "e.g., FRGS",
+                              },
+                              {
+                                name: "grantName",
+                                label: "Grant Program Name",
+                                type: "text",
+                                placeholder: activeProject?.grantScheme ? `e.g., ${activeProject.grantScheme}` : "e.g., FRGS, ERC Starting Grant",
+                                required: true,
+                              },
+                              {
+                                name: "grant_guidelines_text",
+                                label: "Paste Grant Guidelines",
+                                type: "file-upload-text",
+                                placeholder: "Paste the full grant guidelines text here (from PDF or website)...",
+                              },
+                              {
+                                name: "grant_url",
+                                label: "Grant URL",
+                                type: "text",
+                                placeholder: "e.g., https://erc.europa.eu/apply-grant/starting-grant",
+                              },
+                              {
+                                name: "evaluation_criteria_text",
+                                label: "Paste Evaluation Criteria",
+                                type: "file-upload-text",
+                                placeholder: "Paste specific evaluation criteria text here...",
+                              },
+                              {
+                                name: "application_form_text",
+                                label: "Paste Application Form Details",
+                                type: "file-upload-text",
+                                placeholder: "Paste application form or template requirements here...",
+                              },
+                            ]}
+                            onComplete={() => {
+                              loadDocuments(projectId);
+                            }}
+                          />
+                        </div>
                       ) : null}
                     </div>
                   </motion.div>

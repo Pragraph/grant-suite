@@ -11,6 +11,8 @@ import {
   Play,
   CheckCircle2,
   FolderArchive,
+  Upload,
+  Sparkles,
 } from "lucide-react";
 
 import { useProjectStore } from "@/stores/project-store";
@@ -21,18 +23,19 @@ import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
 import { exportAllDocuments } from "@/lib/export-all";
 import { PHASES } from "@/lib/types";
-import type { Project, StepStatus } from "@/lib/types";
+import type { Project, StepStatus, Document } from "@/lib/types";
 
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Input } from "@/components/ui/input";
 import { PipelineMap } from "@/components/shared/PipelineMap";
 import { DocumentInventory } from "@/components/document/DocumentInventory";
+import { ImportWizard } from "@/components/shared/ImportWizard";
 
 /**
  * Force a full-page navigation, bypassing Next.js App Router's
@@ -60,6 +63,73 @@ const stepStatusColors: Record<StepStatus, string> = {
   complete: "text-success",
 };
 
+function getGuidanceMessage(
+  project: Project,
+  currentDocs: Document[],
+): { message: string; action: string; phase: number } | null {
+  const docNames = new Set(currentDocs.map((d) => d.canonicalName));
+  const mode = project.journeyMode;
+
+  if (mode === "review") {
+    if (!docNames.has("Complete_Proposal.md")) {
+      return {
+        message: "Import your proposal draft to start the review process.",
+        action: "Import Documents",
+        phase: 6,
+      };
+    }
+    if (!docNames.has("Grant_Intelligence.md")) {
+      return {
+        message:
+          "Adding Grant Intelligence will make the review more aligned with funder expectations. Consider using Quick-Fill or importing your grant guidelines.",
+        action: "Add Grant Intelligence",
+        phase: 1,
+      };
+    }
+    return {
+      message: "Your proposal is ready for review. Start with a Mock Review to identify weaknesses.",
+      action: "Start Phase 6",
+      phase: 6,
+    };
+  }
+
+  if (mode === "resubmit") {
+    if (!docNames.has("Complete_Proposal.md")) {
+      return {
+        message: "Import your original proposal to begin the resubmission process.",
+        action: "Import Documents",
+        phase: 7,
+      };
+    }
+    if (!docNames.has("Feedback_Analysis.md")) {
+      return {
+        message: "Import the reviewer feedback so the system can analyze it and build a revision strategy.",
+        action: "Import Feedback",
+        phase: 7,
+      };
+    }
+    return {
+      message: "Your proposal and feedback are ready. Start Feedback Analysis to build your revision strategy.",
+      action: "Start Phase 7",
+      phase: 7,
+    };
+  }
+
+  if (mode === "planned") {
+    if (!docNames.has("Grant_Intelligence.md")) {
+      return {
+        message:
+          "Grant Intelligence is the foundation for all downstream work. Use Quick-Fill to provide your grant details, or import grant guidelines.",
+        action: "Add Grant Intelligence",
+        phase: 1,
+      };
+    }
+    return null;
+  }
+
+  return null;
+}
+
 export function ProjectDetailClient({ id: _id }: { id: string }) {
   void _id; // extracted from URL instead
   const { setActiveProject, activeProject, updateProject } =
@@ -79,6 +149,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleValue, setTitleValue] = useState("");
   const [exportingAll, setExportingAll] = useState(false);
+  const [importWizardOpen, setImportWizardOpen] = useState(false);
 
   useEffect(() => {
     if (!projectId) return;
@@ -101,6 +172,20 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
       ]);
     }
   }, [project, setBreadcrumbs]);
+
+  // Show import wizard on first visit for skip-ahead journey modes
+  useEffect(() => {
+    if (!project) return;
+    const mode = project.journeyMode;
+    if (!mode || mode === "explore" || mode === "directed") return;
+
+    const wizardShownKey = `grant-suite-import-shown-${project.id}`;
+    const alreadyShown = localStorage.getItem(wizardShownKey);
+    if (alreadyShown) return;
+
+    setImportWizardOpen(true);
+    localStorage.setItem(wizardShownKey, "true");
+  }, [project]);
 
   if (project && !editingTitle && titleValue !== project.title) {
     setTitleValue(project.title);
@@ -219,6 +304,18 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
               {exportingAll ? "Exporting..." : "Export All Docs"}
             </Button>
           )}
+          {project?.journeyMode &&
+            project.journeyMode !== "explore" &&
+            project.journeyMode !== "directed" && (
+              <Button
+                variant="secondary"
+                onClick={() => setImportWizardOpen(true)}
+                className="border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg"
+              >
+                <Upload className="h-4 w-4" />
+                Import Documents
+              </Button>
+            )}
           <Button variant="secondary" onClick={handleExport} className="border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg">
             <Download className="h-4 w-4" />
             Export Project
@@ -237,6 +334,49 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
         </Card>
       </motion.div>
 
+      {/* Contextual Guidance */}
+      {(() => {
+        const guidance = project ? getGuidanceMessage(project, currentDocs) : null;
+        if (!guidance) return null;
+
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.15 }}
+          >
+            <Card className="bg-[#F0F4FF] border-[#4F7DF3]/20 rounded-xl">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#4F7DF3]/10 text-[#4F7DF3]">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground">
+                    Recommended Next Step
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {guidance.message}
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  className="shrink-0"
+                  onClick={() => {
+                    if (guidance.action === "Import Documents" || guidance.action === "Import Feedback" || guidance.action === "Add Grant Intelligence") {
+                      setImportWizardOpen(true);
+                    } else {
+                      navigateTo(`/projects/${projectId}/phase/${guidance.phase}`);
+                    }
+                  }}
+                >
+                  {guidance.action}
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        );
+      })()}
+
       {/* Main Content */}
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Left: Phase Pipeline */}
@@ -246,6 +386,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
             const accessible = canAccessPhase(phase.id);
             const completion = getPhaseCompletion(phase.id);
             const isCurrent = project.currentPhase === phase.id;
+            const isBypassed = progress.phases[phase.id]?.gateStatus === "bypassed";
             const phaseProgress = progress.phases[phase.id];
             const phaseUrl = `/projects/${projectId}/phase/${phase.id}`;
 
@@ -258,13 +399,15 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
               >
                 <Card
                   className={`transition-all duration-normal rounded-xl ${
-                    isCurrent
-                      ? "bg-card border border-[#4F7DF3]/30 shadow-sm"
-                      : !accessible
-                        ? "bg-muted/50 border border-border opacity-60"
-                        : completion === 100
-                          ? "bg-card border border-emerald-200"
-                          : "bg-card border border-border"
+                    isBypassed
+                      ? "bg-card border border-dashed border-border/60 opacity-80"
+                      : isCurrent
+                        ? "bg-card border border-[#4F7DF3]/30 shadow-sm"
+                        : !accessible
+                          ? "bg-muted/50 border border-border opacity-60"
+                          : completion === 100
+                            ? "bg-card border border-emerald-200"
+                            : "bg-card border border-border"
                   }`}
                 >
                   {/* Phase Row — toggles expand/collapse */}
@@ -284,6 +427,11 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                         {!accessible && (
                           <Lock className="h-3.5 w-3.5 text-gray-300" />
                         )}
+                        {isBypassed && (
+                          <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                            Skipped
+                          </Badge>
+                        )}
                       </div>
                       <p className="text-xs text-muted-foreground truncate mt-0.5">
                         {phase.description}
@@ -297,7 +445,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                         </span>
                       </div>
                       {accessible && (
-                        isCurrent ? (
+                        (isCurrent || (isBypassed && completion === 0)) ? (
                           <div
                             role="button"
                             tabIndex={0}
@@ -386,6 +534,19 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
           />
         </div>
       </div>
+
+      {/* Import Wizard for skip-ahead journey modes */}
+      {project?.journeyMode && (
+        <ImportWizard
+          projectId={projectId!}
+          journeyMode={project.journeyMode}
+          open={importWizardOpen}
+          onOpenChange={setImportWizardOpen}
+          onComplete={() => {
+            loadDocuments(projectId!);
+          }}
+        />
+      )}
     </div>
   );
 }

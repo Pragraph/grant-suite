@@ -17,7 +17,7 @@ interface ProjectState {
   _setHasHydrated: (v: boolean) => void;
   loadProjects: () => void;
   createProject: (
-    data: Omit<Project, "id" | "createdAt" | "updatedAt" | "currentPhase" | "currentStep" | "status" | "metadata">
+    data: Omit<Project, "id" | "createdAt" | "updatedAt" | "currentStep" | "status" | "metadata"> & { currentPhase?: number }
   ) => Project;
   updateProject: (id: string, updates: Partial<Project>) => void;
   deleteProject: (id: string) => void;
@@ -47,7 +47,7 @@ export const useProjectStore = create<ProjectState>()(
         const project: Project = {
           id: storage.createId(),
           ...data,
-          currentPhase: 1,
+          currentPhase: data.startingPhase ?? 1,
           currentStep: 1,
           status: "active",
           metadata: {},
