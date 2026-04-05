@@ -81,5 +81,5 @@ Based on the analysis, these topics offer the best combination of citation momen
 ---
 
 **NEXT STEP:**
-From the tables above, please select ONE specific topic you want to explore further. Type your selection exactly as shown in the "Emerging Keyword/Topic" or "Intersection Topic" column, and I will help you refine it for research exploration.`,
+From the tables above, select and copy ONE specific topic you want to explore further. Type your selection exactly as shown in the "Emerging Keyword/Topic", "Intersection Topic", or "Top 5 Recommendations" column into the next step of the Research Grant Suite.`,
 };
