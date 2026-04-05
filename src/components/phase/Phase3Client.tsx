@@ -425,7 +425,8 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                       name: "discipline",
                       label: "Discipline",
                       type: "text",
-                      placeholder: activeProject?.discipline || "e.g., Computer Science",
+                      placeholder: "e.g., Computer Science",
+                      defaultValue: activeProject?.discipline || undefined,
                       required: true,
                     },
                     {
@@ -606,20 +607,23 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                                   name: "discipline",
                                   label: "Discipline",
                                   type: "text",
-                                  placeholder: activeProject?.discipline || "e.g., Computer Science",
+                                  placeholder: "e.g., Computer Science",
+                                  defaultValue: activeProject?.discipline || undefined,
                                   required: true,
                                 },
                                 {
                                   name: "country",
                                   label: "Country",
                                   type: "text",
-                                  placeholder: activeProject?.country || "e.g., United States",
+                                  placeholder: "e.g., Malaysia",
+                                  defaultValue: activeProject?.country || undefined,
                                 },
                                 {
                                   name: "careerStage",
                                   label: "Career Stage",
                                   type: "text",
-                                  placeholder: activeProject?.careerStage || "e.g., Early Career Researcher",
+                                  placeholder: "e.g., Early Career Researcher",
+                                  defaultValue: activeProject?.careerStage || undefined,
                                 },
                               ]}
                               onComplete={() => loadDocuments(projectId)}
@@ -764,7 +768,8 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                                               name: "discipline",
                                               label: "Discipline",
                                               type: "text",
-                                              placeholder: activeProject?.discipline || "e.g., Computer Science",
+                                              placeholder: "e.g., Computer Science",
+                                              defaultValue: activeProject?.discipline || undefined,
                                               required: true,
                                             },
                                             {
@@ -887,14 +892,16 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                               name: "discipline",
                               label: "Discipline",
                               type: "text",
-                              placeholder: activeProject?.discipline || "e.g., Computer Science",
+                              placeholder: "e.g., Computer Science",
+                              defaultValue: activeProject?.discipline || undefined,
                               required: true,
                             },
                             {
                               name: "country",
                               label: "Country",
                               type: "text",
-                              placeholder: activeProject?.country || "e.g., United States",
+                              placeholder: "e.g., Malaysia",
+                              defaultValue: activeProject?.country || undefined,
                             },
                           ]}
                           onComplete={() => {
@@ -939,7 +946,8 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                             name: "discipline",
                             label: "Discipline",
                             type: "text",
-                            placeholder: activeProject?.discipline || "e.g., Computer Science",
+                            placeholder: "e.g., Computer Science",
+                            defaultValue: activeProject?.discipline || undefined,
                             required: true,
                           },
                           {
@@ -1155,7 +1163,8 @@ function getModuleFields(
       name: "discipline",
       label: "Discipline",
       type: "text" as const,
-      placeholder: project?.discipline || "e.g., Computer Science",
+      placeholder: "e.g., Computer Science",
+      defaultValue: project?.discipline || undefined,
       required: true,
     },
   ];
@@ -1168,7 +1177,8 @@ function getModuleFields(
           name: "country",
           label: "Country",
           type: "text" as const,
-          placeholder: project?.country || "e.g., United States",
+          placeholder: "e.g., Malaysia",
+          defaultValue: project?.country || undefined,
         },
       ];
     case "national":
@@ -1178,7 +1188,8 @@ function getModuleFields(
           name: "country",
           label: "Country",
           type: "text" as const,
-          placeholder: project?.country || "e.g., Malaysia",
+          placeholder: "e.g., Malaysia",
+          defaultValue: project?.country || undefined,
           required: true,
         },
       ];
@@ -1195,7 +1206,8 @@ function getModuleFields(
           name: "country",
           label: "Country",
           type: "text" as const,
-          placeholder: project?.country || "e.g., United States",
+          placeholder: "e.g., Malaysia",
+          defaultValue: project?.country || undefined,
         },
       ];
     case "profile":
@@ -1212,13 +1224,15 @@ function getModuleFields(
           name: "careerStage",
           label: "Career Stage",
           type: "text" as const,
-          placeholder: project?.careerStage || "e.g., Early Career Researcher",
+          placeholder: "e.g., Early Career Researcher",
+          defaultValue: project?.careerStage || undefined,
         },
         {
           name: "country",
           label: "Country",
           type: "text" as const,
-          placeholder: project?.country || "e.g., United States",
+          placeholder: "e.g., Malaysia",
+          defaultValue: project?.country || undefined,
         },
       ];
     case "originality":
@@ -1239,7 +1253,8 @@ function getModuleFields(
           name: "country",
           label: "Country",
           type: "text" as const,
-          placeholder: project?.country || "e.g., United States",
+          placeholder: "e.g., Malaysia",
+          defaultValue: project?.country || undefined,
         },
       ];
     default:

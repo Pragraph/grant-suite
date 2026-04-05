@@ -10,6 +10,7 @@ import {
   Check,
   ChevronDown,
   ChevronRight,
+  ArrowRight,
   FileCheck,
 } from "lucide-react";
 
@@ -21,7 +22,7 @@ import { useProjectStore } from "@/stores/project-store";
 import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
-import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { PHASE_DEFINITIONS, GRANT_SCHEME_MAP } from "@/lib/constants";
 import type { StepStatus } from "@/lib/types";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -352,6 +353,59 @@ const stepExpandVariants = {
   expanded: { height: "auto", opacity: 1, overflow: "visible" as const },
 };
 
+// ─── Next Step CTA ──────────────────────────────────────────────────────────
+
+interface NextStepCTAProps {
+  projectId: string;
+  currentStep: number;
+  phase1Steps: typeof PHASE_1.steps;
+}
+
+function NextStepCTA({ projectId, currentStep, phase1Steps }: NextStepCTAProps) {
+  void projectId; // available for future use
+  const nextStepDef = phase1Steps.find((s) => s.step > currentStep);
+  if (!nextStepDef) return null;
+
+  const handleNavigate = () => {
+    window.dispatchEvent(
+      new CustomEvent("grant-suite:expand-step", { detail: { step: nextStepDef.step } })
+    );
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+      className="mt-4"
+    >
+      <button
+        onClick={handleNavigate}
+        className={cn(
+          "group flex w-full items-center gap-4 rounded-xl border p-4 text-left transition-all",
+          "border-[#4F7DF3]/30 bg-gradient-to-r from-[#F0F4FF] to-[#F8FAFF]",
+          "dark:from-[#4F7DF3]/10 dark:to-[#4F7DF3]/5 dark:border-[#4F7DF3]/20",
+          "hover:border-[#4F7DF3]/50 hover:shadow-md hover:shadow-[#4F7DF3]/10",
+          "active:scale-[0.995]",
+        )}
+      >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#4F7DF3]/10 dark:bg-[#4F7DF3]/20 text-[#4F7DF3] transition-colors group-hover:bg-[#4F7DF3]/20">
+          <ArrowRight className="h-5 w-5" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-foreground">
+            Continue to {nextStepDef.name}
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Proceed to the next step in Phase 1
+          </p>
+        </div>
+        <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 transition-transform group-hover:translate-x-0.5" />
+      </button>
+    </motion.div>
+  );
+}
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export function Phase1Client({ projectId: _pid }: { projectId: string }) {
@@ -383,6 +437,19 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
     ]);
   }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
+  // ── Listen for next-step navigation events ────────────────────────────────
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ step: number }>).detail;
+      setActiveStep(detail.step);
+      setTimeout(() => {
+        const el = document.getElementById(`phase1-step-${detail.step}`);
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 350);
+    };
+    window.addEventListener("grant-suite:expand-step", handler);
+    return () => window.removeEventListener("grant-suite:expand-step", handler);
+  }, []);
 
   // ── Load completed methods from documents ─────────────────────────────────
 
@@ -583,7 +650,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
           const unlocked = isStepUnlocked(stepDef.step);
 
           return (
-            <div key={stepDef.step} className="relative">
+            <div key={stepDef.step} id={`phase1-step-${stepDef.step}`} className="relative">
               {/* Timeline line */}
               {i < phase1Steps.length - 1 && (
                 <div
@@ -893,10 +960,20 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                 <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                               </button>
                             </div>
+
+                            {/* Next step CTA when Step 1 is complete */}
+                            {getStepStatus(1) === "complete" && (
+                              <NextStepCTA
+                                projectId={projectId}
+                                currentStep={1}
+                                phase1Steps={phase1Steps}
+                              />
+                            )}
                           </div>
                         )
                       ) : stepDef.step === 2 ? (
                         // ── Step 2: Grant Matching (uses StepExecutor) ──
+                        <>
                         <StepExecutor
                           templateId="phase1.grant-matching"
                           projectId={projectId}
@@ -909,31 +986,38 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                               name: "grantScheme",
                               label: "Grant Scheme",
                               type: "text",
-                              placeholder: activeProject?.grantScheme || "e.g., FRGS",
+                              placeholder: "e.g., FRGS",
+                              defaultValue: activeProject?.grantScheme && activeProject.grantScheme !== "Undecided" && activeProject.grantScheme !== "Other"
+                                ? activeProject.grantScheme
+                                : undefined,
                             },
                             {
                               name: "researchTopic",
                               label: "Research Topic / Title",
                               type: "text",
-                              placeholder: activeProject?.title || "e.g., Machine Learning for Drug Discovery",
+                              placeholder: "e.g., Machine Learning for Drug Discovery",
+                              defaultValue: activeProject?.title || undefined,
                             },
                             {
                               name: "discipline",
                               label: "Discipline",
                               type: "text",
-                              placeholder: activeProject?.discipline || "e.g., Computer Science",
+                              placeholder: "e.g., Computer Science",
+                              defaultValue: activeProject?.discipline || undefined,
                             },
                             {
                               name: "country",
                               label: "Country",
                               type: "text",
-                              placeholder: activeProject?.country || "e.g., Malaysia",
+                              placeholder: "e.g., Malaysia",
+                              defaultValue: activeProject?.country || undefined,
                             },
                             {
                               name: "careerStage",
                               label: "Career Stage",
                               type: "text",
-                              placeholder: activeProject?.careerStage || "e.g., Associate Professor",
+                              placeholder: "e.g., Associate Professor",
+                              defaultValue: activeProject?.careerStage || undefined,
                             },
                             {
                               name: "budgetRange",
@@ -958,6 +1042,15 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                             setActiveStep(3);
                           }}
                         />
+                        {/* Next step CTA when Step 2 is complete */}
+                        {getStepStatus(2) === "complete" && (
+                          <NextStepCTA
+                            projectId={projectId}
+                            currentStep={2}
+                            phase1Steps={phase1Steps}
+                          />
+                        )}
+                      </>
                       ) : stepDef.step === 3 ? (
                         // ── Step 3: Grant Intelligence (uses StepExecutor) ──
                         <div className="space-y-4">
@@ -1012,13 +1105,19 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                 name: "grantScheme",
                                 label: "Grant Scheme",
                                 type: "text",
-                                placeholder: activeProject?.grantScheme || "e.g., FRGS",
+                                placeholder: "e.g., FRGS",
+                                defaultValue: activeProject?.grantScheme && activeProject.grantScheme !== "Undecided" && activeProject.grantScheme !== "Other"
+                                  ? activeProject.grantScheme
+                                  : undefined,
                               },
                               {
                                 name: "grantName",
                                 label: "Grant Program Name",
                                 type: "text",
-                                placeholder: activeProject?.grantScheme ? `e.g., ${activeProject.grantScheme}` : "e.g., FRGS, ERC Starting Grant",
+                                placeholder: "e.g., Fundamental Research Grant Scheme",
+                                defaultValue: activeProject?.grantScheme && activeProject.grantScheme !== "Undecided" && activeProject.grantScheme !== "Other"
+                                  ? (GRANT_SCHEME_MAP[activeProject.grantScheme]?.fullName || activeProject.grantScheme)
+                                  : undefined,
                                 required: true,
                               },
                               {
@@ -1050,6 +1149,40 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                               loadDocuments(projectId);
                             }}
                           />
+
+                          {/* Next step CTA when Step 3 is complete — links to Phase 2 */}
+                          {getStepStatus(3) === "complete" && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                              className="mt-4"
+                            >
+                              <button
+                                onClick={() => window.location.assign(`/projects/${projectId}/phase/2`)}
+                                className={cn(
+                                  "group flex w-full items-center gap-4 rounded-xl border p-4 text-left transition-all",
+                                  "border-[#4F7DF3]/30 bg-gradient-to-r from-[#F0F4FF] to-[#F8FAFF]",
+                                  "dark:from-[#4F7DF3]/10 dark:to-[#4F7DF3]/5 dark:border-[#4F7DF3]/20",
+                                  "hover:border-[#4F7DF3]/50 hover:shadow-md hover:shadow-[#4F7DF3]/10",
+                                  "active:scale-[0.995]",
+                                )}
+                              >
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#4F7DF3]/10 dark:bg-[#4F7DF3]/20 text-[#4F7DF3] transition-colors group-hover:bg-[#4F7DF3]/20">
+                                  <ArrowRight className="h-5 w-5" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-semibold text-foreground">
+                                    Continue to Phase 2: Strategic Positioning
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-0.5">
+                                    All Phase 1 steps are complete. Proceed to the next phase.
+                                  </p>
+                                </div>
+                                <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 transition-transform group-hover:translate-x-0.5" />
+                              </button>
+                            </motion.div>
+                          )}
                         </div>
                       ) : null}
                     </div>

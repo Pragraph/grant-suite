@@ -45,6 +45,7 @@ export interface FormFieldConfig {
   type: "text" | "textarea" | "select" | "file-upload-text";
   placeholder?: string;
   required?: boolean;
+  defaultValue?: string;
   options?: { label: string; value: string }[];
 }
 
@@ -216,13 +217,28 @@ export function StepExecutor({
         const parsed = JSON.parse(persisted) as ExecutorReducerState;
         // Don't restore CHECKING or transient states
         if (parsed.state !== "CHECKING") {
-          dispatch({ type: "RESTORE", state: parsed });
+          // Merge any new default values that didn't exist in persisted state
+          const mergedFormValues = { ...parsed.formValues };
+          for (const field of additionalFields) {
+            if (field.defaultValue && !mergedFormValues[field.name]) {
+              mergedFormValues[field.name] = field.defaultValue;
+            }
+          }
+          dispatch({ type: "RESTORE", state: { ...parsed, formValues: mergedFormValues } });
           return;
         }
       }
     } catch {
       // Ignore parse errors
     }
+
+    // Seed form values from defaultValue when no persisted state
+    for (const field of additionalFields) {
+      if (field.defaultValue) {
+        dispatch({ type: "SET_FORM_VALUE", name: field.name, value: field.defaultValue });
+      }
+    }
+
     checkReadiness();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, phase, step]);

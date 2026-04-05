@@ -23,7 +23,7 @@ import { useProjectStore } from "@/stores/project-store";
 import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
-import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { PHASE_DEFINITIONS, GRANT_SCHEME_MAP } from "@/lib/constants";
 import type { StepStatus } from "@/lib/types";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -442,20 +442,25 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                 name: "grantName",
                 label: "Grant Program Name",
                 type: "text",
-                placeholder: activeProject?.targetFunder || "e.g., ERC Starting Grant",
+                placeholder: "e.g., Fundamental Research Grant Scheme",
+                defaultValue: activeProject?.grantScheme && activeProject.grantScheme !== "Undecided" && activeProject.grantScheme !== "Other"
+                  ? (GRANT_SCHEME_MAP[activeProject.grantScheme]?.fullName || activeProject.grantScheme)
+                  : (activeProject?.targetFunder || undefined),
                 required: true,
               },
               {
                 name: "discipline",
                 label: "Discipline",
                 type: "text",
-                placeholder: activeProject?.discipline || "e.g., Computer Science",
+                placeholder: "e.g., Computer Science",
+                defaultValue: activeProject?.discipline || undefined,
               },
               {
                 name: "country",
                 label: "Country",
                 type: "text",
-                placeholder: activeProject?.country || "e.g., United States",
+                placeholder: "e.g., Malaysia",
+                defaultValue: activeProject?.country || undefined,
               },
               {
                 name: "cvSummary",
@@ -663,14 +668,18 @@ function getAdditionalFields(
       name: "grantName",
       label: "Grant Program Name",
       type: "text" as const,
-      placeholder: project?.targetFunder || "e.g., ERC Starting Grant",
+      placeholder: "e.g., Fundamental Research Grant Scheme",
+      defaultValue: project?.grantScheme && project.grantScheme !== "Undecided" && project.grantScheme !== "Other"
+        ? (GRANT_SCHEME_MAP[project.grantScheme]?.fullName || project.grantScheme)
+        : (project?.targetFunder || undefined),
       required: true,
     },
     {
       name: "discipline",
       label: "Discipline",
       type: "text" as const,
-      placeholder: project?.discipline || "e.g., Computer Science",
+      placeholder: "e.g., Computer Science",
+      defaultValue: project?.discipline || undefined,
     },
   ];
 
@@ -682,13 +691,15 @@ function getAdditionalFields(
           name: "country",
           label: "Country",
           type: "text" as const,
-          placeholder: project?.country || "e.g., United States",
+          placeholder: "e.g., Malaysia",
+          defaultValue: project?.country || undefined,
         },
         {
           name: "careerStage",
           label: "Career Stage",
           type: "text" as const,
-          placeholder: project?.careerStage || "e.g., Early Career Researcher",
+          placeholder: "e.g., Early Career Researcher",
+          defaultValue: project?.careerStage || undefined,
         },
         {
           name: "cvSummary",
@@ -705,13 +716,15 @@ function getAdditionalFields(
           name: "country",
           label: "Country",
           type: "text" as const,
-          placeholder: project?.country || "e.g., United States",
+          placeholder: "e.g., Malaysia",
+          defaultValue: project?.country || undefined,
         },
         {
           name: "careerStage",
           label: "Career Stage",
           type: "text" as const,
-          placeholder: project?.careerStage || "e.g., Early Career Researcher",
+          placeholder: "e.g., Early Career Researcher",
+          defaultValue: project?.careerStage || undefined,
         },
       ];
     case 3:
@@ -721,7 +734,8 @@ function getAdditionalFields(
           name: "careerStage",
           label: "Career Stage",
           type: "text" as const,
-          placeholder: project?.careerStage || "e.g., Early Career Researcher",
+          placeholder: "e.g., Early Career Researcher",
+          defaultValue: project?.careerStage || undefined,
         },
       ];
     case 4:
@@ -731,13 +745,15 @@ function getAdditionalFields(
           name: "country",
           label: "Country",
           type: "text" as const,
-          placeholder: project?.country || "e.g., United States",
+          placeholder: "e.g., Malaysia",
+          defaultValue: project?.country || undefined,
         },
         {
           name: "careerStage",
           label: "Career Stage",
           type: "text" as const,
-          placeholder: project?.careerStage || "e.g., Early Career Researcher",
+          placeholder: "e.g., Early Career Researcher",
+          defaultValue: project?.careerStage || undefined,
         },
       ];
     case 5:
@@ -747,13 +763,15 @@ function getAdditionalFields(
           name: "country",
           label: "Country",
           type: "text" as const,
-          placeholder: project?.country || "e.g., United States",
+          placeholder: "e.g., Malaysia",
+          defaultValue: project?.country || undefined,
         },
         {
           name: "careerStage",
           label: "Career Stage",
           type: "text" as const,
-          placeholder: project?.careerStage || "e.g., Early Career Researcher",
+          placeholder: "e.g., Early Career Researcher",
+          defaultValue: project?.careerStage || undefined,
         },
       ];
     default:
