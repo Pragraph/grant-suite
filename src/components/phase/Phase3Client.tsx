@@ -1216,8 +1216,8 @@ function getModuleFields(
         {
           name: "cvSummary",
           label: "Your CV / Career Summary",
-          type: "textarea" as const,
-          placeholder: "Paste a summary of your CV — publications, grants, teaching, supervision, and relevant experience.",
+          type: "file-upload-text" as const,
+          placeholder: "Upload your CV as PDF, or paste a summary — publications, grants, teaching, supervision, and relevant experience.",
           required: true,
         },
         {
@@ -1241,8 +1241,8 @@ function getModuleFields(
         {
           name: "proposalText",
           label: "Proposal Text to Review",
-          type: "textarea" as const,
-          placeholder: "Paste the proposal text you want to check for originality...",
+          type: "file-upload-text" as const,
+          placeholder: "Upload your proposal as PDF, or paste the text you want to check for originality...",
           required: true,
         },
       ];

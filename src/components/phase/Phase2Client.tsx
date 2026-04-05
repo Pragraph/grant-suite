@@ -704,9 +704,9 @@ function getAdditionalFields(
         {
           name: "cvSummary",
           label: "Your CV or Career Summary",
-          type: "textarea" as const,
+          type: "file-upload-text" as const,
           placeholder:
-            "Paste a summary of your CV — publications, grants, teaching, supervision, and relevant experience. This helps identify alignment and gaps with the grant requirements.",
+            "Upload your CV as PDF, or paste a summary — publications, grants, teaching, supervision, and relevant experience.",
         },
       ];
     case 2:

@@ -15,6 +15,7 @@ import {
   Trash2,
   Eye,
   Save,
+  Upload,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -184,6 +185,170 @@ const stateVariants = {
 };
 
 const springTransition = { type: "spring", stiffness: 300, damping: 30 };
+
+// ─── File text extraction (for file-upload-text fields) ─────────────────────
+
+async function extractTextFromUpload(file: File): Promise<string> {
+  const ext = file.name.split(".").pop()?.toLowerCase();
+
+  if (ext === "txt" || ext === "md") {
+    return file.text();
+  }
+
+  if (ext === "pdf") {
+    const pdfjsLib = await import("pdfjs-dist");
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const pages: string[] = [];
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const text = content.items
+        .map((item: { str?: string }) => item.str || "")
+        .join(" ");
+      pages.push(text);
+    }
+
+    const result = pages.join("\n\n");
+    if (!result.trim()) {
+      throw new Error("Could not extract text from this PDF. The file may be scanned or image-based. Try copying the text manually and pasting it instead.");
+    }
+    return result;
+  }
+
+  // Fallback: try reading as text
+  return file.text();
+}
+
+// ─── File Upload Text Field ─────────────────────────────────────────────────
+
+function FileUploadTextField({
+  field,
+  value,
+  onChange,
+}: {
+  field: FormFieldConfig;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFile = async (file: File) => {
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const text = await extractTextFromUpload(file);
+      if (!text.trim()) {
+        throw new Error("The file appears to be empty or no text could be extracted.");
+      }
+      onChange(text);
+      setUploadedFileName(file.name);
+      toast.success(`Extracted text from ${file.name}`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to extract text from file";
+      setUploadError(msg);
+      toast.error(msg);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  };
+
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-gray-500">
+        {field.label}
+        {field.required && <span className="ml-1 text-red-500">*</span>}
+      </Label>
+
+      {/* Upload bar */}
+      <div className="flex items-center gap-2">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.txt,.md"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleFile(file);
+            // Reset so the same file can be re-uploaded
+            e.target.value = "";
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className={cn(
+            "flex items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 text-xs font-medium transition-colors",
+            "border-gray-300 text-gray-500 hover:border-[#4F7DF3]/40 hover:text-[#4F7DF3] hover:bg-[#F0F4FF]",
+            uploading && "opacity-50 pointer-events-none",
+          )}
+        >
+          <Upload className="h-3.5 w-3.5" />
+          {uploading ? "Extracting..." : "Upload file"}
+        </button>
+        <span className="text-[10px] text-gray-400">
+          .pdf, .txt, .md
+        </span>
+        {uploadedFileName && !uploadError && (
+          <span className="text-[10px] text-emerald-600 flex items-center gap-1">
+            <Check className="h-3 w-3" />
+            {uploadedFileName}
+          </span>
+        )}
+      </div>
+
+      {/* Error */}
+      {uploadError && (
+        <div className="flex items-start gap-1.5 text-[11px] text-red-600">
+          <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" />
+          <span>{uploadError}</span>
+        </div>
+      )}
+
+      {/* Textarea with drop support */}
+      <div
+        onDragOver={(e) => { e.preventDefault(); }}
+        onDrop={handleDrop}
+      >
+        <textarea
+          id={`field-${field.name}`}
+          value={value}
+          onChange={(e) => {
+            onChange(e.target.value);
+            // Clear uploaded filename if user manually edits
+            if (uploadedFileName) setUploadedFileName(null);
+          }}
+          placeholder={field.placeholder || "Upload a file above or paste the text content here..."}
+          className={cn(
+            "w-full min-h-25 resize-y rounded-lg border border-gray-200 bg-gray-50 p-3",
+            "font-mono text-sm text-gray-800 placeholder:text-gray-400",
+            "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white"
+          )}
+        />
+      </div>
+
+      {/* Word count when content exists */}
+      {value.trim() && (
+        <p className="text-[10px] text-gray-400 text-right">
+          {value.split(/\s+/).filter(Boolean).length.toLocaleString()} words
+        </p>
+      )}
+    </div>
+  );
+}
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
@@ -433,18 +598,12 @@ export function StepExecutor({
           );
 
         case "textarea":
-        case "file-upload-text":
           return (
             <div key={field.name} className="space-y-1.5">
               <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-gray-500">
                 {field.label}
                 {field.required && <span className="ml-1 text-red-500">*</span>}
               </Label>
-              {field.type === "file-upload-text" && (
-                <p className="text-xs text-gray-400">
-                  Paste the text content from your file below
-                </p>
-              )}
               <textarea
                 id={`field-${field.name}`}
                 value={value}
@@ -457,6 +616,16 @@ export function StepExecutor({
                 )}
               />
             </div>
+          );
+
+        case "file-upload-text":
+          return (
+            <FileUploadTextField
+              key={field.name}
+              field={field}
+              value={value}
+              onChange={(v) => dispatch({ type: "SET_FORM_VALUE", name: field.name, value: v })}
+            />
           );
 
         case "select":
