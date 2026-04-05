@@ -356,6 +356,7 @@ export function MethodWizard({
       case "topic-brief-form":
         return !!(
           state.formValues.researchTopic?.trim() &&
+          state.formValues.researchObjectives?.trim() &&
           state.formValues.researchQuestions?.trim() &&
           state.formValues.gapJustification?.trim() &&
           state.formValues.keyReferences?.trim()
@@ -916,10 +917,11 @@ export function MethodWizard({
       case "topic-brief-form":
         return (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500">{step.description}</p>
+            <p className="text-sm text-muted-foreground">{step.description}</p>
 
+            {/* ── Required Fields ─────────────────────────────────────────── */}
             <div className="space-y-1.5">
-              <Label htmlFor="wizard-topic" className="text-xs font-medium text-gray-500">
+              <Label htmlFor="wizard-topic" className="text-xs font-medium text-muted-foreground">
                 Research Topic / Title <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -931,24 +933,44 @@ export function MethodWizard({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="wizard-rqs" className="text-xs font-medium text-gray-500">
+              <Label htmlFor="wizard-objectives" className="text-xs font-medium text-muted-foreground">
+                Research Objectives <span className="text-red-500">*</span>
+              </Label>
+              <textarea
+                id="wizard-objectives"
+                value={state.formValues.researchObjectives || ""}
+                onChange={(e) => setFormValue("researchObjectives", e.target.value)}
+                placeholder={"State 2–4 specific, measurable objectives.\n\ne.g.,\nRO1: To determine the interstitial glucose patterns associated with training adaptation in endurance athletes.\nRO2: To develop a predictive model for recovery readiness using continuous glucose monitoring data."}
+                className={cn(
+                  "w-full min-h-24 resize-y rounded-lg border border-border bg-background p-3",
+                  "text-sm text-foreground placeholder:text-muted-foreground/60",
+                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
+                )}
+              />
+              <p className="text-[11px] text-muted-foreground/60">
+                Objectives define what you aim to achieve. They should be specific and measurable, distinct from research questions.
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="wizard-rqs" className="text-xs font-medium text-muted-foreground">
                 Research Questions <span className="text-red-500">*</span>
               </Label>
               <textarea
                 id="wizard-rqs"
                 value={state.formValues.researchQuestions || ""}
                 onChange={(e) => setFormValue("researchQuestions", e.target.value)}
-                placeholder={"Enter 1–3 research questions, one per line.\ne.g.,\nRQ1: What interstitial glucose patterns are associated with training adaptation?\nRQ2: Can ML models predict recovery readiness from CGM data?"}
+                placeholder={"Enter 1–3 research questions, one per line.\n\ne.g.,\nRQ1: What interstitial glucose patterns are associated with training adaptation?\nRQ2: Can ML models predict recovery readiness from CGM data?"}
                 className={cn(
-                  "w-full min-h-24 resize-y rounded-lg border border-gray-200 bg-white p-3",
-                  "text-sm text-gray-800 placeholder:text-gray-400",
+                  "w-full min-h-24 resize-y rounded-lg border border-border bg-background p-3",
+                  "text-sm text-foreground placeholder:text-muted-foreground/60",
                   "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
                 )}
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="wizard-gap" className="text-xs font-medium text-gray-500">
+              <Label htmlFor="wizard-gap" className="text-xs font-medium text-muted-foreground">
                 Gap Justification <span className="text-red-500">*</span>
               </Label>
               <textarea
@@ -957,33 +979,15 @@ export function MethodWizard({
                 onChange={(e) => setFormValue("gapJustification", e.target.value)}
                 placeholder="Explain why this is an unresolved gap. What has the literature missed, overlooked, or not yet addressed?"
                 className={cn(
-                  "w-full min-h-24 resize-y rounded-lg border border-gray-200 bg-white p-3",
-                  "text-sm text-gray-800 placeholder:text-gray-400",
+                  "w-full min-h-24 resize-y rounded-lg border border-border bg-background p-3",
+                  "text-sm text-foreground placeholder:text-muted-foreground/60",
                   "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
                 )}
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="wizard-method" className="text-xs font-medium text-gray-500">
-                Proposed Methodology
-                <span className="ml-1 text-gray-400">(optional)</span>
-              </Label>
-              <textarea
-                id="wizard-method"
-                value={state.formValues.proposedMethodology || ""}
-                onChange={(e) => setFormValue("proposedMethodology", e.target.value)}
-                placeholder="Describe your proposed approach, design, or methodology if you have one in mind."
-                className={cn(
-                  "w-full min-h-20 resize-y rounded-lg border border-gray-200 bg-white p-3",
-                  "text-sm text-gray-800 placeholder:text-gray-400",
-                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
-                )}
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="wizard-refs" className="text-xs font-medium text-gray-500">
+              <Label htmlFor="wizard-refs" className="text-xs font-medium text-muted-foreground">
                 Key References <span className="text-red-500">*</span>
               </Label>
               <textarea
@@ -992,14 +996,109 @@ export function MethodWizard({
                 onChange={(e) => setFormValue("keyReferences", e.target.value)}
                 placeholder={"Paste 3–5 key APA references that support your topic and gap justification.\n\ne.g.,\nHelleputte, S., Podlogar, T., & Gonzalez, J. (2025). Application potential of CGM in elite endurance athletes. Performance Nutrition, 1(1), 13."}
                 className={cn(
-                  "w-full min-h-28 resize-y rounded-lg border border-gray-200 bg-white p-3",
-                  "font-mono text-xs text-gray-700 placeholder:text-gray-400",
+                  "w-full min-h-28 resize-y rounded-lg border border-border bg-background p-3",
+                  "font-mono text-xs text-foreground/80 placeholder:text-muted-foreground/60",
                   "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
                 )}
               />
-              <p className="text-[11px] text-gray-400">
+              <p className="text-[11px] text-muted-foreground/60">
                 Minimum 3 references. These will be used by the AI to evaluate your gap justification.
               </p>
+            </div>
+
+            {/* ── Optional Fields ─────────────────────────────────────────── */}
+            <div className="relative py-3">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-card px-3 text-xs text-muted-foreground">
+                  Optional — improves downstream quality
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="wizard-population" className="text-xs font-medium text-muted-foreground">
+                Target Population / Sample
+              </Label>
+              <textarea
+                id="wizard-population"
+                value={state.formValues.targetPopulation || ""}
+                onChange={(e) => setFormValue("targetPopulation", e.target.value)}
+                placeholder="e.g., 30 male endurance athletes aged 18–35, recruited from university sports teams in Selangor, Malaysia"
+                className={cn(
+                  "w-full min-h-16 resize-y rounded-lg border border-border bg-background p-3",
+                  "text-sm text-foreground placeholder:text-muted-foreground/60",
+                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
+                )}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="wizard-framework" className="text-xs font-medium text-muted-foreground">
+                Theoretical / Conceptual Framework
+              </Label>
+              <Input
+                id="wizard-framework"
+                value={state.formValues.theoreticalFramework || ""}
+                onChange={(e) => setFormValue("theoreticalFramework", e.target.value)}
+                placeholder="e.g., Self-Determination Theory, Technology Acceptance Model, Ecological Systems Theory"
+              />
+              <p className="text-[11px] text-muted-foreground/60">
+                Name the theory or framework grounding your study. Important for MOHE grants (especially FRGS).
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="wizard-method" className="text-xs font-medium text-muted-foreground">
+                Proposed Methodology
+              </Label>
+              <textarea
+                id="wizard-method"
+                value={state.formValues.proposedMethodology || ""}
+                onChange={(e) => setFormValue("proposedMethodology", e.target.value)}
+                placeholder="Describe your proposed approach, design, or methodology if you have one in mind."
+                className={cn(
+                  "w-full min-h-20 resize-y rounded-lg border border-border bg-background p-3",
+                  "text-sm text-foreground placeholder:text-muted-foreground/60",
+                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
+                )}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="wizard-outcomes" className="text-xs font-medium text-muted-foreground">
+                Expected Outcomes
+              </Label>
+              <textarea
+                id="wizard-outcomes"
+                value={state.formValues.expectedOutcomes || ""}
+                onChange={(e) => setFormValue("expectedOutcomes", e.target.value)}
+                placeholder={"e.g.,\n- A validated ML model for predicting recovery readiness\n- 2 ISI/Scopus journal publications\n- Patent filing for the prediction algorithm"}
+                className={cn(
+                  "w-full min-h-20 resize-y rounded-lg border border-border bg-background p-3",
+                  "text-sm text-foreground placeholder:text-muted-foreground/60",
+                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
+                )}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="wizard-scope" className="text-xs font-medium text-muted-foreground">
+                Study Scope & Boundaries
+              </Label>
+              <textarea
+                id="wizard-scope"
+                value={state.formValues.studyScope || ""}
+                onChange={(e) => setFormValue("studyScope", e.target.value)}
+                placeholder="Define time frame, geography, variables, and any known limitations or exclusions."
+                className={cn(
+                  "w-full min-h-16 resize-y rounded-lg border border-border bg-background p-3",
+                  "text-sm text-foreground placeholder:text-muted-foreground/60",
+                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-1",
+                )}
+              />
             </div>
           </div>
         );

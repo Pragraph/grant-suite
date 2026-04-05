@@ -9,6 +9,8 @@ import {
   PenLine,
   Check,
   ChevronDown,
+  ChevronRight,
+  FileCheck,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -356,12 +358,15 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
   void _pid; // extracted from URL instead
   const [projectId] = useState(() => getProjectIdFromUrl());
   const { setActiveProject, activeProject } = useProjectStore();
-  const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
+  const { progress, loadProgress, getPhaseCompletion, updateStepStatus } = useProgressStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
 
   const [activeStep, setActiveStep] = useState<number | null>(1);
   const [activeMethod, setActiveMethod] = useState<string | null>(null);
+  const [discoveryExpanded, setDiscoveryExpanded] = useState<boolean>(
+    () => activeProject?.journeyMode !== "directed"
+  );
 
   // ── Initialize ────────────────────────────────────────────────────────────
 
@@ -400,6 +405,8 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
     }
     return completed;
   }, [documents, projectId]);
+
+  const hasDirectionBrief = completedMethods.includes("method3");
 
   // ── Auto-open Method 3 for "directed" journey mode ────────────────────────
   // Runs as a synchronous state derivation during render (not in an effect)
@@ -450,6 +457,25 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
       }
       if (doc.canonicalName === "Method2_Trend_Discovery.md") {
         outputs.method2_output = doc.content;
+      }
+    }
+    return outputs;
+  }, [documents, projectId]);
+
+  // ── Collect discovery outputs for Direction Brief context ──────────────
+
+  const getDiscoveryOutputsForBrief = useCallback(() => {
+    const outputs: Record<string, string> = {};
+    for (const doc of documents) {
+      if (doc.projectId !== projectId || doc.phase !== 1 || doc.step !== 1) continue;
+      if (doc.canonicalName === "Method1_Gap_Synthesis.md") {
+        outputs.method1_output = doc.content;
+      }
+      if (doc.canonicalName === "Method2_Trend_Discovery.md") {
+        outputs.method2_output = doc.content;
+      }
+      if (doc.canonicalName === "Method4_Convergence_Synthesis.md") {
+        outputs.method4_output = doc.content;
       }
     }
     return outputs;
@@ -511,6 +537,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
   };
 
   const getMethodName = (methodId: string): string => {
+    if (methodId === "method3") return "Research Direction Brief";
     return METHODS.find((m) => m.id === methodId)?.name || methodId;
   };
 
@@ -654,122 +681,218 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                   >
                     <div className="pt-2">
                       {stepDef.step === 1 ? (
-                        // ── Step 1: Method selector / wizard ───────────
+                        // ── Step 1: Discovery + Direction Brief ─────────
                         activeMethod ? (
                           <MethodWizard
                             methodId={activeMethod}
                             methodName={getMethodName(activeMethod)}
                             projectId={projectId}
                             steps={getMethodSteps(activeMethod)}
-                            initialFormValues={activeMethod === "method4" ? getMethodOutputs() : undefined}
+                            initialFormValues={
+                              activeMethod === "method4"
+                                ? getMethodOutputs()
+                                : activeMethod === "method3"
+                                  ? getDiscoveryOutputsForBrief()
+                                  : undefined
+                            }
                             onComplete={() => {
+                              if (activeMethod === "method3") {
+                                updateStepStatus(projectId, 1, 1, "complete");
+                              }
                               setActiveMethod(null);
                               loadDocuments(projectId);
                             }}
                             onCancel={() => setActiveMethod(null)}
                           />
                         ) : (
-                          <div className="space-y-4">
-                            {/* Completed methods summary */}
-                            {completedMethods.length > 0 && (
-                              <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
-                                <p className="text-xs font-medium text-emerald-600 mb-1">
-                                  Completed Methods
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                  {completedMethods.map((mId) => {
-                                    const method = METHODS.find((m) => m.id === mId);
-                                    return (
-                                      <Badge key={mId} className="text-[10px]">
-                                        <Check className="h-3 w-3 mr-1" />
-                                        {method?.name}
-                                      </Badge>
-                                    );
-                                  })}
+                          <div className="space-y-6">
+                            {/* ── Section A: Discovery Methods (Optional) ────────── */}
+                            <div className="space-y-3">
+                              <button
+                                onClick={() => setDiscoveryExpanded(!discoveryExpanded)}
+                                className="flex w-full items-center justify-between text-left group"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <h3 className="text-sm font-semibold text-foreground">
+                                    Explore Research Directions
+                                  </h3>
+                                  <Badge variant="outline" className="text-[10px] text-muted-foreground border-border">
+                                    Optional
+                                  </Badge>
                                 </div>
-                              </div>
-                            )}
+                                <ChevronDown
+                                  className={cn(
+                                    "h-4 w-4 text-muted-foreground transition-transform",
+                                    discoveryExpanded && "rotate-180",
+                                  )}
+                                />
+                              </button>
+                              <p className="text-xs text-muted-foreground">
+                                Use these tools to discover and validate potential research directions before formalizing below.
+                              </p>
 
-                            {/* Method cards */}
-                            <div className="grid gap-3 sm:grid-cols-2">
-                              {METHODS.map((method) => {
-                                const isCompleted = completedMethods.includes(method.id);
-                                const isLocked = method.id === "method4" && !method4Available;
-
-                                return (
-                                  <Card
-                                    key={method.id}
-                                    className={cn(
-                                      "cursor-pointer transition-all hover:ring-2 hover:ring-phase-1/30 hover:border-[#4F7DF3]/40 hover:shadow-sm",
-                                      isCompleted && "ring-1 ring-emerald-200",
-                                      isLocked && "opacity-50 cursor-not-allowed hover:ring-0",
-                                    )}
-                                    onClick={() => {
-                                      if (isLocked) return;
-                                      setActiveMethod(method.id);
-                                    }}
+                              <AnimatePresence>
+                                {discoveryExpanded && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                                    className="overflow-hidden"
                                   >
-                                    <CardContent className="p-4">
-                                      <div className="flex items-start gap-3">
-                                        <div
-                                          className={cn(
-                                            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted",
-                                            method.color,
-                                          )}
-                                        >
-                                          <method.icon className="h-4.5 w-4.5" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                          <div className="flex items-center gap-2">
-                                            <p className="text-sm font-semibold text-foreground">
-                                              {method.name}
-                                            </p>
-                                            {isCompleted && (
-                                              <Check className="h-3.5 w-3.5 text-emerald-500" />
-                                            )}
-                                          </div>
-                                          <p className="text-xs text-muted-foreground mt-0.5">
-                                            {method.description}
+                                    <div className="space-y-3 pt-1">
+                                      {/* Completed methods summary */}
+                                      {completedMethods.filter(m => m !== "method3").length > 0 && (
+                                        <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 p-3">
+                                          <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mb-1">
+                                            Completed Discovery Methods
                                           </p>
-                                          {isLocked && (
-                                            <p className="text-[10px] text-red-500 mt-1">
-                                              Only needed if you complete both Gap-Based and Trend-Based Discovery
-                                            </p>
-                                          )}
+                                          <div className="flex flex-wrap gap-2">
+                                            {completedMethods.filter(m => m !== "method3").map((mId) => {
+                                              const method = METHODS.find((m) => m.id === mId);
+                                              return (
+                                                <Badge key={mId} className="text-[10px]">
+                                                  <Check className="h-3 w-3 mr-1" />
+                                                  {method?.name}
+                                                </Badge>
+                                              );
+                                            })}
+                                          </div>
                                         </div>
+                                      )}
+
+                                      {/* Discovery method cards */}
+                                      <div className="grid gap-3 sm:grid-cols-2">
+                                        {METHODS.map((method) => {
+                                          const isCompleted = completedMethods.includes(method.id);
+                                          const isLocked = method.id === "method4" && !method4Available;
+
+                                          return (
+                                            <Card
+                                              key={method.id}
+                                              className={cn(
+                                                "cursor-pointer transition-all hover:ring-2 hover:ring-phase-1/30 hover:border-[#4F7DF3]/40 hover:shadow-sm",
+                                                isCompleted && "ring-1 ring-emerald-200 dark:ring-emerald-800",
+                                                isLocked && "opacity-50 cursor-not-allowed hover:ring-0",
+                                              )}
+                                              onClick={() => {
+                                                if (isLocked) return;
+                                                setActiveMethod(method.id);
+                                              }}
+                                            >
+                                              <CardContent className="p-4">
+                                                <div className="flex items-start gap-3">
+                                                  <div
+                                                    className={cn(
+                                                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted",
+                                                      method.color,
+                                                    )}
+                                                  >
+                                                    <method.icon className="h-4.5 w-4.5" />
+                                                  </div>
+                                                  <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2">
+                                                      <p className="text-sm font-semibold text-foreground">
+                                                        {method.name}
+                                                      </p>
+                                                      {isCompleted && (
+                                                        <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                                      )}
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground mt-0.5">
+                                                      {method.description}
+                                                    </p>
+                                                    {isLocked && (
+                                                      <p className="text-[10px] text-red-500 dark:text-red-400 mt-1">
+                                                        Only needed if you complete both Gap-Based and Trend-Based Discovery
+                                                      </p>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              </CardContent>
+                                            </Card>
+                                          );
+                                        })}
                                       </div>
-                                    </CardContent>
-                                  </Card>
-                                );
-                              })}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
                             </div>
 
-                            {/* Method 3: I already have a topic */}
-                            <button
-                              onClick={() => setActiveMethod("method3")}
-                              className={cn(
-                                "flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 text-left transition-all",
-                                "hover:ring-2 hover:ring-phase-1/30 hover:border-[#4F7DF3]/40 hover:shadow-sm",
-                                completedMethods.includes("method3") && "ring-1 ring-emerald-200",
-                              )}
-                            >
-                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                                <PenLine className="h-4.5 w-4.5" />
+                            {/* ── Divider ──────────────────────────────────────────── */}
+                            <div className="relative py-1">
+                              <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-border" />
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2">
-                                  <p className="text-sm font-semibold text-foreground">
-                                    I already have a research topic
-                                  </p>
-                                  {completedMethods.includes("method3") && (
-                                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                            </div>
+
+                            {/* ── Section B: Research Direction Brief (Required) ──── */}
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-sm font-semibold text-foreground">
+                                  Define Your Research Direction
+                                </h3>
+                                <Badge
+                                  variant={hasDirectionBrief ? "default" : "outline"}
+                                  className={cn(
+                                    "text-[10px]",
+                                    hasDirectionBrief
+                                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
+                                      : "text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-700",
+                                  )}
+                                >
+                                  {hasDirectionBrief ? "Complete" : "Required"}
+                                </Badge>
+                              </div>
+
+                              <p className="text-xs text-muted-foreground">
+                                {completedMethods.filter(m => m !== "method3").length > 0
+                                  ? "Based on your discovery results, formalize the direction you want to pursue. This document guides every downstream phase."
+                                  : "Formalize your research topic, objectives, questions, and gap justification. This document guides every downstream phase."
+                                }
+                              </p>
+
+                              <button
+                                onClick={() => setActiveMethod("method3")}
+                                className={cn(
+                                  "flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all",
+                                  hasDirectionBrief
+                                    ? "border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20 hover:ring-2 hover:ring-emerald-300/50"
+                                    : "border-[#4F7DF3]/40 bg-[#F0F4FF] dark:bg-[#4F7DF3]/10 hover:ring-2 hover:ring-phase-1/30 hover:shadow-sm",
+                                )}
+                              >
+                                <div className={cn(
+                                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+                                  hasDirectionBrief
+                                    ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400"
+                                    : "bg-[#4F7DF3]/10 dark:bg-[#4F7DF3]/20 text-[#4F7DF3]",
+                                )}>
+                                  {hasDirectionBrief ? (
+                                    <FileCheck className="h-4.5 w-4.5" />
+                                  ) : (
+                                    <PenLine className="h-4.5 w-4.5" />
                                   )}
                                 </div>
-                                <p className="text-xs text-muted-foreground mt-0.5">
-                                  Provide your existing topic, research questions, and key references to generate a Research Direction Brief.
-                                </p>
-                              </div>
-                            </button>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <p className="text-sm font-semibold text-foreground">
+                                      Research Direction Brief
+                                    </p>
+                                    {hasDirectionBrief && (
+                                      <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground mt-0.5">
+                                    {hasDirectionBrief
+                                      ? "Your research direction is defined. Click to review or update."
+                                      : "Provide your topic, objectives, research questions, gap justification, and key references."
+                                    }
+                                  </p>
+                                </div>
+                                <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                              </button>
+                            </div>
                           </div>
                         )
                       ) : stepDef.step === 2 ? (
