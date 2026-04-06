@@ -15,7 +15,7 @@ export const template: PromptTemplate = {
   ],
   outputName: "Evaluator_Psychology.md",
   epTags: ["EP-02", "EP-03", "EP-05", "EP-09", "EP-10"],
-  estimatedWords: 4000,
+  estimatedWords: 2500,
   template: `You are an expert in evaluator psychology and decision science applied to research funding. Your task is to build a comprehensive psychological profile of the evaluators for this grant, enabling the applicant to write a proposal that resonates at every cognitive and emotional level.
 
 This is a KEY DIFFERENTIATOR of this proposal system. Most applicants focus only on content — we also optimize for how evaluators think, feel, and decide.
@@ -58,94 +58,85 @@ For Malaysian MOHE grants (FRGS, PRGS, TRGS, LRGS, PPRN), the evaluation panel h
 
 ## INSTRUCTIONS
 
-Produce a comprehensive Evaluator Psychology Profile with these sections:
+Produce a focused Evaluator Psychology Profile with these sections. Every section must be actionable — if a recommendation can't be turned into specific proposal text, cut it.
 
 ---
 
-### 1. Evaluator Persona Construction
-Build detailed personas for the likely evaluator types:
+### 1. Reviewer Context
 
-For each persona (typically 3-4):
-- **Role profile** — academic rank, discipline, experience with this funder
-- **Review load** — how many proposals they likely review per cycle
-- **Time per proposal** — realistic estimate of minutes spent per application
-- **Reading pattern** — what they read first, what they skim, what they skip
-- **Decision weight** — how much influence they have (panel chair vs. external reviewer)
-- **Fatigue factor** — how proposal position in the stack affects assessment
+Briefly describe the likely reviewer panel for this grant:
+- **Panel size and composition** — how many reviewers, what expertise mix
+- **Review load** — estimated proposals per cycle, time per proposal
+- **Reading pattern** — what they read first, what they skim
+- **Key implication** — the single most important thing to know about how these reviewers operate
+
+Keep this to 200 words maximum. The goal is context, not speculation.
+
+{{#if grantScheme}}
+Use the MOHE panel context above to inform this section with specific details about Malaysian academic reviewers.
+{{/if}}
 
 ### 2. EP Deployment Map (EP-02, EP-03, EP-05)
-Create a tactical map of Evaluator Psychology tags and where to deploy them:
 
-| EP Tag | Psychology Principle | Deployment Point | Implementation |
-|--------|---------------------|------------------|----------------|
-| EP-01 | First Impression Anchoring | Title, Abstract, Opening paragraph | Set a strong anchor with a compelling problem statement that frames everything that follows |
-| EP-02 | Evaluation Criteria Alignment | Each section mapped to criteria | Mirror the exact language and structure of evaluation criteria in your section headings |
-| EP-03 | Novelty Signal | Research gap, Methods, Innovation | Use "first," "novel," "unique" strategically — evaluators scan for innovation markers |
-| EP-04 | Strategic Funder Alignment | Objectives, Impact, Background | Reference funder's strategic plan language directly — creates subconscious alignment |
-| EP-05 | Internal Coherence | Throughout — cross-references | Proposals that feel "tight" score higher — explicitly link sections to each other |
-| EP-06 | Competitive Awareness | Positioning, Literature review | Show awareness of the field without being dismissive — evaluators know your competitors |
-| EP-07 | Impact Amplification | Impact section, Abstract, Conclusion | Make impact feel inevitable, not aspirational — use concrete pathways |
-| EP-08 | Track Record Framing | CV, Team section, Feasibility | Frame past work as a trajectory pointing to this project as the natural next step |
-| EP-09 | Cognitive Load Reduction | Structure, Formatting, Language | Evaluators reward proposals that are easy to process — reduce cognitive load at every turn |
-| EP-10 | Emotional Resonance | Opening, Impact, Significance | Create moments of "this matters" — evaluators are human and respond to meaning |
+Create a tactical deployment table for ALL 10 core EP tags. For each tag, specify exactly where in the proposal to deploy it and provide a one-sentence implementation instruction:
+
+| EP Tag | Principle | Deploy In | Implementation Instruction |
+|--------|-----------|-----------|---------------------------|
+| EP-01 | First Impression Anchoring | Title, Abstract, Opening paragraph | [One specific sentence about what to do] |
+| EP-02 | Evaluation Criteria Alignment | Section headings, each section opener | [One specific sentence] |
+| EP-03 | Novelty Signal | Research gap, Methods, Innovation claims | [One specific sentence] |
+| EP-04 | Strategic Funder Alignment | Objectives, Impact, Background | [One specific sentence] |
+| EP-05 | Internal Coherence | Cross-references between all sections | [One specific sentence] |
+| EP-06 | Competitive Awareness | Literature review, Positioning | [One specific sentence] |
+| EP-07 | Impact Amplification | Impact section, Abstract, Closing | [One specific sentence] |
+| EP-08 | Track Record Framing | Team section, CV, Feasibility | [One specific sentence] |
+| EP-09 | Cognitive Load Reduction | Structure, Formatting, Language | [One specific sentence] |
+| EP-10 | Emotional Resonance | Opening hook, Impact, Significance | [One specific sentence] |
 
 ### 3. Champion Phrase Library (EP-09, EP-10)
-Provide 15-20 "champion phrases" — specific phrases that evaluators tend to highlight when advocating for a proposal in panel discussions:
 
-**Category: Scientific Merit**
-- "[Phrase]" — Why it works: [psychological mechanism]
+Provide exactly 12 "champion phrases" — specific sentence templates an evaluator would quote when advocating for this proposal in panel. Group by category:
 
-**Category: Innovation**
-- "[Phrase]" — Why it works: [psychological mechanism]
+**Scientific Merit (3 phrases)**
+> "[Phrase template]"
+> Why it works: [one sentence]
 
-**Category: Impact**
-- "[Phrase]" — Why it works: [psychological mechanism]
+**Innovation (3 phrases)**
+> "[Phrase template]"
+> Why it works: [one sentence]
 
-**Category: Feasibility**
-- "[Phrase]" — Why it works: [psychological mechanism]
+**Impact (3 phrases)**
+> "[Phrase template]"
+> Why it works: [one sentence]
 
-**Category: Team/Capacity**
-- "[Phrase]" — Why it works: [psychological mechanism]
+**Feasibility (3 phrases)**
+> "[Phrase template]"
+> Why it works: [one sentence]
 
-These phrases should be specific to the discipline and grant type, not generic.
+These phrases must be specific to the discipline and grant type, not generic.
 
 ### 4. Loss-Frame Narrative Seeds (EP-10)
-Loss framing is more psychologically powerful than gain framing. Provide 5-7 "loss-frame narrative seeds" — ways to frame the research need in terms of what will be LOST or what COST will be incurred if this research is NOT funded:
+
+Provide exactly 5 "loss-frame narrative seeds" — ways to frame the research need in terms of what will be LOST if this research is NOT funded. Loss framing is more psychologically powerful than gain framing.
 
 For each seed:
 - **The loss frame:** "[What happens if we don't act]"
-- **Supporting evidence:** What data or trends support this framing
-- **Emotional register:** What feeling this evokes (urgency, concern, responsibility)
-- **Deployment suggestion:** Where in the proposal to use this
+- **Where to deploy:** [Specific proposal section]
+- **Supporting evidence:** [What data or trend supports this framing]
 
-### 5. Cognitive Bias Exploitation Map (EP-09)
-Identify specific cognitive biases that affect grant evaluation, and how to ethically leverage them:
+### 5. Evaluator Red Flags
 
-| Bias | Description | How It Affects Review | How to Leverage |
-|------|-------------|----------------------|-----------------|
-| Anchoring | First information disproportionately influences judgment | Strong opening sets the tone for entire review | Lead with your strongest claim |
-| Halo effect | Positive impression in one area colors all judgments | Excellence in one section elevates the entire proposal | Make your first section exceptional |
-| Confirmation bias | Evaluators seek evidence confirming initial impression | Once an evaluator "likes" a proposal, they find reasons to support it | Front-load compelling arguments |
-| Status quo bias | Preference for established approaches | Novel methods can feel risky to evaluators | Frame innovation as extending proven approaches |
-| Bandwagon effect | People follow perceived consensus | Show that the field is moving in your direction | Reference growing interest, trending topics |
-| Peak-end rule | Experiences judged by their peak moment and ending | The strongest section and the conclusion matter most | Engineer a "peak moment" and strong close |
+List the 10 things that will immediately trigger negative evaluator responses for this specific grant type and discipline:
 
-### 6. Evaluator Red Flags
-List 10-15 things that immediately trigger negative evaluator responses:
-- [Red flag] — [Why evaluators react negatively] — [How to avoid]
+1. [Red flag] — [How to avoid it in this proposal]
+2. ...
 
-### 7. Scoring Psychology
-Analyze how evaluators actually assign scores:
-- Score clustering patterns (tendency toward middle scores)
-- The "champion effect" — what makes an evaluator fight for a proposal in panel
-- Score justification behavior — evaluators need to explain scores to peers
-- How to write for the evaluator's written comments (which go to the panel)
-- The difference between "this is good" and "I will advocate for this"
+Be specific to the field, not generic "poor writing" advice.
 
 ---
 
 ## OUTPUT FORMAT
-Structure as a markdown document titled "# Evaluator Psychology Profile: [Grant Name]". Begin with a 3-sentence summary of the most important psychological insights for this specific grant. Use tables for the EP Deployment Map and Bias Map. Use callout-style formatting (> blockquotes) for Champion Phrases and Loss-Frame Seeds.
+Structure as a markdown document titled "# Evaluator Psychology Profile: [Grant Name]". Begin with a 3-sentence summary. Use tables for the EP Deployment Map. Use blockquotes for Champion Phrases and Loss-Frame Seeds.
 
 **CRITICAL:** All recommendations must be ethically sound — we optimize for clear communication and persuasion, never for deception or misrepresentation.`,
 };

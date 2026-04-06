@@ -9,6 +9,7 @@ import {
   BrainCircuit,
   Shield,
   Sparkles,
+  ClipboardList,
   Lock,
   Info,
   AlertTriangle,
@@ -39,6 +40,7 @@ import {
 import { StepExecutor } from "@/components/phase/StepExecutor";
 import { MarkdownRenderer } from "@/components/document/MarkdownRenderer";
 import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
+import { PlaceholderTracker } from "@/components/shared/PlaceholderTracker";
 
 // ─── Phase 6 definition ────────────────────────────────────────────────────
 
@@ -82,6 +84,13 @@ const STEP_META: Record<number, StepMeta> = {
       "Produce an optimized final version addressing all weaknesses from review, EP audit, and compliance reports.",
     tooltip:
       "Combines insights from all three reviews into a single, optimized proposal that addresses every identified weakness.",
+  },
+  5: {
+    icon: ClipboardList,
+    description:
+      "Map your final proposal to the application form fields for copy-ready submission.",
+    tooltip:
+      "Produces copy-ready text for each form field, with character limits respected and budget/KPI tables formatted for the application system.",
   },
 };
 
@@ -750,6 +759,7 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
       case 2: return "phase6.step2-ep-audit";
       case 3: return "phase6.step3-compliance";
       case 4: return "phase6.step4-optimization";
+      case 5: return "phase6.step5-form-mapper";
       default: return "";
     }
   };
@@ -827,6 +837,9 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
             </div>
           </CardContent>
         </Card>
+
+        {/* ── Placeholder Resolution Tracker ─────────────────────────────── */}
+        <PlaceholderTracker projectId={projectId} className="mb-0" />
 
         {/* ── Steps ──────────────────────────────────────────────────────── */}
         <div className="space-y-0">

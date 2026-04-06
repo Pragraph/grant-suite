@@ -277,6 +277,7 @@ export const DOCUMENT_DEPENDENCIES: DependencyEntry[] = [
   { phase: 6, step: 2, produces: "EP_Audit_Report.md", requires: ["Complete_Proposal.md"], optional: [] },
   { phase: 6, step: 3, produces: "Compliance_Report.md", requires: ["Complete_Proposal.md"], optional: [] },
   { phase: 6, step: 4, produces: "Final_Proposal.md", requires: ["Complete_Proposal.md", "Mock_Review_Report.md"], optional: ["EP_Audit_Report.md", "Compliance_Report.md"] },
+  { phase: 6, step: 5, produces: "Form_Ready_Proposal.md", requires: ["Final_Proposal.md"], optional: ["Grant_Intelligence.md", "Budget_Draft.md", "KPI_Plan.md"] },
 
   // Phase 7 — Post-Submission & Resubmission
   { phase: 7, step: 1, produces: "Feedback_Analysis.md", requires: ["Complete_Proposal.md"], optional: [] },
@@ -359,6 +360,7 @@ export const PHASE_DEFINITIONS: PhaseDefinition[] = [
       { step: 2, name: "EP Tag Audit", type: "standard" },
       { step: 3, name: "Compliance Check", type: "standard" },
       { step: 4, name: "Final Proposal", type: "standard" },
+      { step: 5, name: "Application Form Mapper", type: "standard" },
     ],
   },
   {

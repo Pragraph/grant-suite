@@ -33,6 +33,7 @@ import { template as impactWriter } from "./phase5/step5-impact";
 import { template as budgetJustWriter } from "./phase5/step6-budget-justification";
 import { template as supportingDocsGenerator } from "./phase5/step7-supporting-docs";
 import { template as assemblyPolish } from "./phase5/step8-assembly-polish";
+import { template as citationResolver } from "./phase5/step4b-citation-resolver";
 import { template as teamAssembly } from "./phase4/team-assembly";
 import { template as budgetConstruction } from "./phase4/budget-construction";
 import { template as budgetJustification } from "./phase4/budget-justification";
@@ -40,6 +41,7 @@ import { template as mockReview } from "./phase6/step1-mock-review";
 import { template as epAudit } from "./phase6/step2-ep-audit";
 import { template as complianceCheck } from "./phase6/step3-compliance";
 import { template as optimization } from "./phase6/step4-optimization";
+import { template as formMapper } from "./phase6/step5-form-mapper";
 import { template as feedbackAnalysis } from "./phase7/step1-feedback-analysis";
 import { template as resubmissionStrategy } from "./phase7/step2-resubmission-strategy";
 import { template as responseRevised } from "./phase7/step3-response-revised";
@@ -83,10 +85,12 @@ export const templates: PromptTemplate[] = [
   budgetJustWriter,
   supportingDocsGenerator,
   assemblyPolish,
+  citationResolver,
   mockReview,
   epAudit,
   complianceCheck,
   optimization,
+  formMapper,
   feedbackAnalysis,
   resubmissionStrategy,
   responseRevised,

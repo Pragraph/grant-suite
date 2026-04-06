@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/tooltip";
 import { StepExecutor } from "@/components/phase/StepExecutor";
 import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
+import { PlaceholderTracker } from "@/components/shared/PlaceholderTracker";
 
 // ─── Phase 5 definition ────────────────────────────────────────────────────
 
@@ -599,6 +600,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
   const [customSections, setCustomSections] = useState<{ key: string; label: string; afterIndex: number }[]>([]);
   const [assembledContent, setAssembledContent] = useState<string | null>(null);
   const [showPolishPrompt, setShowPolishPrompt] = useState(false);
+  const [showCitationResolver, setShowCitationResolver] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
 
   const handleAssemble = useCallback(() => {
@@ -654,6 +656,18 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
     a.click();
     URL.revokeObjectURL(url);
   }, [assembledContent]);
+
+  const handleDownloadDocx = useCallback(async () => {
+    if (!assembledContent) return;
+    const { exportProposalAsDocx } = await import("@/lib/export-docx");
+    const proj = storage.getProject(projectId);
+    await exportProposalAsDocx({
+      title: proj?.title || "Proposal",
+      grantName: proj?.grantScheme || "Grant",
+      discipline: proj?.discipline || "",
+      content: assembledContent,
+    });
+  }, [assembledContent, projectId]);
 
   // ── Document stats for completed steps ──────────────────────────────────
 
@@ -1333,6 +1347,9 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                       </CardContent>
                                     </Card>
 
+                                    {/* Placeholder Resolution Tracker */}
+                                    <PlaceholderTracker projectId={projectId} />
+
                                     {/* AI Polish option */}
                                     {!showPolishPrompt ? (
                                       <Card className="border-phase-5/15 bg-phase-5/5">
@@ -1385,6 +1402,57 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                       />
                                     )}
 
+                                    {/* Citation Resolution option */}
+                                    {!showCitationResolver ? (
+                                      <Card className="border-amber-200/50 bg-amber-50/50">
+                                        <CardContent className="p-3 flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                            <BookOpen className="h-4 w-4 text-amber-600" />
+                                            <div>
+                                              <p className="text-xs font-medium text-foreground">
+                                                Resolve Citations
+                                              </p>
+                                              <p className="text-[11px] text-muted-foreground">
+                                                Generate suggested references for all [CITATION NEEDED] markers.
+                                              </p>
+                                            </div>
+                                          </div>
+                                          <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-xs h-7"
+                                            onClick={() => setShowCitationResolver(true)}
+                                          >
+                                            <BookOpen className="h-3 w-3 mr-1" />
+                                            Resolve
+                                          </Button>
+                                        </CardContent>
+                                      </Card>
+                                    ) : (
+                                      <StepExecutor
+                                        templateId="phase5.citation-resolver"
+                                        projectId={projectId}
+                                        phase={5}
+                                        step={8}
+                                        title="Citation Resolution Assistant"
+                                        description="Generate suggested references for all [CITATION NEEDED] markers in your assembled proposal."
+                                        additionalFields={[
+                                          {
+                                            name: "assembledProposal",
+                                            label: "Assembled proposal (auto-filled)",
+                                            type: "textarea" as const,
+                                            placeholder: "",
+                                            required: true,
+                                            defaultValue: assembledContent || "",
+                                          },
+                                        ]}
+                                        onComplete={() => {
+                                          loadDocuments(projectId);
+                                        }}
+                                      />
+                                    )}
+
                                     {/* Export options */}
                                     <div className="flex items-center gap-2">
                                       <Button
@@ -1396,6 +1464,16 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                       >
                                         <Download className="h-3.5 w-3.5 mr-1.5" />
                                         Download as .md
+                                      </Button>
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="text-xs"
+                                        onClick={handleDownloadDocx}
+                                      >
+                                        <Download className="h-3.5 w-3.5 mr-1.5" />
+                                        Download as .docx
                                       </Button>
                                     </div>
 
