@@ -15,12 +15,13 @@ export const template: PromptTemplate = {
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
     "Research_Design.md",
-    "Budget_Team_Plan.md",
+    "Budget_Justification.md",
     "Partnership_Plan.md",
     "Patent_Analysis.md",
     "SDG_Alignment.md",
     "National_Alignment.md",
     "KPI_Plan.md",
+    "Researcher_Profile.md",
     "grantScheme",
     "Method4_Convergence_Synthesis.md",
     "Method1_Gap_Synthesis.md",
@@ -55,7 +56,7 @@ export const template: PromptTemplate = {
 {{> Research_Design.md}}
 
 ### Budget & Team Plan (Phase 4)
-{{> Budget_Team_Plan.md}}
+{{> Budget_Justification.md}}
 
 ---
 
@@ -82,6 +83,11 @@ export const template: PromptTemplate = {
 {{#if KPI_Plan.md}}
 ## OPTIONAL: KPI Plan (Phase 3C)
 {{> KPI_Plan.md}}
+{{/if}}
+
+{{#if Researcher_Profile.md}}
+## OPTIONAL: Researcher Profile (Phase 3C)
+{{> Researcher_Profile.md}}
 {{/if}}
 
 {{#if Method4_Convergence_Synthesis.md}}
@@ -167,6 +173,13 @@ Compile all the above documents into a single, well-organized **Proposal_Data.md
 - Key performance indicators
 - Measurement methodology
 - Success thresholds
+{{/if}}
+
+{{#if Researcher_Profile.md}}
+### 11. Researcher Profile & Track Record
+- Optimized PI narrative and alignment with grant criteria
+- Key achievements reframed for this proposal
+- Gap mitigation strategies
 {{/if}}
 
 ### Cross-Reference Matrix

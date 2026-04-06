@@ -131,7 +131,7 @@ const REQUIRED_DOCS = [
   { canonicalName: "Grant_Intelligence.md", label: "Grant Intelligence", phase: 1 },
   { canonicalName: "Proposal_Blueprint.md", label: "Proposal Blueprint", phase: 2 },
   { canonicalName: "Research_Design.md", label: "Research Design", phase: 3 },
-  { canonicalName: "Budget_Team_Plan.md", label: "Budget & Team Plan", phase: 4 },
+  { canonicalName: "Budget_Justification.md", label: "Budget Justification", phase: 4 },
 ];
 
 const OPTIONAL_DOCS = [
@@ -140,6 +140,7 @@ const OPTIONAL_DOCS = [
   { canonicalName: "SDG_Alignment.md", label: "SDG Alignment", phase: "3C" },
   { canonicalName: "National_Alignment.md", label: "National Priority Alignment", phase: "3C" },
   { canonicalName: "KPI_Plan.md", label: "KPI Plan", phase: "3C" },
+  { canonicalName: "Researcher_Profile.md", label: "Researcher Profile", phase: "3C" },
 ];
 
 // ─── Status helpers ────────────────────────────────────────────────────────
@@ -1371,10 +1372,11 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                         additionalFields={[
                                           {
                                             name: "assembledProposal",
-                                            label: "Assembled proposal (auto-filled)",
+                                            label: "Assembled proposal (auto-filled from sections above)",
                                             type: "textarea" as const,
                                             placeholder: "",
                                             required: true,
+                                            defaultValue: assembledContent || "",
                                           },
                                         ]}
                                         onComplete={() => {

@@ -78,21 +78,39 @@ const MODULE_3C: ModuleConfig[] = [
   { id: "trl", group: "3C", label: "TRL Assessment", description: "Evaluate technology readiness level and maturation path", icon: Gauge, step: 17, templateId: "phase3.step17-trl-assessment", outputName: "TRL_Assessment.md" },
 ];
 
-// ─── Funder recommendations ────────────────────────────────────────────────
+// ─── Scheme module guidance (two-tier: required vs recommended) ────────────
 
-const FUNDER_RECOMMENDATIONS: Record<string, string[]> = {
-  FRGS: ["sdg", "national", "kpi", "profile", "originality", "trl"],
-  NIH: ["kpi", "profile"],
-  ERC: ["sdg", "kpi"],
+interface SchemeModuleGuidance {
+  required: string[];
+  recommended: string[];
+}
+
+const SCHEME_MODULE_GUIDANCE: Record<string, SchemeModuleGuidance> = {
+  FRGS: {
+    required: ["patent", "kpi", "originality"],
+    recommended: ["national", "sdg", "profile"],
+  },
+  PRGS: {
+    required: ["patent", "trl", "kpi"],
+    recommended: ["national", "sdg", "profile"],
+  },
+  TRGS: {
+    required: ["kpi"],
+    recommended: ["national", "sdg", "profile", "partnership"],
+  },
+  LRGS: {
+    required: ["kpi", "national"],
+    recommended: ["sdg", "profile", "partnership"],
+  },
+  PPRN: {
+    required: ["kpi"],
+    recommended: ["national", "profile", "partnership"],
+  },
 };
 
-function getRecommendedModules(funder?: string): string[] {
-  if (!funder) return [];
-  const upper = funder.toUpperCase();
-  for (const [key, modules] of Object.entries(FUNDER_RECOMMENDATIONS)) {
-    if (upper.includes(key)) return modules;
-  }
-  return [];
+function getModuleGuidance(scheme?: string): SchemeModuleGuidance {
+  if (!scheme) return { required: [], recommended: [] };
+  return SCHEME_MODULE_GUIDANCE[scheme] || { required: [], recommended: [] };
 }
 
 // ─── Status helpers ────────────────────────────────────────────────────────
@@ -237,9 +255,9 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
 
   const mainStepComplete = getStepStatus(1) === "complete";
 
-  const recommendedModules = useMemo(
-    () => getRecommendedModules(activeProject?.targetFunder),
-    [activeProject?.targetFunder],
+  const moduleGuidance = useMemo(
+    () => getModuleGuidance(activeProject?.grantScheme),
+    [activeProject?.grantScheme],
   );
 
   // ── Progress calculation (count main + enabled optional modules) ────────
@@ -511,6 +529,13 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
               onToggle={() => toggleModule("module3A")}
               stepStatus={getStepStatus(10)}
               phaseColor="phase-3"
+              guidanceBadge={
+                moduleGuidance.required.includes("partnership")
+                  ? "required"
+                  : moduleGuidance.recommended.includes("partnership")
+                    ? "recommended"
+                    : undefined
+              }
             />
 
             {/* ── Card 3B: Patent Search & Novelty ─────────────────────── */}
@@ -523,6 +548,13 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
               onToggle={() => toggleModule("module3B")}
               stepStatus={getStepStatus(11)}
               phaseColor="phase-3"
+              guidanceBadge={
+                moduleGuidance.required.includes("patent")
+                  ? "required"
+                  : moduleGuidance.recommended.includes("patent")
+                    ? "recommended"
+                    : undefined
+              }
             />
 
             {/* ── Card 3C: Merit Enhancement Modules ───────────────────── */}
@@ -984,16 +1016,27 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                       <h3 className="text-sm font-semibold text-gray-900">3C: Merit Enhancement Modules</h3>
                     </div>
 
-                    {/* Funder recommendation hint */}
-                    {recommendedModules.length > 0 && (
-                      <div className="rounded-lg border border-phase-3/20 bg-phase-3/5 p-3">
-                        <p className="text-xs text-gray-500">
-                          <span className="font-medium text-phase-3">Recommended for {activeProject?.targetFunder}:</span>{" "}
-                          {recommendedModules
-                            .map((id) => MODULE_3C.find((m) => m.id === id)?.label)
-                            .filter(Boolean)
-                            .join(", ")}
-                        </p>
+                    {/* Scheme guidance hint */}
+                    {(moduleGuidance.required.length > 0 || moduleGuidance.recommended.length > 0) && (
+                      <div className="rounded-lg border border-phase-3/20 bg-phase-3/5 p-3 space-y-1">
+                        {moduleGuidance.required.filter((id) => MODULE_3C.some((m) => m.id === id)).length > 0 && (
+                          <p className="text-xs text-gray-500">
+                            <span className="font-medium text-rose-600">Required for {activeProject?.grantScheme}:</span>{" "}
+                            {moduleGuidance.required
+                              .map((id) => MODULE_3C.find((m) => m.id === id)?.label)
+                              .filter(Boolean)
+                              .join(", ")}
+                          </p>
+                        )}
+                        {moduleGuidance.recommended.filter((id) => MODULE_3C.some((m) => m.id === id)).length > 0 && (
+                          <p className="text-xs text-gray-500">
+                            <span className="font-medium text-amber-600">Recommended:</span>{" "}
+                            {moduleGuidance.recommended
+                              .map((id) => MODULE_3C.find((m) => m.id === id)?.label)
+                              .filter(Boolean)
+                              .join(", ")}
+                          </p>
+                        )}
                       </div>
                     )}
 
@@ -1003,7 +1046,8 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                         const ModIcon = mod.icon;
                         const enabled = moduleToggles.enabledMeritModules.includes(mod.id);
                         const status = getStepStatus(mod.step);
-                        const isRecommended = recommendedModules.includes(mod.id);
+                        const isRequired = moduleGuidance.required.includes(mod.id);
+                        const isRecommended = !isRequired && moduleGuidance.recommended.includes(mod.id);
 
                         return (
                           <div key={mod.id} className="space-y-2">
@@ -1015,13 +1059,18 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                             >
                               <ModIcon className={cn("h-4 w-4 shrink-0", enabled ? "text-phase-3" : "text-gray-400")} />
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-1.5 flex-wrap">
                                   <p className={cn("text-xs font-medium", enabled ? "text-gray-900" : "text-gray-600")}>
                                     {mod.label}
                                   </p>
+                                  {isRequired && (
+                                    <Badge className="text-[9px] bg-rose-100 text-rose-600 border-rose-200 px-1">
+                                      Required for {activeProject?.grantScheme}
+                                    </Badge>
+                                  )}
                                   {isRecommended && (
-                                    <Badge variant="outline" className="text-[9px] border-phase-3/30 text-phase-3 px-1">
-                                      rec
+                                    <Badge className="text-[9px] bg-amber-100 text-amber-600 border-amber-200 px-1">
+                                      Recommended
                                     </Badge>
                                   )}
                                   {status === "complete" && (
@@ -1101,6 +1150,7 @@ function ModuleCard({
   stepStatus,
   phaseColor,
   count,
+  guidanceBadge,
 }: {
   title: string;
   badge: string;
@@ -1111,6 +1161,7 @@ function ModuleCard({
   stepStatus: StepStatus;
   phaseColor: string;
   count?: number;
+  guidanceBadge?: "required" | "recommended";
 }) {
   return (
     <Card
@@ -1126,6 +1177,12 @@ function ModuleCard({
             <Badge variant="outline" className={cn("text-[10px]", enabled && `border-${phaseColor}/30 text-${phaseColor}`)}>
               {badge}
             </Badge>
+            {guidanceBadge === "required" && (
+              <Badge className="text-[9px] bg-rose-100 text-rose-600 border-rose-200 px-1">Required</Badge>
+            )}
+            {guidanceBadge === "recommended" && (
+              <Badge className="text-[9px] bg-amber-100 text-amber-600 border-amber-200 px-1">Recommended</Badge>
+            )}
           </div>
           <Switch checked={enabled} onCheckedChange={onToggle} />
         </div>
