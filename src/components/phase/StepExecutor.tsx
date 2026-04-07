@@ -267,7 +267,7 @@ function FileUploadTextField({
 
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-gray-500">
+      <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-muted-foreground">
         {field.label}
         {field.required && <span className="ml-1 text-red-500">*</span>}
       </Label>
@@ -292,14 +292,14 @@ function FileUploadTextField({
           disabled={uploading}
           className={cn(
             "flex items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 text-xs font-medium transition-colors",
-            "border-gray-300 text-gray-500 hover:border-[#4F7DF3]/40 hover:text-[#4F7DF3] hover:bg-[#F0F4FF]",
+            "border-border text-muted-foreground hover:border-[#4F7DF3]/40 hover:text-[#4F7DF3] hover:bg-[#F0F4FF]",
             uploading && "opacity-50 pointer-events-none",
           )}
         >
           <Upload className="h-3.5 w-3.5" />
           {uploading ? "Extracting..." : "Upload file"}
         </button>
-        <span className="text-[10px] text-gray-400">
+        <span className="text-[10px] text-muted-foreground">
           .pdf, .txt, .md
         </span>
         {uploadedFileName && !uploadError && (
@@ -333,16 +333,16 @@ function FileUploadTextField({
           }}
           placeholder={field.placeholder || "Upload a file above or paste the text content here..."}
           className={cn(
-            "w-full min-h-25 resize-y rounded-lg border border-gray-200 bg-gray-50 p-3",
-            "font-mono text-sm text-gray-800 placeholder:text-gray-400",
-            "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white"
+            "w-full min-h-25 resize-y rounded-lg border border-border bg-muted p-3",
+            "font-mono text-sm text-foreground placeholder:text-muted-foreground",
+            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
           )}
         />
       </div>
 
       {/* Word count when content exists */}
       {value.trim() && (
-        <p className="text-[10px] text-gray-400 text-right">
+        <p className="text-[10px] text-muted-foreground text-right">
           {value.split(/\s+/).filter(Boolean).length.toLocaleString()} words
         </p>
       )}
@@ -584,7 +584,7 @@ export function StepExecutor({
         case "text":
           return (
             <div key={field.name} className="space-y-1.5">
-              <Label htmlFor={field.name} className="text-xs font-medium text-gray-500">
+              <Label htmlFor={field.name} className="text-xs font-medium text-muted-foreground">
                 {field.label}
                 {field.required && <span className="ml-1 text-red-500">*</span>}
               </Label>
@@ -600,7 +600,7 @@ export function StepExecutor({
         case "textarea":
           return (
             <div key={field.name} className="space-y-1.5">
-              <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-gray-500">
+              <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-muted-foreground">
                 {field.label}
                 {field.required && <span className="ml-1 text-red-500">*</span>}
               </Label>
@@ -610,9 +610,9 @@ export function StepExecutor({
                 onChange={(e) => dispatch({ type: "SET_FORM_VALUE", name: field.name, value: e.target.value })}
                 placeholder={field.placeholder}
                 className={cn(
-                  "w-full min-h-25 resize-y rounded-lg border border-gray-200 bg-gray-50 p-3",
-                  "font-mono text-sm text-gray-800 placeholder:text-gray-400",
-                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white"
+                  "w-full min-h-25 resize-y rounded-lg border border-border bg-muted p-3",
+                  "font-mono text-sm text-foreground placeholder:text-muted-foreground",
+                  "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
                 )}
               />
             </div>
@@ -631,7 +631,7 @@ export function StepExecutor({
         case "select":
           return (
             <div key={field.name} className="space-y-1.5">
-              <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-gray-500">
+              <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-muted-foreground">
                 {field.label}
                 {field.required && <span className="ml-1 text-red-500">*</span>}
               </Label>
@@ -641,9 +641,9 @@ export function StepExecutor({
                 onChange={(e) => dispatch({ type: "SET_FORM_VALUE", name: field.name, value: e.target.value })}
                 aria-label={field.label}
                 className={cn(
-                  "w-full h-9 rounded-md border border-gray-200 bg-gray-50 px-3",
-                  "text-sm text-gray-800",
-                  "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white"
+                  "w-full h-9 rounded-md border border-border bg-muted px-3",
+                  "text-sm text-foreground",
+                  "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
                 )}
               >
                 <option value="">Select...</option>
@@ -675,7 +675,7 @@ export function StepExecutor({
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
               <Skeleton className="h-8 w-40 mt-4" />
-              <p className="text-xs text-gray-400 mt-2">Checking prerequisites...</p>
+              <p className="text-xs text-muted-foreground mt-2">Checking prerequisites...</p>
             </CardContent>
           </motion.div>
         );
@@ -685,21 +685,21 @@ export function StepExecutor({
         return (
           <motion.div key="missing" {...stateVariants} transition={springTransition}>
             <CardContent className="space-y-4">
-              <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+              <div className="flex items-start gap-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4">
                 <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-foreground">
                     Required documents are missing
                   </p>
                   <ul className="space-y-1.5">
                     {execState.missingRequired.map((doc) => {
                       const producer = findProducer(doc.canonicalName);
                       return (
-                        <li key={doc.canonicalName} className="text-sm text-gray-600 flex items-center gap-2">
+                        <li key={doc.canonicalName} className="text-sm text-muted-foreground flex items-center gap-2">
                           <FileText className="h-3.5 w-3.5 text-amber-500" />
-                          <span className="font-mono text-xs text-amber-600">{doc.canonicalName}</span>
+                          <span className="font-mono text-xs text-amber-600 dark:text-amber-400">{doc.canonicalName}</span>
                           {producer && (
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-muted-foreground">
                               — Phase {producer.phase}, Step {producer.step}: {producer.name}
                             </span>
                           )}
@@ -711,17 +711,17 @@ export function StepExecutor({
               </div>
 
               {execState.missingOptional.length > 0 && (
-                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                  <p className="text-xs font-medium text-gray-500 mb-2">Recommended (optional)</p>
+                <div className="rounded-lg border border-border bg-muted p-4">
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Recommended (optional)</p>
                   <ul className="space-y-1">
                     {execState.missingOptional.map((doc) => {
                       const producer = findProducer(doc.canonicalName);
                       return (
-                        <li key={doc.canonicalName} className="text-xs text-gray-400 flex items-center gap-2">
+                        <li key={doc.canonicalName} className="text-xs text-muted-foreground flex items-center gap-2">
                           <FileText className="h-3 w-3" />
                           <span className="font-mono">{doc.canonicalName}</span>
                           {producer && (
-                            <span className="text-gray-400">
+                            <span className="text-muted-foreground">
                               — Phase {producer.phase}, Step {producer.step}
                             </span>
                           )}
@@ -745,7 +745,7 @@ export function StepExecutor({
           <motion.div key="ready" {...stateVariants} transition={springTransition}>
             <CardContent className="space-y-4">
               {description && (
-                <p className="text-sm text-gray-500">{description}</p>
+                <p className="text-sm text-muted-foreground">{description}</p>
               )}
 
               {additionalFields.length > 0 && (
@@ -776,15 +776,15 @@ export function StepExecutor({
                     onChange={(e) => dispatch({ type: "SET_PROMPT_EDITED", prompt: e.target.value })}
                     aria-label="Edit compiled prompt"
                     className={cn(
-                      "w-full max-h-100 min-h-50 resize-y rounded-lg bg-gray-50 p-5",
-                      "font-mono text-sm text-gray-800",
+                      "w-full max-h-100 min-h-50 resize-y rounded-lg bg-muted p-5",
+                      "font-mono text-sm text-foreground",
                       "border border-[#4F7DF3]/30",
                       "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3]"
                     )}
                   />
                 ) : (
-                  <div className="max-h-100 overflow-auto rounded-xl bg-gray-50 border border-gray-200 p-5">
-                    <pre className="whitespace-pre-wrap font-mono text-sm text-gray-800 leading-relaxed">
+                  <div className="max-h-100 overflow-auto rounded-xl bg-muted border border-border p-5">
+                    <pre className="whitespace-pre-wrap font-mono text-sm text-foreground leading-relaxed">
                       {execState.compiledPrompt}
                     </pre>
                   </div>
@@ -792,11 +792,11 @@ export function StepExecutor({
               </div>
 
               {/* Metadata */}
-              <div className="flex flex-wrap items-center gap-2 text-xs text-gray-400">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <span>~{execState.estimatedWords.toLocaleString()} words</span>
                 {execState.epTags.length > 0 && (
                   <>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-muted-foreground/50">|</span>
                     <span>EP tags:</span>
                     {execState.epTags.map((tag) => (
                       <Badge key={tag} className="text-[10px] px-1.5 py-0">{tag}</Badge>
@@ -805,16 +805,16 @@ export function StepExecutor({
                 )}
                 {execState.promptEdited && (
                   <>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-muted-foreground/50">|</span>
                     <Badge variant="warning" className="text-[10px] px-1.5 py-0">Edited</Badge>
                   </>
                 )}
               </div>
 
               {execState.warnings.length > 0 && (
-                <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
+                <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 px-3 py-2">
                   {execState.warnings.map((w, i) => (
-                    <p key={i} className="text-xs text-amber-600">{w}</p>
+                    <p key={i} className="text-xs text-amber-600 dark:text-amber-400">{w}</p>
                   ))}
                 </div>
               )}
@@ -844,7 +844,7 @@ export function StepExecutor({
                 </Button>
               </div>
 
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 Paste this prompt into your preferred AI tool (ChatGPT, Claude, Gemini, etc.) and copy the output.
               </p>
 
@@ -861,12 +861,12 @@ export function StepExecutor({
         return (
           <motion.div key="waiting" {...stateVariants} transition={springTransition}>
             <CardContent className="space-y-4">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 Paste the complete output from your AI tool below.
               </p>
 
               {previewMode && execState.pastedOutput ? (
-                <div className="min-h-75 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-6">
+                <div className="min-h-75 overflow-auto rounded-lg border border-border bg-muted p-6">
                   <MarkdownRenderer content={execState.pastedOutput} />
                 </div>
               ) : (
@@ -875,9 +875,9 @@ export function StepExecutor({
                   onChange={(e) => dispatch({ type: "SET_PASTED_OUTPUT", output: e.target.value })}
                   placeholder="Paste the AI output here..."
                   className={cn(
-                    "w-full min-h-75 resize-y rounded-xl border border-gray-200 bg-white p-4",
-                    "font-mono text-sm text-gray-800 placeholder:text-gray-400",
-                    "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3] focus:ring-offset-2 focus:ring-offset-white"
+                    "w-full min-h-75 resize-y rounded-xl border border-border bg-card p-4",
+                    "font-mono text-sm text-foreground placeholder:text-muted-foreground",
+                    "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
                   )}
                 />
               )}
@@ -921,11 +921,11 @@ export function StepExecutor({
           <motion.div key="reviewing" {...stateVariants} transition={springTransition}>
             <CardContent className="space-y-4">
               {/* Metadata bar */}
-              <div className="flex flex-wrap items-center gap-2 text-xs text-gray-400 rounded-lg bg-gray-50 border border-gray-200 px-3 py-2">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground rounded-lg bg-muted border border-border px-3 py-2">
                 <span>{outputMeta.wordCount.toLocaleString()} words</span>
                 {outputMeta.epTags.length > 0 && (
                   <>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-muted-foreground/50">|</span>
                     {outputMeta.epTags.map((tag) => (
                       <Badge key={tag} className="text-[10px] px-1.5 py-0">{tag}</Badge>
                     ))}
@@ -933,7 +933,7 @@ export function StepExecutor({
                 )}
                 {outputMeta.citations > 0 && (
                   <>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-muted-foreground/50">|</span>
                     <Badge variant="warning" className="text-[10px] px-1.5 py-0">
                       {outputMeta.citations} citation{outputMeta.citations > 1 ? "s" : ""} needed
                     </Badge>
@@ -941,7 +941,7 @@ export function StepExecutor({
                 )}
                 {outputMeta.userInputs > 0 && (
                   <>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-muted-foreground/50">|</span>
                     <Badge variant="error" className="text-[10px] px-1.5 py-0">
                       {outputMeta.userInputs} input{outputMeta.userInputs > 1 ? "s" : ""} needed
                     </Badge>
@@ -958,7 +958,7 @@ export function StepExecutor({
                   minHeight="300px"
                 />
               ) : (
-                <div className="max-h-125 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-6">
+                <div className="max-h-125 overflow-auto rounded-lg border border-border bg-muted p-6">
                   <MarkdownRenderer content={execState.pastedOutput} />
                 </div>
               )}
@@ -1002,17 +1002,17 @@ export function StepExecutor({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20, delay: 0.1 }}
-                className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50"
+                className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/30"
               >
                 <Check className="h-7 w-7 text-emerald-500" />
               </motion.div>
 
               <div className="text-center space-y-1">
-                <p className="text-sm font-medium text-emerald-700">Document saved</p>
-                <p className="text-xs text-emerald-600 font-mono">
+                <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Document saved</p>
+                <p className="text-xs text-emerald-600 dark:text-emerald-400 font-mono">
                   {execState.savedDocumentName}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-muted-foreground">
                   {execState.savedWordCount.toLocaleString()} words
                 </p>
               </div>
@@ -1036,19 +1036,19 @@ export function StepExecutor({
   return (
     <Card
       className={cn(
-        "border-l-[3px] bg-white border border-gray-200 rounded-xl shadow-sm overflow-visible",
+        "border-l-[3px] bg-card border border-border rounded-xl shadow-sm overflow-visible",
         phaseBorderColors[phase] ?? "border-l-accent-500"
       )}
     >
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-base text-gray-900">{title}</CardTitle>
+            <CardTitle className="text-base text-foreground">{title}</CardTitle>
             {execState.state !== "READY" && description && (
-              <CardDescription className="mt-1 text-gray-500">{description}</CardDescription>
+              <CardDescription className="mt-1 text-muted-foreground">{description}</CardDescription>
             )}
           </div>
-          <Badge variant="outline" className="text-[10px] shrink-0 text-gray-500 border-gray-200">
+          <Badge variant="outline" className="text-[10px] shrink-0 text-muted-foreground border-border">
             Phase {phase} &middot; Step {step}
           </Badge>
         </div>

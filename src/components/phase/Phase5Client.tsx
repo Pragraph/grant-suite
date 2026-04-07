@@ -217,14 +217,14 @@ function PreCompilationChecklist({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Database className="h-4 w-4 text-phase-5" />
-            <p className="text-sm font-medium text-gray-900">Pre-Compilation Checklist</p>
+            <p className="text-sm font-medium text-foreground">Pre-Compilation Checklist</p>
           </div>
           <Badge
             className={cn(
               "text-[10px]",
               allRequired
-                ? "bg-emerald-100 text-emerald-600"
-                : "bg-red-100 text-red-600",
+                ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400"
+                : "bg-red-100 text-red-600 dark:text-red-400",
             )}
           >
             {allRequired ? "Ready to compile" : "Missing required documents"}
@@ -233,7 +233,7 @@ function PreCompilationChecklist({
 
         {/* Required Documents */}
         <div className="space-y-1.5">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Required Documents
           </p>
           {REQUIRED_DOCS.map((doc) => {
@@ -245,8 +245,8 @@ function PreCompilationChecklist({
                 className={cn(
                   "flex items-center gap-2 rounded-md border px-3 py-2 text-xs",
                   exists
-                    ? "border-emerald-200 bg-emerald-50"
-                    : "border-red-200 bg-red-50",
+                    ? "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30"
+                    : "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30",
                 )}
               >
                 {exists ? (
@@ -254,10 +254,10 @@ function PreCompilationChecklist({
                 ) : (
                   <XCircle className="h-3.5 w-3.5 text-red-500 shrink-0" />
                 )}
-                <span className="flex-1 font-medium text-gray-900">{doc.label}</span>
-                <span className="text-gray-500">Phase {doc.phase}</span>
+                <span className="flex-1 font-medium text-foreground">{doc.label}</span>
+                <span className="text-muted-foreground">Phase {doc.phase}</span>
                 {exists && (
-                  <span className="text-gray-400">{words.toLocaleString()} words</span>
+                  <span className="text-muted-foreground">{words.toLocaleString()} words</span>
                 )}
               </div>
             );
@@ -266,7 +266,7 @@ function PreCompilationChecklist({
 
         {/* Optional Documents */}
         <div className="space-y-1.5">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Optional Documents
           </p>
           {OPTIONAL_DOCS.map((doc) => {
@@ -280,7 +280,7 @@ function PreCompilationChecklist({
                   "flex items-center gap-2 rounded-md border px-3 py-2 text-xs",
                   exists
                     ? "border-phase-5/15 bg-phase-5/5"
-                    : "border-gray-200 bg-transparent",
+                    : "border-border bg-transparent",
                 )}
               >
                 <Checkbox
@@ -293,16 +293,16 @@ function PreCompilationChecklist({
                 <span
                   className={cn(
                     "flex-1 font-medium",
-                    exists ? "text-gray-900" : "text-gray-400",
+                    exists ? "text-foreground" : "text-muted-foreground",
                   )}
                 >
                   {doc.label}
                 </span>
-                <span className="text-gray-400">Phase {doc.phase}</span>
+                <span className="text-muted-foreground">Phase {doc.phase}</span>
                 {exists ? (
-                  <span className="text-gray-400">{words.toLocaleString()} words</span>
+                  <span className="text-muted-foreground">{words.toLocaleString()} words</span>
                 ) : (
-                  <span className="text-gray-300 italic">Not completed</span>
+                  <span className="text-muted-foreground/50 italic">Not completed</span>
                 )}
               </div>
             );
@@ -312,7 +312,7 @@ function PreCompilationChecklist({
         {/* Estimated prompt size */}
         <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-2.5">
           <AlertTriangle className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
-          <div className="text-[11px] text-gray-500 space-y-1">
+          <div className="text-[11px] text-muted-foreground space-y-1">
             <p>
               <strong>Estimated prompt size:</strong> ~{totalWords.toLocaleString()} words from{" "}
               {[...REQUIRED_DOCS, ...OPTIONAL_DOCS].filter((d) => hasDoc(d.canonicalName)).length}{" "}
@@ -336,22 +336,22 @@ function CitationHighlights({ content }: { content: string }) {
   if (citations.length === 0) return null;
 
   return (
-    <Card className="border-amber-200 bg-amber-50">
+    <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30">
       <CardContent className="p-3">
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
-          <p className="text-xs font-medium text-amber-600">
+          <p className="text-xs font-medium text-amber-600 dark:text-amber-400">
             {citations.length} Citation{citations.length !== 1 ? "s" : ""} Needed
           </p>
         </div>
         <div className="space-y-1">
           {citations.slice(0, 10).map((c, i) => (
-            <p key={i} className="text-[11px] text-gray-600 bg-amber-50 rounded px-2 py-1">
+            <p key={i} className="text-[11px] text-muted-foreground bg-amber-50 dark:bg-amber-950/30 rounded px-2 py-1">
               {c}
             </p>
           ))}
           {citations.length > 10 && (
-            <p className="text-[10px] text-gray-400 italic">
+            <p className="text-[10px] text-muted-foreground italic">
               ...and {citations.length - 10} more
             </p>
           )}
@@ -693,8 +693,8 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
         <div className="flex items-center gap-4">
           <PhaseIcon phase={5} size="lg" active />
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900">{PHASE_5.name}</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-2xl font-bold text-foreground">{PHASE_5.name}</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               Write your proposal section by section in a strategic order. Each section builds on
               the previous ones, ensuring narrative coherence and evidence alignment.
             </p>
@@ -704,8 +704,8 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
         {/* ── Progress Bar ───────────────────────────────────────────────── */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500 font-medium">Phase Progress</span>
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-muted-foreground font-medium">Phase Progress</span>
+            <span className="text-sm text-muted-foreground">
               {phase5Steps.filter((s) => getStepStatus(s.step) === "complete").length} of{" "}
               {phase5Steps.length} steps
             </span>
@@ -718,8 +718,8 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
           <CardContent className="p-3">
             <div className="flex items-start gap-2">
               <Info className="h-3.5 w-3.5 text-phase-5 mt-0.5 shrink-0" />
-              <div className="text-[11px] text-gray-500">
-                <p className="font-medium text-gray-900 mb-1">Why this writing order?</p>
+              <div className="text-[11px] text-muted-foreground">
+                <p className="font-medium text-foreground mb-1">Why this writing order?</p>
                 <p>
                   Sections are written in a specific sequence so each builds on the previous. The
                   executive summary sets the narrative arc, methods define the work, background
@@ -763,7 +763,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                   <div
                     className={cn(
                       "absolute left-3.75 top-9 w-0.5 h-[calc(100%-20px)]",
-                      isComplete ? "bg-phase-5" : "bg-gray-200",
+                      isComplete ? "bg-phase-5" : "bg-muted",
                     )}
                   />
                 )}
@@ -773,7 +773,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                   onClick={() => setActiveStep(isActive ? null : stepDef.step)}
                   className={cn(
                     "flex w-full items-center gap-3 py-3 text-left transition-colors",
-                    "hover:bg-gray-50 rounded-xl px-2 -mx-2",
+                    "hover:bg-muted rounded-xl px-2 -mx-2",
                   )}
                 >
                   {/* Timeline dot */}
@@ -785,8 +785,8 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                         : isCurrent
                           ? "border-phase-5 bg-transparent text-phase-5"
                           : unlocked
-                            ? "border-gray-200 bg-transparent text-gray-400"
-                            : "border-gray-200 bg-transparent text-gray-300",
+                            ? "border-border bg-transparent text-muted-foreground"
+                            : "border-border bg-transparent text-muted-foreground/50",
                     )}
                   >
                     {isComplete ? (
@@ -802,18 +802,18 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                         className={cn(
                           "text-sm font-medium",
                           isComplete
-                            ? "text-gray-900"
+                            ? "text-foreground"
                             : isCurrent
-                              ? "text-gray-900"
+                              ? "text-foreground"
                               : unlocked
-                                ? "text-gray-600"
-                                : "text-gray-400",
+                                ? "text-muted-foreground"
+                                : "text-muted-foreground",
                         )}
                       >
                         {stepDef.name}
                       </p>
                       {!unlocked && (
-                        <Badge variant="outline" className="text-[10px] border-gray-200 text-gray-400">
+                        <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
                           <Lock className="h-2.5 w-2.5 mr-0.5" />
                           Locked
                         </Badge>
@@ -830,7 +830,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                     {/* Completed doc info */}
                     {isComplete && stepDocs.length > 0 && (
                       <div className="flex items-center gap-2 mt-0.5">
-                        <p className="text-xs text-gray-400 truncate">
+                        <p className="text-xs text-muted-foreground truncate">
                           {producedDocNames[stepDef.step]} —{" "}
                           {docStats ? `${docStats.wordCount.toLocaleString()} words` : "saved"}
                         </p>
@@ -861,7 +861,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                             <StepIcon
                               className={cn(
                                 "h-4 w-4",
-                                isComplete ? "text-phase-5" : "text-gray-300",
+                                isComplete ? "text-phase-5" : "text-muted-foreground/50",
                               )}
                             />
                           </span>
@@ -879,7 +879,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                     )}
                     <ChevronDown
                       className={cn(
-                        "h-4 w-4 text-gray-400 transition-transform",
+                        "h-4 w-4 text-muted-foreground transition-transform",
                         isActive && "rotate-180",
                       )}
                     />
@@ -927,11 +927,11 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                               >
                                 <div className="flex items-center gap-2">
                                   <CheckCircle2 className="h-4 w-4 text-phase-5" />
-                                  <p className="text-sm font-medium text-gray-900">
+                                  <p className="text-sm font-medium text-foreground">
                                     Proposal data compiled
                                   </p>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-1 ml-6">
+                                <p className="text-xs text-muted-foreground mt-1 ml-6">
                                   This document feeds all writing steps. Steps 2-8 are now available
                                   in sequence.
                                 </p>
@@ -1113,7 +1113,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                   <CardContent className="p-4 space-y-4">
                                     <div className="flex items-center gap-2">
                                       <FolderOpen className="h-4 w-4 text-phase-5" />
-                                      <p className="text-sm font-medium text-gray-900">
+                                      <p className="text-sm font-medium text-foreground">
                                         Select supporting documents your grant requires
                                       </p>
                                     </div>
@@ -1121,7 +1121,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                       {SUPPORT_DOC_OPTIONS.map((opt) => (
                                         <div
                                           key={opt.key}
-                                          className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-xs"
+                                          className="flex items-center gap-2 rounded-md border border-border px-3 py-2 text-xs"
                                         >
                                           <Checkbox
                                             checked={selectedSupportDocs[opt.key] ?? false}
@@ -1132,14 +1132,14 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                               }))
                                             }
                                           />
-                                          <span className="text-gray-900 font-medium">
+                                          <span className="text-foreground font-medium">
                                             {opt.label}
                                           </span>
                                         </div>
                                       ))}
                                       {/* Custom document type input */}
                                       <div className="pt-2 space-y-1.5">
-                                        <Label className="text-xs text-gray-500">
+                                        <Label className="text-xs text-muted-foreground">
                                           Any other (comma-separated)
                                         </Label>
                                         <Input
@@ -1153,7 +1153,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                     {Object.values(selectedSupportDocs).some(Boolean) && (
                                       <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-2.5">
                                         <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
-                                        <p className="text-[11px] text-gray-500">
+                                        <p className="text-[11px] text-muted-foreground">
                                           {Object.values(selectedSupportDocs).filter(Boolean).length}
                                           {customDocTypes.trim()
                                             ? ` + ${customDocTypes.split(",").filter((s) => s.trim()).length} custom`
@@ -1202,7 +1202,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                     <div className="flex items-center justify-between">
                                       <div className="flex items-center gap-2">
                                         <Layers className="h-4 w-4 text-phase-5" />
-                                        <p className="text-sm font-medium text-gray-900">
+                                        <p className="text-sm font-medium text-foreground">
                                           Proposal Section Order
                                         </p>
                                       </div>
@@ -1217,7 +1217,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                         Add section
                                       </Button>
                                     </div>
-                                    <p className="text-[11px] text-gray-500">
+                                    <p className="text-[11px] text-muted-foreground">
                                       Drag to reorder sections if your grant requires a different order.
                                     </p>
                                     <div className="space-y-1">
@@ -1235,18 +1235,18 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                               dragIdx === idx
                                                 ? "border-phase-5/40 bg-phase-5/10"
                                                 : hasContent
-                                                  ? "border-emerald-200 bg-emerald-50"
-                                                  : "border-gray-200 bg-white",
+                                                  ? "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30"
+                                                  : "border-border bg-card",
                                             )}
                                           >
-                                            <GripVertical className="h-3.5 w-3.5 text-gray-300 shrink-0" />
-                                            <span className="text-gray-400 w-4">
+                                            <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0" />
+                                            <span className="text-muted-foreground w-4">
                                               {idx + 1}.
                                             </span>
                                             <span
                                               className={cn(
                                                 "flex-1 font-medium",
-                                                hasContent ? "text-gray-900" : "text-gray-400",
+                                                hasContent ? "text-foreground" : "text-muted-foreground",
                                               )}
                                             >
                                               {section.label}
@@ -1254,7 +1254,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                             {hasContent ? (
                                               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                                             ) : (
-                                              <XCircle className="h-3.5 w-3.5 text-gray-300 shrink-0" />
+                                              <XCircle className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0" />
                                             )}
                                           </div>
                                         );
@@ -1263,14 +1263,14 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
 
                                     {/* Custom sections */}
                                     {customSections.length > 0 && (
-                                      <div className="space-y-1.5 pt-2 border-t border-gray-200">
-                                        <p className="text-[11px] text-gray-500 uppercase tracking-wider font-medium">
+                                      <div className="space-y-1.5 pt-2 border-t border-border">
+                                        <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
                                           Custom Sections
                                         </p>
                                         {customSections.map((cs, idx) => (
                                           <div
                                             key={cs.key}
-                                            className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-1.5"
+                                            className="flex items-center gap-2 rounded-md border border-border px-3 py-1.5"
                                           >
                                             <Input
                                               value={cs.label}
@@ -1286,7 +1286,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                               type="button"
                                               variant="ghost"
                                               size="sm"
-                                              className="h-7 w-7 p-0 text-gray-400 hover:text-red-500"
+                                              className="h-7 w-7 p-0 text-muted-foreground hover:text-red-500"
                                               onClick={() =>
                                                 setCustomSections((prev) =>
                                                   prev.filter((_, i) => i !== idx),
@@ -1323,7 +1323,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                     <Card className="border-phase-5/20">
                                       <CardContent className="p-3">
                                         <div className="flex items-center gap-3 flex-wrap text-xs">
-                                          <span className="text-gray-900 font-medium">
+                                          <span className="text-foreground font-medium">
                                             Assembly Stats
                                           </span>
                                           <Badge variant="outline" className="text-[10px]">
@@ -1357,10 +1357,10 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                           <div className="flex items-center gap-2">
                                             <Sparkles className="h-4 w-4 text-phase-5" />
                                             <div>
-                                              <p className="text-xs font-medium text-gray-900">
+                                              <p className="text-xs font-medium text-foreground">
                                                 Polish with AI
                                               </p>
-                                              <p className="text-[11px] text-gray-500">
+                                              <p className="text-[11px] text-muted-foreground">
                                                 Generate a prompt to check consistency, flow, and
                                                 cross-references.
                                               </p>
@@ -1404,10 +1404,10 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
 
                                     {/* Citation Resolution option */}
                                     {!showCitationResolver ? (
-                                      <Card className="border-amber-200/50 bg-amber-50/50">
+                                      <Card className="border-amber-200/50 dark:border-amber-800/50 bg-amber-50/50 dark:bg-amber-950/20">
                                         <CardContent className="p-3 flex items-center justify-between">
                                           <div className="flex items-center gap-2">
-                                            <BookOpen className="h-4 w-4 text-amber-600" />
+                                            <BookOpen className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                                             <div>
                                               <p className="text-xs font-medium text-foreground">
                                                 Resolve Citations
@@ -1511,11 +1511,11 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
 function LockedStepMessage({ stepNum }: { stepNum: number }) {
   const prevStepName = PHASE_5.steps[stepNum - 2]?.name || "previous step";
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4">
-      <Lock className="h-5 w-5 text-gray-300" />
+    <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
+      <Lock className="h-5 w-5 text-muted-foreground/50" />
       <div>
-        <p className="text-sm font-medium text-gray-500">Step locked</p>
-        <p className="text-xs text-gray-400">
+        <p className="text-sm font-medium text-muted-foreground">Step locked</p>
+        <p className="text-xs text-muted-foreground">
           Complete &quot;{prevStepName}&quot; first. Steps must be completed in order to maintain
           narrative coherence.
         </p>
@@ -1547,7 +1547,7 @@ function PostStepStats({
       className="rounded-lg border border-phase-5/20 bg-phase-5/5 p-3"
     >
       <div className="flex items-center gap-3 flex-wrap text-xs">
-        <span className="text-gray-900 font-medium">{canonicalName}</span>
+        <span className="text-foreground font-medium">{canonicalName}</span>
         <Badge variant="outline" className="text-[10px]">
           {wc.toLocaleString()} words
         </Badge>

@@ -145,10 +145,10 @@ function MockReviewResultUI({ content }: { content: string }) {
   const verdict = verdictMatch?.[1]?.toUpperCase() || "UNKNOWN";
   const verdictColor =
     verdict === "WOULD FUND"
-      ? "bg-emerald-100 text-emerald-600 border-emerald-200"
+      ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
       : verdict === "BORDERLINE"
-        ? "bg-amber-100 text-amber-600 border-amber-200"
-        : "bg-red-100 text-red-600 border-red-200";
+        ? "bg-amber-100 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800"
+        : "bg-red-100 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800";
 
   // Parse score table rows
   const scoreRegex = /\|\s*(.+?)\s*\|\s*(\d+(?:\.\d+)?)\s*\/\s*10\s*\|\s*(\d+(?:\.\d+)?)\s*\/\s*10\s*\|\s*(\d+(?:\.\d+)?)\s*\/\s*10\s*\|\s*(\d+(?:\.\d+)?)\s*\/\s*10\s*\|/g;
@@ -179,15 +179,15 @@ function MockReviewResultUI({ content }: { content: string }) {
           {reviewers.map((r, i) => (
             <Card key={i} className="border-phase-6/20 bg-phase-6/5">
               <CardContent className="p-3 space-y-1.5">
-                <p className="text-sm font-medium text-gray-900">{r.name}</p>
-                <p className="text-[11px] text-gray-500">{r.expertise}</p>
+                <p className="text-sm font-medium text-foreground">{r.name}</p>
+                <p className="text-[11px] text-muted-foreground">{r.expertise}</p>
                 <Badge
                   className={cn(
                     "text-[10px]",
                     r.disposition.toLowerCase().includes("supportive")
-                      ? "bg-emerald-100 text-emerald-600"
+                      ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400"
                       : r.disposition.toLowerCase().includes("critical")
-                        ? "bg-red-100 text-red-600"
+                        ? "bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400"
                         : "bg-blue-100 text-blue-600",
                   )}
                 >
@@ -209,12 +209,12 @@ function MockReviewResultUI({ content }: { content: string }) {
       {/* Score Table */}
       {scores.length > 0 && (
         <div className="overflow-x-auto">
-          <table className="w-full text-xs border border-gray-200 rounded-lg overflow-hidden">
+          <table className="w-full text-xs border border-border rounded-lg overflow-hidden">
             <thead>
-              <tr className="bg-gray-50">
-                <th className="px-3 py-2 text-left font-medium text-gray-500">Criterion</th>
+              <tr className="bg-muted">
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground">Criterion</th>
                 {reviewers.slice(0, 3).map((r, i) => (
-                  <th key={i} className="px-3 py-2 text-center font-medium text-gray-500">
+                  <th key={i} className="px-3 py-2 text-center font-medium text-muted-foreground">
                     R{i + 1}
                   </th>
                 ))}
@@ -223,8 +223,8 @@ function MockReviewResultUI({ content }: { content: string }) {
             </thead>
             <tbody>
               {scores.map((row, i) => (
-                <tr key={i} className={cn("border-t border-gray-100", row.criterion.includes("OVERALL") && "bg-phase-6/5 font-medium")}>
-                  <td className="px-3 py-2 text-gray-900">{row.criterion}</td>
+                <tr key={i} className={cn("border-t border-border", row.criterion.includes("OVERALL") && "bg-phase-6/5 font-medium")}>
+                  <td className="px-3 py-2 text-foreground">{row.criterion}</td>
                   <td className="px-3 py-2 text-center">{row.r1}/10</td>
                   <td className="px-3 py-2 text-center">{row.r2}/10</td>
                   <td className="px-3 py-2 text-center">{row.r3}/10</td>
@@ -239,7 +239,7 @@ function MockReviewResultUI({ content }: { content: string }) {
       {/* Weaknesses */}
       {weaknesses.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Ranked Weaknesses
           </p>
           {weaknesses.map((w, i) => (
@@ -248,10 +248,10 @@ function MockReviewResultUI({ content }: { content: string }) {
               className={cn(
                 "flex items-start gap-2 rounded-md border px-3 py-2 text-xs",
                 w.severity === "CRITICAL"
-                  ? "border-red-200 bg-red-50"
+                  ? "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30"
                   : w.severity === "MAJOR"
-                    ? "border-amber-200 bg-amber-50"
-                    : "border-gray-200 bg-gray-50",
+                    ? "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30"
+                    : "border-border bg-muted",
               )}
             >
               <Badge
@@ -261,12 +261,12 @@ function MockReviewResultUI({ content }: { content: string }) {
                     ? "bg-red-100 text-red-500"
                     : w.severity === "MAJOR"
                       ? "bg-amber-100 text-amber-500"
-                      : "bg-gray-100 text-gray-500",
+                      : "bg-muted text-muted-foreground",
                 )}
               >
                 {w.severity}
               </Badge>
-              <span className="text-gray-900">{w.text}</span>
+              <span className="text-foreground">{w.text}</span>
             </div>
           ))}
         </div>
@@ -334,7 +334,7 @@ function EPAuditResultUI({ content }: { content: string }) {
       {/* EP Tag Grid */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             EP Tag Deployment
           </p>
           <div className="flex items-center gap-3 text-[10px]">
@@ -350,10 +350,10 @@ function EPAuditResultUI({ content }: { content: string }) {
               className={cn(
                 "flex items-center gap-2 rounded-md border px-2.5 py-2 text-[11px]",
                 tag.status === "deployed"
-                  ? "border-emerald-200 bg-emerald-50"
+                  ? "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30"
                   : tag.status === "partial"
-                    ? "border-amber-200 bg-amber-50"
-                    : "border-red-200 bg-red-50",
+                    ? "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30"
+                    : "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30",
               )}
             >
               <span
@@ -368,7 +368,7 @@ function EPAuditResultUI({ content }: { content: string }) {
               >
                 {tag.id}
               </span>
-              <span className="text-gray-500 truncate">{tag.name}</span>
+              <span className="text-muted-foreground truncate">{tag.name}</span>
             </div>
           ))}
         </div>
@@ -383,9 +383,9 @@ function EPAuditResultUI({ content }: { content: string }) {
               Champion Phrases
             </p>
             {champions.slice(0, 5).map((c, i) => (
-              <div key={i} className="rounded-md bg-white p-2.5 text-[11px] space-y-1">
-                <p className="text-gray-800 italic">&ldquo;{c.phrase}&rdquo;</p>
-                <p className="text-gray-500">{c.reason}</p>
+              <div key={i} className="rounded-md bg-card p-2.5 text-[11px] space-y-1">
+                <p className="text-foreground italic">&ldquo;{c.phrase}&rdquo;</p>
+                <p className="text-muted-foreground">{c.reason}</p>
               </div>
             ))}
           </CardContent>
@@ -397,22 +397,22 @@ function EPAuditResultUI({ content }: { content: string }) {
         className={cn(
           "border",
           lossStrength === "Strong"
-            ? "border-emerald-200 bg-emerald-50"
+            ? "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30"
             : lossStrength === "Moderate"
-              ? "border-amber-200 bg-amber-50"
-              : "border-red-200 bg-red-50",
+              ? "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30"
+              : "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30",
         )}
       >
         <CardContent className="p-3 flex items-center gap-3">
-          <p className="text-xs text-gray-500">Loss-Frame Effectiveness (EP-05):</p>
+          <p className="text-xs text-muted-foreground">Loss-Frame Effectiveness (EP-05):</p>
           <Badge
             className={cn(
               "text-[10px]",
               lossStrength === "Strong"
-                ? "bg-emerald-100 text-emerald-600"
+                ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400"
                 : lossStrength === "Moderate"
-                  ? "bg-amber-100 text-amber-600"
-                  : "bg-red-100 text-red-600",
+                  ? "bg-amber-100 text-amber-600 dark:text-amber-400"
+                  : "bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400",
             )}
           >
             {lossStrength}
@@ -468,17 +468,17 @@ function ComplianceResultUI({ content }: { content: string }) {
       {checks.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Compliance Checklist
             </p>
             <Badge
               className={cn(
                 "text-[10px]",
                 passCount === checks.length
-                  ? "bg-emerald-100 text-emerald-600"
+                  ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400"
                   : passCount > checks.length / 2
-                    ? "bg-amber-100 text-amber-600"
-                    : "bg-red-100 text-red-600",
+                    ? "bg-amber-100 text-amber-600 dark:text-amber-400"
+                    : "bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400",
               )}
             >
               {passCount}/{checks.length} passed
@@ -491,8 +491,8 @@ function ComplianceResultUI({ content }: { content: string }) {
                 className={cn(
                   "flex items-center gap-2 rounded-md border px-3 py-2 text-xs",
                   c.status === "PASS"
-                    ? "border-emerald-200 bg-emerald-50"
-                    : "border-red-200 bg-red-50",
+                    ? "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30"
+                    : "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30",
                 )}
               >
                 {c.status === "PASS" ? (
@@ -500,8 +500,8 @@ function ComplianceResultUI({ content }: { content: string }) {
                 ) : (
                   <XCircle className="h-3.5 w-3.5 text-red-500 shrink-0" />
                 )}
-                <span className="flex-1 font-medium text-gray-900">{c.requirement}</span>
-                <span className="text-gray-400 text-[10px] max-w-[200px] truncate">{c.notes}</span>
+                <span className="flex-1 font-medium text-foreground">{c.requirement}</span>
+                <span className="text-muted-foreground text-[10px] max-w-[200px] truncate">{c.notes}</span>
               </div>
             ))}
           </div>
@@ -511,39 +511,39 @@ function ComplianceResultUI({ content }: { content: string }) {
       {/* Coverage Matrix */}
       {coverage.length > 0 && (
         <div>
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
             Evaluation Criteria Coverage
           </p>
           <div className="overflow-x-auto">
-            <table className="w-full text-xs border border-gray-200 rounded-lg overflow-hidden">
+            <table className="w-full text-xs border border-border rounded-lg overflow-hidden">
               <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-3 py-2 text-left font-medium text-gray-500">Criterion</th>
-                  <th className="px-3 py-2 text-center font-medium text-gray-500">Weight</th>
-                  <th className="px-3 py-2 text-center font-medium text-gray-500">Coverage</th>
-                  <th className="px-3 py-2 text-center font-medium text-gray-500">Score</th>
+                <tr className="bg-muted">
+                  <th className="px-3 py-2 text-left font-medium text-muted-foreground">Criterion</th>
+                  <th className="px-3 py-2 text-center font-medium text-muted-foreground">Weight</th>
+                  <th className="px-3 py-2 text-center font-medium text-muted-foreground">Coverage</th>
+                  <th className="px-3 py-2 text-center font-medium text-muted-foreground">Score</th>
                 </tr>
               </thead>
               <tbody>
                 {coverage.map((row, i) => (
-                  <tr key={i} className="border-t border-gray-100">
-                    <td className="px-3 py-2 text-gray-900">{row.criterion}</td>
-                    <td className="px-3 py-2 text-center text-gray-500">{row.weight}</td>
+                  <tr key={i} className="border-t border-border">
+                    <td className="px-3 py-2 text-foreground">{row.criterion}</td>
+                    <td className="px-3 py-2 text-center text-muted-foreground">{row.weight}</td>
                     <td className="px-3 py-2 text-center">
                       <Badge
                         className={cn(
                           "text-[9px]",
                           row.status === "Full"
-                            ? "bg-emerald-100 text-emerald-600"
+                            ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400"
                             : row.status === "Partial"
-                              ? "bg-amber-100 text-amber-600"
-                              : "bg-red-100 text-red-600",
+                              ? "bg-amber-100 text-amber-600 dark:text-amber-400"
+                              : "bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400",
                         )}
                       >
                         {row.status}
                       </Badge>
                     </td>
-                    <td className="px-3 py-2 text-center text-gray-500">{row.score}</td>
+                    <td className="px-3 py-2 text-center text-muted-foreground">{row.score}</td>
                   </tr>
                 ))}
               </tbody>
@@ -555,7 +555,7 @@ function ComplianceResultUI({ content }: { content: string }) {
       {/* Missing Items */}
       {missingItems.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Missing or Incomplete Items
           </p>
           {missingItems.map((item, i) => (
@@ -564,10 +564,10 @@ function ComplianceResultUI({ content }: { content: string }) {
               className={cn(
                 "flex items-start gap-2 rounded-md border px-3 py-2 text-xs",
                 item.severity === "CRITICAL"
-                  ? "border-red-200 bg-red-50"
+                  ? "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30"
                   : item.severity === "MAJOR"
-                    ? "border-amber-200 bg-amber-50"
-                    : "border-gray-200 bg-gray-50",
+                    ? "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30"
+                    : "border-border bg-muted",
               )}
             >
               <Badge
@@ -577,12 +577,12 @@ function ComplianceResultUI({ content }: { content: string }) {
                     ? "bg-red-100 text-red-500"
                     : item.severity === "MAJOR"
                       ? "bg-amber-100 text-amber-500"
-                      : "bg-gray-100 text-gray-500",
+                      : "bg-muted text-muted-foreground",
                 )}
               >
                 {item.severity}
               </Badge>
-              <span className="text-gray-900">{item.text}</span>
+              <span className="text-foreground">{item.text}</span>
             </div>
           ))}
         </div>
@@ -649,8 +649,8 @@ function OptimizationDiffView({
       ) : (
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <p className="text-xs font-medium text-gray-500 mb-2">Original</p>
-            <Card className="border-gray-200">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Original</p>
+            <Card className="border-border">
               <CardContent className="p-3 max-h-[500px] overflow-y-auto text-xs">
                 <MarkdownRenderer content={originalContent} />
               </CardContent>
@@ -801,8 +801,8 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
         <div className="flex items-center gap-4">
           <PhaseIcon phase={6} size="lg" active />
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900">{PHASE_6.name}</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-2xl font-bold text-foreground">{PHASE_6.name}</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               Evaluate your proposal through simulated peer review, EP psychology audit, and
               compliance checks, then produce an optimized final version.
             </p>
@@ -812,8 +812,8 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
         {/* ── Progress Bar ───────────────────────────────────────────────── */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500 font-medium">Phase Progress</span>
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-muted-foreground font-medium">Phase Progress</span>
+            <span className="text-sm text-muted-foreground">
               {phase6Steps.filter((s) => getStepStatus(s.step) === "complete").length} of{" "}
               {phase6Steps.length} steps
             </span>
@@ -826,8 +826,8 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
           <CardContent className="p-3">
             <div className="flex items-start gap-2">
               <Info className="h-3.5 w-3.5 text-phase-6 mt-0.5 shrink-0" />
-              <div className="text-[11px] text-gray-500">
-                <p className="font-medium text-gray-900 mb-1">Why review before submission?</p>
+              <div className="text-[11px] text-muted-foreground">
+                <p className="font-medium text-foreground mb-1">Why review before submission?</p>
                 <p>
                   Most rejected proposals have addressable weaknesses. Simulated peer review catches
                   blind spots, the EP audit ensures maximum persuasive impact, and the compliance check
@@ -857,7 +857,7 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
                   <div
                     className={cn(
                       "absolute left-3.75 top-9 w-0.5 h-[calc(100%-20px)]",
-                      isComplete ? "bg-phase-6" : "bg-gray-200",
+                      isComplete ? "bg-phase-6" : "bg-muted",
                     )}
                   />
                 )}
@@ -867,7 +867,7 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
                   onClick={() => setActiveStep(isActive ? null : stepDef.step)}
                   className={cn(
                     "flex w-full items-center gap-3 py-3 text-left transition-colors",
-                    "hover:bg-gray-50 rounded-xl px-2 -mx-2",
+                    "hover:bg-muted rounded-xl px-2 -mx-2",
                   )}
                 >
                   <div
@@ -878,8 +878,8 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
                         : isCurrent
                           ? "border-phase-6 bg-transparent text-phase-6"
                           : unlocked
-                            ? "border-gray-200 bg-transparent text-gray-400"
-                            : "border-gray-200 bg-transparent text-gray-300",
+                            ? "border-border bg-transparent text-muted-foreground"
+                            : "border-border bg-transparent text-muted-foreground/50",
                     )}
                   >
                     {isComplete ? (
@@ -895,18 +895,18 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
                         className={cn(
                           "text-sm font-medium",
                           isComplete
-                            ? "text-gray-900"
+                            ? "text-foreground"
                             : isCurrent
-                              ? "text-gray-900"
+                              ? "text-foreground"
                               : unlocked
-                                ? "text-gray-600"
-                                : "text-gray-400",
+                                ? "text-muted-foreground"
+                                : "text-muted-foreground",
                         )}
                       >
                         {stepDef.name}
                       </p>
                       {!unlocked && (
-                        <Badge variant="outline" className="text-[10px] border-gray-200 text-gray-400">
+                        <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
                           <Lock className="h-2.5 w-2.5 mr-0.5" />
                           Locked
                         </Badge>
@@ -919,20 +919,20 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
                             ? "border-phase-6/30 text-phase-6"
                             : isCurrent
                               ? "border-phase-6/20 text-phase-6/70"
-                              : "border-gray-200 text-gray-400",
+                              : "border-border text-muted-foreground",
                         )}
                       >
                         {stepStatusLabels[status]}
                       </Badge>
                     </div>
-                    <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-1">
+                    <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">
                       {meta?.description}
                     </p>
                   </div>
 
                   <ChevronDown
                     className={cn(
-                      "h-4 w-4 text-gray-400 transition-transform shrink-0",
+                      "h-4 w-4 text-muted-foreground transition-transform shrink-0",
                       isActive && "rotate-180",
                     )}
                   />
@@ -951,10 +951,10 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
                     >
                       <div className="space-y-4 pb-6">
                         {!unlocked ? (
-                          <Card className="border-gray-200 bg-white">
+                          <Card className="border-border bg-card">
                             <CardContent className="p-4 text-center">
-                              <Lock className="h-5 w-5 text-gray-300 mx-auto mb-2" />
-                              <p className="text-xs text-gray-400">
+                              <Lock className="h-5 w-5 text-muted-foreground/50 mx-auto mb-2" />
+                              <p className="text-xs text-muted-foreground">
                                 Complete step {stepDef.step - 1} to unlock this step.
                               </p>
                             </CardContent>
@@ -963,10 +963,10 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
                           <>
                             {/* Step 2 context warning */}
                             {stepDef.step === 2 && (
-                              <Card className="border-amber-200 bg-amber-50">
+                              <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30">
                                 <CardContent className="p-3 flex items-start gap-2">
                                   <AlertTriangle className="h-3.5 w-3.5 text-amber-500 mt-0.5 shrink-0" />
-                                  <p className="text-[11px] text-gray-500">
+                                  <p className="text-[11px] text-muted-foreground">
                                     <strong className="text-amber-500">Large prompt warning:</strong> This prompt is ~15K+ words with the full proposal.
                                     Use an AI with a large context window (Claude, GPT-4, Gemini Pro).
                                   </p>
@@ -1011,10 +1011,10 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
                             )}
 
                             {stepDef.step === 4 && step4Decision !== "pending" && (
-                              <Card className="border-emerald-200 bg-emerald-50">
+                              <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30">
                                 <CardContent className="p-3 flex items-center gap-2">
                                   <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                                  <p className="text-xs text-gray-900">
+                                  <p className="text-xs text-foreground">
                                     {step4Decision === "accepted"
                                       ? "Optimized version accepted as Final_Proposal.md"
                                       : "Original kept as Final_Proposal.md"}

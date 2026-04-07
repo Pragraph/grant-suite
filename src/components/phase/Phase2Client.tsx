@@ -175,7 +175,7 @@ function PsychologyHighlightsUI({ content }: { content: string }) {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <Brain className="h-4 w-4 text-phase-2" />
-              <p className="text-sm font-medium text-gray-900">EP Deployment Map</p>
+              <p className="text-sm font-medium text-foreground">EP Deployment Map</p>
               <Badge className="text-[10px] bg-phase-2/20 text-phase-2">
                 {highlights.epDeploymentRows.length} tags
               </Badge>
@@ -184,21 +184,21 @@ function PsychologyHighlightsUI({ content }: { content: string }) {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-phase-2/20">
-                    <th className="text-left py-1.5 px-2 text-gray-500 font-medium">Tag</th>
-                    <th className="text-left py-1.5 px-2 text-gray-500 font-medium">Principle</th>
-                    <th className="text-left py-1.5 px-2 text-gray-500 font-medium">Deploy At</th>
-                    <th className="text-left py-1.5 px-2 text-gray-500 font-medium">How</th>
+                    <th className="text-left py-1.5 px-2 text-muted-foreground font-medium">Tag</th>
+                    <th className="text-left py-1.5 px-2 text-muted-foreground font-medium">Principle</th>
+                    <th className="text-left py-1.5 px-2 text-muted-foreground font-medium">Deploy At</th>
+                    <th className="text-left py-1.5 px-2 text-muted-foreground font-medium">How</th>
                   </tr>
                 </thead>
                 <tbody>
                   {highlights.epDeploymentRows.map((row) => (
-                    <tr key={row.tag} className="border-b border-gray-100">
+                    <tr key={row.tag} className="border-b border-border">
                       <td className="py-1.5 px-2">
                         <Badge className="text-[10px] px-1.5 py-0">{row.tag}</Badge>
                       </td>
-                      <td className="py-1.5 px-2 text-gray-900">{row.principle}</td>
-                      <td className="py-1.5 px-2 text-gray-500">{row.deployment}</td>
-                      <td className="py-1.5 px-2 text-gray-500">{row.implementation}</td>
+                      <td className="py-1.5 px-2 text-foreground">{row.principle}</td>
+                      <td className="py-1.5 px-2 text-muted-foreground">{row.deployment}</td>
+                      <td className="py-1.5 px-2 text-muted-foreground">{row.implementation}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -210,23 +210,23 @@ function PsychologyHighlightsUI({ content }: { content: string }) {
 
       {/* Champion Phrases */}
       {highlights.championPhrases.length > 0 && (
-        <Card className="border-emerald-200 bg-emerald-50">
+        <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <Quote className="h-4 w-4 text-emerald-500" />
-              <p className="text-sm font-medium text-gray-900">Champion Phrases</p>
+              <p className="text-sm font-medium text-foreground">Champion Phrases</p>
               <Badge className="text-[10px] bg-success/20 text-success">
                 {highlights.championPhrases.length} phrases
               </Badge>
             </div>
-            <p className="text-xs text-gray-500 mb-2">
+            <p className="text-xs text-muted-foreground mb-2">
               Phrases evaluators use when advocating for a proposal in panel discussions.
             </p>
             <div className="flex flex-wrap gap-2">
               {highlights.championPhrases.map((phrase, i) => (
                 <div
                   key={i}
-                  className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs text-gray-900"
+                  className="rounded-md border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1.5 text-xs text-foreground"
                 >
                   &ldquo;{phrase}&rdquo;
                 </div>
@@ -238,20 +238,20 @@ function PsychologyHighlightsUI({ content }: { content: string }) {
 
       {/* Loss-Frame Narrative Seeds */}
       {highlights.lossFrameSeeds.length > 0 && (
-        <Card className="border-amber-200 bg-amber-50">
+        <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <AlertOctagon className="h-4 w-4 text-amber-500" />
-              <p className="text-sm font-medium text-gray-900">Loss-Frame Narrative Seeds</p>
+              <p className="text-sm font-medium text-foreground">Loss-Frame Narrative Seeds</p>
             </div>
-            <p className="text-xs text-gray-500 mb-2">
+            <p className="text-xs text-muted-foreground mb-2">
               Loss framing is more psychologically powerful than gain framing. Use these to frame urgency.
             </p>
             <div className="space-y-2">
               {highlights.lossFrameSeeds.map((seed, i) => (
                 <div
                   key={i}
-                  className="rounded-md border-l-2 border-amber-300 bg-amber-50 px-3 py-2 text-xs text-gray-800 italic"
+                  className="rounded-md border-l-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 px-3 py-2 text-xs text-foreground italic"
                 >
                   &ldquo;{seed}&rdquo;
                 </div>
@@ -358,24 +358,24 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
       <div className="flex items-center gap-4">
         <PhaseIcon phase={2} size="lg" active />
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-foreground">
             {PHASE_2.name}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Analyze requirements, competition, evaluator psychology, and impact to build your strategic Proposal Blueprint.
           </p>
         </div>
       </div>
 
       {/* ── Mode Toggle ────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+      <div className="flex items-center gap-3 rounded-lg border border-border bg-muted p-3">
         <button
           onClick={() => setMode("individual")}
           className={cn(
             "flex-1 rounded-md px-4 py-2 text-sm font-medium transition-all",
             mode === "individual"
               ? "bg-phase-2 text-white shadow-sm"
-              : "text-gray-500 hover:text-gray-900 hover:bg-gray-100",
+              : "text-muted-foreground hover:text-foreground hover:bg-muted",
           )}
         >
           <span className="flex items-center justify-center gap-2">
@@ -390,7 +390,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
             "flex-1 rounded-md px-4 py-2 text-sm font-medium transition-all",
             mode === "combined"
               ? "bg-phase-2 text-white shadow-sm"
-              : "text-gray-500 hover:text-gray-900 hover:bg-gray-100",
+              : "text-muted-foreground hover:text-foreground hover:bg-muted",
           )}
         >
           <span className="flex items-center justify-center gap-2">
@@ -403,8 +403,8 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
       {/* ── Progress Bar ───────────────────────────────────────────────── */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-500 font-medium">Phase Progress</span>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-muted-foreground font-medium">Phase Progress</span>
+          <span className="text-sm text-muted-foreground">
             {phase2Steps.filter((s) => getStepStatus(s.step) === "complete").length} of{" "}
             {phase2Steps.length} steps
           </span>
@@ -416,13 +416,13 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
       {mode === "combined" ? (
         <div className="space-y-4">
           {/* Context window warning */}
-          <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <div className="flex items-start gap-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
             <div>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-foreground">
                 Large Context Window Required
               </p>
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Combined mode works best with AI tools that have large context windows (100K+ tokens).
                 This produces the Proposal Blueprint in a single session, combining all 5 analysis steps.
                 If your AI tool has limited context, use Individual Steps mode instead.
@@ -494,7 +494,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                   <div
                     className={cn(
                       "absolute left-3.75 top-9 w-0.5 h-[calc(100%-20px)]",
-                      isComplete ? "bg-phase-2" : "bg-gray-200",
+                      isComplete ? "bg-phase-2" : "bg-muted",
                     )}
                   />
                 )}
@@ -504,7 +504,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                   onClick={() => setActiveStep(isActive ? null : stepDef.step)}
                   className={cn(
                     "flex w-full items-center gap-3 py-3 text-left transition-colors",
-                    "hover:bg-gray-50 rounded-xl px-2 -mx-2",
+                    "hover:bg-muted rounded-xl px-2 -mx-2",
                   )}
                 >
                   {/* Timeline dot */}
@@ -516,8 +516,8 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                         : isCurrent
                           ? "border-phase-2 bg-transparent text-phase-2"
                           : unlocked
-                            ? "border-gray-200 bg-transparent text-gray-400"
-                            : "border-gray-200 bg-transparent text-gray-300",
+                            ? "border-border bg-transparent text-muted-foreground"
+                            : "border-border bg-transparent text-muted-foreground/50",
                     )}
                   >
                     {isComplete ? (
@@ -533,12 +533,12 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                         className={cn(
                           "text-sm font-medium",
                           isComplete
-                            ? "text-gray-900"
+                            ? "text-foreground"
                             : isCurrent
-                              ? "text-gray-900"
+                              ? "text-foreground"
                               : unlocked
-                                ? "text-gray-600"
-                                : "text-gray-400",
+                                ? "text-muted-foreground"
+                                : "text-muted-foreground",
                         )}
                       >
                         {stepDef.name}
@@ -555,7 +555,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                       )}
                     </div>
                     {isComplete && stepDocs.length > 0 && (
-                      <p className="text-xs text-gray-400 mt-0.5 truncate">
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
                         {stepDocs.map((d) => d.canonicalName).join(", ")} —{" "}
                         {stepDocs.reduce((sum, d) => sum + d.wordCount, 0).toLocaleString()} words
                       </p>
@@ -567,7 +567,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                       <StepIcon
                         className={cn(
                           "h-4 w-4",
-                          isComplete ? "text-phase-2" : "text-gray-300",
+                          isComplete ? "text-phase-2" : "text-muted-foreground/50",
                         )}
                       />
                     )}
@@ -581,7 +581,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                     )}
                     <ChevronDown
                       className={cn(
-                        "h-4 w-4 text-gray-400 transition-transform",
+                        "h-4 w-4 text-muted-foreground transition-transform",
                         isActive && "rotate-180",
                       )}
                     />
@@ -632,11 +632,11 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                           >
                             <div className="flex items-center gap-2 mb-2">
                               <Sparkles className="h-5 w-5 text-[#4F7DF3]" />
-                              <p className="text-sm font-medium text-gray-900">
+                              <p className="text-sm font-medium text-foreground">
                                 Proposal Blueprint Created
                               </p>
                             </div>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-muted-foreground">
                               This document guides all proposal writing in subsequent phases.
                               Every section of your proposal will reference this strategic foundation.
                             </p>

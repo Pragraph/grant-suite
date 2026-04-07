@@ -340,10 +340,10 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
       <div className="flex items-center gap-4">
         <PhaseIcon phase={3} size="lg" active />
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-foreground">
             {PHASE_3.name}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Design your research methodology and optionally enhance your proposal with partnership evidence, novelty analysis, and merit modules.
           </p>
         </div>
@@ -352,8 +352,8 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
       {/* ── Progress Bar ───────────────────────────────────────────────── */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-500 font-medium">Phase Progress</span>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-muted-foreground font-medium">Phase Progress</span>
+          <span className="text-sm text-muted-foreground">
             {completedSteps} of {totalSteps} steps
           </span>
         </div>
@@ -366,14 +366,14 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
         <div
           className={cn(
             "absolute left-3.75 top-9 w-0.5 h-[calc(100%-20px)]",
-            mainStepComplete ? "bg-phase-3" : "bg-gray-200",
+            mainStepComplete ? "bg-phase-3" : "bg-muted",
           )}
         />
 
         {/* Step header */}
         <button
           onClick={() => setActiveSection(activeSection === "main" ? null : "main")}
-          className="flex w-full items-center gap-3 py-3 text-left transition-colors hover:bg-gray-50 rounded-xl px-2 -mx-2"
+          className="flex w-full items-center gap-3 py-3 text-left transition-colors hover:bg-muted rounded-xl px-2 -mx-2"
         >
           <div
             className={cn(
@@ -382,7 +382,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                 ? "border-phase-3 bg-phase-3 text-white"
                 : getStepStatus(1) !== "not-started"
                   ? "border-phase-3 bg-transparent text-phase-3"
-                  : "border-gray-200 bg-transparent text-gray-400",
+                  : "border-border bg-transparent text-muted-foreground",
             )}
           >
             {mainStepComplete ? (
@@ -394,7 +394,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <p className={cn("text-sm font-semibold", mainStepComplete ? "text-gray-900" : "text-gray-900")}>
+              <p className={cn("text-sm font-semibold", mainStepComplete ? "text-foreground" : "text-foreground")}>
                 Research Design Generator
               </p>
               <Badge variant="outline" className="text-[10px] border-phase-3/30 text-phase-3">
@@ -402,20 +402,20 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
               </Badge>
             </div>
             {mainStepComplete && (
-              <p className="text-xs text-gray-400 mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Research_Design.md — Core research methodology defined
               </p>
             )}
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <FlaskConical className={cn("h-4 w-4", mainStepComplete ? "text-phase-3" : "text-gray-300")} />
+            <FlaskConical className={cn("h-4 w-4", mainStepComplete ? "text-phase-3" : "text-muted-foreground/50")} />
             {getStepStatus(1) !== "not-started" && (
               <Badge variant={mainStepComplete ? "default" : "outline"} className="text-[10px]">
                 {stepStatusLabels[getStepStatus(1)]}
               </Badge>
             )}
-            <ChevronDown className={cn("h-4 w-4 text-gray-400 transition-transform", activeSection === "main" && "rotate-180")} />
+            <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", activeSection === "main" && "rotate-180")} />
           </div>
         </button>
 
@@ -486,11 +486,11 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <Sparkles className="h-5 w-5 text-phase-3" />
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-foreground">
                         Research Design Complete
                       </p>
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       You can now enable optional modules below to strengthen your proposal, or proceed to Phase 4.
                     </p>
                   </motion.div>
@@ -510,11 +510,11 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
           className="space-y-6"
         >
           <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-gray-200" />
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <div className="h-px flex-1 bg-muted" />
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Optional Enhancements
             </span>
-            <div className="h-px flex-1 bg-gray-200" />
+            <div className="h-px flex-1 bg-muted" />
           </div>
 
           {/* ── Module Cards Grid ──────────────────────────────────────── */}
@@ -598,7 +598,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                   <CardContent className="p-6 space-y-6">
                     <div className="flex items-center gap-2">
                       <Handshake className="h-5 w-5 text-phase-3" />
-                      <h3 className="text-sm font-semibold text-gray-900">3A: Partnership & Support Evidence</h3>
+                      <h3 className="text-sm font-semibold text-foreground">3A: Partnership & Support Evidence</h3>
                     </div>
 
                     {/* Sub-step a: Partnership Strategy */}
@@ -609,12 +609,12 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                       >
                         <div className={cn(
                           "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs",
-                          getStepStatus(10) === "complete" ? "border-phase-3 bg-phase-3 text-white" : "border-gray-200 text-gray-500",
+                          getStepStatus(10) === "complete" ? "border-phase-3 bg-phase-3 text-white" : "border-border text-muted-foreground",
                         )}>
                           {getStepStatus(10) === "complete" ? <Check className="h-3 w-3" /> : "a"}
                         </div>
-                        <span className="text-sm font-medium text-gray-900 flex-1">Partnership Strategy</span>
-                        <ChevronDown className={cn("h-4 w-4 text-gray-400 transition-transform", activeSection === "3A-strategy" && "rotate-180")} />
+                        <span className="text-sm font-medium text-foreground flex-1">Partnership Strategy</span>
+                        <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", activeSection === "3A-strategy" && "rotate-180")} />
                       </button>
 
                       <AnimatePresence>
@@ -671,14 +671,14 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                         onClick={() => setActiveSection(activeSection === "3A-letters" ? null : "3A-letters")}
                         className="flex w-full items-center gap-3 text-left"
                       >
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-gray-200 text-xs text-gray-500">
+                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border text-xs text-muted-foreground">
                           b
                         </div>
-                        <span className="text-sm font-medium text-gray-900 flex-1">Support Letter Generator</span>
+                        <span className="text-sm font-medium text-foreground flex-1">Support Letter Generator</span>
                         {partners.length > 0 && (
                           <Badge variant="outline" className="text-[10px]">{partners.length} partner{partners.length !== 1 ? "s" : ""}</Badge>
                         )}
-                        <ChevronDown className={cn("h-4 w-4 text-gray-400 transition-transform", activeSection === "3A-letters" && "rotate-180")} />
+                        <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", activeSection === "3A-letters" && "rotate-180")} />
                       </button>
 
                       <AnimatePresence>
@@ -691,21 +691,21 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                             transition={{ duration: 0.3 }}
                             className="ml-9 space-y-4"
                           >
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-muted-foreground">
                               Add your collaborators below. For each partner, a personalized support letter prompt will be generated.
                             </p>
 
                             {/* Partner list */}
                             {partners.map((partner, idx) => (
-                              <Card key={partner.id} className="border-gray-200">
+                              <Card key={partner.id} className="border-border">
                                 <CardContent className="p-4 space-y-3">
                                   <div className="flex items-center justify-between">
-                                    <span className="text-xs font-medium text-gray-500">Partner {idx + 1}</span>
+                                    <span className="text-xs font-medium text-muted-foreground">Partner {idx + 1}</span>
                                     <Button
                                       variant="ghost"
                                       size="sm"
                                       onClick={() => removePartner(partner.id)}
-                                      className="h-6 w-6 p-0 text-gray-400 hover:text-red-500"
+                                      className="h-6 w-6 p-0 text-muted-foreground hover:text-red-500"
                                     >
                                       <Trash2 className="h-3 w-3" />
                                     </Button>
@@ -852,7 +852,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                               variant="outline"
                               size="sm"
                               onClick={addPartner}
-                              className="w-full border-dashed border-gray-200 text-gray-500 hover:text-gray-900"
+                              className="w-full border-dashed border-border text-muted-foreground hover:text-foreground"
                             >
                               <Plus className="h-4 w-4 mr-2" />
                               Add Partner
@@ -881,7 +881,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                   <CardContent className="p-6 space-y-6">
                     <div className="flex items-center gap-2">
                       <Search className="h-5 w-5 text-phase-3" />
-                      <h3 className="text-sm font-semibold text-gray-900">3B: Patent Search & Novelty Assessment</h3>
+                      <h3 className="text-sm font-semibold text-foreground">3B: Patent Search & Novelty Assessment</h3>
                     </div>
 
                     {/* Sub-step tabs */}
@@ -892,7 +892,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                           "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
                           patentSubStep === "search"
                             ? "bg-phase-3 text-white"
-                            : "text-gray-500 hover:text-gray-900 hover:bg-gray-100",
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted",
                         )}
                       >
                         1. Patent Search Strategy
@@ -903,7 +903,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                           "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
                           patentSubStep === "novelty"
                             ? "bg-phase-3 text-white"
-                            : "text-gray-500 hover:text-gray-900 hover:bg-gray-100",
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted",
                         )}
                       >
                         2. Novelty & TRL Analysis
@@ -947,7 +947,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                             href="https://patents.google.com/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs text-gray-500 hover:text-gray-900 hover:border-phase-3/30 transition-colors"
+                            className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-phase-3/30 transition-colors"
                           >
                             <ExternalLink className="h-3 w-3" />
                             Google Patents
@@ -956,7 +956,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                             href="https://worldwide.espacenet.com/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs text-gray-500 hover:text-gray-900 hover:border-phase-3/30 transition-colors"
+                            className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-phase-3/30 transition-colors"
                           >
                             <ExternalLink className="h-3 w-3" />
                             Espacenet
@@ -1013,14 +1013,14 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                   <CardContent className="p-6 space-y-4">
                     <div className="flex items-center gap-2 mb-2">
                       <Sparkles className="h-5 w-5 text-phase-3" />
-                      <h3 className="text-sm font-semibold text-gray-900">3C: Merit Enhancement Modules</h3>
+                      <h3 className="text-sm font-semibold text-foreground">3C: Merit Enhancement Modules</h3>
                     </div>
 
                     {/* Scheme guidance hint */}
                     {(moduleGuidance.required.length > 0 || moduleGuidance.recommended.length > 0) && (
                       <div className="rounded-lg border border-phase-3/20 bg-phase-3/5 p-3 space-y-1">
                         {moduleGuidance.required.filter((id) => MODULE_3C.some((m) => m.id === id)).length > 0 && (
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-muted-foreground">
                             <span className="font-medium text-rose-600">Required for {activeProject?.grantScheme}:</span>{" "}
                             {moduleGuidance.required
                               .map((id) => MODULE_3C.find((m) => m.id === id)?.label)
@@ -1029,8 +1029,8 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                           </p>
                         )}
                         {moduleGuidance.recommended.filter((id) => MODULE_3C.some((m) => m.id === id)).length > 0 && (
-                          <p className="text-xs text-gray-500">
-                            <span className="font-medium text-amber-600">Recommended:</span>{" "}
+                          <p className="text-xs text-muted-foreground">
+                            <span className="font-medium text-amber-600 dark:text-amber-400">Recommended:</span>{" "}
                             {moduleGuidance.recommended
                               .map((id) => MODULE_3C.find((m) => m.id === id)?.label)
                               .filter(Boolean)
@@ -1054,13 +1054,13 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                             <div
                               className={cn(
                                 "flex items-center gap-3 rounded-lg border p-3 transition-colors",
-                                enabled ? "border-phase-3/30 bg-phase-3/5" : "border-gray-200",
+                                enabled ? "border-phase-3/30 bg-phase-3/5" : "border-border",
                               )}
                             >
-                              <ModIcon className={cn("h-4 w-4 shrink-0", enabled ? "text-phase-3" : "text-gray-400")} />
+                              <ModIcon className={cn("h-4 w-4 shrink-0", enabled ? "text-phase-3" : "text-muted-foreground")} />
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-1.5 flex-wrap">
-                                  <p className={cn("text-xs font-medium", enabled ? "text-gray-900" : "text-gray-600")}>
+                                  <p className={cn("text-xs font-medium", enabled ? "text-foreground" : "text-muted-foreground")}>
                                     {mod.label}
                                   </p>
                                   {isRequired && (
@@ -1069,7 +1069,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                                     </Badge>
                                   )}
                                   {isRecommended && (
-                                    <Badge className="text-[9px] bg-amber-100 text-amber-600 border-amber-200 px-1">
+                                    <Badge className="text-[9px] bg-amber-100 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 px-1">
                                       Recommended
                                     </Badge>
                                   )}
@@ -1077,7 +1077,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                                     <Check className="h-3 w-3 text-emerald-500" />
                                   )}
                                 </div>
-                                <p className="text-[11px] text-gray-400 truncate">{mod.description}</p>
+                                <p className="text-[11px] text-muted-foreground truncate">{mod.description}</p>
                               </div>
                               <Switch
                                 checked={enabled}
@@ -1167,13 +1167,13 @@ function ModuleCard({
     <Card
       className={cn(
         "transition-all",
-        enabled ? `border-${phaseColor}/30 bg-${phaseColor}/5` : "border-gray-200",
+        enabled ? `border-${phaseColor}/30 bg-${phaseColor}/5` : "border-border",
       )}
     >
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Icon className={cn("h-5 w-5", enabled ? `text-${phaseColor}` : "text-gray-400")} />
+            <Icon className={cn("h-5 w-5", enabled ? `text-${phaseColor}` : "text-muted-foreground")} />
             <Badge variant="outline" className={cn("text-[10px]", enabled && `border-${phaseColor}/30 text-${phaseColor}`)}>
               {badge}
             </Badge>
@@ -1181,15 +1181,15 @@ function ModuleCard({
               <Badge className="text-[9px] bg-rose-100 text-rose-600 border-rose-200 px-1">Required</Badge>
             )}
             {guidanceBadge === "recommended" && (
-              <Badge className="text-[9px] bg-amber-100 text-amber-600 border-amber-200 px-1">Recommended</Badge>
+              <Badge className="text-[9px] bg-amber-100 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 px-1">Recommended</Badge>
             )}
           </div>
           <Switch checked={enabled} onCheckedChange={onToggle} />
         </div>
-        <h4 className={cn("text-sm font-medium mb-1", enabled ? "text-gray-900" : "text-gray-600")}>
+        <h4 className={cn("text-sm font-medium mb-1", enabled ? "text-foreground" : "text-muted-foreground")}>
           {title}
         </h4>
-        <p className="text-xs text-gray-400">{description}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
         {enabled && (
           <div className="flex items-center gap-2 mt-3">
             {stepStatus === "complete" ? (
@@ -1197,7 +1197,7 @@ function ModuleCard({
             ) : stepStatus !== "not-started" ? (
               <Badge variant="outline" className="text-[10px]">In Progress</Badge>
             ) : (
-              <Badge variant="outline" className="text-[10px] text-gray-500">Ready</Badge>
+              <Badge variant="outline" className="text-[10px] text-muted-foreground">Ready</Badge>
             )}
             {count !== undefined && count > 0 && (
               <Badge variant="outline" className="text-[10px]">{count} module{count !== 1 ? "s" : ""}</Badge>
