@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "targetFunder",
     "Proposal_Data.md",
     "Methods_Draft.md",
+    "Budget_Justification.md",
     "grantScheme",
   ],
   outputName: "Budget_Justification_Draft.md",
@@ -35,11 +36,30 @@ export const template: PromptTemplate = {
 ## METHODS (every budget line must trace here)
 {{> Methods_Draft.md}}
 
+{{#if Budget_Justification.md}}
+---
+
+## EXISTING BUDGET JUSTIFICATION (from Phase 4)
+The researcher has already produced a comprehensive Budget Justification in Phase 4. Your task is NOT to redo this analysis from scratch. Instead, take the existing justification below and adapt it into polished proposal-section prose:
+- Tighten the language for a proposal audience (evaluators, not administrators)
+- Ensure every cost connects to a specific method from the Methods section above
+- Remove compliance-checklist language and replace with persuasive narrative
+- Preserve all specific numbers, rates, and justification logic
+- Add cross-references to the Methods section (e.g., "As described in Work Package 2...")
+
+{{> Budget_Justification.md}}
+{{/if}}
+
 ---
 
 ## INSTRUCTIONS
 
+{{#if Budget_Justification.md}}
+Adapt the existing Phase 4 Budget Justification (above) into polished proposal-section prose. Focus on tightening language, strengthening method connections, and making the narrative persuasive for evaluators. Do NOT regenerate the analysis from scratch.
+{{/if}}
+{{#unless Budget_Justification.md}}
 Write a budget justification narrative that explains WHY each budget item is necessary and HOW it connects to the research methods. This is NOT a budget table — it is a persuasive narrative.
+{{/unless}}
 
 ### 1. Personnel
 - Justify each role: PI, Co-PIs, postdocs, PhD students, research assistants, technicians
