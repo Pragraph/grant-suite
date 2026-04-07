@@ -90,6 +90,10 @@ const SCHEME_MODULE_GUIDANCE: Record<string, SchemeModuleGuidance> = {
     required: ["kpi", "originality"],
     recommended: ["patent", "national", "sdg", "profile"],
   },
+  GET: {
+    required: ["patent", "kpi", "partnership"],
+    recommended: ["national", "sdg", "profile", "trl", "originality"],
+  },
   PRGS: {
     required: ["patent", "trl", "kpi"],
     recommended: ["national", "sdg", "profile"],

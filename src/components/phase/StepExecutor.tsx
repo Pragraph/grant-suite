@@ -459,6 +459,7 @@ export function StepExecutor({
         careerStage: activeProject.careerStage,
         targetFunder: activeProject.targetFunder,
         budgetRange: activeProject.budgetRange,
+        grantSubCategory: activeProject.grantSubCategory,
       },
       documents: documentMap,
       formInputs: execState.formValues,

@@ -24,6 +24,7 @@ import {
   DrawerFooter,
   DrawerClose,
 } from "@/components/ui/drawer";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -145,6 +146,7 @@ export function CreateProjectDrawer({
   const [targetFunder, setTargetFunder] = useState("");
   const [currency, setCurrency] = useState("");
   const [budgetRange, setBudgetRange] = useState("");
+  const [grantSubCategory, setGrantSubCategory] = useState<"exploratory" | "transformative" | "">("");
   const [drawerStep, setDrawerStep] = useState<"info" | "journey">("info");
   const [journeyMode, setJourneyMode] = useState<JourneyMode | null>(null);
 
@@ -175,6 +177,7 @@ export function CreateProjectDrawer({
       setCurrency(info.defaultCurrency);
     }
     setBudgetRange(""); // Reset since ranges change per scheme
+    setGrantSubCategory(""); // Reset sub-category when scheme changes
   };
 
   const isMalaysianScheme = grantScheme
@@ -186,7 +189,9 @@ export function CreateProjectDrawer({
     currency || (isMalaysianScheme ? "MYR" : "USD"),
   );
 
-  const isValid = discipline.trim() && country;
+  const schemeInfo = grantScheme ? GRANT_SCHEME_MAP[grantScheme] : null;
+  const needsSubCategory = schemeInfo?.subCategories && schemeInfo.subCategories.length > 0;
+  const isValid = discipline.trim() && country && (!needsSubCategory || grantSubCategory);
 
   const generateDraftTitle = (): string => {
     const schemeInfo = grantScheme ? GRANT_SCHEME_MAP[grantScheme] : null;
@@ -220,6 +225,7 @@ export function CreateProjectDrawer({
       careerStage: "",
       currency: currency || undefined,
       grantScheme: grantScheme || undefined,
+      grantSubCategory: grantSubCategory || undefined,
       targetFunder: targetFunder.trim() || undefined,
       budgetRange: budgetRange || undefined,
       journeyMode: selectedMode,
@@ -241,6 +247,7 @@ export function CreateProjectDrawer({
     setTargetFunder("");
     setCurrency("");
     setBudgetRange("");
+    setGrantSubCategory("");
     setDrawerStep("info");
     setJourneyMode(null);
     onOpenChange(false);
@@ -411,6 +418,34 @@ export function CreateProjectDrawer({
                 {GRANT_SCHEME_MAP[grantScheme].description}
               </p>
             )}
+            {/* GET sub-category selector */}
+            {grantScheme && GRANT_SCHEME_MAP[grantScheme]?.subCategories && (
+              <div className="mt-3 space-y-2">
+                <Label className="text-xs font-medium text-foreground">
+                  Research Type <span className="text-error">*</span>
+                </Label>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {GRANT_SCHEME_MAP[grantScheme].subCategories!.map((sub) => (
+                    <button
+                      key={sub.id}
+                      type="button"
+                      onClick={() => setGrantSubCategory(sub.id as "exploratory" | "transformative")}
+                      className={cn(
+                        "flex flex-col items-start gap-1 rounded-xl border p-3 text-left transition-all",
+                        "hover:border-[#4F7DF3]/40 hover:shadow-sm",
+                        grantSubCategory === sub.id
+                          ? "border-[#4F7DF3] bg-[#F0F4FF] dark:bg-[#4F7DF3]/10 dark:border-[#4F7DF3]/60"
+                          : "border-border bg-card",
+                      )}
+                    >
+                      <p className="text-xs font-semibold text-foreground">{sub.name}</p>
+                      <p className="text-[11px] text-muted-foreground leading-snug">{sub.description}</p>
+                      <Badge variant="outline" className="text-[9px] mt-1">{sub.trlRange}</Badge>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 6. Target Funder */}
@@ -469,6 +504,23 @@ export function CreateProjectDrawer({
                 to match MyGRANTS requirements including evaluation criteria, required attachments,
                 and formatting.
               </p>
+            </div>
+          )}
+
+          {/* GET-specific requirements banner */}
+          {grantScheme === "GET" && (
+            <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-3 space-y-1.5">
+              <p className="text-xs font-medium text-amber-700 dark:text-amber-300">
+                GET Mandatory Requirements
+              </p>
+              <ul className="text-xs text-amber-600 dark:text-amber-400 space-y-0.5 list-disc list-inside">
+                <li>Industry collaboration required (LOI/MoU/MoA)</li>
+                <li>Patent search via lens.org required</li>
+                <li>Minimum 1 IP filing required (priority: patent)</li>
+                <li>Return of Value (ROV) mandatory — 3-year post-completion monitoring</li>
+                <li>Mentor required for Associate Professor and below</li>
+                <li>Maximum 3 GET projects as PI across your entire career</li>
+              </ul>
             </div>
           )}
         </div>

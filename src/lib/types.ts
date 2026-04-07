@@ -27,6 +27,7 @@ export interface Project {
   careerStage: string;
   currency?: string;
   grantScheme?: GrantScheme;
+  grantSubCategory?: "exploratory" | "transformative";
   journeyMode?: JourneyMode;
   startingPhase?: number;     // the phase the user begins at
   targetFunder?: string;
@@ -43,6 +44,7 @@ export interface Project {
 
 export type MalaysianGrantScheme =
   | "FRGS"
+  | "GET"
   | "PRGS"
   | "TRGS"
   | "LRGS"
@@ -72,6 +74,12 @@ export interface GrantSchemeInfo {
   requiresMyGrants?: boolean;
   requiresTurnitin?: boolean;
   maxSimilarityIndex?: number;
+  subCategories?: { id: string; name: string; description: string; trlRange: string }[];
+  requiresIndustryCollaboration?: boolean;
+  requiresIPFiling?: boolean;
+  requiresMentor?: boolean;
+  requiresROV?: boolean;
+  lifetimeProjectCap?: number;
   description: string;
 }
 
