@@ -15,6 +15,7 @@ export const template: PromptTemplate = {
     "Grant_Intelligence.md",
     "Team_Strategy.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Budget_Draft.md",
   epTags: ["EP-08", "EP-09"],
@@ -74,6 +75,19 @@ For Malaysian MOHE grants, budgets follow a prescribed structure:
   - Any single item exceeding RM3,000 requires 3 formal quotations attached in MyGRANTS
   - Vote 35000 (Capital Equipment) — FRGS is generally not for buying equipment (no laptops, freezers). Keep at zero unless absolutely essential and well-justified.
   - Vague budget descriptions — do not write "Sequencing services." Write "Shotgun Metagenomics Sequencing for 100 samples (50 GDM, 50 Control) at [specific provider]."
+
+**GET-Specific Budget Differences from FRGS:**
+If the target grant scheme is **GET**, apply these rules INSTEAD of the FRGS equivalents where they differ:
+
+- **GRA Allowances (Vot 11000):** PhD ceiling is RM3,000/month (not RM2,800). Masters ceiling is RM2,500/month (not RM2,300). KWSP/PERKESO deductions are NOT allowed (confirmed in official briefing).
+- **RA (Vot 11000):** RA is listed under Vot 11000 in GET (not Vot 29000 as in FRGS). GRA and RA cannot be appointed simultaneously.
+- **Travel (Vot 21000):** Maximum 20% of total project budget (not 40% as in FRGS). This is a significantly tighter cap — budget travel conservatively.
+- **Equipment (Vot 35000):** Maximum 30% of total project budget (not 40% as in FRGS). Emphasis is on direct research costs, not equipment acquisition.
+- **IP Fees:** IP filing fees ARE allowed in GET budget (they are NOT allowed in FRGS). Budget for at least 1 patent filing.
+- **Short-term courses (Vot 29000):** Maximum 5% of total budget, once only during the research period. Overseas courses only allowed online.
+- **Publication fees (Vot 29000):** APC maximum RM10,000 (same as FRGS).
+- **Conference travel overseas:** Only for projects in year 2 or later. Maximum 2 researchers. One trip per project. GRA limited to domestic and ASEAN conferences only.
+- **Budget philosophy:** GET emphasizes "Principle of Commensurability" — ROV must be commensurate with the budget requested. Over-requesting with weak ROV projections is a red flag.
 
 Format the budget using the MOHE Vote structure above. Include a column for Year 1 / Year 2 / Year 3 breakdown.
 {{/if}}

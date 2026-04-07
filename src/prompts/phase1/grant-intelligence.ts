@@ -16,6 +16,7 @@ export const template: PromptTemplate = {
     "careerStage",
     "targetFunder",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Grant_Intelligence.md",
   epTags: ["EP-01", "EP-02", "EP-04"],
@@ -47,6 +48,7 @@ If this is a MOHE competitive grant (FRGS, PRGS, TRGS, LRGS, PPRN), incorporate 
 - TRGS: evaluated on Trans-disciplinary Integration, National Impact, Multi-institutional Collaboration Quality
 - LRGS: evaluated on Strategic National Priority Alignment, Research Programme Quality, Consortium Strength
 - PPRN: evaluated on Industry Relevance, Partnership Strength, Applied Research Quality
+- **GET (Geran Penyelidikan Eksploratori dan Transformatif):** Two sub-categories — Exploratory (TRL 1-2) and Transformative (TRL 2-3). Evaluated with EXPLICIT scoring weights: Title & Keywords 5%, Executive Summary 10%, Background 15%, Objectives 10%, Methodology 20%, Expected Results/ROV 20%, Team Collaboration 10%, Industry Partner/Evidence 10%. Key differentiators from FRGS: industry collaboration is MANDATORY (LOI/MoU/MoA required, not just encouraged), patent search is MANDATORY (via lens.org, keywords must be consistent with project title), minimum 1 IP filing required (priority: patent), ROV (Return of Value) is MANDATORY with 3-year post-completion monitoring, mentor required for Associate Professor and below (Gred Khas C or equivalent). Maximum 3 GET projects as PI across entire career (lifetime cap). GRA rates: PhD RM3,000/month, Masters RM2,500/month. Travel capped at 20% (not 40%). Equipment capped at 30%. Must align with: RPTM 2026-2035, Mega Trends RMK13, BITARA, MADANI Big Bolds, ESG, MySTIE 10-10, SDGs. Integrity requirement: applicants must be free from disciplinary action, bankruptcy, high debt, or criminal record. No overlap with PRGS allowed.
 
 **Key Malaysian Policy Documents to Reference:**
 - 13th Malaysia Plan (RMKe-13)
@@ -64,7 +66,16 @@ If this is a MOHE competitive grant (FRGS, PRGS, TRGS, LRGS, PPRN), incorporate 
 - Letters of support (if applicable)
 - Researcher CV in MyGRANTS profile format
 
+**Additional GET-Specific Attachments (verify against current MyGRANTS form):**
+- Patent search report from lens.org (mandatory for both Exploratory and Transformative)
+- Industry collaboration evidence: LOI / MoU / MoA with clear description of partner roles and contributions
+- Risk assessment plan (mandatory — must include risk level estimation)
+- ROV projection (Return of Value — estimate of research return commensurate with investment)
+- Mentor details (for Associate Professor and below): name, position (Gred Khas C or equivalent), institution, expertise alignment
+- Target TRL declaration (TRL 1, 2, or 3)
+
 Search for the latest MyGRANTS guidelines and any recent changes to the evaluation criteria for the {{grantScheme}} scheme specifically.
+If this is a GET application, also search for the latest GET guidelines, the GET application form structure, the RPTM 2026-2035 document, and the Mega Trends RMK13 framework to inform the intelligence gathering.
 {{/if}}
 
 {{#if grant_guidelines_text}}

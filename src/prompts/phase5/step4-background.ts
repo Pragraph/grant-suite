@@ -15,6 +15,7 @@ export const template: PromptTemplate = {
     "Proposal_Data.md",
     "Executive_Summary_Draft.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Background_Draft.md",
   epTags: ["EP-01", "EP-02", "EP-03", "EP-10"],
@@ -101,5 +102,17 @@ Output as a markdown document titled "# Background & Significance" with clear su
 {{#if grantScheme}}
 ## MYGRANTS SUBMISSION TIP
 This maps to the "Literature Review / Background" field in MyGRANTS. The panel reads this to judge whether you understand the field. Use citations strictly from the last 5 years (2022–2026) for core claims. Older citations signal a stale literature review to MOHE panels.
+
+If the target grant scheme is **GET**, note the explicit evaluation weights:
+- Title & Keywords: 5%
+- Executive Summary: 10%
+- Background: 15%
+- Objectives: 10%
+- Methodology: 20%
+- Expected Results/ROV: 20%
+- Team Collaboration: 10%
+- Industry Partner/Evidence: 10%
+
+Allocate writing effort proportionally — Methodology and Expected Results/ROV together carry 40% of the score.
 {{/if}}`,
 };

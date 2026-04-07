@@ -14,6 +14,7 @@ export const template: PromptTemplate = {
     "cvSummary",
     "Grant_Intelligence.md",
     "grantScheme",
+    "grantSubCategory",
     "Method4_Convergence_Synthesis.md",
     "Method1_Gap_Synthesis.md",
     "Method2_Trend_Discovery.md",

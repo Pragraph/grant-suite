@@ -14,6 +14,7 @@ export const template: PromptTemplate = {
     "budgetRange",
     "keywords",
     "grantScheme",
+    "grantSubCategory",
     "Method4_Convergence_Synthesis.md",
     "Method1_Gap_Synthesis.md",
     "Method3_Research_Direction_Brief.md",
@@ -44,6 +45,7 @@ If the target grant scheme is one of the MOHE competitive grants (FRGS, PRGS, TR
 
 **Key Malaysian Funders to Include:**
 - Ministry of Higher Education (MOHE) — FRGS, PRGS, TRGS, LRGS, PPRN
+- Ministry of Higher Education (MOHE) — GET (Exploratory & Transformative Research Grant) — new scheme from 2026
 - Ministry of Science, Technology and Innovation (MOSTI)
 - Malaysian Toray Science Foundation (MTSF)
 - Academy of Sciences Malaysia (ASM)

@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "Proposal_Blueprint.md",
     "Research_Design.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "National_Alignment.md",
   epTags: ["EP-02", "EP-04"],

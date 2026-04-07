@@ -17,6 +17,7 @@ export const template: PromptTemplate = {
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
     "grantScheme",
+    "grantSubCategory",
     "Method4_Convergence_Synthesis.md",
     "Method1_Gap_Synthesis.md",
     "Method2_Trend_Discovery.md",
@@ -79,6 +80,12 @@ For MOHE grants, evaluators have specific methodology expectations:
 - Ethical approval timeline (mention MREC/institutional ethics committee)
 - For PRGS: include prototype development methodology and testing protocol
 - Gantt chart data that maps to the MOHE-standard project timeline format
+- For GET: Must explicitly declare target TRL (1, 2, or 3). The selected sub-category is {{grantSubCategory}}.
+  - Exploratory (TRL 1-2): methodology should emphasize exploration, hypothesis generation, and understanding — qualitative/mixed methods, grounded theory, phenomenological approaches, or fundamental experimental designs are appropriate
+  - Transformative (TRL 2-3): methodology should emphasize proof of concept, system change, and measurable transformation — action research, design science, implementation research, or quasi-experimental designs with clear before/after measurement
+- For GET: industry collaboration integration must be visible in the methodology — describe how the industry partner contributes to data collection, validation, testing, or application
+- For GET: risk assessment plan is mandatory — include a comprehensive risk register with estimated risk levels (not just mitigation strategies)
+- For GET: ROV planning should be embedded in the methodology — describe how outputs will be measured and tracked, including the 3-year post-completion monitoring plan
 {{/if}}
 
 ## INSTRUCTIONS

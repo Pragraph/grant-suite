@@ -14,6 +14,7 @@ export const template: PromptTemplate = {
     "Proposal_Blueprint.md",
     "Research_Design.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Patent_Search_Strategy.md",
   epTags: ["EP-01"],
@@ -44,7 +45,9 @@ export const template: PromptTemplate = {
 ## MYGRANTS PATENT SEARCH REQUIREMENTS
 For MOHE grants, a Simplified Patent Search Report strengthens your application:
 - **PRGS:** Patent search is mandatory
-- **FRGS:** Patent search is encouraged (digalakkan) as of Pindaan 2025 — not mandatory, but highly recommended as it demonstrates novelty awareness to the evaluation panel The report must follow the MyGRANTS template format:
+- **FRGS:** Patent search is encouraged (digalakkan) as of Pindaan 2025 — not mandatory, but highly recommended as it demonstrates novelty awareness to the evaluation panel
+- **GET:** Patent search is MANDATORY for both Exploratory and Transformative categories. Must use www.lens.org as the primary database. Keywords must be consistent with the project title. The report must follow the MyGRANTS template format. This is a strict requirement — proposals without patent search evidence will be rejected at the internal evaluation stage.
+The report must follow the MyGRANTS template format:
 - Search must cover at least 2–3 patent databases (Lens.org, Google Patents, MyIPO recommended)
 - Include: search date, databases searched, search strings used, number of results
 - List the most relevant patents found (title, patent number, applicant, filing date)
@@ -52,7 +55,7 @@ For MOHE grants, a Simplified Patent Search Report strengthens your application:
 - MyIPO (Malaysian Intellectual Property Office at https://www.myipo.gov.my/) should be included as one of the databases for Malaysian patent coverage
 - The report format must match the MOHE-prescribed template available in MyGRANTS guidelines
 
-Generate search strings that work in Lens.org (the recommended free tool) and Google Patents.
+Generate search strings that work in Lens.org (mandatory for GET; recommended for all MOHE grants) and Google Patents.
 {{/if}}
 
 ## INSTRUCTIONS

@@ -15,6 +15,7 @@ export const template: PromptTemplate = {
     "Proposal_Blueprint.md",
     "Research_Design.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "KPI_Plan.md",
   epTags: ["EP-04", "EP-05", "EP-07"],
@@ -57,6 +58,45 @@ For MOHE grants, KPIs are evaluated strictly. MyGRANTS requires specific targets
 - **Commercialisation:** For PRGS — prototype completion, licensing discussions, industry adoption.
 - Format KPIs in a Year 1 / Year 2 / Year 3 / Cumulative table matching the MyGRANTS form fields.
 - Be realistic — over-promising with undelivered prior KPIs damages future applications.
+
+**GET-Specific KPI and ROV Requirements:**
+If the target grant scheme is **GET**, the following additional requirements apply:
+
+- **IP Filing (Mandatory):** Minimum 1 IP filing required. Priority is patent. 8 types of IP recognized: Patent/Utility Innovation (priority), Industrial Design, Geographical Indications, Copyright, Integrated Circuit Layout Design, New Plant Variety, Technology Disclosure, Trademark.
+- **Publications:** Strongly encouraged (not strictly mandatory like FRGS). Articles in indexed journals with GET JPT acknowledgment. Industry co-authored publications are strongly encouraged.
+- **Talent (GRA):** PhD or Masters full-time research mode. Priority given to Malaysian citizens. GRA rates: PhD max RM3,000/month, Masters max RM2,500/month.
+- **ROV (Return of Value) — MANDATORY:**
+  ROV is a paradigm shift unique to GET. Every project must produce ROV commensurate with the investment. ROV is calculated based on:
+  (a) IP registration
+  (b) Publications
+  (c) Talent development
+  (d) Changes to target groups (beneficiaries)
+
+  The ROV projection must be attached to the application. ROV is monitored for 3 YEARS after project completion — plan for long-term impact from the start.
+
+- **Policy Impact (if applicable):** Guidelines, white papers, or technical reports presented to relevant ministries/agencies.
+- **Beneficiaries (if applicable):** Must identify target beneficiaries — Government, Industry, Community, Schools, NGOs, etc.
+- **Video Impact:** 3-minute video following JPT format guidelines required as final deliverable.
+- **Infographic/Poster:** Required as final deliverable alongside the video.
+
+**GET ROV Output Planning Table (use this structure):**
+
+| Output | Impact Target | Impact Indicator | Example KPI |
+|--------|--------------|-----------------|-------------|
+| Publications | New knowledge generation & research visibility | Number of publications, journal index, citations | ≥1 indexed journal article (Scopus/WoS/MyCITE) |
+| Conferences | Knowledge dissemination | Presentations delivered | ≥1 conference presentation |
+| Talent (GRA) | Graduate employability & advanced expertise | Employment rate, starting salary | ≥80% employed within 6 months |
+| IP Filing | Innovation protection & commercialization readiness | Number of IP filed, type, status | ≥1 IP filing (patent priority) |
+| Guidelines/White Paper | Technical reference & knowledge transfer | Documents approved/adopted | ≥1 technical document presented to ministry/agency |
+| Beneficiaries | Improved efficiency/quality of life | Satisfaction level, number of beneficiaries | ≥1 target group benefiting; ≥70% satisfaction |
+| Policy Impact | Evidence-based policy support | Number of policy inputs, recognition | ≥1 technical input to policy/standard |
+| Cost/Time Savings | Operational efficiency | Percentage saved | ≥20% time or ≥15% cost savings vs existing methods |
+| Economic/Social Impact | Value creation & social welfare | Economic value, beneficiary count | ≥1 community/industry engaged |
+| External Funding | Research sustainability | Follow-on funding secured | ≥1 external funding application; ≥RM100,000 |
+| Prototype/Invention | Proof of concept & TRL readiness | TRL level achieved | ≥1 proof-of-concept at TRL 2-3 |
+| Commercialization | Revenue generation | Licensing agreements, market tests | ≥1 licensing agreement or market test |
+
+Format KPIs in a Year 1 / Year 2 / Year 3 / Cumulative table matching the MyGRANTS form fields.
 {{/if}}
 
 ## INSTRUCTIONS

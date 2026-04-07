@@ -15,6 +15,7 @@ export const template: PromptTemplate = {
     "Executive_Summary_Draft.md",
     "Methods_Draft.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Impact_Draft.md",
   epTags: ["EP-04", "EP-05", "EP-06", "EP-10"],
@@ -98,5 +99,17 @@ Output as a markdown document titled "# Expected Impact & Significance" with cle
 {{#if grantScheme}}
 ## MYGRANTS SUBMISSION TIP
 Impact content maps to "Expected Findings / Results" in MyGRANTS. MOHE panels expect concrete, measurable outcomes, not aspirational language. Include specific publication targets (e.g., "2 Scopus/WoS-indexed journal articles") and postgraduate output (e.g., "1 Masters student graduated").
+
+If the target grant scheme is **GET**, note the explicit evaluation weights:
+- Title & Keywords: 5%
+- Executive Summary: 10%
+- Background: 15%
+- Objectives: 10%
+- Methodology: 20%
+- Expected Results/ROV: 20%
+- Team Collaboration: 10%
+- Industry Partner/Evidence: 10%
+
+Allocate writing effort proportionally — Methodology and Expected Results/ROV together carry 40% of the score.
 {{/if}}`,
 };

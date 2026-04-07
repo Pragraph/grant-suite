@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "targetFunder",
     "Complete_Proposal.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "EP_Audit_Report.md",
   epTags: [

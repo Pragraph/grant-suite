@@ -16,6 +16,7 @@ export const template: PromptTemplate = {
     "Competitive_Analysis.md",
     "Evaluator_Psychology.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Impact_Framework.md",
   epTags: ["EP-04", "EP-07", "EP-10"],
@@ -58,6 +59,12 @@ For MOHE grants, frame impact using these dimensions that Malaysian evaluators s
 - **Commercialisation Potential:** For PRGS — TRL advancement, patents, licensing
 - **Community/Industry Impact:** Tangible benefits to Malaysian society or industry partners
 - **International Visibility:** How the research positions Malaysia in the global research landscape
+- **GET-Specific Impact Dimensions:**
+  - **Return of Value (ROV):** Mandatory for GET. Must demonstrate that the research return is commensurate with the investment. ROV includes: IP filings, publications, talent development, changes to target groups, policy impact, economic/social benefit.
+  - **Industry/Agency Impact:** GET mandates industry collaboration — frame impact through the lens of industry adoption, policy uptake, or agency benefit.
+  - **Beneficiary Identification:** GET requires explicit identification of beneficiaries (government, industry, community, schools, NGOs, etc.) with specific impact indicators.
+  - **Post-Completion Impact Planning:** GET monitors ROV for 3 years after project completion — impact must be planned as a long-term trajectory, not just end-of-project deliverables.
+  - **Video Impact:** GET requires a 3-minute impact video as a final deliverable — consider how visual impact storytelling can be designed from the start.
 {{/if}}
 
 ## INSTRUCTIONS

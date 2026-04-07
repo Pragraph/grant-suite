@@ -26,6 +26,7 @@ export const template: PromptTemplate = {
     "country",
     "careerStage",
     "grantScheme",
+    "grantSubCategory",
     "method1_output",
     "method2_output",
     "method4_output",
@@ -90,6 +91,9 @@ When evaluating feasibility and funding fit, factor in the priorities of the {{g
 - For PRGS: the direction should show prototype or product potential with TRL progression
 - For TRGS/LRGS: evaluate whether the topic benefits from multi-disciplinary or multi-institutional collaboration
 - For international grants: evaluate international collaboration potential and global relevance
+- For GET (Exploratory): the direction must explore new knowledge — generating hypotheses, conceptual frameworks, or basic understanding. TRL target is 1-2. It should NOT be a prototype or product development project (those belong in PRGS).
+- For GET (Transformative): the direction must propose radical change to existing policies, SOPs, processes, or systems with a clear proof-of-concept pathway. TRL target is 2-3. Must have clear beneficiaries and measurable impact.
+- For GET (both types): industry collaboration is mandatory — the direction should be relevant to industry/agency partners. Patent search is mandatory. Minimum 1 IP filing required.
 {{/if}}
 
 {{#if method4_output}}
@@ -159,6 +163,36 @@ PRGS funds prototype development and proof-of-concept research. The topic must d
 - Evidence of prior fundamental work (ideally an FRGS completion or equivalent)
 
 If the topic has no prototype or product outcome, flag this as a concern and suggest how to reframe it.
+
+If the target grant scheme is **GET**:
+
+The selected GET sub-category is **{{grantSubCategory}}**.
+
+**GET Exploratory Requirement:**
+GET Exploratory funds research that explores new knowledge to understand problems or phenomena that are not yet well understood. Target TRL is 1-2. Acceptable outputs: new hypotheses, conceptual frameworks, basic understanding, or new theories. It does NOT fund:
+- Product development or prototype creation (belongs in PRGS)
+- Pure replication studies with no theoretical contribution
+- Studies that only describe without generating new conceptual understanding
+
+**Test the proposed topic:** Does it aim to EXPLORE and UNDERSTAND (Exploratory) or to CHANGE and PROVE (Transformative)?
+
+If the topic is tagged as Exploratory but proposes developing a product, system, or intervention, flag this as a **CRITICAL ISSUE** and suggest either:
+1. Reframe as a genuine exploration (focus on understanding the phenomenon before building solutions)
+2. Switch to Transformative sub-category if the topic proposes radical change with proof of concept
+
+**GET Transformative Requirement:**
+GET Transformative funds research that creates radical change to existing policies, SOPs, processes, or systems. Target TRL is 2-3. Must demonstrate:
+- Clear path from current state to transformed state
+- Identifiable beneficiaries (government, industry, community, schools, NGOs)
+- Proof of concept as a key deliverable
+- Measurable impact on the target system/policy/process
+
+If the topic has no clear transformation target or no identifiable beneficiaries, flag this as a concern and suggest how to reframe it.
+
+**For both GET types:**
+- Industry collaboration is mandatory — does the proposed direction lend itself to meaningful industry/agency partnership?
+- Patent search is mandatory — does the research direction have potential for intellectual property?
+- ROV (Return of Value) is mandatory — can the researcher articulate a clear return on investment?
 {{/if}}
 
 ### Stage 1: Topic and Question Analysis
@@ -210,6 +244,10 @@ Produce a refined version of the research direction including:
   - **Matter** — the specific subject (e.g., "Host-Microbiome Metabolic Interactions")
   - **Meaning** — the theoretical contribution (e.g., "Towards a New Theoretical Model of...")
   A strong FRGS title signals fundamental investigation, not applied development.
+  For GET specifically:
+  - Exploratory titles should signal investigation and understanding: "Exploring...", "Investigating...", "Understanding...", "Characterizing..."
+  - Transformative titles should signal change and impact: "Transforming...", "Redesigning...", "Reengineering...", "Innovating..."
+  - Both types benefit from the T3M formula but Transformative titles should also hint at the system/policy being changed.
 {{/if}}
 - **Core Research Question:** (the single strongest RQ)
 - **Supporting Questions:** (1–2 additional RQs if warranted)

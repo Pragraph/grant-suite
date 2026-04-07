@@ -12,6 +12,7 @@ export const template: PromptTemplate = {
     "careerStage",
     "Grant_Intelligence.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Evaluator_Psychology.md",
   epTags: ["EP-02", "EP-03", "EP-05", "EP-09", "EP-10"],
@@ -47,6 +48,7 @@ For Malaysian MOHE grants (FRGS, PRGS, TRGS, LRGS, PPRN), the evaluation panel h
 - **TRGS:** Trans-disciplinary integration quality matters most. Reviewers assess whether the collaboration is genuine or tokenistic.
 - **LRGS:** National strategic alignment and consortium governance are critical. Reviewers evaluate programme-level coherence across sub-projects.
 - **PPRN:** Industry partner commitment and applied relevance are the main criteria. Note: PPRN is submitted via pprn.mohe.gov.my, not MyGRANTS.
+- **GET:** Evaluators use EXPLICIT scoring weights — Methodology (20%) and Expected Results/ROV (20%) are the heaviest criteria. Industry Partner/Evidence carries 10% — this is unique to GET and means weak industry collaboration evidence is a guaranteed score reduction. Background (15%) and Team Collaboration (10%) are next. Title & Keywords (5%) may seem small but a poor title creates negative first impressions. Evaluators specifically look for: (a) radical/bold research elements that justify the "transformative" label, (b) quantifiable risk assessment with mitigation strategies, (c) patent/IP potential that is realistic and well-argued, (d) clear ROV projection that demonstrates value for money, (e) genuine industry engagement (not just a tokenistic LOI). For Exploratory proposals, evaluators assess whether the research genuinely explores the unknown vs. rehashing established knowledge. For Transformative proposals, they assess whether the proposed change is truly radical vs. incremental improvement.
 
 **Cultural Considerations for Malaysian Academic Panels:**
 - Respect for institutional hierarchy — demonstrate senior researcher oversight
@@ -54,6 +56,9 @@ For Malaysian MOHE grants (FRGS, PRGS, TRGS, LRGS, PPRN), the evaluation panel h
 - National service framing resonates — position research as serving Malaysia's development
 - Publications in indexed journals (Scopus/WoS) are expected as key outputs
 - Prior grant completion rate is checked (threshold is 75% as of Pindaan 2025) — address any gaps proactively
+- For GET: evaluators check the lifetime project cap (max 3 GET projects as PI) — address any prior GET/FRGS track record proactively
+- ROV is a paradigm shift — evaluators expect a concrete return-on-investment narrative, not vague impact claims
+- Industry collaboration evidence is scrutinized: a generic LOI with no specific commitments will weaken the score
 {{/if}}
 
 ## INSTRUCTIONS

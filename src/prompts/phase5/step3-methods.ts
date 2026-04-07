@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Draft the methods/methodology section with detailed procedures, work packages, and timeline.",
   requiredInputs: ["discipline", "grantName", "country", "wordLimit"],
-  optionalInputs: ["careerStage", "targetFunder", "Proposal_Data.md", "grantScheme"],
+  optionalInputs: ["careerStage", "targetFunder", "Proposal_Data.md", "grantScheme", "grantSubCategory"],
   outputName: "Methods_Draft.md",
   epTags: ["EP-03", "EP-04", "EP-05", "EP-08"],
   estimatedWords: 3000,
@@ -85,5 +85,17 @@ Output as a markdown document titled "# Research Methodology" with clear subsect
 {{#if grantScheme}}
 ## MYGRANTS SUBMISSION TIP
 This section maps to the "Methodology" text box in MyGRANTS. Copy this structure directly. Ensure each Work Package maps to a specific Research Objective. Include the Gantt chart data — MyGRANTS has a separate Gantt chart section (Section F) that must align with the methodology timeline.
+
+If the target grant scheme is **GET**, note the explicit evaluation weights:
+- Title & Keywords: 5%
+- Executive Summary: 10%
+- Background: 15%
+- Objectives: 10%
+- Methodology: 20%
+- Expected Results/ROV: 20%
+- Team Collaboration: 10%
+- Industry Partner/Evidence: 10%
+
+Allocate writing effort proportionally — Methodology and Expected Results/ROV together carry 40% of the score.
 {{/if}}`,
 };

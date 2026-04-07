@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "targetFunder",
     "Feedback_Analysis.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Resubmission_Strategy.md",
   epTags: ["EP-03", "EP-04", "EP-07", "EP-09", "EP-10"],

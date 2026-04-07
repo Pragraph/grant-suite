@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Draft a compelling executive summary that establishes the narrative arc for the entire proposal.",
   requiredInputs: ["discipline", "grantName", "country", "wordLimit"],
-  optionalInputs: ["careerStage", "targetFunder", "Proposal_Data.md", "grantScheme"],
+  optionalInputs: ["careerStage", "targetFunder", "Proposal_Data.md", "grantScheme", "grantSubCategory"],
   outputName: "Executive_Summary_Draft.md",
   epTags: ["EP-01", "EP-02", "EP-03", "EP-10"],
   estimatedWords: 1500,
@@ -91,5 +91,17 @@ Output the executive summary as a polished markdown document titled "# Executive
 {{#if grantScheme}}
 ## MYGRANTS SUBMISSION TIP
 This executive summary maps to the "Abstract" field in MyGRANTS (typically 300–500 words, verify exact limit). Make sure your first paragraph explicitly highlights the Scientific Knowledge Gap and promises a new theoretical/methodological contribution. Do not let reviewers think this is applied research.
+
+If the target grant scheme is **GET**, note the explicit evaluation weights:
+- Title & Keywords: 5%
+- Executive Summary: 10%
+- Background: 15%
+- Objectives: 10%
+- Methodology: 20%
+- Expected Results/ROV: 20%
+- Team Collaboration: 10%
+- Industry Partner/Evidence: 10%
+
+Allocate writing effort proportionally — Methodology and Expected Results/ROV together carry 40% of the score.
 {{/if}}`,
 };

@@ -15,6 +15,7 @@ export const template: PromptTemplate = {
     "Methods_Draft.md",
     "Budget_Justification.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Budget_Justification_Draft.md",
   epTags: ["EP-07", "EP-08", "EP-09", "EP-10"],
@@ -122,5 +123,17 @@ Output as a markdown document titled "# Budget Justification" with clear subsect
 {{#if grantScheme}}
 ## MYGRANTS SUBMISSION TIP
 Budget justification in MyGRANTS is entered per Vote code (11000, 21000, 24000, 27000, 28000, 29000, 35000). Structure your justification to match these Vote categories exactly. Any item exceeding RM3,000 will require 3 quotations uploaded as PDF attachments.
+
+If the target grant scheme is **GET**, note the explicit evaluation weights:
+- Title & Keywords: 5%
+- Executive Summary: 10%
+- Background: 15%
+- Objectives: 10%
+- Methodology: 20%
+- Expected Results/ROV: 20%
+- Team Collaboration: 10%
+- Industry Partner/Evidence: 10%
+
+Allocate writing effort proportionally — Methodology and Expected Results/ROV together carry 40% of the score.
 {{/if}}`,
 };

@@ -17,6 +17,7 @@ export const template: PromptTemplate = {
     "Budget_Draft.md",
     "KPI_Plan.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Form_Ready_Proposal.md",
   epTags: [],
@@ -110,6 +111,49 @@ For MOHE grants submitted via MyGRANTS, map proposal content to these standard f
 - Other supporting documents
 
 Map every section below to the MyGRANTS field it fills.
+
+### GET-Specific Form Fields (in addition to standard MyGRANTS fields):
+
+**GET Sub-Category Declaration:**
+- Research Type: Exploratory / Transformative (select one)
+- Target TRL: 1 / 2 / 3
+
+**Section: Industry Collaboration**
+- Collaborator name, institution/company, role, and specific contributions
+- Type of collaboration evidence: LOI / MoU / MoA
+- Document reference number and date
+
+**Section: Patent Search**
+- Database used (must include lens.org)
+- Search keywords (must be consistent with project title)
+- Number of results found
+- Most relevant patents identified
+- Novelty conclusion
+
+**Section: Mentor Details (if applicable)**
+- Mentor name, position, institution
+- Qualification level (must be Gred Khas C or equivalent and above)
+- Expertise alignment with project
+- Mentoring plan (frequency of sessions)
+
+**Section: ROV Projection**
+- IP targets (type, number, timeline)
+- Publication targets (journal tier, number, timeline)
+- Talent targets (GRA level, graduation timeline)
+- Beneficiary targets (type, number, impact indicators)
+- Policy impact targets (if applicable)
+- Economic/social impact estimates
+
+**Section: Risk Assessment**
+- Risk identification (at least 3-5 risks)
+- Risk level estimation (Low/Medium/High)
+- Mitigation strategies per risk
+- Contingency plans
+
+**Final Deliverables Checklist (GET-specific):**
+- [ ] 3-minute impact video (English voiceover, Malay subtitles mandatory)
+- [ ] Research infographic/poster (bilingual Malay & English)
+- [ ] Prototype documentation (if applicable)
 {{/if}}
 
 ## INSTRUCTIONS

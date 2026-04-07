@@ -11,6 +11,7 @@ export const template: PromptTemplate = {
   optionalInputs: [
     "assembledProposal",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Citation_Resolution.md",
   epTags: ["EP-03", "EP-08"],

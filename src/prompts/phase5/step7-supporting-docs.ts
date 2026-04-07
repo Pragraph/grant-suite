@@ -14,6 +14,7 @@ export const template: PromptTemplate = {
     "customDocumentTypes",
     "Proposal_Data.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Supporting_Documents.md",
   epTags: ["EP-05", "EP-06", "EP-08", "EP-09", "EP-10"],

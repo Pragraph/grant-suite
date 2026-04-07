@@ -12,6 +12,7 @@ export const template: PromptTemplate = {
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Originality_Check.md",
   epTags: ["EP-01", "EP-10"],

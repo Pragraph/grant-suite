@@ -13,6 +13,7 @@ export const template: PromptTemplate = {
     "targetFunder",
     "assembledProposal",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Complete_Proposal.md",
   epTags: ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-06", "EP-07", "EP-08", "EP-09", "EP-10"],
@@ -45,6 +46,14 @@ Before finalising, verify the assembled proposal against MyGRANTS requirements:
 - [ ] Letters of support attached (if applicable)
 - [ ] Researcher profiles in MyGRANTS are up-to-date
 - [ ] KPI targets are realistic and formatted per MyGRANTS fields
+- [ ] (GET only) Industry collaboration evidence attached (LOI/MoU/MoA with specific commitments)
+- [ ] (GET only) Patent search report from lens.org attached (keywords consistent with title)
+- [ ] (GET only) ROV projection completed and attached
+- [ ] (GET only) Risk assessment plan included with estimated risk levels
+- [ ] (GET only) Target TRL declared (1, 2, or 3)
+- [ ] (GET only) Mentor details provided (if Associate Professor or below)
+- [ ] (GET only) Video impact plan noted for final deliverables
+- [ ] (GET only) Beneficiaries identified with impact indicators
 {{/if}}
 
 ## INSTRUCTIONS

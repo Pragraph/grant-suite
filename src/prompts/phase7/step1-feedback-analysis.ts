@@ -14,6 +14,7 @@ export const template: PromptTemplate = {
     "Complete_Proposal.md",
     "Final_Proposal.md",
     "grantScheme",
+    "grantSubCategory",
   ],
   outputName: "Feedback_Analysis.md",
   epTags: ["EP-03", "EP-07", "EP-09"],
@@ -56,6 +57,8 @@ MOHE grants typically provide reviewer comments through MyGRANTS. Key considerat
 - MOHE reviewers sometimes provide scores without detailed comments — infer issues from low scores
 - Common MOHE rejection reasons: insufficient novelty evidence, weak methodology, unrealistic KPIs, poor national alignment, PI track record concerns
 - Resubmission to the same scheme in the next cycle is common and often successful if reviewer feedback is substantively addressed
+- For GET specifically: common rejection reasons include insufficient ROV projection, weak/tokenistic industry collaboration evidence, unclear TRL target, poor alignment breadth (missing Mega Trends/BITARA/ESG/SDGs mapping), unrealistic IP filing targets, and inadequate risk assessment. GET evaluators also flag proposals where the "transformative" label is claimed but the research is actually incremental.
+- GET allows resubmission — the lifetime cap is 3 projects, not 3 applications. A revised resubmission that substantively addresses reviewer feedback is common and often successful.
 {{/if}}
 
 ## INSTRUCTIONS

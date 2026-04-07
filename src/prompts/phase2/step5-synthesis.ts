@@ -17,6 +17,7 @@ export const template: PromptTemplate = {
     "Evaluator_Psychology.md",
     "Impact_Framework.md",
     "grantScheme",
+    "grantSubCategory",
     "Method4_Convergence_Synthesis.md",
     "Method1_Gap_Synthesis.md",
     "Method2_Trend_Discovery.md",
