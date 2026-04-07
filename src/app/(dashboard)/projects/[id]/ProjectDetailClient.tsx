@@ -487,8 +487,8 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                       className="border-t border-gray-100"
                     >
                       <div className="px-4 py-2 space-y-1">
-                        {phase.stepNames.map((stepName, stepIdx) => {
-                          const stepNum = stepIdx + 1;
+                        {phase.steps.map((stepDef, stepIdx) => {
+                          const stepNum = stepDef.step ?? stepIdx + 1;
                           const status: StepStatus =
                             phaseProgress?.steps[stepNum] ?? "not-started";
 
@@ -504,10 +504,10 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                               className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors cursor-pointer"
                             >
                               <span className="text-xs text-gray-400 font-mono w-5">
-                                {stepNum}
+                                {stepIdx + 1}
                               </span>
                               <span className="text-sm text-foreground/80 flex-1">
-                                {stepName}
+                                {stepDef.name}
                               </span>
                               <span
                                 className={`text-xs font-medium ${stepStatusColors[status]}`}
