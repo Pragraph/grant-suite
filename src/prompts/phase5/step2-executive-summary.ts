@@ -86,5 +86,10 @@ Write an executive summary that:
 **CRITICAL:** The summary MUST be under {{wordLimit}} words. Count carefully. If the limit is tight, prioritize the hook, gap, solution, and impact sections.
 
 ## OUTPUT FORMAT
-Output the executive summary as a polished markdown document titled "# Executive Summary" with the subsections flowing naturally as prose (not numbered sections). Include a word count at the end.`,
+Output the executive summary as a polished markdown document titled "# Executive Summary" with the subsections flowing naturally as prose (not numbered sections). Include a word count at the end.
+
+{{#if grantScheme}}
+## MYGRANTS SUBMISSION TIP
+This executive summary maps to the "Abstract" field in MyGRANTS (typically 300–500 words, verify exact limit). Make sure your first paragraph explicitly highlights the Scientific Knowledge Gap and promises a new theoretical/methodological contribution. Do not let reviewers think this is applied research.
+{{/if}}`,
 };

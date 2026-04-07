@@ -53,7 +53,7 @@ For Malaysian MOHE grants (FRGS, PRGS, TRGS, LRGS, PPRN), the evaluation panel h
 - Strong emphasis on capacity building (postgraduate training counts heavily)
 - National service framing resonates — position research as serving Malaysia's development
 - Publications in indexed journals (Scopus/WoS) are expected as key outputs
-- Prior grant completion rate is checked — address any gaps proactively
+- Prior grant completion rate is checked (threshold is 75% as of Pindaan 2025) — address any gaps proactively
 {{/if}}
 
 ## INSTRUCTIONS

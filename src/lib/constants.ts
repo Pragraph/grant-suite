@@ -15,12 +15,12 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     defaultBudgetRange: "RM 100,000 – RM 250,000",
     maxBudget: 250000,
     defaultCurrency: "MYR",
-    requiresPatentSearch: true,
+    requiresPatentSearch: false,
     requiresMyGrants: true,
     requiresTurnitin: true,
     maxSimilarityIndex: 20,
     description:
-      "Funds fundamental research across all disciplines in Malaysian public universities. Maximum RM250,000 for 2–3 years. Evaluated via MyGRANTS with emphasis on novelty, methodology, and researcher competency. Simplified Patent Search Report is mandatory.",
+      "Funds fundamental research across all disciplines in Malaysian public universities. Maximum RM250,000 for 2–3 years. Evaluated via MyGRANTS with emphasis on novelty, methodology, and researcher competency. Patent search is encouraged (digalakkan). Risk assessment plan is mandatory (dimestikan).",
   },
   {
     id: "PRGS",
@@ -249,6 +249,7 @@ export const DOCUMENT_DEPENDENCIES: DependencyEntry[] = [
   // Phase 3 — Research Design & Optional Modules
   { phase: 3, step: 1, produces: "Research_Design.md", requires: ["Grant_Intelligence.md", "Proposal_Blueprint.md"], optional: ["Method4_Convergence_Synthesis.md", "Method1_Gap_Synthesis.md", "Method2_Trend_Discovery.md", "Method3_Research_Direction_Brief.md"] },
   { phase: 3, step: 10, produces: "Partnership_Plan.md", requires: [], optional: [], isOptional: true },
+  { phase: 3, step: 10, produces: "Support_Letter.md", requires: [], optional: ["Partnership_Plan.md"], isOptional: true },
   { phase: 3, step: 11, produces: "Patent_Analysis.md", requires: [], optional: [], isOptional: true },
   { phase: 3, step: 12, produces: "SDG_Alignment.md", requires: [], optional: [], isOptional: true },
   { phase: 3, step: 13, produces: "National_Alignment.md", requires: [], optional: [], isOptional: true },
@@ -291,6 +292,7 @@ export const PHASE_DEFINITIONS: PhaseDefinition[] = [
   {
     phase: 1,
     name: "Foundation & Discovery",
+    description: "Discover your research direction, match grants, and gather intelligence",
     color: "phase-1",
     steps: [
       { step: 1, name: "Research Idea Discovery", type: "multi-method" },
@@ -301,6 +303,7 @@ export const PHASE_DEFINITIONS: PhaseDefinition[] = [
   {
     phase: 2,
     name: "Strategic Positioning",
+    description: "Analyze requirements, competition, and evaluator expectations",
     color: "phase-2",
     steps: [
       { step: 1, name: "Grant Requirements Analysis", type: "standard" },
@@ -313,6 +316,7 @@ export const PHASE_DEFINITIONS: PhaseDefinition[] = [
   {
     phase: 3,
     name: "Research Design & Optional Modules",
+    description: "Design methodology and complete optional grant-specific modules",
     color: "phase-3",
     steps: [
       { step: 1, name: "Research Design Generator", type: "standard" },
@@ -329,6 +333,7 @@ export const PHASE_DEFINITIONS: PhaseDefinition[] = [
   {
     phase: 4,
     name: "Budget & Team Planning",
+    description: "Plan team composition, budget framework, and justification",
     color: "phase-4",
     steps: [
       { step: 1, name: "Team Composition", type: "standard" },
@@ -339,6 +344,7 @@ export const PHASE_DEFINITIONS: PhaseDefinition[] = [
   {
     phase: 5,
     name: "Proposal Writing",
+    description: "Draft and assemble all proposal sections into a complete document",
     color: "phase-5",
     steps: [
       { step: 1, name: "Data Compilation", type: "standard" },
@@ -354,6 +360,7 @@ export const PHASE_DEFINITIONS: PhaseDefinition[] = [
   {
     phase: 6,
     name: "Quality Assurance & Finalization",
+    description: "Review, audit, and finalize the proposal for submission",
     color: "phase-6",
     steps: [
       { step: 1, name: "Mock Review", type: "standard" },
@@ -366,6 +373,7 @@ export const PHASE_DEFINITIONS: PhaseDefinition[] = [
   {
     phase: 7,
     name: "Post-Submission & Resubmission",
+    description: "Analyze feedback and prepare revised proposals for resubmission",
     color: "phase-7",
     steps: [
       { step: 1, name: "Feedback Analysis", type: "standard" },

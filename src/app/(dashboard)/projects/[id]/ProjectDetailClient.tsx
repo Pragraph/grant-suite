@@ -22,7 +22,7 @@ import { useUiStore } from "@/stores/ui-store";
 import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
 import { exportAllDocuments } from "@/lib/export-all";
-import { PHASES } from "@/lib/types";
+import { PHASE_DEFINITIONS } from "@/lib/constants";
 import type { Project, StepStatus, Document } from "@/lib/types";
 
 import { toast } from "sonner";
@@ -381,18 +381,18 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Left: Phase Pipeline */}
         <div className="flex-2 space-y-3">
-          {PHASES.map((phase, i) => {
-            const isExpanded = expandedPhase === phase.id;
-            const accessible = canAccessPhase(phase.id);
-            const completion = getPhaseCompletion(phase.id);
-            const isCurrent = project.currentPhase === phase.id;
-            const isBypassed = progress.phases[phase.id]?.gateStatus === "bypassed";
-            const phaseProgress = progress.phases[phase.id];
-            const phaseUrl = `/projects/${projectId}/phase/${phase.id}`;
+          {PHASE_DEFINITIONS.map((phase, i) => {
+            const isExpanded = expandedPhase === phase.phase;
+            const accessible = canAccessPhase(phase.phase);
+            const completion = getPhaseCompletion(phase.phase);
+            const isCurrent = project.currentPhase === phase.phase;
+            const isBypassed = progress.phases[phase.phase]?.gateStatus === "bypassed";
+            const phaseProgress = progress.phases[phase.phase];
+            const phaseUrl = `/projects/${projectId}/phase/${phase.phase}`;
 
             return (
               <motion.div
-                key={phase.id}
+                key={phase.phase}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25, delay: i * 0.04 }}
@@ -413,10 +413,10 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                   {/* Phase Row — toggles expand/collapse */}
                   <div
                     className={`flex w-full items-center gap-3 px-4 py-3 text-left select-none ${accessible ? "cursor-pointer" : "cursor-default"}`}
-                    onClick={() => accessible && setExpandedPhase(isExpanded ? null : phase.id)}
+                    onClick={() => accessible && setExpandedPhase(isExpanded ? null : phase.phase)}
                   >
                     <PhaseIcon
-                      phase={phase.id as 1 | 2 | 3 | 4 | 5 | 6 | 7}
+                      phase={phase.phase as 1 | 2 | 3 | 4 | 5 | 6 | 7}
                       active={isCurrent}
                     />
                     <div className="flex-1 min-w-0">

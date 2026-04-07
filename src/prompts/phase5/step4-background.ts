@@ -96,5 +96,10 @@ Write a background section that:
 Output as a markdown document titled "# Background & Significance" with clear subsections. At the end, include:
 1. Word count
 2. List of [CITATION NEEDED] placeholders with suggested search terms for finding appropriate references
-3. List of [USER INPUT NEEDED] items`,
+3. List of [USER INPUT NEEDED] items
+
+{{#if grantScheme}}
+## MYGRANTS SUBMISSION TIP
+This maps to the "Literature Review / Background" field in MyGRANTS. The panel reads this to judge whether you understand the field. Use citations strictly from the last 5 years (2022–2026) for core claims. Older citations signal a stale literature review to MOHE panels.
+{{/if}}`,
 };

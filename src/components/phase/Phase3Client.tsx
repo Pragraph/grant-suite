@@ -87,8 +87,8 @@ interface SchemeModuleGuidance {
 
 const SCHEME_MODULE_GUIDANCE: Record<string, SchemeModuleGuidance> = {
   FRGS: {
-    required: ["patent", "kpi", "originality"],
-    recommended: ["national", "sdg", "profile"],
+    required: ["kpi", "originality"],
+    recommended: ["patent", "national", "sdg", "profile"],
   },
   PRGS: {
     required: ["patent", "trl", "kpi"],

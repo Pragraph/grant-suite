@@ -97,5 +97,10 @@ Output as a markdown document titled "# Budget Justification" with clear subsect
 1. Word count
 2. Budget-to-method traceability table (which cost maps to which method/work package)
 3. List of [USER INPUT NEEDED] items requiring the user's actual budget figures
-4. List of [CITATION NEEDED] placeholders`,
+4. List of [CITATION NEEDED] placeholders
+
+{{#if grantScheme}}
+## MYGRANTS SUBMISSION TIP
+Budget justification in MyGRANTS is entered per Vote code (11000, 21000, 24000, 27000, 28000, 29000, 35000). Structure your justification to match these Vote categories exactly. Any item exceeding RM3,000 will require 3 quotations uploaded as PDF attachments.
+{{/if}}`,
 };

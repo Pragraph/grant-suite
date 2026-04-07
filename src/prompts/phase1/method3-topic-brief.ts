@@ -118,6 +118,49 @@ The researcher completed trend-based discovery. Use this as context when evaluat
 
 Produce a **Research Direction Brief** covering these stages. Be direct and critical where warranted. Do not inflate weak justifications.
 
+{{#if grantScheme}}
+### Stage 0: Topic Fitness Check
+
+**This stage is critical and must be completed before all other stages.**
+
+Evaluate whether the proposed research topic is appropriate for the {{grantScheme}} scheme:
+
+If the target grant scheme is **FRGS**:
+
+**FRGS Fundamental Research Requirement:**
+FRGS strictly funds fundamental research — the generation of new theories, concepts, models, or principles that advance the boundaries of knowledge. It does NOT fund:
+- Applied research (developing tools, products, systems, apps, or diagnostic kits)
+- Clinical trials or intervention effectiveness studies
+- Technology development or prototype creation (these belong in PRGS)
+- Purely descriptive or survey-based studies with no theoretical contribution
+
+**Test the proposed topic:** Does it aim to UNDERSTAND a phenomenon (fundamental) or to DEVELOP/TEST a solution (applied)?
+
+If the topic leans applied, you MUST:
+1. Flag this clearly as a **CRITICAL ISSUE** at the top of your response
+2. Explain why it would likely be rejected by the FRGS evaluation panel
+3. Provide a "fundamental pivot" — reframe the topic to focus on underlying mechanisms, theoretical models, or conceptual frameworks rather than practical applications
+4. Suggest a revised title using the T3M formula: [METHOD of investigation] + [MATTER being studied] + [MEANING — the theoretical contribution]
+
+Example of an applied title that would be rejected:
+"Development of an AI-Based Early Detection System for Gestational Diabetes"
+
+Example of the same idea reframed as fundamental:
+"Elucidating Host-Microbiome Metabolic Interactions to Establish a Theoretical Model for Insulin Resistance in Gestational Diabetes"
+
+The key shift: from "building a tool" to "understanding a mechanism to generate new theory."
+
+If the target grant scheme is **PRGS**:
+
+**PRGS Prototype Requirement:**
+PRGS funds prototype development and proof-of-concept research. The topic must demonstrate:
+- A clear path from fundamental findings to a working prototype
+- TRL progression (typically from TRL 3-4 to TRL 5-6)
+- Evidence of prior fundamental work (ideally an FRGS completion or equivalent)
+
+If the topic has no prototype or product outcome, flag this as a concern and suggest how to reframe it.
+{{/if}}
+
 ### Stage 1: Topic and Question Analysis
 
 1. **Topic Clarity Assessment:** Is the proposed topic specific enough to be researchable, or is it too broad, too narrow, or poorly scoped? State your assessment clearly.
@@ -161,6 +204,13 @@ Produce a **Research Direction Brief** covering these stages. Be direct and crit
 Produce a refined version of the research direction including:
 
 - **Refined Topic Title:** (improved if needed, keep original if already strong)
+{{#if grantScheme}}
+  For MOHE grants, apply the T3M title formula where appropriate:
+  - **Method** — the research approach (e.g., "Elucidating," "Characterizing," "Modeling")
+  - **Matter** — the specific subject (e.g., "Host-Microbiome Metabolic Interactions")
+  - **Meaning** — the theoretical contribution (e.g., "Towards a New Theoretical Model of...")
+  A strong FRGS title signals fundamental investigation, not applied development.
+{{/if}}
 - **Core Research Question:** (the single strongest RQ)
 - **Supporting Questions:** (1–2 additional RQs if warranted)
 - **Research Objectives:** (refined list of 2–4 measurable objectives)

@@ -9,7 +9,7 @@ import { useQualityGate } from "@/hooks/useQualityGate";
 import { qualityGateService } from "@/lib/quality-gate";
 import { QualityGate } from "@/components/shared/QualityGate";
 import { useProgressStore } from "@/stores/progress-store";
-import { PHASES } from "@/lib/types";
+import { PHASE_DEFINITIONS } from "@/lib/constants";
 
 interface PhaseCompleteCTAProps {
   projectId: string;
@@ -28,7 +28,7 @@ export function PhaseCompleteCTA({
 
   const nextPhase = phase + 1;
   const nextPhaseName =
-    PHASES.find((p) => p.id === nextPhase)?.name ?? `Phase ${nextPhase}`;
+    PHASE_DEFINITIONS.find((p) => p.phase === nextPhase)?.name ?? `Phase ${nextPhase}`;
 
   const navigateToNext = useCallback(() => {
     window.location.assign(`/projects/${projectId}/phase/${nextPhase}`);

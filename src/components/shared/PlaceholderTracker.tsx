@@ -41,7 +41,7 @@ export function PlaceholderTracker({
       (d) =>
         d.projectId === projectId &&
         d.isCurrent &&
-        (d.phase === 5 || d.phase === 6),
+        (d.phase >= 3 && d.phase <= 6),
     );
 
     for (const doc of relevantDocs) {

@@ -42,7 +42,7 @@ If this is a MOHE competitive grant (FRGS, PRGS, TRGS, LRGS, PPRN), incorporate 
 - MyGRANTS requires a Turnitin similarity report (typically <20% for FRGS/PRGS)
 
 **MOHE Evaluation Framework:**
-- FRGS: evaluated on Novelty, Research Methodology, Researcher Competency, and Expected Outcomes
+- FRGS: evaluated on Novelty, Research Methodology, Researcher Competency, and Expected Outcomes. Patent search is encouraged (not mandatory as of Pindaan 2025). Risk assessment plan is mandatory. Prior projects must be 75% complete for new applications.
 - PRGS: evaluated on Innovation/Novelty, Prototype Feasibility, Commercialisation Potential, and TRL Progression
 - TRGS: evaluated on Trans-disciplinary Integration, National Impact, Multi-institutional Collaboration Quality
 - LRGS: evaluated on Strategic National Priority Alignment, Research Programme Quality, Consortium Strength
@@ -56,7 +56,8 @@ If this is a MOHE competitive grant (FRGS, PRGS, TRGS, LRGS, PPRN), incorporate 
 - National Technology and Innovation Sandbox (NTIS)
 
 **Required Attachments for MOHE Grants (verify against current guidelines):**
-- Simplified Patent Search Report (FRGS, PRGS — mandatory)
+- Simplified Patent Search Report (PRGS — mandatory; FRGS — encouraged/digalakkan as of Pindaan 2025)
+- Risk Assessment Plan (FRGS — mandatory/dimestikan as of Pindaan 2025)
 - Turnitin Similarity Report
 - Gantt chart
 - Detailed budget using MOHE template

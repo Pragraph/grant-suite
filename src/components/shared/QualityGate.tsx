@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { GateCheck, GateResult } from "@/lib/quality-gate";
-import { PHASES } from "@/lib/types";
+import { PHASE_DEFINITIONS } from "@/lib/constants";
 
 // ─── Status icon mapping ────────────────────────────────────────────────────
 
@@ -194,7 +194,7 @@ export function QualityGate({
   const phase = gateResult?.phase ?? 0;
   const nextPhase = phase + 1;
   const nextPhaseName =
-    PHASES.find((p) => p.id === nextPhase)?.name ?? `Phase ${nextPhase}`;
+    PHASE_DEFINITIONS.find((p) => p.phase === nextPhase)?.name ?? `Phase ${nextPhase}`;
 
   const failCount =
     gateResult?.checks.filter((c) => c.status === "fail").length ?? 0;

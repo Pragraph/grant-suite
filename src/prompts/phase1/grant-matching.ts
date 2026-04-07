@@ -8,7 +8,16 @@ export const template: PromptTemplate = {
   description:
     "Identify and rank grant opportunities that best match your research profile and topic.",
   requiredInputs: ["discipline", "country"],
-  optionalInputs: ["researchTopic", "careerStage", "budgetRange", "keywords", "grantScheme"],
+  optionalInputs: [
+    "researchTopic",
+    "careerStage",
+    "budgetRange",
+    "keywords",
+    "grantScheme",
+    "Method4_Convergence_Synthesis.md",
+    "Method1_Gap_Synthesis.md",
+    "Method3_Research_Direction_Brief.md",
+  ],
   outputName: "Grant_Matching.md",
   epTags: ["EP-01"],
   estimatedWords: 2500,
@@ -54,15 +63,19 @@ If the target grant scheme is one of the MOHE competitive grants (FRGS, PRGS, TR
 When the grant scheme is a MOHE grant, frame your match scores relative to the selected scheme's requirements and evaluation criteria. Note any specific eligibility requirements (e.g., FRGS requires the PI to be a full-time academic at a Malaysian public university).
 {{/if}}
 
-{{#if convergence_output}}
-## RESEARCH DIRECTION CONTEXT
-The following convergence synthesis provides context on the researcher's direction:
-{{convergence_output}}
+{{#if Method4_Convergence_Synthesis.md}}
+## RESEARCH DIRECTION CONTEXT (Convergence Synthesis from Phase 1)
+{{> Method4_Convergence_Synthesis.md}}
 {{/if}}
 
-{{#if method1_output}}
+{{#if Method1_Gap_Synthesis.md}}
 ## GAP-BASED DISCOVERY CONTEXT
-{{method1_output}}
+{{> Method1_Gap_Synthesis.md}}
+{{/if}}
+
+{{#if Method3_Research_Direction_Brief.md}}
+## RESEARCH DIRECTION BRIEF
+{{> Method3_Research_Direction_Brief.md}}
 {{/if}}
 
 ## INSTRUCTIONS

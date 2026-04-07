@@ -123,6 +123,11 @@ export interface AppSettings {
 
 // ─── Phase metadata ─────────────────────────────────────────────────────────
 
+/**
+ * @deprecated Use PHASE_DEFINITIONS from constants.ts instead.
+ * This interface has incorrect step names and counts.
+ * Will be removed in the next version.
+ */
 export interface PhaseInfo {
   id: number;
   name: string;
@@ -131,6 +136,11 @@ export interface PhaseInfo {
   stepNames: string[];
 }
 
+/**
+ * @deprecated Use PHASE_DEFINITIONS from constants.ts instead.
+ * This array has incorrect step names and counts.
+ * Will be removed in the next version.
+ */
 export const PHASES: PhaseInfo[] = [
   {
     id: 1,
@@ -238,6 +248,7 @@ export interface StepDefinition {
 export interface PhaseDefinition {
   phase: number;
   name: string;
+  description: string;
   color: string;
   steps: StepDefinition[];
 }

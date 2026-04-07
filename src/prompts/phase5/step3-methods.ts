@@ -80,5 +80,10 @@ For each work package or research phase:
 **CRITICAL:** The methods section MUST be under {{wordLimit}} words. If space is tight, prioritize work package descriptions and timeline.
 
 ## OUTPUT FORMAT
-Output as a markdown document titled "# Research Methodology" with clear subsections. Include a Gantt chart as a markdown table. Include a word count at the end.`,
+Output as a markdown document titled "# Research Methodology" with clear subsections. Include a Gantt chart as a markdown table. Include a word count at the end.
+
+{{#if grantScheme}}
+## MYGRANTS SUBMISSION TIP
+This section maps to the "Methodology" text box in MyGRANTS. Copy this structure directly. Ensure each Work Package maps to a specific Research Objective. Include the Gantt chart data — MyGRANTS has a separate Gantt chart section (Section F) that must align with the methodology timeline.
+{{/if}}`,
 };

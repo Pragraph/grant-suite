@@ -16,7 +16,7 @@ import {
   Layers,
   CheckCircle2,
 } from "lucide-react";
-import { PHASES } from "@/lib/types";
+import { PHASE_DEFINITIONS } from "@/lib/constants";
 
 // ─── Scroll helper ──────────────────────────────────────────────────────────
 
@@ -256,11 +256,11 @@ export default function LandingPage() {
           </p>
 
           <div className="max-w-5xl mx-auto mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 [&>*:last-child]:sm:col-start-1 [&>*:last-child]:lg:col-start-2">
-            {PHASES.map((phase, i) => {
+            {PHASE_DEFINITIONS.map((phase, i) => {
               const Icon = phaseIcons[i];
               return (
                 <div
-                  key={phase.id}
+                  key={phase.phase}
                   className="group relative bg-white rounded-2xl border border-gray-200/80 p-7 hover:shadow-lg hover:border-gray-300 transition-all duration-300 text-left"
                   style={{ borderTopColor: phaseColors[i], borderTopWidth: "3px" }}
                 >
@@ -270,7 +270,7 @@ export default function LandingPage() {
                       className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-sm"
                       style={{ backgroundColor: phaseColors[i] }}
                     >
-                      {phase.id}
+                      {phase.phase}
                     </span>
                     <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center"

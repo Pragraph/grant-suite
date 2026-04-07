@@ -297,14 +297,14 @@ function checkGate3(): GateCheck[] {
 
 function checkGate4(): GateCheck[] {
   const checks: GateCheck[] = [];
-  const doc = getDocument("Budget_Team_Plan.md");
+  const doc = getDocument("Budget_Justification.md");
 
   // Check 1: Document exists
   if (!doc || !doc.content.trim()) {
     checks.push({
       id: "g4-exists",
-      label: "Budget & Team Plan document",
-      description: "Budget_Team_Plan.md must exist and contain content",
+      label: "Budget Justification document",
+      description: "Budget_Justification.md must exist and contain content",
       status: "fail",
       detail: "Document is missing. Complete Phase 4, Step 3 to generate it.",
     });
@@ -313,8 +313,8 @@ function checkGate4(): GateCheck[] {
 
   checks.push({
     id: "g4-exists",
-    label: "Budget & Team Plan document",
-    description: "Budget_Team_Plan.md exists and contains content",
+    label: "Budget Justification document",
+    description: "Budget_Justification.md exists and contains content",
     status: "pass",
   });
 

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { storage } from "@/lib/storage";
 import type { PhaseProgress, StepStatus, GateStatus } from "@/lib/types";
-import { PHASES } from "@/lib/types";
+import { PHASE_DEFINITIONS } from "@/lib/constants";
 import type { GateResult } from "@/lib/quality-gate";
 
 interface ProgressState {
@@ -69,7 +69,7 @@ export const useProgressStore = create<ProgressState>()((set, get) => ({
 
   getPhaseCompletion: (phase) => {
     const { progress } = get();
-    const phaseInfo = PHASES.find((p) => p.id === phase);
+    const phaseInfo = PHASE_DEFINITIONS.find((p) => p.phase === phase);
     if (!phaseInfo) return 0;
 
     const phaseProgress = progress.phases[phase];
@@ -79,7 +79,7 @@ export const useProgressStore = create<ProgressState>()((set, get) => ({
       (s) => s === "complete"
     ).length;
 
-    return Math.round((completedSteps / phaseInfo.stepCount) * 100);
+    return Math.round((completedSteps / phaseInfo.steps.length) * 100);
   },
 
   canAccessPhase: (phase) => {

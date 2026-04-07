@@ -15,7 +15,7 @@ export const template: PromptTemplate = {
     "Research_Design.md",
     "grantScheme",
   ],
-  outputName: "Patent_Search_Queries.md",
+  outputName: "Patent_Search_Strategy.md",
   epTags: ["EP-01"],
   estimatedWords: 1500,
   template: `You are a patent research specialist with expertise in prior art searches and intellectual property landscape analysis. Your task is to generate comprehensive search strategies for identifying relevant patents and prior art.
@@ -42,7 +42,9 @@ export const template: PromptTemplate = {
 
 {{#if grantScheme}}
 ## MYGRANTS PATENT SEARCH REQUIREMENTS
-For MOHE grants (especially FRGS and PRGS), a Simplified Patent Search Report is **mandatory**. The report must follow the MyGRANTS template format:
+For MOHE grants, a Simplified Patent Search Report strengthens your application:
+- **PRGS:** Patent search is mandatory
+- **FRGS:** Patent search is encouraged (digalakkan) as of Pindaan 2025 — not mandatory, but highly recommended as it demonstrates novelty awareness to the evaluation panel The report must follow the MyGRANTS template format:
 - Search must cover at least 2–3 patent databases (Lens.org, Google Patents, MyIPO recommended)
 - Include: search date, databases searched, search strings used, number of results
 - List the most relevant patents found (title, patent number, applicant, filing date)
@@ -96,5 +98,5 @@ Provide 5-8 queries for academic databases (Scopus, Web of Science):
 ## OUTPUT FORMAT
 Structure as "# Patent Search Strategy". For each query, provide the exact string to copy-paste into the search engine. Include direct instructions for the user on how to execute each search. Flag any areas where the research direction is unclear with [USER INPUT NEEDED].
 
-**IMPORTANT:** The user will execute these searches manually and paste the results back for analysis. Make queries specific and actionable.`,
+**IMPORTANT:** The user will execute these searches manually and paste the results back into the Novelty & TRL Assessment step for full analysis. Make queries specific and actionable.`,
 };

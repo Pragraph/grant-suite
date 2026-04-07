@@ -46,8 +46,11 @@ export const template: PromptTemplate = {
 {{#if grantScheme}}
 ## MOHE KPI EXPECTATIONS
 For MOHE grants, KPIs are evaluated strictly. MyGRANTS requires specific targets:
-- **Publications:** Number of Scopus/WoS-indexed journal articles (Q1/Q2 preferred). Typical FRGS target: 2–4 publications for a 2–3 year grant.
-- **Postgraduate Training:** Number of PhD and Masters students supported. MOHE values capacity building highly.
+- **Publications:** Number of Scopus/WoS-indexed journal articles (Q1/Q2 preferred). Minimum for FRGS: 2 indexed articles (at least 1 must be Web of Science). Check current guidelines for exact requirements.
+- **Postgraduate Training (Bakat):** This is non-negotiable. For FRGS specifically (Pindaan 2025):
+  - 3-year project: MUST graduate 1 PhD student OR 2 Masters students as GRA
+  - 2-year project: MUST graduate 1 Masters student as GRA
+  - GRA must be full-time research mode from the grant-receiving institution
 - **Conference Presentations:** International and national conferences with indexed proceedings.
 - **Intellectual Property:** Patent filings (especially for PRGS), copyrights, utility innovations.
 - **Community/Industry Engagement:** Workshops, consultations, MoUs (especially for PPRN).

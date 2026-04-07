@@ -65,11 +65,15 @@ For Malaysian MOHE grants, budgets follow a prescribed structure:
   - No entertainment, gifts, or office renovation costs
   - Overhead/management fees are typically NOT included (absorbed by the university)
 
-- **Common Budget Mistakes to Avoid:**
-  - Requesting amounts at the exact ceiling (signals lack of genuine costing)
-  - Under-budgeting postgraduate allowances
-  - Including items that are already available at the institution
+- **Common Budget Mistakes to Avoid (RMC Red Flags):**
+  - Requesting amounts at the exact ceiling (signals lack of genuine costing). Stay ~RM5,000–10,000 below ceiling.
+  - Under-budgeting GRA allowances — the rate is capped at RM2,300/month per GRA (verify current rate)
+  - Including items already available at the institution
   - Not linking every budget line to a specific research activity
+  - High travel budget — keep Vote 21000 modest; international travel requires strong justification (paper presentation at WoS-indexed conference). Excessive travel is a "massive red flag" for RMC.
+  - Any single item exceeding RM3,000 requires 3 formal quotations attached in MyGRANTS
+  - Vote 35000 (Capital Equipment) — FRGS is generally not for buying equipment (no laptops, freezers). Keep at zero unless absolutely essential and well-justified.
+  - Vague budget descriptions — do not write "Sequencing services." Write "Shotgun Metagenomics Sequencing for 100 samples (50 GDM, 50 Control) at [specific provider]."
 
 Format the budget using the MOHE Vote structure above. Include a column for Year 1 / Year 2 / Year 3 breakdown.
 {{/if}}

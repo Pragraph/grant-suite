@@ -93,5 +93,10 @@ Output as a markdown document titled "# Expected Impact & Significance" with cle
 1. Word count
 2. Impact-to-method traceability table (which impact maps to which method)
 3. List of [CITATION NEEDED] placeholders
-4. List of [USER INPUT NEEDED] items`,
+4. List of [USER INPUT NEEDED] items
+
+{{#if grantScheme}}
+## MYGRANTS SUBMISSION TIP
+Impact content maps to "Expected Findings / Results" in MyGRANTS. MOHE panels expect concrete, measurable outcomes, not aspirational language. Include specific publication targets (e.g., "2 Scopus/WoS-indexed journal articles") and postgraduate output (e.g., "1 Masters student graduated").
+{{/if}}`,
 };

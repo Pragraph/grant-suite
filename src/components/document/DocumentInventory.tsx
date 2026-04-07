@@ -15,7 +15,7 @@ import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 
 import { useDocumentStore } from "@/stores/document-store";
-import { PHASES } from "@/lib/types";
+import { PHASE_DEFINITIONS } from "@/lib/constants";
 import type { Document } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
@@ -88,10 +88,10 @@ export function DocumentInventory({
 
   const docsByPhase = useMemo(() => {
     const grouped: Record<number, Document[]> = {};
-    for (const phase of PHASES) {
-      const phaseDocs = filteredDocs.filter((d) => d.phase === phase.id);
+    for (const phase of PHASE_DEFINITIONS) {
+      const phaseDocs = filteredDocs.filter((d) => d.phase === phase.phase);
       if (phaseDocs.length > 0) {
-        grouped[phase.id] = phaseDocs;
+        grouped[phase.phase] = phaseDocs;
       }
     }
     return grouped;
@@ -133,7 +133,7 @@ export function DocumentInventory({
     URL.revokeObjectURL(url);
   };
 
-  const phasesWithDocs = PHASES.filter((p) => docsByPhase[p.id]);
+  const phasesWithDocs = PHASE_DEFINITIONS.filter((p) => docsByPhase[p.phase]);
   const scrollHeight = fullPage ? "h-[calc(100vh-200px)]" : "max-h-[500px]";
 
   return (
@@ -182,19 +182,19 @@ export function DocumentInventory({
             ) : (
               <div className="space-y-3 pr-2">
                 {phasesWithDocs.map((phase) => {
-                  const phaseDocs = docsByPhase[phase.id]!;
-                  const isCollapsed = collapsedPhases.has(phase.id);
+                  const phaseDocs = docsByPhase[phase.phase]!;
+                  const isCollapsed = collapsedPhases.has(phase.phase);
 
                   return (
-                    <div key={phase.id}>
+                    <div key={phase.phase}>
                       {/* Phase header */}
                       <button
                         type="button"
                         className="flex w-full items-center gap-2 mb-1.5 group"
-                        onClick={() => togglePhase(phase.id)}
+                        onClick={() => togglePhase(phase.phase)}
                       >
                         <PhaseIcon
-                          phase={phase.id as 1 | 2 | 3 | 4 | 5 | 6 | 7}
+                          phase={phase.phase as 1 | 2 | 3 | 4 | 5 | 6 | 7}
                           size="sm"
                         />
                         <span className="text-xs font-medium text-muted-foreground flex-1 text-left truncate">
@@ -204,8 +204,8 @@ export function DocumentInventory({
                           variant="outline"
                           className="text-[10px] h-4 px-1.5"
                           style={{
-                            borderColor: `var(--phase-${phase.id})`,
-                            color: `var(--phase-${phase.id})`,
+                            borderColor: `var(--phase-${phase.phase})`,
+                            color: `var(--phase-${phase.phase})`,
                           }}
                         >
                           {phaseDocs.length}

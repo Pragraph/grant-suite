@@ -43,7 +43,7 @@ export const template: PromptTemplate = {
 ## MYGRANTS PROFILE CONTEXT
 For MOHE grants submitted via MyGRANTS, the researcher profile is evaluated directly as part of the application:
 - **H-index** and **publication count** (Scopus-indexed) are visible to reviewers
-- **Prior grant completion rate** is tracked — flag if below 100% and prepare mitigation language
+- **Prior grant completion rate** is tracked — as of Pindaan 2025, new FRGS applications require previous projects to be at least 75% complete (verified by RMC in MyGRANTS Monitoring Module). Flag if below 75% and prepare mitigation language.
 - **Postgraduate supervision record** is valued (number of PhD/Masters students supervised to completion)
 - **International collaboration evidence** strengthens the profile
 - Ensure ORCID profile is up-to-date and linked to MyGRANTS
