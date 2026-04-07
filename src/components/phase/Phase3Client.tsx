@@ -452,6 +452,13 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                       required: true,
                     },
                     {
+                      name: "grantSubCategory",
+                      label: "GET Sub-Category",
+                      type: "text",
+                      placeholder: "exploratory or transformative",
+                      defaultValue: activeProject?.grantSubCategory || undefined,
+                    },
+                    {
                       name: "researchApproach",
                       label: "Research Approach Preference",
                       type: "select",
@@ -948,6 +955,15 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                         {/* External links for patent databases */}
                         <div className="flex flex-wrap gap-2">
                           <a
+                            href="https://www.lens.org/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-md border border-phase-3/30 bg-phase-3/5 px-3 py-1.5 text-xs text-phase-3 font-medium hover:bg-phase-3/10 transition-colors"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            Lens.org (required for GET)
+                          </a>
+                          <a
                             href="https://patents.google.com/"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -1227,6 +1243,13 @@ function getModuleFields(
       placeholder: "e.g., Computer Science",
       defaultValue: project?.discipline || undefined,
       required: true,
+    },
+    {
+      name: "grantSubCategory",
+      label: "GET Sub-Category",
+      type: "text" as const,
+      placeholder: "exploratory or transformative",
+      defaultValue: project?.grantSubCategory || undefined,
     },
   ];
 

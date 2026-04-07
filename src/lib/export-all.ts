@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { storage } from "./storage";
-import { PHASES } from "./types";
+import { PHASE_DEFINITIONS } from "./constants";
 import type { Document } from "./types";
 
 /**
@@ -34,11 +34,11 @@ export async function exportAllDocuments(
   }
 
   // Create phase folders with documents
-  for (const phase of PHASES) {
-    const phaseDocs = docsByPhase[phase.id];
+  for (const phase of PHASE_DEFINITIONS) {
+    const phaseDocs = docsByPhase[phase.phase];
     if (!phaseDocs || phaseDocs.length === 0) continue;
 
-    const folderName = `Phase_${phase.id}_${phase.name.replace(/[^a-zA-Z0-9]+/g, "_")}`;
+    const folderName = `Phase_${phase.phase}_${phase.name.replace(/[^a-zA-Z0-9]+/g, "_")}`;
     const folder = zip.folder(folderName)!;
 
     for (const doc of phaseDocs) {

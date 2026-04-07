@@ -140,6 +140,9 @@ export function MethodWizard({
       if (!initial.formValues.currency && project.currency) {
         updates.currency = project.currency;
       }
+      if (!initial.formValues.grantSubCategory && project.grantSubCategory) {
+        updates.grantSubCategory = project.grantSubCategory;
+      }
       if (Object.keys(updates).length > 0) {
         initial = { ...initial, formValues: { ...initial.formValues, ...updates } };
       }

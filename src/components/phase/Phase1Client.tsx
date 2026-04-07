@@ -992,6 +992,13 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                 : undefined,
                             },
                             {
+                              name: "grantSubCategory",
+                              label: "GET Sub-Category",
+                              type: "text",
+                              placeholder: "e.g., exploratory or transformative",
+                              defaultValue: activeProject?.grantSubCategory || undefined,
+                            },
+                            {
                               name: "researchTopic",
                               label: "Research Topic / Title",
                               type: "text",
@@ -1109,6 +1116,13 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                 defaultValue: activeProject?.grantScheme && activeProject.grantScheme !== "Undecided" && activeProject.grantScheme !== "Other"
                                   ? activeProject.grantScheme
                                   : undefined,
+                              },
+                              {
+                                name: "grantSubCategory",
+                                label: "GET Sub-Category (if applicable)",
+                                type: "text",
+                                placeholder: "exploratory or transformative",
+                                defaultValue: activeProject?.grantSubCategory || undefined,
                               },
                               {
                                 name: "grantName",
