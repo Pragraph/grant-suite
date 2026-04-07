@@ -11,6 +11,10 @@ import {
   BorderStyle,
   ShadingType,
   LevelFormat,
+  Table,
+  TableRow,
+  TableCell,
+  WidthType,
 } from "docx";
 import { saveAs } from "file-saver";
 
@@ -107,21 +111,168 @@ function parseInlineFormatting(text: string): TextRun[] {
 }
 
 /**
- * Parse a markdown string into an array of docx Paragraph objects.
- * Handles: H1-H3, paragraphs, bold, italic, bullet lists, numbered lists, horizontal rules.
+ * Parse a markdown table into a docx Table object.
+ * Expects lines in the format:
+ *   | Header 1 | Header 2 | Header 3 |
+ *   |----------|----------|----------|
+ *   | Cell 1   | Cell 2   | Cell 3   |
  */
-function parseMarkdownToDocx(markdown: string): Paragraph[] {
-  const lines = markdown.split("\n");
-  const paragraphs: Paragraph[] = [];
+function parseMarkdownTable(lines: string[]): Table {
+  const parseRow = (line: string): string[] =>
+    line
+      .split("|")
+      .map((cell) => cell.trim())
+      .filter((cell) => cell.length > 0);
 
-  for (let i = 0; i < lines.length; i++) {
+  const headerCells = parseRow(lines[0]);
+  const dataRows = lines.slice(2).map(parseRow); // Skip separator line (index 1)
+
+  const columnCount = headerCells.length;
+
+  // Calculate even column widths (total page width minus margins ≈ 9026 twips for A4)
+  const colWidth = Math.floor(9026 / columnCount);
+
+  const createCell = (text: string, isHeader: boolean): TableCell =>
+    new TableCell({
+      width: { size: colWidth, type: WidthType.DXA },
+      shading: isHeader
+        ? { type: ShadingType.CLEAR, fill: "E8EDF5" }
+        : undefined,
+      children: [
+        new Paragraph({
+          children: parseInlineFormatting(text),
+          spacing: { before: 40, after: 40 },
+        }),
+      ],
+    });
+
+  const headerRow = new TableRow({
+    children: headerCells.map((cell) => createCell(cell, true)),
+    tableHeader: true,
+  });
+
+  const bodyRows = dataRows
+    .filter((row) => row.length > 0)
+    .map(
+      (row) =>
+        new TableRow({
+          children: Array.from({ length: columnCount }, (_, i) =>
+            createCell(row[i] || "", false),
+          ),
+        }),
+    );
+
+  return new Table({
+    rows: [headerRow, ...bodyRows],
+    width: { size: 100, type: WidthType.PERCENTAGE },
+  });
+}
+
+/**
+ * Detect if a line is a markdown table row (starts and ends with |)
+ */
+function isTableRow(line: string): boolean {
+  const trimmed = line.trim();
+  return trimmed.startsWith("|") && trimmed.endsWith("|");
+}
+
+/**
+ * Detect if a line is a table separator (| --- | --- |)
+ */
+function isTableSeparator(line: string): boolean {
+  const trimmed = line.trim();
+  return /^\|[\s\-:|]+\|$/.test(trimmed);
+}
+
+/**
+ * Parse a markdown string into an array of docx Paragraph and Table objects.
+ * Handles: H1-H3, paragraphs, bold, italic, bullet lists, numbered lists,
+ * horizontal rules, tables, blockquotes, and fenced code blocks.
+ */
+function parseMarkdownToDocx(markdown: string): (Paragraph | Table)[] {
+  const lines = markdown.split("\n");
+  const elements: (Paragraph | Table)[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
     const trimmed = lines[i].trim();
 
-    if (!trimmed) continue;
+    // Skip empty lines
+    if (!trimmed) {
+      i++;
+      continue;
+    }
 
-    // Horizontal rule
+    // ── Table detection ─────────────────────────────────────────────
+    if (
+      isTableRow(trimmed) &&
+      i + 1 < lines.length &&
+      isTableSeparator(lines[i + 1].trim())
+    ) {
+      const tableLines: string[] = [];
+      while (i < lines.length && isTableRow(lines[i].trim())) {
+        tableLines.push(lines[i].trim());
+        i++;
+      }
+      if (tableLines.length >= 2) {
+        elements.push(parseMarkdownTable(tableLines));
+        elements.push(new Paragraph({ spacing: { before: 100, after: 100 } }));
+      }
+      continue;
+    }
+
+    // ── Blockquote ──────────────────────────────────────────────────
+    if (trimmed.startsWith("> ")) {
+      const quoteText = trimmed.slice(2);
+      elements.push(
+        new Paragraph({
+          children: parseInlineFormatting(quoteText),
+          indent: { left: 720 },
+          spacing: { before: 60, after: 60 },
+          border: {
+            left: {
+              style: BorderStyle.SINGLE,
+              size: 3,
+              color: "4F7DF3",
+              space: 10,
+            },
+          },
+        }),
+      );
+      i++;
+      continue;
+    }
+
+    // ── Code block (fenced) ─────────────────────────────────────────
+    if (trimmed.startsWith("```")) {
+      i++; // skip opening fence
+      const codeLines: string[] = [];
+      while (i < lines.length && !lines[i].trim().startsWith("```")) {
+        codeLines.push(lines[i]);
+        i++;
+      }
+      if (i < lines.length) i++; // skip closing fence
+
+      elements.push(
+        new Paragraph({
+          shading: { type: ShadingType.CLEAR, fill: "F5F5F5" },
+          spacing: { before: 100, after: 100 },
+          children: codeLines.map(
+            (line, idx) =>
+              new TextRun({
+                text: line + (idx < codeLines.length - 1 ? "\n" : ""),
+                font: "JetBrains Mono",
+                size: 18,
+              }),
+          ),
+        }),
+      );
+      continue;
+    }
+
+    // ── Horizontal rule ─────────────────────────────────────────────
     if (/^-{3,}$/.test(trimmed) || /^\*{3,}$/.test(trimmed)) {
-      paragraphs.push(
+      elements.push(
         new Paragraph({
           spacing: { before: 200, after: 200 },
           border: {
@@ -129,76 +280,83 @@ function parseMarkdownToDocx(markdown: string): Paragraph[] {
           },
         }),
       );
+      i++;
       continue;
     }
 
-    // Headings
+    // ── Headings ────────────────────────────────────────────────────
     if (trimmed.startsWith("### ")) {
-      paragraphs.push(
+      elements.push(
         new Paragraph({
           heading: HeadingLevel.HEADING_3,
           children: parseInlineFormatting(trimmed.slice(4)),
           spacing: { before: 200, after: 100 },
         }),
       );
+      i++;
       continue;
     }
     if (trimmed.startsWith("## ")) {
-      paragraphs.push(
+      elements.push(
         new Paragraph({
           heading: HeadingLevel.HEADING_2,
           children: parseInlineFormatting(trimmed.slice(3)),
           spacing: { before: 240, after: 120 },
         }),
       );
+      i++;
       continue;
     }
     if (trimmed.startsWith("# ")) {
-      paragraphs.push(
+      elements.push(
         new Paragraph({
           heading: HeadingLevel.HEADING_1,
           children: parseInlineFormatting(trimmed.slice(2)),
           spacing: { before: 360, after: 200 },
         }),
       );
+      i++;
       continue;
     }
 
-    // Bullet lists
+    // ── Bullet lists ────────────────────────────────────────────────
     if (/^[-*]\s/.test(trimmed)) {
-      paragraphs.push(
+      elements.push(
         new Paragraph({
           bullet: { level: 0 },
           children: parseInlineFormatting(trimmed.replace(/^[-*]\s+/, "")),
           spacing: { before: 40, after: 40 },
         }),
       );
+      i++;
       continue;
     }
 
-    // Numbered lists
+    // ── Numbered lists ──────────────────────────────────────────────
     const numMatch = trimmed.match(/^(\d+)\.\s+(.*)$/);
     if (numMatch) {
-      paragraphs.push(
+      elements.push(
         new Paragraph({
           numbering: { level: 0, reference: "default-numbering" },
           children: parseInlineFormatting(numMatch[2]),
           spacing: { before: 40, after: 40 },
         }),
       );
+      i++;
       continue;
     }
 
-    // Regular paragraph
-    paragraphs.push(
+    // ── Regular paragraph ───────────────────────────────────────────
+    elements.push(
       new Paragraph({
         children: parseInlineFormatting(trimmed),
         spacing: { before: 60, after: 60 },
       }),
     );
+    i++;
   }
 
-  return paragraphs;
+  return elements;
 }
 
 /**
