@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Synthesise bibliometric search results into feasible, fundable research directions with citation-trend evidence and copy-ready Direction Brief output.",
   requiredInputs: ["discipline", "areaOfInterest", "researchType", "selectedTrendTopic", "trendSearchResults"],
-  optionalInputs: ["country", "careerStage", "grantScheme"],
+  optionalInputs: ["country", "careerStage", "grantScheme", "grantSubCategory", "targetFunder"],
   outputName: "Method2_Trend_Discovery.md",
   epTags: ["EP-01"],
   estimatedWords: 4000,
@@ -25,6 +25,66 @@ export const template: PromptTemplate = {
 {{#if country}}- **Country:** {{country}}{{/if}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+{{#if grantSubCategory}}- **Grant Sub-Category:** {{grantSubCategory}}{{/if}}
+{{#if targetFunder}}- **Funder:** {{targetFunder}}{{/if}}
+
+{{#if grantScheme}}
+## GRANT SCHEME ALIGNMENT FILTER
+
+You MUST factor the following grant scheme context into your analysis. Directions that do not align with these requirements will score poorly and should be ranked lower or excluded.
+
+**Scheme:** {{grantScheme}}{{#if grantSubCategory}} ({{grantSubCategory}}){{/if}}
+{{#if targetFunder}}**Funder:** {{targetFunder}}{{/if}}
+{{#if country}}**Country context:** {{country}}{{/if}}
+
+If the target grant scheme is **FRGS**:
+- Topics MUST be fundamental research (generating new knowledge, theory, or concepts). Applied or product-development topics are not eligible.
+- Patent search is encouraged but not mandatory. Risk assessment plan is mandatory.
+
+If the target grant scheme is **GET**:
+- Industry collaboration is MANDATORY (LOI/MoU/MoA required). Prioritise topics where an industry partner would naturally benefit.
+- Patent search via lens.org is MANDATORY. Favour topics with patentable potential.
+- Minimum 1 IP filing is required. Topics producing patentable methods, tools, or frameworks score higher.
+- Return of Value (ROV) is MANDATORY with 3-year post-completion monitoring. Topics must have demonstrable, measurable impact on real beneficiaries.
+- If the sub-category is **exploratory**: Topics should explore the unknown to generate hypotheses or conceptual frameworks (TRL 1-2). Open-ended investigation is acceptable.
+- If the sub-category is **transformative**: Topics MUST involve radical change to existing policies, SOPs, processes, or systems. Incremental improvements are insufficient. Must produce proof of concept with clear beneficiaries (TRL 2-3).
+
+If the target grant scheme is **PRGS**:
+- Topics MUST have a clear prototype or product output. TRL progression narrative is essential.
+- Patent Search Report is mandatory.
+
+If the target grant scheme is **TRGS**:
+- Topics should require trans-disciplinary collaboration across faculties or institutions.
+
+If the target grant scheme is **LRGS**:
+- Topics must address national priority areas with long-term, high-impact potential. Consortium-based.
+
+If the target grant scheme is **PPRN**:
+- Topics must be industry-driven with a registered SSM industry partner. Demand-driven innovation.
+
+For **international grants**: Prioritise topics with strong international collaboration potential and alignment with the funder's strategic priorities.
+
+If the target grant scheme is **GET**, the following national priority domains are MANDATORY alignment targets. When evaluating and ranking topics, explicitly flag which Mega Trend(s) and/or BITARA niche(s) each topic aligns with:
+
+**7 Mega Trends (RMK13) — at least 1 must be addressed:**
+1. Shifting Economic Blocs (Perubahan Susunan Blok Ekonomi)
+2. Future Technology & Digital (Teknologi & Digital Masa Hadapan)
+3. Demographics & Quality of Life (Demografi & Kualiti Hidup)
+4. Global Health Crisis (Krisis Kesihatan Bumi)
+5. Education (Pendidikan)
+6. National Security (Keselamatan Negara)
+7. Heritage & Local Wisdom (Warisan & Kearifan Tempatan)
+
+**BITARA Niche Areas (if applicable):**
+E&E, Aerospace, Chemical, Machinery & Equipment, Digital & ICT, Pharmaceutical, Medical Devices, Palm Oil Products, Rubber Products
+
+**ESG Components (at least 1 should be addressed):**
+Environmental, Social, Governance
+
+**Additional policy alignment:** RPTM 2026-2035, MADANI, MySTIE, SDGs
+
+For **FRGS, PRGS, TRGS, LRGS, PPRN**: Implicit alignment with MADANI, MySTIE, and SDGs is expected. Mega Trends and BITARA are not mandatory but strengthen the proposal if addressed.
+{{/if}}
 
 **Bibliometric Search Results (from Publish or Perish or Citation Impact Analyzer — sorted by citations per year):**
 The user collected the following high-impact publications related to their selected topic. The data may be in APA reference format or tabular (Excel) format. Analyse all entries regardless of format.
@@ -90,6 +150,7 @@ Generate 3–5 viable research directions. Validate each:
 | Direction | Saturation Risk | Literature Volume | Data Access | Methods Feasibility | Ethics | VERDICT |
 
 Rank them:
+{{#if grantScheme}}When scoring "Funding Fit", evaluate specifically against {{grantScheme}}{{#if grantSubCategory}} ({{grantSubCategory}}){{/if}} requirements as described in the Grant Scheme Alignment Filter above.{{/if}}
 | Rank | Direction | Gap Alignment (1–5) | Feasibility (1–5) | Impact (1–5) | Funding Fit (1–5) | Overall |
 
 Identify the Primary Recommendation and Alternative Recommendation with justifications.

@@ -199,6 +199,70 @@ export const GRANT_SCHEME_MAP: Record<string, GrantSchemeInfo> = Object.fromEntr
   GRANT_SCHEMES.map((g) => [g.id, g]),
 );
 
+// ─── Scheme Priority Frameworks ─────────────────────────────────────────────
+// Source: FRGS Pindaan 2025, GET Garis Panduan 2026, Taklimat BKPI JPT 26 Feb 2026
+
+export interface SchemePriorityFramework {
+  scheme: string;
+  policyAlignment: string[];
+  megaTrends?: string[];
+  bitaraNiches?: string[];
+  esgComponents?: string[];
+  notes: string;
+}
+
+export const SCHEME_PRIORITY_FRAMEWORKS: SchemePriorityFramework[] = [
+  {
+    scheme: "FRGS",
+    policyAlignment: ["MADANI", "MySTIE", "SDGs"],
+    notes: "Implicit alignment with national strategic agendas. No explicit Mega Trends, BITARA, or ESG requirement.",
+  },
+  {
+    scheme: "GET",
+    policyAlignment: ["RPTM 2026-2035", "MADANI", "MySTIE", "SDGs", "Mega Trends RMK13", "BITARA", "ESG"],
+    megaTrends: [
+      "Perubahan Susunan Blok Ekonomi (Shifting Economic Blocs)",
+      "Teknologi & Digital Masa Hadapan (Future Technology & Digital)",
+      "Demografi & Kualiti Hidup (Demographics & Quality of Life)",
+      "Krisis Kesihatan Bumi (Global Health Crisis)",
+      "Pendidikan (Education)",
+      "Keselamatan Negara (National Security)",
+      "Warisan & Kearifan Tempatan (Heritage & Local Wisdom)",
+    ],
+    bitaraNiches: [
+      "E&E", "Aerospace", "Chemical", "Machinery & Equipment",
+      "Digital & ICT", "Pharmaceutical", "Medical Devices",
+      "Palm Oil Products", "Rubber Products",
+    ],
+    esgComponents: ["Environmental", "Social", "Governance"],
+    notes: "Explicit and detailed alignment required. Must state alignment with Mega Trends, BITARA, MADANI, ESG, SDGs, MySTIE, and RPTM 2026-2035.",
+  },
+  {
+    scheme: "PRGS",
+    policyAlignment: ["MADANI", "MySTIE", "SDGs"],
+    notes: "Implicit alignment. Focus on prototype development and commercialisation pathway.",
+  },
+  {
+    scheme: "TRGS",
+    policyAlignment: ["MADANI", "MySTIE", "SDGs"],
+    notes: "Cross-faculty/cross-university collaboration emphasis. National priority alignment implicit.",
+  },
+  {
+    scheme: "LRGS",
+    policyAlignment: ["MADANI", "MySTIE", "SDGs"],
+    notes: "Strong national policy alignment required. Consortium-based, long-term impact.",
+  },
+  {
+    scheme: "PPRN",
+    policyAlignment: ["MADANI", "MySTIE", "SDGs"],
+    notes: "Industry-driven. Alignment with industry partner's sector priorities.",
+  },
+];
+
+export const SCHEME_PRIORITY_MAP: Record<string, SchemePriorityFramework> = Object.fromEntries(
+  SCHEME_PRIORITY_FRAMEWORKS.map((f) => [f.scheme, f]),
+);
+
 export const MALAYSIAN_SCHEMES = GRANT_SCHEMES.filter((g) => g.category === "malaysian");
 export const INTERNATIONAL_SCHEMES = GRANT_SCHEMES.filter((g) => g.category === "international");
 

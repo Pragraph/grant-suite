@@ -8,7 +8,7 @@ export const template: PromptTemplate = {
   description:
     "Synthesize outputs from multiple discovery methods to identify convergent themes and produce copy-ready Research Direction Briefs for the strongest directions.",
   requiredInputs: ["discipline"],
-  optionalInputs: ["areaOfInterest", "researchType", "country", "careerStage", "grantScheme"],
+  optionalInputs: ["areaOfInterest", "researchType", "country", "careerStage", "grantScheme", "grantSubCategory", "targetFunder"],
   outputName: "Method4_Convergence_Synthesis.md",
   epTags: ["EP-01"],
   estimatedWords: 4000,
@@ -23,15 +23,65 @@ export const template: PromptTemplate = {
 {{#if country}}- **Country:** {{country}}{{/if}}
 {{#if careerStage}}- **Career Stage:** {{careerStage}}{{/if}}
 {{#if grantScheme}}- **Target Grant Scheme:** {{grantScheme}}{{/if}}
+{{#if grantSubCategory}}- **Grant Sub-Category:** {{grantSubCategory}}{{/if}}
+{{#if targetFunder}}- **Funder:** {{targetFunder}}{{/if}}
 
 {{#if grantScheme}}
-## GRANT SCHEME CONTEXT
-When scoring convergence and ranking research directions, factor in the specific priorities of the {{grantScheme}} scheme:
-- For MOHE grants (FRGS, PRGS, TRGS, LRGS, PPRN): prioritise directions that align with Malaysian national research priority areas and the 13th Malaysia Plan (RMKe-13)
-- For FRGS: favour fundamental research with clear novelty claims supportable by patent search evidence
-- For PRGS: favour directions with clear prototype/product potential and TRL progression narrative
-- For TRGS/LRGS: favour directions requiring multi-disciplinary or multi-institutional collaboration
-- For international grants: prioritise directions with strong international collaboration potential
+## GRANT SCHEME ALIGNMENT FILTER
+
+You MUST factor the following grant scheme context into your analysis. Directions that do not align with these requirements will score poorly and should be ranked lower or excluded.
+
+**Scheme:** {{grantScheme}}{{#if grantSubCategory}} ({{grantSubCategory}}){{/if}}
+{{#if targetFunder}}**Funder:** {{targetFunder}}{{/if}}
+{{#if country}}**Country context:** {{country}}{{/if}}
+
+If the target grant scheme is **FRGS**:
+- Topics MUST be fundamental research (generating new knowledge, theory, or concepts). Applied or product-development topics are not eligible.
+- Patent search is encouraged but not mandatory. Risk assessment plan is mandatory.
+
+If the target grant scheme is **GET**:
+- Industry collaboration is MANDATORY (LOI/MoU/MoA required). Prioritise topics where an industry partner would naturally benefit.
+- Patent search via lens.org is MANDATORY. Favour topics with patentable potential.
+- Minimum 1 IP filing is required. Topics producing patentable methods, tools, or frameworks score higher.
+- Return of Value (ROV) is MANDATORY with 3-year post-completion monitoring. Topics must have demonstrable, measurable impact on real beneficiaries.
+- If the sub-category is **exploratory**: Topics should explore the unknown to generate hypotheses or conceptual frameworks (TRL 1-2). Open-ended investigation is acceptable.
+- If the sub-category is **transformative**: Topics MUST involve radical change to existing policies, SOPs, processes, or systems. Incremental improvements are insufficient. Must produce proof of concept with clear beneficiaries (TRL 2-3).
+
+If the target grant scheme is **PRGS**:
+- Topics MUST have a clear prototype or product output. TRL progression narrative is essential.
+- Patent Search Report is mandatory.
+
+If the target grant scheme is **TRGS**:
+- Topics should require trans-disciplinary collaboration across faculties or institutions.
+
+If the target grant scheme is **LRGS**:
+- Topics must address national priority areas with long-term, high-impact potential. Consortium-based.
+
+If the target grant scheme is **PPRN**:
+- Topics must be industry-driven with a registered SSM industry partner. Demand-driven innovation.
+
+For **international grants**: Prioritise topics with strong international collaboration potential and alignment with the funder's strategic priorities.
+
+If the target grant scheme is **GET**, the following national priority domains are MANDATORY alignment targets. When evaluating and ranking topics, explicitly flag which Mega Trend(s) and/or BITARA niche(s) each topic aligns with:
+
+**7 Mega Trends (RMK13) — at least 1 must be addressed:**
+1. Shifting Economic Blocs (Perubahan Susunan Blok Ekonomi)
+2. Future Technology & Digital (Teknologi & Digital Masa Hadapan)
+3. Demographics & Quality of Life (Demografi & Kualiti Hidup)
+4. Global Health Crisis (Krisis Kesihatan Bumi)
+5. Education (Pendidikan)
+6. National Security (Keselamatan Negara)
+7. Heritage & Local Wisdom (Warisan & Kearifan Tempatan)
+
+**BITARA Niche Areas (if applicable):**
+E&E, Aerospace, Chemical, Machinery & Equipment, Digital & ICT, Pharmaceutical, Medical Devices, Palm Oil Products, Rubber Products
+
+**ESG Components (at least 1 should be addressed):**
+Environmental, Social, Governance
+
+**Additional policy alignment:** RPTM 2026-2035, MADANI, MySTIE, SDGs
+
+For **FRGS, PRGS, TRGS, LRGS, PPRN**: Implicit alignment with MADANI, MySTIE, and SDGs is expected. Mega Trends and BITARA are not mandatory but strengthen the proposal if addressed.
 {{/if}}
 
 ## DISCOVERY METHOD OUTPUTS
@@ -71,6 +121,7 @@ The primary output is the user's main deliverable. The supporting analysis provi
 Score 0 if that method was not used, and note it.
 
 ### STAGE 3: Ranking
+{{#if grantScheme}}When scoring and ranking directions, evaluate specifically against {{grantScheme}}{{#if grantSubCategory}} ({{grantSubCategory}}){{/if}} requirements as described in the Grant Scheme Alignment Filter above.{{/if}}
 Rank the top directions from the convergence matrix, with 2–3 sentence justifications for the Primary and Alternative recommendations.
 
 ---

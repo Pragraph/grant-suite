@@ -143,6 +143,28 @@ export function MethodWizard({
       if (!initial.formValues.grantSubCategory && project.grantSubCategory) {
         updates.grantSubCategory = project.grantSubCategory;
       }
+      // Auto-select researchType based on grant scheme
+      if (!initial.formValues.researchType && project.grantScheme) {
+        const scheme = project.grantScheme;
+        if (scheme === "GET") {
+          updates.researchType = "applied";
+        } else if (scheme === "FRGS") {
+          updates.researchType = "fundamental";
+        } else if (scheme === "PRGS") {
+          updates.researchType = "applied";
+        } else if (scheme === "TRGS") {
+          updates.researchType = "translational";
+        } else if (scheme === "LRGS") {
+          updates.researchType = "mixed";
+        }
+      }
+      // Pre-fill grantScheme and targetFunder for prompt templates
+      if (!initial.formValues.grantScheme && project.grantScheme) {
+        updates.grantScheme = project.grantScheme;
+      }
+      if (!initial.formValues.targetFunder && project.targetFunder) {
+        updates.targetFunder = project.targetFunder;
+      }
       if (Object.keys(updates).length > 0) {
         initial = { ...initial, formValues: { ...initial.formValues, ...updates } };
       }
@@ -202,6 +224,7 @@ export function MethodWizard({
           currency: activeProject.currency || "",
           targetFunder: activeProject.targetFunder,
           budgetRange: activeProject.budgetRange,
+          grantSubCategory: activeProject.grantSubCategory,
         },
         documents: {},
         formInputs: state.formValues,
@@ -601,18 +624,6 @@ export function MethodWizard({
               </div>
             )}
 
-            {tool && (
-              <a
-                href={tool.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-md bg-[#F0F4FF] px-4 py-2.5 text-sm font-medium text-[#4F7DF3] transition-colors hover:bg-[#4F7DF3]/10"
-              >
-                <ExternalLink className="h-4 w-4" />
-                Open {tool.name}
-              </a>
-            )}
-
             {tool?.instructions && (
               tool.instructions.includes("\n---\n") ? (
                 /* Split mode: render each block as a separate styled card */
@@ -695,6 +706,18 @@ export function MethodWizard({
                   </>
                 )}
               </div>
+            )}
+
+            {tool && (
+              <a
+                href={tool.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md bg-[#F0F4FF] px-4 py-2.5 text-sm font-medium text-[#4F7DF3] transition-colors hover:bg-[#4F7DF3]/10"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Open {tool.name}
+              </a>
             )}
           </div>
         );
