@@ -6,7 +6,12 @@
   "pnpm": {
     "overrides": {
       "postcss": "8.5.10"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@playwright/test",
+      "playwright",
+      "sharp"
+    ]
   },
   "scripts": {
     "dev": "next dev",
