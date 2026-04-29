@@ -690,25 +690,27 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p
-                    className={cn(
-                      "text-sm font-semibold",
-                      isComplete
-                        ? "text-foreground"
-                        : isCurrent
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={cn(
+                        "text-sm font-semibold",
+                        isComplete
                           ? "text-foreground"
-                          : unlocked
-                            ? "text-foreground/70"
-                            : "text-muted-foreground/50",
-                    )}
-                  >
-                    {stepDef.name}
+                          : isCurrent
+                            ? "text-foreground"
+                            : unlocked
+                              ? "text-foreground/70"
+                              : "text-muted-foreground/50",
+                      )}
+                    >
+                      {stepDef.name}
+                    </p>
                     {stepDef.type === "multi-method" && (
-                      <Badge variant="outline" className="ml-2 text-[10px]">
+                      <Badge variant="outline" className="text-[10px]">
                         Multi-method
                       </Badge>
                     )}
-                  </p>
+                  </div>
                   {isComplete && stepDocs.length > 0 && (
                     <p className="text-xs text-muted-foreground/60 mt-0.5 truncate">
                       {stepDocs.map((d) => d.canonicalName).join(", ")} —{" "}
