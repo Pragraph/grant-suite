@@ -154,12 +154,12 @@ describe("DocumentPipeline — markDownstreamStale", () => {
     expect(stale).not.toContain("Grant_Intelligence.md");
   });
 
-  it("returns empty array for a leaf document", () => {
+  it("marks form-ready proposal stale when the final proposal changes", () => {
     const stale = documentPipeline.markDownstreamStale(
       "proj-1",
       "Final_Proposal.md",
     );
-    expect(stale).toHaveLength(0);
+    expect(stale).toEqual(["Form_Ready_Proposal.md"]);
   });
 });
 

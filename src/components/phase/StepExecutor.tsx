@@ -184,7 +184,7 @@ const stateVariants = {
   exit: { opacity: 0, y: -12 },
 };
 
-const springTransition = { type: "spring", stiffness: 300, damping: 30 };
+const springTransition = { type: "spring" as const, stiffness: 300, damping: 30 };
 
 // ─── File text extraction (for file-upload-text fields) ─────────────────────
 
@@ -207,7 +207,7 @@ async function extractTextFromUpload(file: File): Promise<string> {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
       const text = content.items
-        .map((item: { str?: string }) => item.str || "")
+        .map((item) => ("str" in item ? item.str : ""))
         .join(" ");
       pages.push(text);
     }

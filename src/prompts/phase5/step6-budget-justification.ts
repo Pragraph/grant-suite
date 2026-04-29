@@ -13,7 +13,7 @@ export const template: PromptTemplate = {
     "targetFunder",
     "Proposal_Data.md",
     "Methods_Draft.md",
-    "Budget_Justification.md",
+    "Budget_Team_Plan.md",
     "grantScheme",
     "grantSubCategory",
   ],
@@ -37,7 +37,7 @@ export const template: PromptTemplate = {
 ## METHODS (every budget line must trace here)
 {{> Methods_Draft.md}}
 
-{{#if Budget_Justification.md}}
+{{#if Budget_Team_Plan.md}}
 ---
 
 ## EXISTING BUDGET JUSTIFICATION (from Phase 4)
@@ -48,17 +48,17 @@ The researcher has already produced a comprehensive Budget Justification in Phas
 - Preserve all specific numbers, rates, and justification logic
 - Add cross-references to the Methods section (e.g., "As described in Work Package 2...")
 
-{{> Budget_Justification.md}}
+{{> Budget_Team_Plan.md}}
 {{/if}}
 
 ---
 
 ## INSTRUCTIONS
 
-{{#if Budget_Justification.md}}
+{{#if Budget_Team_Plan.md}}
 Adapt the existing Phase 4 Budget Justification (above) into polished proposal-section prose. Focus on tightening language, strengthening method connections, and making the narrative persuasive for evaluators. Do NOT regenerate the analysis from scratch.
 {{/if}}
-{{#unless Budget_Justification.md}}
+{{#unless Budget_Team_Plan.md}}
 Write a budget justification narrative that explains WHY each budget item is necessary and HOW it connects to the research methods. This is NOT a budget table — it is a persuasive narrative.
 {{/unless}}
 

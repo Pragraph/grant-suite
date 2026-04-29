@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { Project, AppSettings, Document } from "@/lib/types";
-import { STORAGE_KEYS } from "@/lib/types";
 
 // ─── Mock idb-keyval ─────────────────────────────────────────────────────────
 

@@ -10,12 +10,12 @@ export function cn(...inputs: ClassValue[]) {
  * useParams() is unreliable in Next.js 15 static export because the RSC
  * payload hardcodes the placeholder "_" from generateStaticParams.
  */
-export function getProjectIdFromUrl(): string | null {
-  if (typeof window === "undefined") return null;
+export function getProjectIdFromUrl(): string {
+  if (typeof window === "undefined") return "";
   const segments = window.location.pathname.split("/");
   const idx = segments.indexOf("projects");
   const raw = idx >= 0 ? segments[idx + 1] : null;
-  return raw && raw !== "_" ? decodeURIComponent(raw) : null;
+  return raw && raw !== "_" ? decodeURIComponent(raw) : "";
 }
 
 /** Parse both projectId and phaseId from a /projects/[id]/phase/[phaseId] URL. */

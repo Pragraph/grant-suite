@@ -132,7 +132,7 @@ const REQUIRED_DOCS = [
   { canonicalName: "Grant_Intelligence.md", label: "Grant Intelligence", phase: 1 },
   { canonicalName: "Proposal_Blueprint.md", label: "Proposal Blueprint", phase: 2 },
   { canonicalName: "Research_Design.md", label: "Research Design", phase: 3 },
-  { canonicalName: "Budget_Justification.md", label: "Budget Justification", phase: 4 },
+  { canonicalName: "Budget_Team_Plan.md", label: "Budget & Team Plan", phase: 4 },
 ];
 
 const OPTIONAL_DOCS = [
@@ -159,7 +159,7 @@ const stepStatusLabels: Record<StepStatus, string> = {
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const },
 };
 
 const stepExpandVariants = {
