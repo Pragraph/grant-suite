@@ -1,4 +1,4 @@
-import { get, set, del, keys, clear } from "idb-keyval";
+import { get, set, del, keys } from "idb-keyval";
 import { nanoid } from "nanoid";
 import type {
   Project,
@@ -33,6 +33,110 @@ const DEFAULT_SETTINGS: AppSettings = {
   sidebarCollapsed: false,
   defaultExportFormat: "md",
 };
+
+interface ImportData {
+  projects: Project[];
+  settings: AppSettings;
+  progress: Record<string, PhaseProgress>;
+  documents: Record<string, Document[]>;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function assertProject(value: unknown): Project {
+  if (!isRecord(value) || typeof value.id !== "string" || typeof value.title !== "string") {
+    throw new Error("Backup contains an invalid project entry.");
+  }
+  return value as unknown as Project;
+}
+
+function assertSettings(value: unknown): AppSettings {
+  if (!isRecord(value)) return DEFAULT_SETTINGS;
+  const theme = value.theme === "light" || value.theme === "dark" || value.theme === "system"
+    ? value.theme
+    : DEFAULT_SETTINGS.theme;
+  const defaultExportFormat = value.defaultExportFormat === "docx" ? "docx" : "md";
+  return {
+    theme,
+    sidebarCollapsed:
+      typeof value.sidebarCollapsed === "boolean"
+        ? value.sidebarCollapsed
+        : DEFAULT_SETTINGS.sidebarCollapsed,
+    defaultExportFormat,
+  };
+}
+
+function assertProgressMap(value: unknown): Record<string, PhaseProgress> {
+  if (!isRecord(value)) return {};
+  return value as Record<string, PhaseProgress>;
+}
+
+function assertDocument(value: unknown): Document {
+  if (
+    !isRecord(value) ||
+    typeof value.id !== "string" ||
+    typeof value.projectId !== "string" ||
+    typeof value.canonicalName !== "string" ||
+    typeof value.content !== "string"
+  ) {
+    throw new Error("Backup contains an invalid document entry.");
+  }
+  return {
+    ...value,
+    name: typeof value.name === "string" ? value.name : value.canonicalName,
+    format: "md",
+    version: typeof value.version === "number" ? value.version : 1,
+    isCurrent: typeof value.isCurrent === "boolean" ? value.isCurrent : true,
+    wordCount: typeof value.wordCount === "number" ? value.wordCount : 0,
+    createdAt: typeof value.createdAt === "string" ? value.createdAt : new Date().toISOString(),
+  } as Document;
+}
+
+function assertDocumentMap(value: unknown): Record<string, Document[]> {
+  if (!isRecord(value)) return {};
+  const documentMap: Record<string, Document[]> = {};
+  for (const [projectId, docs] of Object.entries(value)) {
+    if (!Array.isArray(docs)) {
+      throw new Error(`Backup documents for project ${projectId} must be an array.`);
+    }
+    documentMap[projectId] = docs.map(assertDocument);
+  }
+  return documentMap;
+}
+
+function parseImportData(json: string): ImportData {
+  const parsed = JSON.parse(json) as unknown;
+  if (!isRecord(parsed)) {
+    throw new Error("Backup file must contain a JSON object.");
+  }
+
+  if ("project" in parsed) {
+    const project = assertProject(parsed.project);
+    return {
+      projects: [project],
+      settings: DEFAULT_SETTINGS,
+      progress: parsed.progress ? { [project.id]: parsed.progress as PhaseProgress } : {},
+      documents: {
+        [project.id]: Array.isArray(parsed.documents)
+          ? parsed.documents.map(assertDocument)
+          : [],
+      },
+    };
+  }
+
+  if (!Array.isArray(parsed.projects)) {
+    throw new Error("Backup file must include a projects array.");
+  }
+
+  return {
+    projects: parsed.projects.map(assertProject),
+    settings: assertSettings(parsed.settings),
+    progress: assertProgressMap(parsed.progress),
+    documents: assertDocumentMap(parsed.documents),
+  };
+}
 
 // ─── Storage Service ────────────────────────────────────────────────────────
 
@@ -94,6 +198,24 @@ export const storage = {
   },
 
   async saveDocument(projectId: string, doc: Document): Promise<void> {
+    const history = await this.getDocumentHistory(projectId, doc.canonicalName);
+    const nextVersion =
+      Math.max(0, ...history.map((existing) => existing.version)) + 1;
+
+    for (const existing of history) {
+      if (existing.isCurrent && existing.id !== doc.id) {
+        await this._setDocumentRaw(projectId, { ...existing, isCurrent: false });
+      }
+    }
+
+    await this._setDocumentRaw(projectId, {
+      ...doc,
+      isCurrent: true,
+      version: Math.max(doc.version, nextVersion),
+    });
+  },
+
+  async _setDocumentRaw(projectId: string, doc: Document): Promise<void> {
     const key = `${STORAGE_KEYS.DOCUMENTS_PREFIX}${projectId}/${doc.id}`;
     await set(key, doc);
   },
@@ -172,13 +294,12 @@ export const storage = {
     );
   },
 
+  validateImportData(json: string): ImportData {
+    return parseImportData(json);
+  },
+
   async importData(json: string): Promise<void> {
-    const data = JSON.parse(json) as {
-      projects: Project[];
-      settings: AppSettings;
-      progress: Record<string, PhaseProgress>;
-      documents: Record<string, Document[]>;
-    };
+    const data = parseImportData(json);
 
     writeJSON(STORAGE_KEYS.PROJECTS, data.projects);
     writeJSON(STORAGE_KEYS.SETTINGS, data.settings);
@@ -189,12 +310,12 @@ export const storage = {
 
     for (const [projectId, docs] of Object.entries(data.documents)) {
       for (const doc of docs) {
-        await this.saveDocument(projectId, doc);
+        await this._setDocumentRaw(projectId, doc);
       }
     }
   },
 
-  clearAllData(): void {
+  async clearAllData(): Promise<void> {
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -203,7 +324,12 @@ export const storage = {
       }
     }
     keysToRemove.forEach((k) => localStorage.removeItem(k));
-    clear(); // clear IndexedDB
+    const allKeys = await keys();
+    for (const key of allKeys) {
+      if (typeof key === "string" && key.startsWith(STORAGE_KEYS.DOCUMENTS_PREFIX)) {
+        await del(key);
+      }
+    }
   },
 
   // ── Utilities ─────────────────────────────────────────────────────────
