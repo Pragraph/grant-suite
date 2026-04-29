@@ -23,6 +23,7 @@ import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
 import { exportAllDocuments } from "@/lib/export-all";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { useIsHydrated } from "@/hooks/use-is-hydrated";
 import type { Project, StepStatus, Document } from "@/lib/types";
 
 import { toast } from "sonner";
@@ -153,11 +154,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
   const [titleValue, setTitleValue] = useState(() => initialProject?.title ?? "");
   const [exportingAll, setExportingAll] = useState(false);
   const [importWizardOpen, setImportWizardOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const hydrated = useIsHydrated();
 
   useEffect(() => {
     if (!projectId) return;
@@ -192,7 +189,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
     return () => window.clearTimeout(timeoutId);
   }, [project]);
 
-  if (!mounted) {
+  if (!hydrated) {
     return (
       <div className="flex items-center justify-center py-24 text-muted-foreground">
         Loading project...
