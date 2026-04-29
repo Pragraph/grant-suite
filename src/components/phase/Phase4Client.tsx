@@ -843,7 +843,6 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
   const [letters, setLetters] = useState<LetterStatus[]>(() =>
     loadJson(getLettersKey(projectId), []),
   );
-  const [step1Output, setStep1Output] = useState<string | null>(null);
 
   // Step 2 state
   const [budgetRows, setBudgetRows] = useState<BudgetRow[]>(() =>
@@ -854,7 +853,6 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
     duration: number;
     currency: string;
   }>(() => loadJson(getBudgetMetaKey(projectId), { budgetLimit: 0, duration: 3, currency: "USD" }));
-  const [step2Output, setStep2Output] = useState<string | null>(null);
 
   // Step 3 / assembly state
   const [showAssemblyPreview, setShowAssemblyPreview] = useState(false);
@@ -897,66 +895,76 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
   // ── Sync letters with roles ──────────────────────────────────────────────
 
   useEffect(() => {
-    const roleIds = new Set(roles.map((r) => r.id));
-    // Remove letters for deleted roles
-    const existing = letters.filter((l) => roleIds.has(l.roleId));
-    // Add letters for new roles
-    const existingRoleIds = new Set(existing.map((l) => l.roleId));
-    const newLetters = roles
-      .filter((r) => !existingRoleIds.has(r.id))
-      .map((r) => ({
-        id: crypto.randomUUID(),
-        roleId: r.id,
-        memberName: r.name || r.role,
-        drafted: false,
-        sent: false,
-        received: false,
-      }));
-    // Update names for existing letters
-    const updated = existing.map((l) => {
-      const role = roles.find((r) => r.id === l.roleId);
-      return role ? { ...l, memberName: role.name || role.role } : l;
-    });
-    const merged = [...updated, ...newLetters];
-    if (JSON.stringify(merged) !== JSON.stringify(letters)) {
-      setLetters(merged);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const timeoutId = window.setTimeout(() => {
+      setLetters((currentLetters) => {
+        const roleIds = new Set(roles.map((r) => r.id));
+        // Remove letters for deleted roles
+        const existing = currentLetters.filter((l) => roleIds.has(l.roleId));
+        // Add letters for new roles
+        const existingRoleIds = new Set(existing.map((l) => l.roleId));
+        const newLetters = roles
+          .filter((r) => !existingRoleIds.has(r.id))
+          .map((r) => ({
+            id: crypto.randomUUID(),
+            roleId: r.id,
+            memberName: r.name || r.role,
+            drafted: false,
+            sent: false,
+            received: false,
+          }));
+        // Update names for existing letters
+        const updated = existing.map((l) => {
+          const role = roles.find((r) => r.id === l.roleId);
+          return role ? { ...l, memberName: role.name || role.role } : l;
+        });
+        const merged = [...updated, ...newLetters];
+        return JSON.stringify(merged) === JSON.stringify(currentLetters)
+          ? currentLetters
+          : merged;
+      });
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [roles]);
 
   // ── Track step outputs from saved documents ──────────────────────────────
 
-  useEffect(() => {
-    const s1Doc = documents.find(
+  const step1Output = useMemo(() => {
+    return documents.find(
       (d) => d.projectId === projectId && d.canonicalName === "Team_Strategy.md" && d.isCurrent,
-    );
-    setStep1Output(s1Doc?.content ?? null);
+    )?.content ?? null;
+  }, [documents, projectId]);
 
-    const s2Doc = documents.find(
+  const step2Output = useMemo(() => {
+    return documents.find(
       (d) => d.projectId === projectId && d.canonicalName === "Budget_Draft.md" && d.isCurrent,
-    );
-    setStep2Output(s2Doc?.content ?? null);
+    )?.content ?? null;
   }, [documents, projectId]);
 
   // ── Parse roles from Step 1 output (when first saved) ────────────────────
 
   useEffect(() => {
-    if (step1Output && roles.length === 0) {
-      const parsed = parseRoleMatrix(step1Output);
-      if (parsed.length > 0) setRoles(parsed);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step1Output]);
+    if (!step1Output || roles.length > 0) return;
+    const parsed = parseRoleMatrix(step1Output);
+    if (parsed.length === 0) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setRoles((currentRoles) => (currentRoles.length === 0 ? parsed : currentRoles));
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [roles.length, step1Output]);
 
   // ── Parse budget from Step 2 output (when first saved) ───────────────────
 
   useEffect(() => {
-    if (step2Output && budgetRows.length === 0) {
-      const parsed = parseBudgetRows(step2Output, budgetMeta.duration);
-      if (parsed.length > 0) setBudgetRows(parsed);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step2Output]);
+    if (!step2Output || budgetRows.length > 0) return;
+    const parsed = parseBudgetRows(step2Output, budgetMeta.duration);
+    if (parsed.length === 0) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setBudgetRows((currentRows) => (currentRows.length === 0 ? parsed : currentRows));
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [budgetMeta.duration, budgetRows.length, step2Output]);
 
   // ── Check if Phase 3A partnership was completed ──────────────────────────
 

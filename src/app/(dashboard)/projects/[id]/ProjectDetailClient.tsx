@@ -139,15 +139,18 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
     useProgressStore();
   const { setBreadcrumbs } = useUiStore();
   const [projectId] = useState(() => getProjectIdFromUrl());
-  const [project, setProject] = useState<Project | null>(() =>
+  const [initialProject] = useState<Project | null>(() =>
     projectId ? storage.getProject(projectId) ?? null : null,
   );
+  const project =
+    activeProject && projectId && activeProject.id === projectId ? activeProject : initialProject;
   const loading = false;
 
-  const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
-  const [expandedPhaseInitialized, setExpandedPhaseInitialized] = useState(false);
+  const [expandedPhase, setExpandedPhase] = useState<number | null>(
+    () => initialProject?.currentPhase ?? null,
+  );
   const [editingTitle, setEditingTitle] = useState(false);
-  const [titleValue, setTitleValue] = useState("");
+  const [titleValue, setTitleValue] = useState(() => initialProject?.title ?? "");
   const [exportingAll, setExportingAll] = useState(false);
   const [importWizardOpen, setImportWizardOpen] = useState(false);
 
@@ -157,12 +160,6 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
     loadProgress(projectId);
     loadDocuments(projectId);
   }, [projectId, setActiveProject, loadProgress, loadDocuments]);
-
-  useEffect(() => {
-    if (activeProject && projectId && activeProject.id === projectId) {
-      setProject(activeProject);
-    }
-  }, [activeProject, projectId]);
 
   useEffect(() => {
     if (project) {
@@ -183,17 +180,12 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
     const alreadyShown = localStorage.getItem(wizardShownKey);
     if (alreadyShown) return;
 
-    setImportWizardOpen(true);
-    localStorage.setItem(wizardShownKey, "true");
+    const timeoutId = window.setTimeout(() => {
+      setImportWizardOpen(true);
+      localStorage.setItem(wizardShownKey, "true");
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [project]);
-
-  if (project && !editingTitle && titleValue !== project.title) {
-    setTitleValue(project.title);
-  }
-  if (project && !expandedPhaseInitialized) {
-    setExpandedPhase(project.currentPhase);
-    setExpandedPhaseInitialized(true);
-  }
 
   if (loading) {
     return (

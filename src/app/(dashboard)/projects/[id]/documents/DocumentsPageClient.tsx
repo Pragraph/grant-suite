@@ -11,7 +11,6 @@ import { useUiStore } from "@/stores/ui-store";
 import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
 import { exportAllDocuments } from "@/lib/export-all";
-import type { Project } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
 import { DocumentInventory } from "@/components/document/DocumentInventory";
@@ -22,9 +21,11 @@ export function DocumentsPageClient({ id: _id }: { id: string }) {
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
   const [projectId] = useState(() => getProjectIdFromUrl());
-  const [project, setProject] = useState<Project | null>(() =>
+  const [initialProject] = useState(() =>
     projectId ? storage.getProject(projectId) ?? null : null,
   );
+  const project =
+    activeProject && projectId && activeProject.id === projectId ? activeProject : initialProject;
   const loading = false;
   const [exportingAll, setExportingAll] = useState(false);
 
@@ -34,13 +35,6 @@ export function DocumentsPageClient({ id: _id }: { id: string }) {
     setActiveProject(projectId);
     loadDocuments(projectId);
   }, [projectId, setActiveProject, loadDocuments]);
-
-  // Keep in sync with store updates
-  useEffect(() => {
-    if (activeProject && projectId && activeProject.id === projectId) {
-      setProject(activeProject);
-    }
-  }, [activeProject, projectId]);
 
   useEffect(() => {
     if (project && projectId) {

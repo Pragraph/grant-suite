@@ -373,6 +373,22 @@ export function StepExecutor({
   const activeProject = useProjectStore((s) => s.activeProject);
   const updateStepStatus = useProgressStore((s) => s.updateStepStatus);
 
+  // ── Check document readiness ────────────────────────────────────────────
+
+  const checkReadiness = useCallback(() => {
+    dispatch({ type: "SET_CHECKING" });
+
+    const result = pipeline.validateReadiness(phase, step);
+    if (!result.ready) {
+      const requiredDocs = pipeline.getRequiredDocuments(phase, step);
+      const missing = requiredDocs.filter((d) => !d.present && d.required);
+      const optionalMissing = requiredDocs.filter((d) => !d.present && !d.required);
+      dispatch({ type: "SET_MISSING_DOCS", required: missing, optional: optionalMissing });
+    } else {
+      dispatch({ type: "SET_READY" });
+    }
+  }, [pipeline, phase, step]);
+
   // ── Restore persisted state on mount ────────────────────────────────────
 
   useEffect(() => {
@@ -422,22 +438,6 @@ export function StepExecutor({
       }
     }
   }, [execState, projectId, phase, step]);
-
-  // ── Check document readiness ────────────────────────────────────────────
-
-  const checkReadiness = useCallback(() => {
-    dispatch({ type: "SET_CHECKING" });
-
-    const result = pipeline.validateReadiness(phase, step);
-    if (!result.ready) {
-      const requiredDocs = pipeline.getRequiredDocuments(phase, step);
-      const missing = requiredDocs.filter((d) => !d.present && d.required);
-      const optionalMissing = requiredDocs.filter((d) => !d.present && !d.required);
-      dispatch({ type: "SET_MISSING_DOCS", required: missing, optional: optionalMissing });
-    } else {
-      dispatch({ type: "SET_READY" });
-    }
-  }, [pipeline, phase, step]);
 
   // ── Compile prompt ──────────────────────────────────────────────────────
 
