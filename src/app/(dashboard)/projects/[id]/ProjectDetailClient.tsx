@@ -404,8 +404,19 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                 >
                   {/* Phase Row — toggles expand/collapse */}
                   <div
+                    role={accessible ? "button" : undefined}
+                    tabIndex={accessible ? 0 : undefined}
+                    aria-expanded={accessible ? isExpanded : undefined}
+                    aria-disabled={!accessible}
                     className={`flex w-full items-center gap-3 px-4 py-3 text-left select-none ${accessible ? "cursor-pointer" : "cursor-default"}`}
                     onClick={() => accessible && setExpandedPhase(isExpanded ? null : phase.phase)}
+                    onKeyDown={(e) => {
+                      if (!accessible) return;
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setExpandedPhase(isExpanded ? null : phase.phase);
+                      }
+                    }}
                   >
                     <PhaseIcon
                       phase={phase.phase as 1 | 2 | 3 | 4 | 5 | 6 | 7}
@@ -438,9 +449,8 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                       </div>
                       {accessible && (
                         (isCurrent || (isBypassed && completion === 0)) ? (
-                          <div
-                            role="button"
-                            tabIndex={0}
+                          <button
+                            type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               navigateTo(phaseUrl);
@@ -455,7 +465,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                           >
                             <Play className="h-3.5 w-3.5" />
                             {completion > 0 ? "Continue" : "Start"}
-                          </div>
+                          </button>
                         ) : completion === 100 ? (
                           <CheckCircle2 className="h-5 w-5 text-success" />
                         ) : null
@@ -485,15 +495,14 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                             phaseProgress?.steps[stepNum] ?? "not-started";
 
                           return (
-                            <div
+                            <button
                               key={stepNum}
-                              role="button"
-                              tabIndex={0}
+                              type="button"
                               onClick={() => navigateTo(phaseUrl)}
                               onKeyDown={(e) => {
                                 if (e.key === "Enter" || e.key === " ") navigateTo(phaseUrl);
                               }}
-                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors cursor-pointer"
+                              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left hover:bg-muted/50 transition-colors cursor-pointer"
                             >
                               <span className="text-xs text-gray-400 font-mono w-5">
                                 {stepIdx + 1}
@@ -506,7 +515,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                               >
                                 {stepStatusLabels[status]}
                               </span>
-                            </div>
+                            </button>
                           );
                         })}
                       </div>

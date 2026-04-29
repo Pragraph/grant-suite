@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, startTransition } from "react";
 
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   Settings,
   Sun,
@@ -230,7 +231,7 @@ export default function SettingsPage() {
         setImportPreview({ json, projectCount, documentCount });
         setImportMode("merge");
       } catch (err) {
-        alert(
+        toast.error(
           err instanceof Error
             ? err.message
             : "Invalid JSON file. Please select a valid backup file."
