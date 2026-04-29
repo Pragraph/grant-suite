@@ -87,7 +87,9 @@ function SidebarContent({
   const { theme, toggleTheme } = useTheme();
   const { toggleSidebar } = useUiStore();
   const { progress } = useProgressStore();
-  const { activeProjectId } = useProjectStore();
+  const { activeProjectId, activeProject } = useProjectStore();
+  const projectIsActive = hasProject || Boolean(activeProjectId);
+  const activePhase = currentPhase ?? activeProject?.currentPhase;
 
   return (
     <div className="flex h-full flex-col pb-8 bg-sidebar text-sidebar-foreground">
@@ -169,10 +171,12 @@ function SidebarContent({
             {phases.map(({ phase, name }) => {
               const status = phaseStatuses[phase] ?? "not-started";
               const StatusIcon = statusIcons[status];
-              const isActive = currentPhase === phase;
-              const disabled = !hasProject;
+              const isActive = activePhase === phase;
+              const disabled = !projectIsActive;
 
-              const phaseUrl = `/projects/phase/${phase}`;
+              const phaseUrl = activeProjectId
+                ? `/projects/${activeProjectId}/phase/${phase}`
+                : `/projects/phase/${phase}`;
               const isCurrentRoute = pathname?.startsWith(phaseUrl);
 
               const item = (

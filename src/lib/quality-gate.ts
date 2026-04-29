@@ -122,27 +122,6 @@ function checkGate1(): GateCheck[] {
     });
   }
 
-  // Check 4: Research Direction Brief exists
-  const directionBrief = getDocument("Method3_Research_Direction_Brief.md");
-
-  if (!directionBrief || !directionBrief.content.trim()) {
-    checks.push({
-      id: "g1-direction",
-      label: "Research Direction Brief",
-      description: "A Research Direction Brief is required to guide downstream phases",
-      status: "warn",
-      detail:
-        "Complete the Research Direction Brief in Step 1 to provide your research topic, objectives, questions, and gap justification. Without this document, proposal quality in later phases will be significantly reduced.",
-    });
-  } else {
-    checks.push({
-      id: "g1-direction",
-      label: "Research Direction Brief",
-      description: "Method3_Research_Direction_Brief.md exists and contains content",
-      status: "pass",
-    });
-  }
-
   return checks;
 }
 
@@ -297,14 +276,14 @@ function checkGate3(): GateCheck[] {
 
 function checkGate4(): GateCheck[] {
   const checks: GateCheck[] = [];
-  const doc = getDocument("Budget_Justification.md");
+  const doc = getDocument("Budget_Team_Plan.md");
 
   // Check 1: Document exists
   if (!doc || !doc.content.trim()) {
     checks.push({
       id: "g4-exists",
       label: "Budget Justification document",
-      description: "Budget_Justification.md must exist and contain content",
+      description: "Budget_Team_Plan.md must exist and contain content",
       status: "fail",
       detail: "Document is missing. Complete Phase 4, Step 3 to generate it.",
     });
@@ -314,7 +293,7 @@ function checkGate4(): GateCheck[] {
   checks.push({
     id: "g4-exists",
     label: "Budget Justification document",
-    description: "Budget_Justification.md exists and contains content",
+    description: "Budget_Team_Plan.md exists and contains content",
     status: "pass",
   });
 

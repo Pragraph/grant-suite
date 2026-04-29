@@ -11,7 +11,7 @@ import { useUiStore } from "@/stores/ui-store";
 import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
 import { exportAllDocuments } from "@/lib/export-all";
-import type { Project } from "@/lib/types";
+import { useIsHydrated } from "@/hooks/use-is-hydrated";
 
 import { Button } from "@/components/ui/button";
 import { DocumentInventory } from "@/components/document/DocumentInventory";
@@ -22,11 +22,14 @@ export function DocumentsPageClient({ id: _id }: { id: string }) {
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
   const [projectId] = useState(() => getProjectIdFromUrl());
-  const [project, setProject] = useState<Project | null>(() =>
+  const [initialProject] = useState(() =>
     projectId ? storage.getProject(projectId) ?? null : null,
   );
+  const project =
+    activeProject && projectId && activeProject.id === projectId ? activeProject : initialProject;
   const loading = false;
   const [exportingAll, setExportingAll] = useState(false);
+  const hydrated = useIsHydrated();
 
   // Sync Zustand stores on mount
   useEffect(() => {
@@ -34,13 +37,6 @@ export function DocumentsPageClient({ id: _id }: { id: string }) {
     setActiveProject(projectId);
     loadDocuments(projectId);
   }, [projectId, setActiveProject, loadDocuments]);
-
-  // Keep in sync with store updates
-  useEffect(() => {
-    if (activeProject && projectId && activeProject.id === projectId) {
-      setProject(activeProject);
-    }
-  }, [activeProject, projectId]);
 
   useEffect(() => {
     if (project && projectId) {
@@ -51,6 +47,14 @@ export function DocumentsPageClient({ id: _id }: { id: string }) {
       ]);
     }
   }, [project, setBreadcrumbs, projectId]);
+
+  if (!hydrated) {
+    return (
+      <div className="flex items-center justify-center py-24 text-muted-foreground">
+        Loading...
+      </div>
+    );
+  }
 
   if (loading) {
     return (

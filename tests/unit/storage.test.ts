@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { Project, AppSettings, Document } from "@/lib/types";
-import { STORAGE_KEYS } from "@/lib/types";
 
 // ─── Mock idb-keyval ─────────────────────────────────────────────────────────
 
@@ -149,13 +148,15 @@ describe("Storage — Document versioning", () => {
   });
 
   it("saving a new version archives the old one", async () => {
-    const v1 = makeDocument("p1", "Grant_Intelligence.md", 1, false);
+    const v1 = makeDocument("p1", "Grant_Intelligence.md", 1, true);
     const v2 = makeDocument("p1", "Grant_Intelligence.md", 2, true);
     await storage.saveDocument("p1", v1);
     await storage.saveDocument("p1", v2);
 
     const docs = await storage.getDocuments("p1");
     expect(docs).toHaveLength(2);
+    expect(docs.filter((d) => d.isCurrent)).toHaveLength(1);
+    expect(docs.find((d) => d.id === v1.id)?.isCurrent).toBe(false);
     const current = docs.find((d) => d.isCurrent);
     expect(current?.version).toBe(2);
   });
@@ -289,6 +290,24 @@ describe("Storage — Export / Import", () => {
     expect(docs).toHaveLength(1);
     expect(docs[0].canonicalName).toBe("Grant_Intelligence.md");
   });
+
+  it("rejects invalid import data before mutating existing data", async () => {
+    const existingProject = makeProject({ id: "existing" });
+    storage.saveProject(existingProject);
+
+    const invalidBackup = JSON.stringify({
+      projects: [{ id: 123, title: "Broken" }],
+      documents: {},
+    });
+
+    expect(() => storage.validateImportData(invalidBackup)).toThrow(
+      "Backup contains an invalid project entry."
+    );
+    await expect(storage.importData(invalidBackup)).rejects.toThrow(
+      "Backup contains an invalid project entry."
+    );
+    expect(storage.getProjects()).toEqual([existingProject]);
+  });
 });
 
 // ─── Utilities ───────────────────────────────────────────────────────────────
@@ -302,14 +321,19 @@ describe("Storage — Utilities", () => {
     expect(id1).not.toBe(id2);
   });
 
-  it("clearAllData removes all grant-suite keys", () => {
+  it("clearAllData removes only grant-suite keys", async () => {
     storage.saveProject(makeProject({ id: "p1" }));
     storage.saveSettings({ theme: "light", sidebarCollapsed: false, defaultExportFormat: "md" });
+    idbStore.set("unrelated-key", { keep: true });
+    await storage.saveDocument("p1", makeDocument("p1", "Grant_Intelligence.md"));
+
     // Verify data exists
     expect(storage.getProjects().length).toBeGreaterThan(0);
 
-    storage.clearAllData();
+    await storage.clearAllData();
     expect(storage.getProjects()).toEqual([]);
     expect(storage.getSettings().theme).toBe("dark"); // back to default
+    expect(idbStore.has("unrelated-key")).toBe(true);
+    expect([...idbStore.keys()].some((key) => key.startsWith("grant-suite-documents/"))).toBe(false);
   });
 });

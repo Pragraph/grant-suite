@@ -109,7 +109,7 @@ const stepStatusLabels: Record<StepStatus, string> = {
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const },
 };
 
 const stepExpandVariants = {
@@ -778,14 +778,18 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
   const handleKeepOriginal = useCallback(async () => {
     if (originalProposal) {
       await saveDocument(projectId, {
+        id: storage.createId(),
+        name: "Final Proposal",
         canonicalName: "Final_Proposal.md",
         content: originalProposal,
+        format: "md",
         phase: 6,
         step: 4,
         projectId,
         isCurrent: true,
         wordCount: countWords(originalProposal),
         version: 1,
+        createdAt: new Date().toISOString(),
       });
       updateStepStatus(projectId, 6, 4, "complete");
       setStep4Decision("kept-original");

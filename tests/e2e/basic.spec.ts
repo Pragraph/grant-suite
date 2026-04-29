@@ -5,9 +5,12 @@ test.describe("Basic navigation", () => {
     await page.goto("/");
     // The landing page should render the app title / heading
     await expect(page.locator("h1").first()).toBeVisible();
-    // Should have a CTA link to projects
-    const ctaLink = page.getByRole("link", { name: /get started|projects|dashboard/i });
-    await expect(ctaLink.first()).toBeVisible();
+    // Should have a CTA to projects (button or link — landing uses <button> with window.location.assign)
+    const cta = page
+      .getByRole("button", { name: /get started|projects|dashboard|start now/i })
+      .or(page.getByRole("link", { name: /get started|projects|dashboard|start now/i }))
+      .first();
+    await expect(cta).toBeVisible();
   });
 
   test("can navigate to /projects", async ({ page }) => {

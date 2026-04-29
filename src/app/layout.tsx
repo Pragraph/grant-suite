@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import "@/styles/globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -52,7 +53,10 @@ export default function RootLayout({
         className="min-h-full flex flex-col"
         style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

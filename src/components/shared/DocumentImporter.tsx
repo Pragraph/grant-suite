@@ -45,7 +45,10 @@ async function extractTextFromFile(file: File): Promise<string> {
   if (ext === "pdf") {
     try {
       const pdfjsLib = await import("pdfjs-dist");
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+        "pdfjs-dist/build/pdf.worker.min.mjs",
+        import.meta.url,
+      ).toString();
 
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -55,7 +58,7 @@ async function extractTextFromFile(file: File): Promise<string> {
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
         const text = content.items
-          .map((item: { str?: string }) => item.str || "")
+          .map((item) => ("str" in item ? item.str : ""))
           .join(" ");
         pages.push(text);
       }

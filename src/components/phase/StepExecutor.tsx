@@ -184,7 +184,7 @@ const stateVariants = {
   exit: { opacity: 0, y: -12 },
 };
 
-const springTransition = { type: "spring", stiffness: 300, damping: 30 };
+const springTransition = { type: "spring" as const, stiffness: 300, damping: 30 };
 
 // ─── File text extraction (for file-upload-text fields) ─────────────────────
 
@@ -197,7 +197,10 @@ async function extractTextFromUpload(file: File): Promise<string> {
 
   if (ext === "pdf") {
     const pdfjsLib = await import("pdfjs-dist");
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      "pdfjs-dist/build/pdf.worker.min.mjs",
+      import.meta.url,
+    ).toString();
 
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -207,7 +210,7 @@ async function extractTextFromUpload(file: File): Promise<string> {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
       const text = content.items
-        .map((item: { str?: string }) => item.str || "")
+        .map((item) => ("str" in item ? item.str : ""))
         .join(" ");
       pages.push(text);
     }
@@ -373,6 +376,22 @@ export function StepExecutor({
   const activeProject = useProjectStore((s) => s.activeProject);
   const updateStepStatus = useProgressStore((s) => s.updateStepStatus);
 
+  // ── Check document readiness ────────────────────────────────────────────
+
+  const checkReadiness = useCallback(() => {
+    dispatch({ type: "SET_CHECKING" });
+
+    const result = pipeline.validateReadiness(phase, step);
+    if (!result.ready) {
+      const requiredDocs = pipeline.getRequiredDocuments(phase, step);
+      const missing = requiredDocs.filter((d) => !d.present && d.required);
+      const optionalMissing = requiredDocs.filter((d) => !d.present && !d.required);
+      dispatch({ type: "SET_MISSING_DOCS", required: missing, optional: optionalMissing });
+    } else {
+      dispatch({ type: "SET_READY" });
+    }
+  }, [pipeline, phase, step]);
+
   // ── Restore persisted state on mount ────────────────────────────────────
 
   useEffect(() => {
@@ -422,22 +441,6 @@ export function StepExecutor({
       }
     }
   }, [execState, projectId, phase, step]);
-
-  // ── Check document readiness ────────────────────────────────────────────
-
-  const checkReadiness = useCallback(() => {
-    dispatch({ type: "SET_CHECKING" });
-
-    const result = pipeline.validateReadiness(phase, step);
-    if (!result.ready) {
-      const requiredDocs = pipeline.getRequiredDocuments(phase, step);
-      const missing = requiredDocs.filter((d) => !d.present && d.required);
-      const optionalMissing = requiredDocs.filter((d) => !d.present && !d.required);
-      dispatch({ type: "SET_MISSING_DOCS", required: missing, optional: optionalMissing });
-    } else {
-      dispatch({ type: "SET_READY" });
-    }
-  }, [pipeline, phase, step]);
 
   // ── Compile prompt ──────────────────────────────────────────────────────
 

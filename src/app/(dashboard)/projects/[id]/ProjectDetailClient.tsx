@@ -23,6 +23,7 @@ import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
 import { exportAllDocuments } from "@/lib/export-all";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { useIsHydrated } from "@/hooks/use-is-hydrated";
 import type { Project, StepStatus, Document } from "@/lib/types";
 
 import { toast } from "sonner";
@@ -139,17 +140,21 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
     useProgressStore();
   const { setBreadcrumbs } = useUiStore();
   const [projectId] = useState(() => getProjectIdFromUrl());
-  const [project, setProject] = useState<Project | null>(() =>
+  const [initialProject] = useState<Project | null>(() =>
     projectId ? storage.getProject(projectId) ?? null : null,
   );
+  const project =
+    activeProject && projectId && activeProject.id === projectId ? activeProject : initialProject;
   const loading = false;
 
-  const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
-  const [expandedPhaseInitialized, setExpandedPhaseInitialized] = useState(false);
+  const [expandedPhase, setExpandedPhase] = useState<number | null>(
+    () => initialProject?.currentPhase ?? null,
+  );
   const [editingTitle, setEditingTitle] = useState(false);
-  const [titleValue, setTitleValue] = useState("");
+  const [titleValue, setTitleValue] = useState(() => initialProject?.title ?? "");
   const [exportingAll, setExportingAll] = useState(false);
   const [importWizardOpen, setImportWizardOpen] = useState(false);
+  const hydrated = useIsHydrated();
 
   useEffect(() => {
     if (!projectId) return;
@@ -157,12 +162,6 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
     loadProgress(projectId);
     loadDocuments(projectId);
   }, [projectId, setActiveProject, loadProgress, loadDocuments]);
-
-  useEffect(() => {
-    if (activeProject && projectId && activeProject.id === projectId) {
-      setProject(activeProject);
-    }
-  }, [activeProject, projectId]);
 
   useEffect(() => {
     if (project) {
@@ -183,16 +182,19 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
     const alreadyShown = localStorage.getItem(wizardShownKey);
     if (alreadyShown) return;
 
-    setImportWizardOpen(true);
-    localStorage.setItem(wizardShownKey, "true");
+    const timeoutId = window.setTimeout(() => {
+      setImportWizardOpen(true);
+      localStorage.setItem(wizardShownKey, "true");
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [project]);
 
-  if (project && !editingTitle && titleValue !== project.title) {
-    setTitleValue(project.title);
-  }
-  if (project && !expandedPhaseInitialized) {
-    setExpandedPhase(project.currentPhase);
-    setExpandedPhaseInitialized(true);
+  if (!hydrated) {
+    return (
+      <div className="flex items-center justify-center py-24 text-muted-foreground">
+        Loading project...
+      </div>
+    );
   }
 
   if (loading) {
@@ -412,8 +414,19 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                 >
                   {/* Phase Row — toggles expand/collapse */}
                   <div
+                    role={accessible ? "button" : undefined}
+                    tabIndex={accessible ? 0 : undefined}
+                    aria-expanded={accessible ? isExpanded : undefined}
+                    aria-disabled={!accessible}
                     className={`flex w-full items-center gap-3 px-4 py-3 text-left select-none ${accessible ? "cursor-pointer" : "cursor-default"}`}
                     onClick={() => accessible && setExpandedPhase(isExpanded ? null : phase.phase)}
+                    onKeyDown={(e) => {
+                      if (!accessible) return;
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setExpandedPhase(isExpanded ? null : phase.phase);
+                      }
+                    }}
                   >
                     <PhaseIcon
                       phase={phase.phase as 1 | 2 | 3 | 4 | 5 | 6 | 7}
@@ -446,9 +459,8 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                       </div>
                       {accessible && (
                         (isCurrent || (isBypassed && completion === 0)) ? (
-                          <div
-                            role="button"
-                            tabIndex={0}
+                          <button
+                            type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               navigateTo(phaseUrl);
@@ -463,7 +475,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                           >
                             <Play className="h-3.5 w-3.5" />
                             {completion > 0 ? "Continue" : "Start"}
-                          </div>
+                          </button>
                         ) : completion === 100 ? (
                           <CheckCircle2 className="h-5 w-5 text-success" />
                         ) : null
@@ -493,15 +505,14 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                             phaseProgress?.steps[stepNum] ?? "not-started";
 
                           return (
-                            <div
+                            <button
                               key={stepNum}
-                              role="button"
-                              tabIndex={0}
+                              type="button"
                               onClick={() => navigateTo(phaseUrl)}
                               onKeyDown={(e) => {
                                 if (e.key === "Enter" || e.key === " ") navigateTo(phaseUrl);
                               }}
-                              className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 transition-colors cursor-pointer"
+                              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left hover:bg-muted/50 transition-colors cursor-pointer"
                             >
                               <span className="text-xs text-gray-400 font-mono w-5">
                                 {stepIdx + 1}
@@ -514,7 +525,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                               >
                                 {stepStatusLabels[status]}
                               </span>
-                            </div>
+                            </button>
                           );
                         })}
                       </div>

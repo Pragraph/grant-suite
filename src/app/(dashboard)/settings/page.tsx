@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, startTransition } from "react";
 
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   Settings,
   Sun,
@@ -221,22 +222,20 @@ export default function SettingsPage() {
     reader.onload = () => {
       try {
         const json = reader.result as string;
-        const parsed = JSON.parse(json);
-        const projectCount =
-          parsed.projects?.length ?? (parsed.project ? 1 : 0);
-        const documentCount = parsed.documents
-          ? Object.values(
-              parsed.documents as Record<string, Document[]>
-            ).reduce(
-              (sum: number, docs: unknown) =>
-                sum + (Array.isArray(docs) ? docs.length : 0),
-              0
-            )
-          : 0;
+        const parsed = storage.validateImportData(json);
+        const projectCount = parsed.projects.length;
+        const documentCount = Object.values(parsed.documents).reduce(
+          (sum: number, docs: Document[]) => sum + docs.length,
+          0
+        );
         setImportPreview({ json, projectCount, documentCount });
         setImportMode("merge");
-      } catch {
-        alert("Invalid JSON file. Please select a valid backup file.");
+      } catch (err) {
+        toast.error(
+          err instanceof Error
+            ? err.message
+            : "Invalid JSON file. Please select a valid backup file."
+        );
       }
     };
     reader.readAsText(file);
@@ -245,8 +244,9 @@ export default function SettingsPage() {
 
   const confirmImport = async () => {
     if (!importPreview) return;
+    storage.validateImportData(importPreview.json);
     if (importMode === "replace") {
-      storage.clearAllData();
+      await storage.clearAllData();
     }
     await storage.importData(importPreview.json);
     loadProjects();
@@ -256,8 +256,8 @@ export default function SettingsPage() {
 
   // ── Clear all data ──────────────────────────────────────────────────────
 
-  const confirmClearAll = () => {
-    storage.clearAllData();
+  const confirmClearAll = async () => {
+    await storage.clearAllData();
     setClearStep(0);
     setClearConfirmText("");
     window.location.href = "/projects";
