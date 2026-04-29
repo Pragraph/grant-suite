@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   ArrowRight,
   ChevronDown,
@@ -123,12 +124,12 @@ export default function LandingPage() {
             {/* CTA — desktop only, appears on scroll */}
             <div className="hidden md:flex items-center">
               {scrolled && (
-                <button
-                  onClick={() => window.location.assign("/projects")}
+                <Link
+                  href="/projects"
                   className="px-4 py-2 bg-[#2B49C7] text-white rounded-lg text-sm font-medium hover:bg-[#1E3494] transition-colors"
                 >
                   Start Now
-                </button>
+                </Link>
               )}
             </div>
 
@@ -179,12 +180,12 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={() => window.location.assign("/projects")}
+            <Link
+              href="/projects"
               className="w-full sm:w-auto px-8 py-3.5 bg-[#2B49C7] text-white rounded-xl text-lg font-semibold hover:bg-[#1E3494] hover:scale-105 transition-all flex items-center justify-center gap-2"
             >
               Get Started <ArrowRight className="w-5 h-5" />
-            </button>
+            </Link>
             <button
               onClick={() => scrollToSection("how-it-works")}
               className="w-full sm:w-auto px-8 py-3.5 border border-gray-300 text-gray-700 rounded-xl text-lg font-medium hover:bg-white/80 transition-all flex items-center justify-center gap-2"
@@ -343,12 +344,12 @@ export default function LandingPage() {
           <p className="text-gray-500 mb-8">
             Free to use. No account needed. No API keys required. Your data never leaves your browser.
           </p>
-          <button
-            onClick={() => window.location.assign("/projects")}
+          <Link
+            href="/projects"
             className="px-8 py-3.5 bg-[#2B49C7] text-white rounded-xl text-lg font-semibold hover:bg-[#1E3494] hover:scale-105 transition-all inline-flex items-center gap-2"
           >
             Start Now <ArrowRight className="w-5 h-5" />
-          </button>
+          </Link>
         </div>
       </section>
 
