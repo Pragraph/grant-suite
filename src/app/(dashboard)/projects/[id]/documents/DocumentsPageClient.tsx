@@ -28,6 +28,11 @@ export function DocumentsPageClient({ id: _id }: { id: string }) {
     activeProject && projectId && activeProject.id === projectId ? activeProject : initialProject;
   const loading = false;
   const [exportingAll, setExportingAll] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Sync Zustand stores on mount
   useEffect(() => {
@@ -45,6 +50,14 @@ export function DocumentsPageClient({ id: _id }: { id: string }) {
       ]);
     }
   }, [project, setBreadcrumbs, projectId]);
+
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center py-24 text-muted-foreground">
+        Loading...
+      </div>
+    );
+  }
 
   if (loading) {
     return (
