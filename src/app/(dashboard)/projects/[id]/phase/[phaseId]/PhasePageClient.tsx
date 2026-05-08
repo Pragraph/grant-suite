@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type PhaseClientProps = {
   projectId: string;
@@ -78,8 +79,17 @@ export function PhasePageClient({ projectId, phaseId }: PhasePageClientProps) {
 
   if (!Client) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <p className="text-muted-foreground">Phase {phaseId} - Coming soon</p>
+      <div className="space-y-3 py-12 text-center">
+        <h2 className="text-lg font-medium text-foreground">Phase not found</h2>
+        <p className="text-sm text-muted-foreground">
+          Phase {phaseId} doesn&apos;t exist for this project.
+        </p>
+        <Button
+          variant="secondary"
+          onClick={() => window.location.assign(`/projects/${projectId}`)}
+        >
+          Back to project
+        </Button>
       </div>
     );
   }
