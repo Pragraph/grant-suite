@@ -64,14 +64,14 @@ describe("DocumentPipeline — getRequiredDocuments", () => {
 
   it("returns correct list for Phase 5 Step 1", () => {
     const result = documentPipeline.getRequiredDocuments("proj-1", 5, 1);
-    // Phase 5 Step 1 requires: Grant_Intelligence, Proposal_Blueprint, Research_Design, Budget_Team_Plan
+    // Phase 5 Step 1 requires: Grant_Intelligence, Proposal_Blueprint, Research_Design, Budget_Justification
     const requiredNames = result
       .filter((r) => r.required)
       .map((r) => r.canonicalName);
     expect(requiredNames).toContain("Grant_Intelligence.md");
     expect(requiredNames).toContain("Proposal_Blueprint.md");
     expect(requiredNames).toContain("Research_Design.md");
-    expect(requiredNames).toContain("Budget_Team_Plan.md");
+    expect(requiredNames).toContain("Budget_Justification.md");
 
     // Optional: Partnership_Plan, Patent_Analysis, SDG_Alignment, National_Alignment, KPI_Plan
     const optionalNames = result
