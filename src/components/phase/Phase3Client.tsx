@@ -28,6 +28,7 @@ import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { advanceToNextStep } from "@/lib/step-navigation";
 import type { StepStatus } from "@/lib/types";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -221,6 +222,24 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
     ]);
   }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
+  // ── Listen for next-step navigation events ────────────────────────────────
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ phase?: number; step: number }>).detail;
+      if (detail.phase !== undefined && detail.phase !== 3) return;
+      if (detail.step === 1) {
+        setActiveSection("main");
+        setTimeout(() => {
+          document
+            .getElementById(`phase3-step-1`)
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 350);
+      }
+    };
+    window.addEventListener("grant-suite:expand-step", handler);
+    return () => window.removeEventListener("grant-suite:expand-step", handler);
+  }, []);
+
   // ── Persist toggles ──────────────────────────────────────────────────────
 
   useEffect(() => {
@@ -365,7 +384,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
       </div>
 
       {/* ── MAIN STEP: Research Design Generator ───────────────────────── */}
-      <div className="relative">
+      <div id="phase3-step-1" className="relative">
         {/* Timeline line */}
         <div
           className={cn(
@@ -485,6 +504,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                   ]}
                   onComplete={() => {
                     loadDocuments(projectId);
+                    advanceToNextStep(projectId, 3, 1);
                   }}
                 />
 

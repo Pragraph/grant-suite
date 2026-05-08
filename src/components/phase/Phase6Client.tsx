@@ -27,6 +27,7 @@ import { useUiStore } from "@/stores/ui-store";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
 import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
+import { advanceToNextStep } from "@/lib/step-navigation";
 import type { StepStatus } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
@@ -719,6 +720,20 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
     ]);
   }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
+  // ── Listen for next-step navigation events ────────────────────────────────
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ phase?: number; step: number }>).detail;
+      if (detail.phase !== undefined && detail.phase !== 6) return;
+      setActiveStep(detail.step);
+      setTimeout(() => {
+        const el = document.getElementById(`phase6-step-${detail.step}`);
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 350);
+    };
+    window.addEventListener("grant-suite:expand-step", handler);
+    return () => window.removeEventListener("grant-suite:expand-step", handler);
+  }, []);
 
   // ── Phase progress ────────────────────────────────────────────────────────
 
@@ -855,7 +870,7 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
             const unlocked = isStepUnlocked(stepDef.step);
             const meta = STEP_META[stepDef.step];
             return (
-              <div key={stepDef.step} className="relative">
+              <div key={stepDef.step} id={`phase6-step-${stepDef.step}`} className="relative">
                 {/* Timeline line */}
                 {i < phase6Steps.length - 1 && (
                   <div
@@ -989,6 +1004,7 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
                               onComplete={() => {
                                 loadDocuments(projectId);
                                 loadProgress(projectId);
+                                advanceToNextStep(projectId, 6, stepDef.step);
                               }}
                             />
 

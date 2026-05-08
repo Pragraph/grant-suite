@@ -26,6 +26,7 @@ import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { advanceToNextStep } from "@/lib/step-navigation";
 import type { StepStatus } from "@/lib/types";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -116,7 +117,7 @@ const STEP_META: Record<number, StepMeta> = {
   3: {
     icon: FileCheck,
     description:
-      "Write budget justification narrative, verify compliance, and assemble Budget_Team_Plan.md.",
+      "Write budget justification narrative, verify compliance, and assemble Budget_Justification.md.",
   },
 };
 
@@ -873,6 +874,20 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
     ]);
   }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
+  // ── Listen for next-step navigation events ────────────────────────────────
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ phase?: number; step: number }>).detail;
+      if (detail.phase !== undefined && detail.phase !== 4) return;
+      setActiveStep(detail.step);
+      setTimeout(() => {
+        const el = document.getElementById(`phase4-step-${detail.step}`);
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 350);
+    };
+    window.addEventListener("grant-suite:expand-step", handler);
+    return () => window.removeEventListener("grant-suite:expand-step", handler);
+  }, []);
 
   // ── Persist roles, letters, budget to localStorage ────────────────────────
 
@@ -1084,8 +1099,8 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
       projectId,
       phase: 4,
       step: 3,
-      name: "Budget & Team Plan",
-      canonicalName: "Budget_Team_Plan.md",
+      name: "Budget Justification",
+      canonicalName: "Budget_Justification.md",
       content,
       format: "md" as const,
       version: 1,
@@ -1148,7 +1163,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
           <h1 className="text-2xl font-bold text-foreground">{PHASE_4.name}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Define your team composition, construct a detailed budget, and assemble the
-            Budget_Team_Plan.md — the financial backbone of your proposal.
+            Budget_Justification.md — the financial backbone of your proposal.
           </p>
         </div>
       </div>
@@ -1178,7 +1193,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
           const StepIcon = meta?.icon;
 
           return (
-            <div key={stepDef.step} className="relative">
+            <div key={stepDef.step} id={`phase4-step-${stepDef.step}`} className="relative">
               {/* Timeline line */}
               {i < phase4Steps.length - 1 && (
                 <div
@@ -1238,7 +1253,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
                         variant="outline"
                         className="text-[10px] border-accent-500/30 text-accent-400"
                       >
-                        Produces Budget_Team_Plan.md
+                        Produces Budget_Justification.md
                       </Badge>
                     )}
                   </div>
@@ -1297,7 +1312,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
                             description={meta?.description}
                             onComplete={() => {
                               loadDocuments(projectId);
-                              setActiveStep(2);
+                              advanceToNextStep(projectId, 4, 1);
                             }}
                           />
                           {/* Role Matrix — show after step is complete or has output */}
@@ -1400,7 +1415,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
                             additionalFields={budgetAdditionalFields}
                             onComplete={() => {
                               loadDocuments(projectId);
-                              setActiveStep(3);
+                              advanceToNextStep(projectId, 4, 2);
                             }}
                           />
 
@@ -1445,7 +1460,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
                               <div className="flex items-center gap-2 mb-2">
                                 <Sparkles className="h-5 w-5 text-accent-400" />
                                 <p className="text-sm font-medium text-foreground">
-                                  Budget_Team_Plan.md Assembled
+                                  Budget_Justification.md Assembled
                                 </p>
                               </div>
                               <p className="text-xs text-muted-foreground">
@@ -1483,7 +1498,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FileCheck className="h-5 w-5 text-phase-4" />
-              Budget_Team_Plan.md — Preview
+              Budget_Justification.md — Preview
             </DialogTitle>
           </DialogHeader>
           <div className="prose prose-sm dark:prose-invert max-w-none py-4">

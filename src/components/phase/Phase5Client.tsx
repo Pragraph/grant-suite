@@ -33,6 +33,7 @@ import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { advanceToNextStep } from "@/lib/step-navigation";
 import type { StepStatus } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
@@ -132,7 +133,7 @@ const REQUIRED_DOCS = [
   { canonicalName: "Grant_Intelligence.md", label: "Grant Intelligence", phase: 1 },
   { canonicalName: "Proposal_Blueprint.md", label: "Proposal Blueprint", phase: 2 },
   { canonicalName: "Research_Design.md", label: "Research Design", phase: 3 },
-  { canonicalName: "Budget_Team_Plan.md", label: "Budget & Team Plan", phase: 4 },
+  { canonicalName: "Budget_Justification.md", label: "Budget Justification", phase: 4 },
 ];
 
 const OPTIONAL_DOCS = [
@@ -391,6 +392,20 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
     ]);
   }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
+  // ── Listen for next-step navigation events ────────────────────────────────
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ phase?: number; step: number }>).detail;
+      if (detail.phase !== undefined && detail.phase !== 5) return;
+      setActiveStep(detail.step);
+      setTimeout(() => {
+        const el = document.getElementById(`phase5-step-${detail.step}`);
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 350);
+    };
+    window.addEventListener("grant-suite:expand-step", handler);
+    return () => window.removeEventListener("grant-suite:expand-step", handler);
+  }, []);
 
   // ── Phase progress ────────────────────────────────────────────────────────
 
@@ -757,7 +772,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
             const docStats = isComplete ? getDocStats(producedDocNames[stepDef.step]) : null;
 
             return (
-              <div key={stepDef.step} className="relative">
+              <div key={stepDef.step} id={`phase5-step-${stepDef.step}`} className="relative">
                 {/* Timeline line */}
                 {i < phase5Steps.length - 1 && (
                   <div
@@ -916,7 +931,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                               description={meta?.description}
                               onComplete={() => {
                                 loadDocuments(projectId);
-                                setActiveStep(2);
+                                advanceToNextStep(projectId, 5, 1);
                               }}
                             />
                             {isComplete && (
@@ -957,7 +972,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                   additionalFields={step2Fields}
                                   onComplete={() => {
                                     loadDocuments(projectId);
-                                    setActiveStep(3);
+                                    advanceToNextStep(projectId, 5, 2);
                                   }}
                                 />
                                 {isComplete && (
@@ -988,7 +1003,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                   additionalFields={step3Fields}
                                   onComplete={() => {
                                     loadDocuments(projectId);
-                                    setActiveStep(4);
+                                    advanceToNextStep(projectId, 5, 3);
                                   }}
                                 />
                                 {isComplete && (
@@ -1019,6 +1034,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                   additionalFields={step4Fields}
                                   onComplete={() => {
                                     loadDocuments(projectId);
+                                    advanceToNextStep(projectId, 5, 4);
                                   }}
                                 />
                                 {isComplete && (
@@ -1056,7 +1072,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                   additionalFields={step5Fields}
                                   onComplete={() => {
                                     loadDocuments(projectId);
-                                    setActiveStep(6);
+                                    advanceToNextStep(projectId, 5, 5);
                                   }}
                                 />
                                 {isComplete && (
@@ -1087,7 +1103,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                   additionalFields={step6Fields}
                                   onComplete={() => {
                                     loadDocuments(projectId);
-                                    setActiveStep(7);
+                                    advanceToNextStep(projectId, 5, 6);
                                   }}
                                 />
                                 {isComplete && (
@@ -1175,7 +1191,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                   additionalFields={step7Fields}
                                   onComplete={() => {
                                     loadDocuments(projectId);
-                                    setActiveStep(8);
+                                    advanceToNextStep(projectId, 5, 7);
                                   }}
                                 />
                                 {isComplete && (

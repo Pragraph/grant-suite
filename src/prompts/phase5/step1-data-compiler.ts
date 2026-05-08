@@ -15,7 +15,7 @@ export const template: PromptTemplate = {
     "Grant_Intelligence.md",
     "Proposal_Blueprint.md",
     "Research_Design.md",
-    "Budget_Team_Plan.md",
+    "Budget_Justification.md",
     "Partnership_Plan.md",
     "Patent_Analysis.md",
     "SDG_Alignment.md",
@@ -56,8 +56,8 @@ export const template: PromptTemplate = {
 ### Research Design (Phase 3)
 {{> Research_Design.md}}
 
-### Budget & Team Plan (Phase 4)
-{{> Budget_Team_Plan.md}}
+### Budget Justification (Phase 4)
+{{> Budget_Justification.md}}
 
 ---
 

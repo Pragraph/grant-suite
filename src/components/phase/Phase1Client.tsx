@@ -23,6 +23,7 @@ import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
 import { PHASE_DEFINITIONS, GRANT_SCHEME_MAP } from "@/lib/constants";
+import { advanceToNextStep } from "@/lib/step-navigation";
 import type { StepStatus } from "@/lib/types";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -130,7 +131,7 @@ function getMethod1Steps(): WizardStepConfig[] {
       type: "gap-citation-collection",
       formInputName: "collectedGapsWithCitations",
       collectionLabel: "Research Gaps with APA Citations",
-      collectionMinItems: 5,
+      collectionMinItems: 1,
     },
     // Step 6: Synthesis Prompt
     {
@@ -368,7 +369,9 @@ function NextStepCTA({ projectId, currentStep, phase1Steps }: NextStepCTAProps) 
 
   const handleNavigate = () => {
     window.dispatchEvent(
-      new CustomEvent("grant-suite:expand-step", { detail: { step: nextStepDef.step } })
+      new CustomEvent("grant-suite:expand-step", {
+        detail: { phase: 1, step: nextStepDef.step },
+      })
     );
   };
 
@@ -440,7 +443,8 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
   // ── Listen for next-step navigation events ────────────────────────────────
   useEffect(() => {
     const handler = (e: Event) => {
-      const detail = (e as CustomEvent<{ step: number }>).detail;
+      const detail = (e as CustomEvent<{ phase?: number; step: number }>).detail;
+      if (detail.phase !== undefined && detail.phase !== 1) return;
       setActiveStep(detail.step);
       setTimeout(() => {
         const el = document.getElementById(`phase1-step-${detail.step}`);
@@ -772,6 +776,24 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                               loadDocuments(projectId);
                             }}
                             onCancel={() => setActiveMethod(null)}
+                            onSkipToBrief={
+                              activeMethod === "method1" ||
+                              activeMethod === "method2" ||
+                              activeMethod === "method4"
+                                ? () => {
+                                    setActiveMethod(null);
+                                    setTimeout(() => {
+                                      const el = document.getElementById(
+                                        "research-direction-brief",
+                                      );
+                                      el?.scrollIntoView({
+                                        behavior: "smooth",
+                                        block: "start",
+                                      });
+                                    }, 350);
+                                  }
+                                : undefined
+                            }
                           />
                         ) : (
                           <div className="space-y-6">
@@ -923,6 +945,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                               </p>
 
                               <button
+                                id="research-direction-brief"
                                 onClick={() => setActiveMethod("method3")}
                                 className={cn(
                                   "flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all",
@@ -1048,7 +1071,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                           ]}
                           onComplete={() => {
                             loadDocuments(projectId);
-                            setActiveStep(3);
+                            advanceToNextStep(projectId, 1, 2);
                           }}
                         />
                         {/* Next step CTA when Step 2 is complete */}
@@ -1163,6 +1186,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                             ]}
                             onComplete={() => {
                               loadDocuments(projectId);
+                              advanceToNextStep(projectId, 1, 3);
                             }}
                           />
 

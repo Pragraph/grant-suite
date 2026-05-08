@@ -28,6 +28,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { MarkdownRenderer } from "@/components/document/MarkdownRenderer";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -58,6 +66,7 @@ interface MethodWizardProps {
   initialFormValues?: Record<string, string>;
   onComplete: () => void;
   onCancel: () => void;
+  onSkipToBrief?: () => void;
 }
 
 interface WizardState {
@@ -98,6 +107,7 @@ export function MethodWizard({
   initialFormValues,
   onComplete,
   onCancel,
+  onSkipToBrief,
 }: MethodWizardProps) {
   const { compile } = usePromptEngine();
   const activeProject = useProjectStore((s) => s.activeProject);
@@ -181,6 +191,7 @@ export function MethodWizard({
   const [direction, setDirection] = useState(0);
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
+  const [showSkipDialog, setShowSkipDialog] = useState(false);
   const isInitialMount = useRef(true);
 
   // ── Persist state changes (skip initial mount) ────────────────────────────
@@ -336,6 +347,18 @@ export function MethodWizard({
     [state.pastedOutputs, methodId, methodName, projectId, saveDocument, updateStepStatus, onComplete],
   );
 
+  // ── Confirm skip-to-brief ────────────────────────────────────────────────
+
+  const handleConfirmSkip = useCallback(() => {
+    try {
+      localStorage.removeItem(getWizardKey(projectId, methodId));
+    } catch {
+      // ignore
+    }
+    setShowSkipDialog(false);
+    onSkipToBrief?.();
+  }, [projectId, methodId, onSkipToBrief]);
+
   // ── Can proceed check ────────────────────────────────────────────────────
 
   const canProceed = (): boolean => {
@@ -367,7 +390,7 @@ export function MethodWizard({
         return true;
       case "gap-citation-collection": {
         const inputName = step.formInputName || step.id;
-        const minItems = step.collectionMinItems || 5;
+        const minItems = step.collectionMinItems || 1;
         try {
           const entries = JSON.parse(state.formValues[inputName] || "[]");
           const filled = entries.filter(
@@ -395,6 +418,11 @@ export function MethodWizard({
   // ── Check if this is the last step ────────────────────────────────────────
 
   const isLastStep = state.currentStep === steps.length - 1;
+  const showSkipAction =
+    isLastStep &&
+    currentStepConfig.type === "paste-output" &&
+    !!onSkipToBrief &&
+    (methodId === "method1" || methodId === "method2" || methodId === "method4");
 
   // ── Render step content ───────────────────────────────────────────────────
 
@@ -769,7 +797,7 @@ export function MethodWizard({
       // ── Gap + Citation Collection ─────────────────────────────────────
       case "gap-citation-collection": {
         const inputName = step.formInputName || step.id;
-        const minItems = step.collectionMinItems || 5;
+        const minItems = step.collectionMinItems || 1;
 
         // Parse existing data from formValues (stored as JSON string)
         let entries: { gap: string; citation: string }[] = [];
@@ -926,13 +954,16 @@ export function MethodWizard({
                     filledEntries.length >= minItems ? "text-emerald-700 dark:text-emerald-300" : "text-muted-foreground",
                   )}
                 >
-                  gaps collected
+                  {filledEntries.length === 1 ? "gap" : "gaps"} collected
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  {filledEntries.length >= minItems
-                    ? "✓ Ready to proceed"
-                    : `Minimum ${minItems} required — need ${minItems - filledEntries.length} more`}
-                </p>
+                {filledEntries.length === 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    Minimum {minItems} required, add {minItems} to continue
+                  </p>
+                )}
+                {filledEntries.length > 0 && filledEntries.length >= minItems && (
+                  <p className="text-xs text-muted-foreground">✓ Ready to proceed</p>
+                )}
               </div>
             </div>
           </div>
@@ -1226,7 +1257,17 @@ export function MethodWizard({
             </Button>
           </div>
 
-          <div>
+          <div className="flex items-center gap-2">
+            {showSkipAction && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSkipDialog(true)}
+                className="text-muted-foreground"
+              >
+                Skip and fill the Direction Brief manually
+              </Button>
+            )}
             {isLastStep && currentStepConfig.type === "paste-output" ? (
               <Button
                 onClick={() => handleSaveFinalOutput(currentStepConfig.templateId || "", currentStepConfig.id)}
@@ -1244,6 +1285,25 @@ export function MethodWizard({
           </div>
         </div>
       </CardContent>
+
+      {/* ── Skip-save confirmation dialog ────────────────────────────── */}
+      <Dialog open={showSkipDialog} onOpenChange={setShowSkipDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Skip saving the synthesis output?</DialogTitle>
+            <DialogDescription>
+              You&apos;ll need to copy your chosen direction brief from the LLM
+              output into the form manually. The auto-prefill will not run.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowSkipDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmSkip}>Skip and continue</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

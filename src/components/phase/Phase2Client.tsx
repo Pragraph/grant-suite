@@ -24,6 +24,7 @@ import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
 import { PHASE_DEFINITIONS, GRANT_SCHEME_MAP } from "@/lib/constants";
+import { advanceToNextStep } from "@/lib/step-navigation";
 import type { StepStatus } from "@/lib/types";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -292,6 +293,20 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
     ]);
   }, [projectId, setActiveProject, loadProgress, loadDocuments, setBreadcrumbs]);
 
+  // ── Listen for next-step navigation events ────────────────────────────────
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ phase?: number; step: number }>).detail;
+      if (detail.phase !== undefined && detail.phase !== 2) return;
+      setActiveStep(detail.step);
+      setTimeout(() => {
+        const el = document.getElementById(`phase2-step-${detail.step}`);
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 350);
+    };
+    window.addEventListener("grant-suite:expand-step", handler);
+    return () => window.removeEventListener("grant-suite:expand-step", handler);
+  }, []);
 
   // ── Track Step 3 output for psychology highlights ─────────────────────────
 
@@ -471,6 +486,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
             ]}
             onComplete={() => {
               loadDocuments(projectId);
+              advanceToNextStep(projectId, 2, 5);
             }}
           />
         </div>
@@ -488,7 +504,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
             const StepIcon = meta?.icon;
 
             return (
-              <div key={stepDef.step} className="relative">
+              <div key={stepDef.step} id={`phase2-step-${stepDef.step}`} className="relative">
                 {/* Timeline line */}
                 {i < phase2Steps.length - 1 && (
                   <div
@@ -611,10 +627,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                           additionalFields={getAdditionalFields(stepDef.step, activeProject)}
                           onComplete={() => {
                             loadDocuments(projectId);
-                            // Auto-advance to next step
-                            if (stepDef.step < 5) {
-                              setActiveStep(stepDef.step + 1);
-                            }
+                            advanceToNextStep(projectId, 2, stepDef.step);
                           }}
                         />
 
