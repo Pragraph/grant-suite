@@ -20,7 +20,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn, titleCase } from "@/lib/utils";
 import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
 import { useProjectStore } from "@/stores/project-store";
@@ -475,7 +475,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                       label: "GET Sub-Category",
                       type: "text",
                       placeholder: "exploratory or transformative",
-                      defaultValue: activeProject?.grantSubCategory || undefined,
+                      defaultValue: titleCase(activeProject?.grantSubCategory) || undefined,
                     },
                     {
                       name: "researchApproach",
@@ -1269,7 +1269,7 @@ function getModuleFields(
       label: "GET Sub-Category",
       type: "text" as const,
       placeholder: "exploratory or transformative",
-      defaultValue: project?.grantSubCategory || undefined,
+      defaultValue: titleCase(project?.grantSubCategory) || undefined,
     },
   ];
 

@@ -13,6 +13,7 @@ import { useDocumentStore } from "@/stores/document-store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { parsePlaceholders } from "@/lib/placeholders";
 
 interface PlaceholderEntry {
   marker: string;
@@ -47,41 +48,30 @@ export function PlaceholderTracker({
     for (const doc of relevantDocs) {
       if (!doc.content) continue;
 
-      const citRegex = /\[CITATION NEEDED[^\]]*\]/g;
-      let match: RegExpExecArray | null;
-      while ((match = citRegex.exec(doc.content)) !== null) {
-        const start = Math.max(0, match.index - 30);
+      const tags = parsePlaceholders(doc.content);
+      for (const tag of tags) {
+        if (tag.type !== "CITATION NEEDED" && tag.type !== "USER INPUT NEEDED") {
+          continue;
+        }
+        const start = Math.max(0, tag.startIndex - 30);
         const end = Math.min(
           doc.content.length,
-          match.index + match[0].length + 30,
+          tag.endIndex + 30,
         );
-        citations.push({
-          marker: match[0],
+        const entry: PlaceholderEntry = {
+          marker: tag.raw,
           document: doc.canonicalName,
           phase: doc.phase,
           context:
             "..." +
             doc.content.slice(start, end).replace(/\n/g, " ") +
             "...",
-        });
-      }
-
-      const inputRegex = /\[USER INPUT NEEDED[^\]]*\]/g;
-      while ((match = inputRegex.exec(doc.content)) !== null) {
-        const start = Math.max(0, match.index - 30);
-        const end = Math.min(
-          doc.content.length,
-          match.index + match[0].length + 30,
-        );
-        userInputs.push({
-          marker: match[0],
-          document: doc.canonicalName,
-          phase: doc.phase,
-          context:
-            "..." +
-            doc.content.slice(start, end).replace(/\n/g, " ") +
-            "...",
-        });
+        };
+        if (tag.type === "CITATION NEEDED") {
+          citations.push(entry);
+        } else {
+          userInputs.push(entry);
+        }
       }
     }
 

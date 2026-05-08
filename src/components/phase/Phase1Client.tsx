@@ -14,7 +14,7 @@ import {
   FileCheck,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn, titleCase, buildGrantGuidelinesSearchUrl } from "@/lib/utils";
 import { generateScholarLabsPrompt, SCHOLAR_LABS_URL } from "@/lib/scholar-labs";
 import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
@@ -1021,7 +1021,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                               label: "GET Sub-Category",
                               type: "text",
                               placeholder: "e.g., exploratory or transformative",
-                              defaultValue: activeProject?.grantSubCategory || undefined,
+                              defaultValue: titleCase(activeProject?.grantSubCategory) || undefined,
                             },
                             {
                               name: "researchTopic",
@@ -1147,7 +1147,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                 label: "GET Sub-Category (if applicable)",
                                 type: "text",
                                 placeholder: "exploratory or transformative",
-                                defaultValue: activeProject?.grantSubCategory || undefined,
+                                defaultValue: titleCase(activeProject?.grantSubCategory) || undefined,
                               },
                               {
                                 name: "grantName",
@@ -1164,6 +1164,19 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                 label: "Paste Grant Guidelines",
                                 type: "file-upload-text",
                                 placeholder: "Paste the full grant guidelines text here (from PDF or website)...",
+                                helperLink: (() => {
+                                  const scheme = activeProject?.grantScheme;
+                                  const isSpecific =
+                                    scheme &&
+                                    scheme !== "Undecided" &&
+                                    scheme !== "Other" &&
+                                    scheme !== "International-Other";
+                                  if (!isSpecific) return undefined;
+                                  const url = buildGrantGuidelinesSearchUrl(
+                                    GRANT_SCHEME_MAP[scheme]?.fullName,
+                                  );
+                                  return url ? { url, label: "Search Google" } : undefined;
+                                })(),
                               },
                               {
                                 name: "grant_url",

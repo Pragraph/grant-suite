@@ -15,7 +15,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn, titleCase } from "@/lib/utils";
 import { usePromptEngine } from "@/hooks/usePromptEngine";
 import { useProjectStore } from "@/stores/project-store";
 import { useDocumentStore } from "@/stores/document-store";
@@ -151,7 +151,7 @@ export function MethodWizard({
         updates.currency = project.currency;
       }
       if (!initial.formValues.grantSubCategory && project.grantSubCategory) {
-        updates.grantSubCategory = project.grantSubCategory;
+        updates.grantSubCategory = titleCase(project.grantSubCategory);
       }
       // Auto-select researchType based on grant scheme
       if (!initial.formValues.researchType && project.grantScheme) {
@@ -235,7 +235,7 @@ export function MethodWizard({
           currency: activeProject.currency || "",
           targetFunder: activeProject.targetFunder,
           budgetRange: activeProject.budgetRange,
-          grantSubCategory: activeProject.grantSubCategory,
+          grantSubCategory: titleCase(activeProject.grantSubCategory),
         },
         documents: {},
         formInputs: state.formValues,

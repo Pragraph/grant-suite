@@ -16,9 +16,10 @@ import {
   Eye,
   Save,
   Upload,
+  ExternalLink,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn, titleCase } from "@/lib/utils";
 import { storage } from "@/lib/storage";
 import { usePromptEngine } from "@/hooks/usePromptEngine";
 import { useDocumentPipeline } from "@/hooks/useDocumentPipeline";
@@ -35,8 +36,22 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { MarkdownRenderer } from "@/components/document/MarkdownRenderer";
 import { MarkdownEditor } from "@/components/document/MarkdownEditor";
+import { DecoratedMarkdownView } from "@/components/document/DecoratedMarkdownView";
+import {
+  PlaceholderResolver,
+  type ResolverFilter,
+} from "@/components/document/PlaceholderResolver";
+import { applyResolutions, parsePlaceholders } from "@/lib/placeholders";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -48,6 +63,7 @@ export interface FormFieldConfig {
   required?: boolean;
   defaultValue?: string;
   options?: { label: string; value: string }[];
+  helperLink?: { url: string; label: string };
 }
 
 interface StepExecutorProps {
@@ -85,6 +101,12 @@ interface ExecutorReducerState {
   pastedOutput: string;
   savedDocumentName: string;
   savedWordCount: number;
+  resolutions: Record<string, string>;
+  confirmed: string[];
+  skipped: string[];
+  tagFilter: ResolverFilter;
+  activeTagId: string | null;
+  resolverOpen: boolean;
 }
 
 type ExecutorAction =
@@ -96,10 +118,17 @@ type ExecutorAction =
   | { type: "SET_PROMPT_EDITED"; prompt: string }
   | { type: "SET_WAITING_FOR_OUTPUT" }
   | { type: "SET_PASTED_OUTPUT"; output: string }
-  | { type: "SET_REVIEWING" }
+  | { type: "SET_REVIEWING"; resolverOpen: boolean }
   | { type: "SET_SAVED"; documentName: string; wordCount: number }
   | { type: "BACK_TO_PROMPT" }
   | { type: "DISCARD_OUTPUT" }
+  | { type: "APPLY_RESOLUTION"; tagId: string; replacement: string }
+  | { type: "CONFIRM_TAG"; tagId: string }
+  | { type: "SKIP_TAG"; tagId: string }
+  | { type: "UNDO_TAG"; tagId: string }
+  | { type: "SET_TAG_FILTER"; filter: ResolverFilter }
+  | { type: "SET_ACTIVE_TAG"; tagId: string | null }
+  | { type: "TOGGLE_RESOLVER" }
   | { type: "RESTORE"; state: ExecutorReducerState };
 
 const initialState: ExecutorReducerState = {
@@ -115,6 +144,12 @@ const initialState: ExecutorReducerState = {
   pastedOutput: "",
   savedDocumentName: "",
   savedWordCount: 0,
+  resolutions: {},
+  confirmed: [],
+  skipped: [],
+  tagFilter: "all",
+  activeTagId: null,
+  resolverOpen: false,
 };
 
 function reducer(state: ExecutorReducerState, action: ExecutorAction): ExecutorReducerState {
@@ -144,13 +179,69 @@ function reducer(state: ExecutorReducerState, action: ExecutorAction): ExecutorR
     case "SET_PASTED_OUTPUT":
       return { ...state, pastedOutput: action.output };
     case "SET_REVIEWING":
-      return { ...state, state: "REVIEWING" };
+      return { ...state, state: "REVIEWING", resolverOpen: action.resolverOpen };
     case "SET_SAVED":
       return { ...state, state: "SAVED", savedDocumentName: action.documentName, savedWordCount: action.wordCount };
     case "BACK_TO_PROMPT":
       return { ...state, state: "PROMPT_COMPILED" };
     case "DISCARD_OUTPUT":
-      return { ...state, state: "WAITING_FOR_OUTPUT", pastedOutput: "" };
+      return {
+        ...state,
+        state: "WAITING_FOR_OUTPUT",
+        pastedOutput: "",
+        resolutions: {},
+        confirmed: [],
+        skipped: [],
+        activeTagId: null,
+        tagFilter: "all",
+      };
+    case "APPLY_RESOLUTION":
+      return {
+        ...state,
+        resolutions: { ...state.resolutions, [action.tagId]: action.replacement },
+        confirmed: state.confirmed.filter((id) => id !== action.tagId),
+        skipped: state.skipped.filter((id) => id !== action.tagId),
+      };
+    case "CONFIRM_TAG": {
+      const { [action.tagId]: _omit, ...remaining } = state.resolutions;
+      void _omit;
+      return {
+        ...state,
+        resolutions: remaining,
+        confirmed: state.confirmed.includes(action.tagId)
+          ? state.confirmed
+          : [...state.confirmed, action.tagId],
+        skipped: state.skipped.filter((id) => id !== action.tagId),
+      };
+    }
+    case "SKIP_TAG": {
+      const { [action.tagId]: _omit, ...remaining } = state.resolutions;
+      void _omit;
+      return {
+        ...state,
+        resolutions: remaining,
+        confirmed: state.confirmed.filter((id) => id !== action.tagId),
+        skipped: state.skipped.includes(action.tagId)
+          ? state.skipped
+          : [...state.skipped, action.tagId],
+      };
+    }
+    case "UNDO_TAG": {
+      const { [action.tagId]: _omit, ...remaining } = state.resolutions;
+      void _omit;
+      return {
+        ...state,
+        resolutions: remaining,
+        confirmed: state.confirmed.filter((id) => id !== action.tagId),
+        skipped: state.skipped.filter((id) => id !== action.tagId),
+      };
+    }
+    case "SET_TAG_FILTER":
+      return { ...state, tagFilter: action.filter };
+    case "SET_ACTIVE_TAG":
+      return { ...state, activeTagId: action.tagId };
+    case "TOGGLE_RESOLVER":
+      return { ...state, resolverOpen: !state.resolverOpen };
     case "RESTORE":
       return action.state;
     default:
@@ -185,6 +276,48 @@ const stateVariants = {
 };
 
 const springTransition = { type: "spring" as const, stiffness: 300, damping: 30 };
+
+// ─── Field label row (handles Optional pill + helper link) ─────────────────
+
+function FieldLabel({
+  field,
+  htmlFor,
+}: {
+  field: FormFieldConfig;
+  htmlFor: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <Label
+        htmlFor={htmlFor}
+        className="text-xs font-medium text-muted-foreground inline-flex items-center gap-1.5"
+      >
+        <span>{field.label}</span>
+        {field.required ? (
+          <span className="text-red-500">*</span>
+        ) : (
+          <Badge
+            variant="outline"
+            className="h-4 px-1.5 text-[9px] font-normal uppercase tracking-wide text-muted-foreground/70 border-border/60"
+          >
+            Optional
+          </Badge>
+        )}
+      </Label>
+      {field.helperLink && (
+        <a
+          href={field.helperLink.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-[11px] font-normal text-[#4F7DF3] hover:text-[#4F7DF3]/80 hover:underline transition-colors"
+        >
+          {field.helperLink.label}
+          <ExternalLink className="h-3 w-3" />
+        </a>
+      )}
+    </div>
+  );
+}
 
 // ─── File text extraction (for file-upload-text fields) ─────────────────────
 
@@ -270,10 +403,7 @@ function FileUploadTextField({
 
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-muted-foreground">
-        {field.label}
-        {field.required && <span className="ml-1 text-red-500">*</span>}
-      </Label>
+      <FieldLabel field={field} htmlFor={`field-${field.name}`} />
 
       {/* Upload bar */}
       <div className="flex items-center gap-2">
@@ -369,6 +499,7 @@ export function StepExecutor({
   const [copyFeedback, setCopyFeedback] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showUnaddressedDialog, setShowUnaddressedDialog] = useState(false);
 
   const { compile, getTemplate } = usePromptEngine();
   const pipeline = useDocumentPipeline(projectId);
@@ -398,17 +529,31 @@ export function StepExecutor({
     try {
       const persisted = localStorage.getItem(getPersistKey(projectId, phase, step));
       if (persisted) {
-        const parsed = JSON.parse(persisted) as ExecutorReducerState;
+        const parsed = JSON.parse(persisted) as Partial<ExecutorReducerState> & {
+          state: ExecutorReducerState["state"];
+        };
         // Don't restore CHECKING or transient states
         if (parsed.state !== "CHECKING") {
           // Merge any new default values that didn't exist in persisted state
-          const mergedFormValues = { ...parsed.formValues };
+          const mergedFormValues = { ...(parsed.formValues ?? {}) };
           for (const field of additionalFields) {
             if (field.defaultValue && !mergedFormValues[field.name]) {
               mergedFormValues[field.name] = field.defaultValue;
             }
           }
-          dispatch({ type: "RESTORE", state: { ...parsed, formValues: mergedFormValues } });
+          // Back-compat: fill in resolver fields if persisted state pre-dates them
+          const restored: ExecutorReducerState = {
+            ...initialState,
+            ...parsed,
+            formValues: mergedFormValues,
+            resolutions: parsed.resolutions ?? {},
+            confirmed: parsed.confirmed ?? [],
+            skipped: parsed.skipped ?? [],
+            tagFilter: parsed.tagFilter ?? "all",
+            activeTagId: parsed.activeTagId ?? null,
+            resolverOpen: parsed.resolverOpen ?? false,
+          };
+          dispatch({ type: "RESTORE", state: restored });
           return;
         }
       }
@@ -462,7 +607,7 @@ export function StepExecutor({
         careerStage: activeProject.careerStage,
         targetFunder: activeProject.targetFunder,
         budgetRange: activeProject.budgetRange,
-        grantSubCategory: activeProject.grantSubCategory,
+        grantSubCategory: titleCase(activeProject.grantSubCategory),
       },
       documents: documentMap,
       formInputs: execState.formValues,
@@ -503,7 +648,8 @@ export function StepExecutor({
 
   const handleSubmitOutput = useCallback(() => {
     if (!execState.pastedOutput.trim()) return;
-    dispatch({ type: "SET_REVIEWING" });
+    const hasTags = parsePlaceholders(execState.pastedOutput).length > 0;
+    dispatch({ type: "SET_REVIEWING", resolverOpen: hasTags });
     updateStepStatus(projectId, phase, step, "output-pasted");
   }, [execState.pastedOutput, updateStepStatus, projectId, phase, step]);
 
@@ -512,7 +658,11 @@ export function StepExecutor({
   const handleSave = useCallback(async () => {
     try {
       const template = getTemplate(templateId);
-      const content = execState.pastedOutput;
+      const content = applyResolutions(
+        execState.pastedOutput,
+        execState.resolutions,
+        new Set(execState.confirmed),
+      );
       const wordCount = content
         .replace(/[#*`>\-|=]/g, " ")
         .split(/\s+/)
@@ -551,22 +701,125 @@ export function StepExecutor({
         description: err instanceof Error ? err.message : "Unknown error",
       });
     }
-  }, [execState.pastedOutput, getTemplate, templateId, projectId, phase, step, saveDocument, updateStepStatus]);
+  }, [
+    execState.pastedOutput,
+    execState.resolutions,
+    execState.confirmed,
+    getTemplate,
+    templateId,
+    projectId,
+    phase,
+    step,
+    saveDocument,
+    updateStepStatus,
+  ]);
 
   // ── Output metadata ─────────────────────────────────────────────────────
 
+  const tagInstances = useMemo(
+    () => parsePlaceholders(execState.pastedOutput),
+    [execState.pastedOutput],
+  );
+
   const outputMeta = useMemo(() => {
     const text = execState.pastedOutput;
-    if (!text) return { wordCount: 0, epTags: [] as string[], citations: 0, userInputs: 0 };
+    if (!text) return { wordCount: 0, epTags: [] as string[] };
 
     const wordCount = text.replace(/[#*`>\-|=]/g, " ").split(/\s+/).filter((w) => w.length > 0).length;
     const epMatches = text.match(/EP-\d{2}/g);
     const epTags = epMatches ? [...new Set(epMatches)].sort() : [];
-    const citations = (text.match(/\[CITATION NEEDED\]/g) || []).length;
-    const userInputs = (text.match(/\[USER INPUT NEEDED\]/g) || []).length;
 
-    return { wordCount, epTags, citations, userInputs };
+    return { wordCount, epTags };
   }, [execState.pastedOutput]);
+
+  const resolverCounts = useMemo(() => {
+    const total = tagInstances.length;
+    const resolvedCount = Object.keys(execState.resolutions).length + execState.confirmed.length;
+    const skippedCount = execState.skipped.length;
+    const unaddressed = total - resolvedCount - skippedCount;
+    return { total, resolvedCount, skippedCount, unaddressed };
+  }, [tagInstances.length, execState.resolutions, execState.confirmed, execState.skipped]);
+
+  const handleSaveClick = useCallback(() => {
+    if (resolverCounts.unaddressed > 0) {
+      setShowUnaddressedDialog(true);
+      return;
+    }
+    handleSave();
+  }, [resolverCounts.unaddressed, handleSave]);
+
+  // ── Keyboard navigation in REVIEWING split view ─────────────────────────
+
+  useEffect(() => {
+    if (execState.state !== "REVIEWING" || !execState.resolverOpen) return;
+
+    const handler = (e: KeyboardEvent) => {
+      const isTextarea =
+        document.activeElement?.tagName === "TEXTAREA" ||
+        document.activeElement?.tagName === "INPUT";
+
+      // Cmd/Ctrl+S always fires
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        handleSaveClick();
+        return;
+      }
+
+      // Block other keys when typing
+      if (isTextarea) return;
+
+      const pendingTags = tagInstances.filter(
+        (t) =>
+          execState.resolutions[t.id] === undefined &&
+          !execState.confirmed.includes(t.id) &&
+          !execState.skipped.includes(t.id),
+      );
+
+      if (e.key === "j" && pendingTags.length > 0) {
+        e.preventDefault();
+        const currentIdx = pendingTags.findIndex((t) => t.id === execState.activeTagId);
+        const next = pendingTags[(currentIdx + 1) % pendingTags.length];
+        dispatch({ type: "SET_ACTIVE_TAG", tagId: next.id });
+        document.getElementById(`resolver-entry-${next.id}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        document.getElementById(`tag-pill-${next.id}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      } else if (e.key === "k" && pendingTags.length > 0) {
+        e.preventDefault();
+        const currentIdx = pendingTags.findIndex((t) => t.id === execState.activeTagId);
+        const prevIdx = currentIdx <= 0 ? pendingTags.length - 1 : currentIdx - 1;
+        const prev = pendingTags[prevIdx];
+        dispatch({ type: "SET_ACTIVE_TAG", tagId: prev.id });
+        document.getElementById(`resolver-entry-${prev.id}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        document.getElementById(`tag-pill-${prev.id}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      } else if (e.key === "Escape" && execState.activeTagId) {
+        e.preventDefault();
+        dispatch({ type: "SKIP_TAG", tagId: execState.activeTagId });
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [
+    execState.state,
+    execState.resolverOpen,
+    execState.activeTagId,
+    execState.resolutions,
+    execState.confirmed,
+    execState.skipped,
+    tagInstances,
+    handleSaveClick,
+  ]);
 
   // ── Find which step produces a given document ───────────────────────────
 
@@ -588,10 +841,7 @@ export function StepExecutor({
         case "text":
           return (
             <div key={field.name} className="space-y-1.5">
-              <Label htmlFor={field.name} className="text-xs font-medium text-muted-foreground">
-                {field.label}
-                {field.required && <span className="ml-1 text-red-500">*</span>}
-              </Label>
+              <FieldLabel field={field} htmlFor={field.name} />
               <Input
                 id={field.name}
                 value={value}
@@ -604,10 +854,7 @@ export function StepExecutor({
         case "textarea":
           return (
             <div key={field.name} className="space-y-1.5">
-              <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-muted-foreground">
-                {field.label}
-                {field.required && <span className="ml-1 text-red-500">*</span>}
-              </Label>
+              <FieldLabel field={field} htmlFor={`field-${field.name}`} />
               <textarea
                 id={`field-${field.name}`}
                 value={value}
@@ -635,10 +882,7 @@ export function StepExecutor({
         case "select":
           return (
             <div key={field.name} className="space-y-1.5">
-              <Label htmlFor={`field-${field.name}`} className="text-xs font-medium text-muted-foreground">
-                {field.label}
-                {field.required && <span className="ml-1 text-red-500">*</span>}
-              </Label>
+              <FieldLabel field={field} htmlFor={`field-${field.name}`} />
               <select
                 id={`field-${field.name}`}
                 value={value}
@@ -920,7 +1164,10 @@ export function StepExecutor({
         );
 
       // ── REVIEWING ──────────────────────────────────────────────────────
-      case "REVIEWING":
+      case "REVIEWING": {
+        const hasTags = tagInstances.length > 0;
+        const showSplitView = hasTags && execState.resolverOpen && !editMode;
+
         return (
           <motion.div key="reviewing" {...stateVariants} transition={springTransition}>
             <CardContent className="space-y-4">
@@ -935,26 +1182,75 @@ export function StepExecutor({
                     ))}
                   </>
                 )}
-                {outputMeta.citations > 0 && (
-                  <>
-                    <span className="text-muted-foreground/50">|</span>
-                    <Badge variant="warning" className="text-[10px] px-1.5 py-0">
-                      {outputMeta.citations} citation{outputMeta.citations > 1 ? "s" : ""} needed
-                    </Badge>
-                  </>
+                <span className="text-muted-foreground/50">|</span>
+                {hasTags ? (
+                  <Badge variant="warning" className="text-[10px] px-1.5 py-0">
+                    {resolverCounts.resolvedCount} of {resolverCounts.total} placeholders resolved
+                  </Badge>
+                ) : (
+                  <Badge variant="success" className="text-[10px] px-1.5 py-0">
+                    <Check className="h-3 w-3 mr-1" />
+                    No placeholders detected
+                  </Badge>
                 )}
-                {outputMeta.userInputs > 0 && (
-                  <>
-                    <span className="text-muted-foreground/50">|</span>
-                    <Badge variant="error" className="text-[10px] px-1.5 py-0">
-                      {outputMeta.userInputs} input{outputMeta.userInputs > 1 ? "s" : ""} needed
-                    </Badge>
-                  </>
+                {hasTags && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => dispatch({ type: "TOGGLE_RESOLVER" })}
+                    className="ml-auto h-6 text-[11px]"
+                  >
+                    {execState.resolverOpen ? "Hide resolver" : "Open resolver"}
+                  </Button>
                 )}
               </div>
 
               {/* Content */}
-              {editMode ? (
+              {showSplitView ? (
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_400px]">
+                  <div className="max-h-125 overflow-auto rounded-lg border border-border bg-muted p-6">
+                    <DecoratedMarkdownView
+                      content={execState.pastedOutput}
+                      tagInstances={tagInstances}
+                      resolutions={execState.resolutions}
+                      confirmed={new Set(execState.confirmed)}
+                      skipped={new Set(execState.skipped)}
+                      activeTagId={execState.activeTagId}
+                      onTagClick={(tagId) => {
+                        dispatch({ type: "SET_ACTIVE_TAG", tagId });
+                        document
+                          .getElementById(`resolver-entry-${tagId}`)
+                          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+                      }}
+                    />
+                  </div>
+                  <div className="max-h-125 overflow-hidden rounded-lg border border-border bg-card">
+                    <PlaceholderResolver
+                      tagInstances={tagInstances}
+                      resolutions={execState.resolutions}
+                      confirmed={new Set(execState.confirmed)}
+                      skipped={new Set(execState.skipped)}
+                      filter={execState.tagFilter}
+                      activeTagId={execState.activeTagId}
+                      onApply={(tagId, replacement) =>
+                        dispatch({ type: "APPLY_RESOLUTION", tagId, replacement })
+                      }
+                      onConfirm={(tagId) => dispatch({ type: "CONFIRM_TAG", tagId })}
+                      onSkip={(tagId) => dispatch({ type: "SKIP_TAG", tagId })}
+                      onUndo={(tagId) => dispatch({ type: "UNDO_TAG", tagId })}
+                      onFilterChange={(filter) =>
+                        dispatch({ type: "SET_TAG_FILTER", filter })
+                      }
+                      onEntryFocus={(tagId) => {
+                        dispatch({ type: "SET_ACTIVE_TAG", tagId });
+                        document
+                          .getElementById(`tag-pill-${tagId}`)
+                          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : editMode ? (
                 <MarkdownEditor
                   content={execState.pastedOutput}
                   onChange={(val) => dispatch({ type: "SET_PASTED_OUTPUT", output: val })}
@@ -969,7 +1265,7 @@ export function StepExecutor({
 
               {/* Actions */}
               <div className="flex flex-wrap items-center gap-2">
-                <Button onClick={handleSave}>
+                <Button onClick={handleSaveClick}>
                   <Check className="h-4 w-4" />
                   Save &amp; Continue
                 </Button>
@@ -996,6 +1292,7 @@ export function StepExecutor({
             </CardContent>
           </motion.div>
         );
+      }
 
       // ── SAVED ──────────────────────────────────────────────────────────
       case "SAVED":
@@ -1061,6 +1358,42 @@ export function StepExecutor({
       <AnimatePresence mode="wait">
         {renderState()}
       </AnimatePresence>
+
+      <Dialog open={showUnaddressedDialog} onOpenChange={setShowUnaddressedDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Unaddressed placeholders</DialogTitle>
+            <DialogDescription>
+              {resolverCounts.unaddressed} placeholder
+              {resolverCounts.unaddressed === 1 ? "" : "s"}{" "}
+              {resolverCounts.unaddressed === 1 ? "is" : "are"} still in the document.
+              These will appear in the saved document and will need to be addressed
+              before the proposal is submitted.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setShowUnaddressedDialog(false);
+                if (!execState.resolverOpen) {
+                  dispatch({ type: "TOGGLE_RESOLVER" });
+                }
+              }}
+            >
+              Resolve now
+            </Button>
+            <Button
+              onClick={() => {
+                setShowUnaddressedDialog(false);
+                handleSave();
+              }}
+            >
+              Save with placeholders
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
