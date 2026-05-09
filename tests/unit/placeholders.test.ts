@@ -186,7 +186,7 @@ describe("parsePlaceholders — asserted bold span scope (Round 4 Group 1)", () 
   });
 });
 
-describe("applyResolutions — wider-scope semantics (Round 4 Group 1)", () => {
+describe("applyResolutions — wider-scope semantics (Round 4 Group 1 + hotfix)", () => {
   it("replaces the entire scope when a resolution is applied", () => {
     const content = "Cap [VERIFY] **No minimum stated** confirmed.";
     const [tag] = parsePlaceholders(content);
@@ -194,11 +194,14 @@ describe("applyResolutions — wider-scope semantics (Round 4 Group 1)", () => {
     expect(result).toBe("Cap Up to RM250,000 confirmed.");
   });
 
-  it("keeps the assertion text when a tag is confirmed as-is", () => {
+  // Hotfix change: confirm-as-is now preserves surrounding bold markers
+  // for both Pattern A and Pattern B. Round 4 Group 1's behaviour of
+  // stripping the markers is gone — the bold belongs to the document.
+  it("preserves bold markers when a Pattern A tag is confirmed as-is", () => {
     const content = "Cap [VERIFY] **No minimum stated** confirmed.";
     const [tag] = parsePlaceholders(content);
     const result = applyResolutions(content, {}, new Set([tag.id]));
-    expect(result).toBe("Cap No minimum stated confirmed.");
+    expect(result).toBe("Cap **No minimum stated** confirmed.");
   });
 
   it("strips the entire scope when confirmed and no assertion follows", () => {
@@ -215,8 +218,8 @@ describe("applyResolutions — wider-scope semantics (Round 4 Group 1)", () => {
   });
 });
 
-describe("preprocessPlaceholdersForMarkdown — wider scope rendering (Round 4 Group 1)", () => {
-  it("emits placeholder-pill-wide class and wraps the assertion in <strong>", () => {
+describe("preprocessPlaceholdersForMarkdown — wider scope rendering (Round 4 Group 1 + hotfix)", () => {
+  it("emits placeholder-pill-wide class and wraps the Pattern A assertion in <strong>", () => {
     const content = "Cap [VERIFY] **No minimum stated** confirmed.";
     const html = preprocessPlaceholdersForMarkdown(content, {}, new Set());
     expect(html).toContain("placeholder-pill-wide");
@@ -225,11 +228,11 @@ describe("preprocessPlaceholdersForMarkdown — wider scope rendering (Round 4 G
     expect(html).toMatch(/<span [^>]*data-tag-id=[^>]*>\[VERIFY\] <strong>No minimum stated<\/strong><\/span>/);
   });
 
-  it("keeps assertion text after a confirmed wider-scope tag", () => {
+  it("preserves bold markers in the output when a Pattern A tag is confirmed", () => {
     const content = "Cap [VERIFY] **No minimum stated** confirmed.";
     const [tag] = parsePlaceholders(content);
     const html = preprocessPlaceholdersForMarkdown(content, {}, new Set([tag.id]));
-    expect(html).toContain("Cap No minimum stated confirmed.");
+    expect(html).toContain("Cap **No minimum stated** confirmed.");
     expect(html).not.toContain("[VERIFY]");
     expect(html).not.toContain("placeholder-pill-wide");
   });
@@ -239,5 +242,137 @@ describe("preprocessPlaceholdersForMarkdown — wider scope rendering (Round 4 G
     const html = preprocessPlaceholdersForMarkdown(content, {}, new Set());
     expect(html).toContain("placeholder-pill-required");
     expect(html).not.toContain("placeholder-pill-wide");
+  });
+});
+
+describe("parsePlaceholders — Pattern B: tag inside bold span (Round 4 hotfix)", () => {
+  it("extends scope backward through the opening `**` and forward through the closing `**`", () => {
+    const content = "submission portal as **[VERIFY] MyGRANTS/ReDI/institutional RMC workflow** before writing.";
+    const [tag] = parsePlaceholders(content);
+    expect(tag).toBeDefined();
+    expect(tag.type).toBe("VERIFY");
+    expect(tag.scopeStartIndex).toBeLessThan(tag.startIndex);
+    expect(tag.scopeRaw).toBe("**[VERIFY] MyGRANTS/ReDI/institutional RMC workflow**");
+    expect(tag.assertionText).toBe("MyGRANTS/ReDI/institutional RMC workflow");
+  });
+
+  it("captures content on both sides of the tag inside the bold span", () => {
+    const content = "**Workflow [VERIFY] step** is required.";
+    const [tag] = parsePlaceholders(content);
+    expect(tag.assertionText).toBe("Workflow step");
+    expect(tag.scopeRaw).toBe("**Workflow [VERIFY] step**");
+  });
+
+  it("falls back to bracket-only when bold-wrapped tag has no inner assertion", () => {
+    // `**[VERIFY]**` has empty assertion → not a meaningful Pattern B match.
+    const content = "Bold **[VERIFY]** tag.";
+    const [tag] = parsePlaceholders(content);
+    expect(tag.assertionText).toBeUndefined();
+    expect(tag.scopeStartIndex).toBe(tag.startIndex);
+    expect(tag.scopeEndIndex).toBe(tag.endIndex);
+    expect(tag.scopeRaw).toBe("[VERIFY]");
+  });
+
+  it("falls back when the assertion contains stray asterisks (bold-italic wrapping)", () => {
+    const content = "Bold-italic ***[VERIFY]*** tag.";
+    const [tag] = parsePlaceholders(content);
+    expect(tag.assertionText).toBeUndefined();
+    expect(tag.scopeStartIndex).toBe(tag.startIndex);
+  });
+
+  it("requires the closing `**` on the same line as the tag", () => {
+    // `**[VERIFY] X` on one line, `**` on the next → no Pattern B match.
+    const content = "**[VERIFY] X\n**";
+    const [tag] = parsePlaceholders(content);
+    expect(tag.assertionText).toBeUndefined();
+    expect(tag.scopeStartIndex).toBe(tag.startIndex);
+  });
+
+  it("does not extend Pattern B for replace-required types", () => {
+    const content = "**[CITATION NEEDED] looks like an assertion**";
+    const [tag] = parsePlaceholders(content);
+    expect(tag.type).toBe("CITATION NEEDED");
+    expect(tag.assertionText).toBeUndefined();
+    expect(tag.scopeStartIndex).toBe(tag.startIndex);
+    expect(tag.scopeEndIndex).toBe(tag.endIndex);
+  });
+
+  it("skips an inner tag whose bracket falls inside a Pattern B claim", () => {
+    const content = "**[VERIFY] outer with [VERIFY] inner**";
+    const tags = parsePlaceholders(content);
+    expect(tags).toHaveLength(1);
+    expect(tags[0].assertionText).toBe("outer with [VERIFY] inner");
+  });
+
+  it("isolates two adjacent Pattern B spans into separate scopes", () => {
+    const content = "**[VERIFY] one** and **[VERIFY] two**";
+    const tags = parsePlaceholders(content);
+    expect(tags).toHaveLength(2);
+    expect(tags[0].assertionText).toBe("one");
+    expect(tags[1].assertionText).toBe("two");
+    // Scopes must not overlap.
+    expect(tags[0].scopeEndIndex).toBeLessThanOrEqual(tags[1].scopeStartIndex);
+  });
+});
+
+describe("applyResolutions — Pattern B (Round 4 hotfix)", () => {
+  it("replaces the entire bold scope with the user's text", () => {
+    const content = "exact submission portal as **[VERIFY] MyGRANTS/ReDI/institutional RMC workflow** before writing final compliance text.";
+    const [tag] = parsePlaceholders(content);
+    const result = applyResolutions(content, { [tag.id]: "ReDI" }, new Set());
+    expect(result).toBe("exact submission portal as ReDI before writing final compliance text.");
+  });
+
+  it("preserves the surrounding bold markers when a Pattern B tag is confirmed", () => {
+    const content = "Cap **[VERIFY] No minimum stated** confirmed.";
+    const [tag] = parsePlaceholders(content);
+    const result = applyResolutions(content, {}, new Set([tag.id]));
+    expect(result).toBe("Cap **No minimum stated** confirmed.");
+  });
+
+  it("collapses extra whitespace when confirming a Pattern B tag with leading content", () => {
+    const content = "Step: **Workflow [VERIFY] step** required.";
+    const [tag] = parsePlaceholders(content);
+    const result = applyResolutions(content, {}, new Set([tag.id]));
+    expect(result).toBe("Step: **Workflow step** required.");
+  });
+
+  it("leaves a Pattern B scope untouched when skipped (neither resolved nor confirmed)", () => {
+    const content = "Cap **[VERIFY] No minimum stated** confirmed.";
+    const result = applyResolutions(content, {}, new Set());
+    expect(result).toBe(content);
+  });
+});
+
+describe("preprocessPlaceholdersForMarkdown — Pattern B (Round 4 hotfix)", () => {
+  it("wraps the entire bold scope in a wider pill with content in <strong>", () => {
+    const content = "Use **[VERIFY] MyGRANTS workflow** before submission.";
+    const html = preprocessPlaceholdersForMarkdown(content, {}, new Set());
+    expect(html).toContain("placeholder-pill-wide");
+    expect(html).toContain("<strong>[VERIFY] MyGRANTS workflow</strong>");
+    expect(html).toMatch(
+      /<span [^>]*placeholder-pill-wide[^>]*><strong>\[VERIFY\] MyGRANTS workflow<\/strong><\/span>/,
+    );
+    // No leftover markdown bold markers around the span.
+    expect(html).not.toMatch(/\*\*<span /);
+    expect(html).not.toMatch(/<\/span>\*\*/);
+  });
+
+  it("preserves bold markers in the output when a Pattern B tag is confirmed", () => {
+    const content = "Cap **[VERIFY] No minimum stated** confirmed.";
+    const [tag] = parsePlaceholders(content);
+    const html = preprocessPlaceholdersForMarkdown(content, {}, new Set([tag.id]));
+    expect(html).toContain("Cap **No minimum stated** confirmed.");
+    expect(html).not.toContain("[VERIFY]");
+    expect(html).not.toContain("placeholder-pill-wide");
+  });
+
+  it("substitutes the entire scope (including `**` markers) on resolution", () => {
+    const content = "Use **[VERIFY] workflow** before submission.";
+    const [tag] = parsePlaceholders(content);
+    const html = preprocessPlaceholdersForMarkdown(content, { [tag.id]: "ReDI" }, new Set());
+    expect(html).toContain("Use ReDI before submission.");
+    expect(html).not.toContain("**");
+    expect(html).not.toContain("[VERIFY]");
   });
 });
