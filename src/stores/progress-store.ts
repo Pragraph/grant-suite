@@ -36,6 +36,8 @@ interface ProgressState {
   getPhaseCompletion: (phase: number, project?: Project | null) => number;
   canAccessPhase: (phase: number) => boolean;
   bypassPhases: (projectId: string, phases: number[]) => void;
+  resetPhaseProgress: (projectId: string, phase: number) => void;
+  revertStepStatus: (projectId: string, phase: number, step: number) => void;
   clearProgress: () => void;
 }
 
@@ -156,6 +158,26 @@ export const useProgressStore = create<ProgressState>()((set, get) => ({
     }
     const key = `grant-suite-progress-${projectId}`;
     localStorage.setItem(key, JSON.stringify(progress));
+    set({ progress });
+  },
+
+  resetPhaseProgress: (projectId, phase) => {
+    storage.clearPhaseProgress(projectId, phase);
+    storage.resetPhaseLocalStorage(projectId, phase);
+    const progress = storage.getProgress(projectId);
+    const gateResultsRaw = localStorage.getItem(
+      `grant-suite-gate-results-${projectId}`,
+    );
+    const gateResults = gateResultsRaw
+      ? (JSON.parse(gateResultsRaw) as Record<number, GateResult>)
+      : {};
+    set({ progress, gateResults });
+  },
+
+  revertStepStatus: (projectId, phase, step) => {
+    storage.revertStepStatus(projectId, phase, step);
+    storage.resetStepLocalStorage(projectId, phase, step);
+    const progress = storage.getProgress(projectId);
     set({ progress });
   },
 

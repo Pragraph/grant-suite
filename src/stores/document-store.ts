@@ -9,6 +9,11 @@ interface DocumentState {
   // Actions
   loadDocuments: (projectId: string) => Promise<void>;
   saveDocument: (projectId: string, doc: Document) => Promise<void>;
+  deleteDocumentsByPhase: (projectId: string, phase: number) => Promise<void>;
+  deleteDocumentByCanonicalName: (
+    projectId: string,
+    canonicalName: string,
+  ) => Promise<void>;
   getDocumentContent: (
     projectId: string,
     canonicalName: string
@@ -30,6 +35,18 @@ export const useDocumentStore = create<DocumentState>()((set, get) => ({
   saveDocument: async (projectId, doc) => {
     await storage.saveDocument(projectId, doc);
     // Reload to pick up the new document
+    const docs = await storage.getDocuments(projectId);
+    set({ documents: docs });
+  },
+
+  deleteDocumentsByPhase: async (projectId, phase) => {
+    await storage.deleteDocumentsByPhase(projectId, phase);
+    const docs = await storage.getDocuments(projectId);
+    set({ documents: docs });
+  },
+
+  deleteDocumentByCanonicalName: async (projectId, canonicalName) => {
+    await storage.deleteDocumentByCanonicalName(projectId, canonicalName);
     const docs = await storage.getDocuments(projectId);
     set({ documents: docs });
   },
