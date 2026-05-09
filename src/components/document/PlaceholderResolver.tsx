@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   Check,
   CheckCheck,
+  ClipboardPaste,
   RotateCcw,
   BookOpen,
   Edit3,
@@ -24,6 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { BulkCitationDialog } from "@/components/document/BulkCitationDialog";
 
 export type ResolverFilter = "all" | "pending" | "resolved";
 
@@ -39,6 +41,7 @@ interface PlaceholderResolverProps {
   onSkip: (tagId: string) => void;
   onUndo: (tagId: string) => void;
   onBulkConfirm?: (tagIds: string[]) => void;
+  onBulkApplyCitations?: (assignments: Record<string, string>) => void;
   onFilterChange: (filter: ResolverFilter) => void;
   onEntryFocus: (tagId: string) => void;
 }
@@ -408,6 +411,7 @@ export function PlaceholderResolver({
   onSkip,
   onUndo,
   onBulkConfirm,
+  onBulkApplyCitations,
   onFilterChange,
   onEntryFocus,
 }: PlaceholderResolverProps) {
@@ -415,6 +419,7 @@ export function PlaceholderResolver({
   const resolvedCount = Object.keys(resolutions).length + confirmed.size;
   const progress = total === 0 ? 100 : Math.round((resolvedCount / total) * 100);
   const [bulkConfirmDialogOpen, setBulkConfirmDialogOpen] = useState(false);
+  const [bulkCitationDialogOpen, setBulkCitationDialogOpen] = useState(false);
 
   const getEntryState = (id: string): "pending" | "resolved" | "confirmed" | "skipped" => {
     if (resolutions[id] !== undefined) return "resolved";
@@ -438,6 +443,14 @@ export function PlaceholderResolver({
       VERIFY_LIKE_TYPES.has(t.type) && getEntryState(t.id) === "pending",
   );
   const eligibleCount = eligibleForBulkConfirm.length;
+
+  // Pending CITATION NEEDED slots in document order. The dialog distributes
+  // pasted references positionally, so document order matters.
+  const pendingCitationSlots = tagInstances.filter(
+    (t) =>
+      t.type === "CITATION NEEDED" && getEntryState(t.id) === "pending",
+  );
+  const pendingCitationCount = pendingCitationSlots.length;
 
   return (
     <div className="flex h-full flex-col">
@@ -474,19 +487,34 @@ export function PlaceholderResolver({
           ))}
         </div>
 
-        {/* Bulk action strip — surfaces only when at least one verify-class
-            tag is pending and a bulk handler is wired by the parent. */}
-        {onBulkConfirm && eligibleCount > 0 && (
+        {/* Bulk action strip — surfaces only when at least one eligible
+            tag is pending and the matching handler is wired by the parent.
+            Each button shows its own count and is hidden when zero. */}
+        {((onBulkConfirm && eligibleCount > 0) ||
+          (onBulkApplyCitations && pendingCitationCount > 0)) && (
           <div className="flex flex-wrap items-center gap-1.5 pt-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setBulkConfirmDialogOpen(true)}
-              className="h-7 text-[11px]"
-            >
-              <CheckCheck className="h-3 w-3" />
-              Confirm all verifications ({eligibleCount})
-            </Button>
+            {onBulkConfirm && eligibleCount > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setBulkConfirmDialogOpen(true)}
+                className="h-7 text-[11px]"
+              >
+                <CheckCheck className="h-3 w-3" />
+                Confirm all verifications ({eligibleCount})
+              </Button>
+            )}
+            {onBulkApplyCitations && pendingCitationCount > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setBulkCitationDialogOpen(true)}
+                className="h-7 text-[11px]"
+              >
+                <ClipboardPaste className="h-3 w-3" />
+                Paste all citations ({pendingCitationCount})
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -522,6 +550,16 @@ export function PlaceholderResolver({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Bulk citation paste — two-stage (paste then review). */}
+      {onBulkApplyCitations && (
+        <BulkCitationDialog
+          open={bulkCitationDialogOpen}
+          onOpenChange={setBulkCitationDialogOpen}
+          citationSlots={pendingCitationSlots}
+          onApply={onBulkApplyCitations}
+        />
+      )}
 
       {/* Entry list */}
       <div className="flex-1 overflow-auto p-3 space-y-2">

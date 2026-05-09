@@ -127,6 +127,7 @@ type ExecutorAction =
   | { type: "SKIP_TAG"; tagId: string }
   | { type: "UNDO_TAG"; tagId: string }
   | { type: "BULK_CONFIRM_VERIFICATIONS"; tagIds: string[] }
+  | { type: "BULK_APPLY_CITATIONS"; assignments: Record<string, string> }
   | { type: "SET_TAG_FILTER"; filter: ResolverFilter }
   | { type: "SET_ACTIVE_TAG"; tagId: string | null }
   | { type: "TOGGLE_RESOLVER" }
@@ -245,6 +246,15 @@ function reducer(state: ExecutorReducerState, action: ExecutorAction): ExecutorR
       return {
         ...state,
         confirmed: Array.from(next),
+      };
+    }
+    case "BULK_APPLY_CITATIONS": {
+      const ids = Object.keys(action.assignments);
+      return {
+        ...state,
+        resolutions: { ...state.resolutions, ...action.assignments },
+        confirmed: state.confirmed.filter((id) => !ids.includes(id)),
+        skipped: state.skipped.filter((id) => !ids.includes(id)),
       };
     }
     case "SET_TAG_FILTER":
@@ -1251,6 +1261,9 @@ export function StepExecutor({
                       onUndo={(tagId) => dispatch({ type: "UNDO_TAG", tagId })}
                       onBulkConfirm={(tagIds) =>
                         dispatch({ type: "BULK_CONFIRM_VERIFICATIONS", tagIds })
+                      }
+                      onBulkApplyCitations={(assignments) =>
+                        dispatch({ type: "BULK_APPLY_CITATIONS", assignments })
                       }
                       onFilterChange={(filter) =>
                         dispatch({ type: "SET_TAG_FILTER", filter })
