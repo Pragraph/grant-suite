@@ -17,6 +17,8 @@ import {
   Save,
   Upload,
   ExternalLink,
+  RotateCcw,
+  X,
 } from "lucide-react";
 
 import { cn, titleCase } from "@/lib/utils";
@@ -29,6 +31,7 @@ import { useProjectStore } from "@/stores/project-store";
 import type { CompileContext } from "@/lib/prompt-engine";
 import type { RequiredDocument } from "@/lib/types";
 import { DOCUMENT_DEPENDENCIES, PHASE_DEFINITIONS } from "@/lib/constants";
+import { getLaterStepProgress } from "@/lib/phase-dependencies";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -516,6 +519,57 @@ function FileUploadTextField({
   );
 }
 
+// ─── Reset Step Button (inline two-tap confirm) ─────────────────────────────
+
+function ResetStepButton({
+  open,
+  onOpen,
+  onCancel,
+  onConfirm,
+}: {
+  open: boolean;
+  onOpen: () => void;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  if (!open) {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={onOpen}
+        className="text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+      >
+        <RotateCcw className="h-3.5 w-3.5" />
+        Reset Step
+      </Button>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 px-2 py-1">
+      <span className="text-xs text-red-600 dark:text-red-400 font-medium">
+        Reset this step?
+      </span>
+      <Button
+        size="sm"
+        onClick={onConfirm}
+        className="h-6 px-2 text-[11px] bg-red-600 hover:bg-red-700 text-white"
+      >
+        Confirm
+      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={onCancel}
+        className="h-6 px-2 text-[11px] text-muted-foreground"
+      >
+        <X className="h-3 w-3" />
+      </Button>
+    </div>
+  );
+}
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export function StepExecutor({
@@ -533,13 +587,26 @@ export function StepExecutor({
   const [previewMode, setPreviewMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showUnaddressedDialog, setShowUnaddressedDialog] = useState(false);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
 
   const { compile, getTemplate } = usePromptEngine();
   const pipeline = useDocumentPipeline(projectId);
   const saveDocument = useDocumentStore((s) => s.saveDocument);
+  const deleteDocumentByCanonicalName = useDocumentStore(
+    (s) => s.deleteDocumentByCanonicalName,
+  );
   const documents = useDocumentStore((s) => s.documents);
   const activeProject = useProjectStore((s) => s.activeProject);
   const updateStepStatus = useProgressStore((s) => s.updateStepStatus);
+  const revertStepStatusAction = useProgressStore((s) => s.revertStepStatus);
+  const progress = useProgressStore((s) => s.progress);
+
+  // Auto-collapse the inline reset confirm after 5s
+  useEffect(() => {
+    if (!resetConfirmOpen) return;
+    const t = window.setTimeout(() => setResetConfirmOpen(false), 5000);
+    return () => window.clearTimeout(t);
+  }, [resetConfirmOpen]);
 
   // ── Check document readiness ────────────────────────────────────────────
 
@@ -813,6 +880,82 @@ export function StepExecutor({
     handleSave();
   }, [resolverCounts.unaddressed, handleSave]);
 
+  // ── Reset step ──────────────────────────────────────────────────────────
+
+  const handleResetStep = useCallback(async () => {
+    if (execState.state === "SAVED") {
+      const check = getLaterStepProgress(progress, phase, step);
+      if (check.hasProgress) {
+        const blockers: string[] = [];
+        if (check.blockingSteps.length > 0) {
+          blockers.push(
+            `Later steps in this phase: ${check.blockingSteps
+              .map((s) => `Step ${s.step} (${s.name})`)
+              .join(", ")}`,
+          );
+        }
+        if (check.downstream.hasProgress) {
+          blockers.push(
+            `Downstream phases: ${check.downstream.blockingPhases
+              .map((p) => `Phase ${p.phase} (${p.name})`)
+              .join(", ")}`,
+          );
+        }
+        toast.error("Cannot reset this step", {
+          description: `Reset later work first. ${blockers.join(". ")}.`,
+          duration: 8000,
+        });
+        setResetConfirmOpen(false);
+        return;
+      }
+
+      try {
+        await deleteDocumentByCanonicalName(
+          projectId,
+          execState.savedDocumentName,
+        );
+        revertStepStatusAction(projectId, phase, step);
+      } catch (err) {
+        toast.error("Failed to delete saved document", {
+          description: err instanceof Error ? err.message : "Unknown error",
+        });
+        return;
+      }
+    }
+
+    storage.resetStepLocalStorage(projectId, phase, step);
+    dispatch({ type: "RESTORE", state: initialState });
+    setResetConfirmOpen(false);
+    setEditMode(false);
+    setPreviewMode(false);
+    window.setTimeout(() => checkReadiness(), 0);
+    toast.success("Step reset");
+  }, [
+    execState.state,
+    execState.savedDocumentName,
+    progress,
+    phase,
+    step,
+    projectId,
+    deleteDocumentByCanonicalName,
+    revertStepStatusAction,
+    checkReadiness,
+  ]);
+
+  // ── Reset button visibility ─────────────────────────────────────────────
+
+  const showResetButton = useMemo(() => {
+    if (execState.state === "CHECKING" || execState.state === "MISSING_DOCS") {
+      return false;
+    }
+    if (execState.state === "READY") {
+      return Object.values(execState.formValues).some(
+        (v) => v && v.trim() !== "",
+      );
+    }
+    return true;
+  }, [execState.state, execState.formValues]);
+
   // ── Keyboard navigation in REVIEWING split view ─────────────────────────
 
   useEffect(() => {
@@ -1067,11 +1210,21 @@ export function StepExecutor({
                 </div>
               )}
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex items-center gap-2">
               <Button onClick={handleCompile}>
                 <Sparkles className="h-4 w-4" />
                 Compile Prompt
               </Button>
+              {showResetButton && (
+                <div className="ml-auto">
+                  <ResetStepButton
+                    open={resetConfirmOpen}
+                    onOpen={() => setResetConfirmOpen(true)}
+                    onCancel={() => setResetConfirmOpen(false)}
+                    onConfirm={handleResetStep}
+                  />
+                </div>
+              )}
             </CardFooter>
           </motion.div>
         );
@@ -1155,6 +1308,16 @@ export function StepExecutor({
                   <Pencil className="h-4 w-4" />
                   {editMode ? "Done Editing" : "Edit Prompt"}
                 </Button>
+                {showResetButton && (
+                  <div className="ml-auto">
+                    <ResetStepButton
+                      open={resetConfirmOpen}
+                      onOpen={() => setResetConfirmOpen(true)}
+                      onCancel={() => setResetConfirmOpen(false)}
+                      onConfirm={handleResetStep}
+                    />
+                  </div>
+                )}
               </div>
 
               <p className="text-xs text-muted-foreground">
@@ -1223,6 +1386,17 @@ export function StepExecutor({
                   <ArrowLeft className="h-4 w-4" />
                   Back to Prompt
                 </Button>
+
+                {showResetButton && (
+                  <div className="ml-auto">
+                    <ResetStepButton
+                      open={resetConfirmOpen}
+                      onOpen={() => setResetConfirmOpen(true)}
+                      onCancel={() => setResetConfirmOpen(false)}
+                      onConfirm={handleResetStep}
+                    />
+                  </div>
+                )}
               </div>
             </CardContent>
           </motion.div>
@@ -1362,6 +1536,17 @@ export function StepExecutor({
                   <Trash2 className="h-4 w-4" />
                   Discard &amp; Re-paste
                 </Button>
+
+                {showResetButton && (
+                  <div className="ml-auto">
+                    <ResetStepButton
+                      open={resetConfirmOpen}
+                      onOpen={() => setResetConfirmOpen(true)}
+                      onCancel={() => setResetConfirmOpen(false)}
+                      onConfirm={handleResetStep}
+                    />
+                  </div>
+                )}
               </div>
             </CardContent>
           </motion.div>
@@ -1400,6 +1585,17 @@ export function StepExecutor({
                 Continue to Next Step
                 <ArrowRight className="h-4 w-4" />
               </Button>
+
+              {showResetButton && (
+                <div className="pt-2">
+                  <ResetStepButton
+                    open={resetConfirmOpen}
+                    onOpen={() => setResetConfirmOpen(true)}
+                    onCancel={() => setResetConfirmOpen(false)}
+                    onConfirm={handleResetStep}
+                  />
+                </div>
+              )}
             </CardContent>
           </motion.div>
         );
