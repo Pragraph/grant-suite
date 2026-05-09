@@ -119,6 +119,79 @@ Some requirements.
     expect(result.checks).toHaveLength(1);
     expect(result.checks[0].id).toBe("g1-exists");
   });
+
+  it("passes with semantically equivalent section names (fuzzy match)", () => {
+    const fuzzyContent = `# Grant Intelligence
+## Program Overview
+Overview text.
+## Eligibility
+Who can apply.
+## Assessment Criteria
+Scoring rubric.
+## Funding Details
+Up to $500k.
+## Strategic Alignment
+National priorities.
+## Submission Requirements
+Forms and CV.
+## Key Dates
+Deadline March 2026.
+## Open Questions
+Things still unknown.
+`;
+    mockDocuments = [makeDoc("Grant_Intelligence.md", fuzzyContent)];
+    const result = qualityGateService.checkGate(1);
+    const sectionsCheck = result.checks.find((c) => c.id === "g1-sections");
+    expect(sectionsCheck?.status).toBe("pass");
+  });
+
+  it("matches headings case-insensitively", () => {
+    const lowercaseContent = `# Grant Intelligence
+## grant program overview
+x
+## eligibility requirements
+x
+## evaluation criteria
+x
+## funding parameters
+x
+## strategic priorities
+x
+## application requirements
+x
+## timeline & deadlines
+x
+## intelligence gaps
+x
+`;
+    mockDocuments = [makeDoc("Grant_Intelligence.md", lowercaseContent)];
+    const result = qualityGateService.checkGate(1);
+    const sectionsCheck = result.checks.find((c) => c.id === "g1-sections");
+    expect(sectionsCheck?.status).toBe("pass");
+  });
+
+  it("lists missing sections by canonical name when partial", () => {
+    const missingTwoContent = `# Grant Intelligence
+## Program Overview
+x
+## Eligibility
+x
+## Evaluation Criteria
+x
+## Funding Parameters
+x
+## Strategic Alignment
+x
+## Application Requirements
+x
+`;
+    mockDocuments = [makeDoc("Grant_Intelligence.md", missingTwoContent)];
+    const result = qualityGateService.checkGate(1);
+    const sectionsCheck = result.checks.find((c) => c.id === "g1-sections");
+    expect(sectionsCheck?.status).toBe("warn");
+    expect(sectionsCheck?.detail).toContain("Timeline & Deadlines");
+    expect(sectionsCheck?.detail).toContain("Intelligence Gaps");
+  });
 });
 
 // ─── Gate 5 Tests ────────────────────────────────────────────────────────────

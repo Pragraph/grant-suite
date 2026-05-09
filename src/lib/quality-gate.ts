@@ -26,8 +26,21 @@ function getDocument(canonicalName: string): Document | undefined {
   return documents.find((d) => d.isCurrent && d.canonicalName === canonicalName);
 }
 
-function hasSection(content: string, sectionName: string): boolean {
-  return content.includes(`## ${sectionName}`);
+interface SectionSpec {
+  canonical: string;
+  aliases: string[];
+}
+
+function hasSection(content: string, spec: SectionSpec): boolean {
+  const headingRegex = /^#{2,3}\s+(.+)$/gm;
+  let match: RegExpExecArray | null;
+  while ((match = headingRegex.exec(content)) !== null) {
+    const heading = match[1].toLowerCase().trim();
+    if (spec.aliases.some((alias) => heading.includes(alias.toLowerCase()))) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function countOccurrences(content: string, needle: string): number {
@@ -42,15 +55,39 @@ function countOccurrences(content: string, needle: string): number {
 
 // ─── Gate Definitions ────────────────────────────────────────────────────────
 
-const GATE_1_SECTIONS = [
-  "Grant Program Overview",
-  "Eligibility Requirements",
-  "Evaluation Criteria",
-  "Funding Parameters",
-  "Strategic Priorities",
-  "Application Requirements",
-  "Timeline & Deadlines",
-  "Intelligence Gaps",
+const GATE_1_SECTIONS: SectionSpec[] = [
+  {
+    canonical: "Grant Program Overview",
+    aliases: ["program overview", "grant overview", "grant program", "program summary", "scheme overview"],
+  },
+  {
+    canonical: "Eligibility Requirements",
+    aliases: ["eligibility", "who can apply", "applicant requirements"],
+  },
+  {
+    canonical: "Evaluation Criteria",
+    aliases: ["evaluation criteria", "assessment criteria", "review criteria", "scoring", "evaluation framework"],
+  },
+  {
+    canonical: "Funding Parameters",
+    aliases: ["funding parameters", "funding details", "budget parameters", "grant amount", "funding amount", "financials"],
+  },
+  {
+    canonical: "Strategic Priorities",
+    aliases: ["strategic priorities", "strategic alignment", "national priorities", "priorities", "thematic areas", "priority areas"],
+  },
+  {
+    canonical: "Application Requirements",
+    aliases: ["application requirements", "submission requirements", "required documents", "what to submit"],
+  },
+  {
+    canonical: "Timeline & Deadlines",
+    aliases: ["timeline", "deadlines", "key dates", "important dates", "submission timeline", "schedule"],
+  },
+  {
+    canonical: "Intelligence Gaps",
+    aliases: ["intelligence gaps", "gaps", "unknowns", "outstanding questions", "missing information", "open questions"],
+  },
 ];
 
 function checkGate1(): GateCheck[] {
@@ -87,7 +124,7 @@ function checkGate1(): GateCheck[] {
       label: "Intelligence sections completeness",
       description: `All ${GATE_1_SECTIONS.length} sections should be present`,
       status: "warn",
-      detail: `Missing sections: ${missingSections.join(", ")}`,
+      detail: `Missing sections: ${missingSections.map((s) => s.canonical).join(", ")}`,
     });
   } else {
     checks.push({
