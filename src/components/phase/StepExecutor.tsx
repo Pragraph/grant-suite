@@ -128,6 +128,7 @@ type ExecutorAction =
   | { type: "UNDO_TAG"; tagId: string }
   | { type: "BULK_CONFIRM_VERIFICATIONS"; tagIds: string[] }
   | { type: "BULK_APPLY_CITATIONS"; assignments: Record<string, string> }
+  | { type: "BULK_APPLY_USER_INPUTS"; assignments: Record<string, string> }
   | { type: "SET_TAG_FILTER"; filter: ResolverFilter }
   | { type: "SET_ACTIVE_TAG"; tagId: string | null }
   | { type: "TOGGLE_RESOLVER" }
@@ -249,6 +250,15 @@ function reducer(state: ExecutorReducerState, action: ExecutorAction): ExecutorR
       };
     }
     case "BULK_APPLY_CITATIONS": {
+      const ids = Object.keys(action.assignments);
+      return {
+        ...state,
+        resolutions: { ...state.resolutions, ...action.assignments },
+        confirmed: state.confirmed.filter((id) => !ids.includes(id)),
+        skipped: state.skipped.filter((id) => !ids.includes(id)),
+      };
+    }
+    case "BULK_APPLY_USER_INPUTS": {
       const ids = Object.keys(action.assignments);
       return {
         ...state,
@@ -1264,6 +1274,9 @@ export function StepExecutor({
                       }
                       onBulkApplyCitations={(assignments) =>
                         dispatch({ type: "BULK_APPLY_CITATIONS", assignments })
+                      }
+                      onBulkApplyUserInputs={(assignments) =>
+                        dispatch({ type: "BULK_APPLY_USER_INPUTS", assignments })
                       }
                       onFilterChange={(filter) =>
                         dispatch({ type: "SET_TAG_FILTER", filter })

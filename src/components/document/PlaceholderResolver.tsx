@@ -5,7 +5,9 @@ import {
   Check,
   CheckCheck,
   ClipboardPaste,
+  ListChecks,
   RotateCcw,
+  X,
   BookOpen,
   Edit3,
   ShieldCheck,
@@ -42,6 +44,7 @@ interface PlaceholderResolverProps {
   onUndo: (tagId: string) => void;
   onBulkConfirm?: (tagIds: string[]) => void;
   onBulkApplyCitations?: (assignments: Record<string, string>) => void;
+  onBulkApplyUserInputs?: (assignments: Record<string, string>) => void;
   onFilterChange: (filter: ResolverFilter) => void;
   onEntryFocus: (tagId: string) => void;
 }
@@ -412,6 +415,7 @@ export function PlaceholderResolver({
   onUndo,
   onBulkConfirm,
   onBulkApplyCitations,
+  onBulkApplyUserInputs,
   onFilterChange,
   onEntryFocus,
 }: PlaceholderResolverProps) {
@@ -420,6 +424,8 @@ export function PlaceholderResolver({
   const progress = total === 0 ? 100 : Math.round((resolvedCount / total) * 100);
   const [bulkConfirmDialogOpen, setBulkConfirmDialogOpen] = useState(false);
   const [bulkCitationDialogOpen, setBulkCitationDialogOpen] = useState(false);
+  const [batchInputMode, setBatchInputMode] = useState(false);
+  const [batchInputDrafts, setBatchInputDrafts] = useState<Record<string, string>>({});
 
   const getEntryState = (id: string): "pending" | "resolved" | "confirmed" | "skipped" => {
     if (resolutions[id] !== undefined) return "resolved";
@@ -451,6 +457,57 @@ export function PlaceholderResolver({
       t.type === "CITATION NEEDED" && getEntryState(t.id) === "pending",
   );
   const pendingCitationCount = pendingCitationSlots.length;
+
+  // Pending USER INPUT NEEDED slots in document order. Each is unique and
+  // requires explicit user content; batch mode expands them all at once with
+  // hint-prominent textareas.
+  const pendingUserInputs = tagInstances.filter(
+    (t) =>
+      t.type === "USER INPUT NEEDED" && getEntryState(t.id) === "pending",
+  );
+  const pendingUserInputCount = pendingUserInputs.length;
+  // Pending IDs for batch mode (kept stable while editing). When the user
+  // exits batch mode the slots they didn't fill remain pending.
+  const batchSlotIds = batchInputMode ? Object.keys(batchInputDrafts) : [];
+
+  const enterBatchInputMode = () => {
+    const initialDrafts: Record<string, string> = {};
+    for (const t of pendingUserInputs) {
+      initialDrafts[t.id] = resolutions[t.id] ?? "";
+    }
+    setBatchInputDrafts(initialDrafts);
+    setBatchInputMode(true);
+  };
+
+  const exitBatchInputMode = () => {
+    setBatchInputMode(false);
+    setBatchInputDrafts({});
+  };
+
+  const applyAllUserInputs = () => {
+    const assignments: Record<string, string> = {};
+    for (const [id, draft] of Object.entries(batchInputDrafts)) {
+      const trimmed = draft.trim();
+      if (trimmed) assignments[id] = trimmed;
+    }
+    if (Object.keys(assignments).length > 0) {
+      onBulkApplyUserInputs?.(assignments);
+    }
+    exitBatchInputMode();
+  };
+
+  const focusNextBatchInput = (currentEl: HTMLTextAreaElement) => {
+    const all = Array.from(
+      document.querySelectorAll<HTMLTextAreaElement>("[data-batch-input='true']"),
+    );
+    const idx = all.indexOf(currentEl);
+    const next = all[idx + 1];
+    next?.focus();
+  };
+
+  const filledBatchCount = Object.values(batchInputDrafts).filter((v) =>
+    v.trim(),
+  ).length;
 
   return (
     <div className="flex h-full flex-col">
@@ -491,7 +548,8 @@ export function PlaceholderResolver({
             tag is pending and the matching handler is wired by the parent.
             Each button shows its own count and is hidden when zero. */}
         {((onBulkConfirm && eligibleCount > 0) ||
-          (onBulkApplyCitations && pendingCitationCount > 0)) && (
+          (onBulkApplyCitations && pendingCitationCount > 0) ||
+          (onBulkApplyUserInputs && pendingUserInputCount > 0 && !batchInputMode)) && (
           <div className="flex flex-wrap items-center gap-1.5 pt-1">
             {onBulkConfirm && eligibleCount > 0 && (
               <Button
@@ -513,6 +571,17 @@ export function PlaceholderResolver({
               >
                 <ClipboardPaste className="h-3 w-3" />
                 Paste all citations ({pendingCitationCount})
+              </Button>
+            )}
+            {onBulkApplyUserInputs && pendingUserInputCount > 0 && !batchInputMode && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={enterBatchInputMode}
+                className="h-7 text-[11px]"
+              >
+                <ListChecks className="h-3 w-3" />
+                Fill all user inputs ({pendingUserInputCount})
               </Button>
             )}
           </div>
@@ -563,27 +632,138 @@ export function PlaceholderResolver({
 
       {/* Entry list */}
       <div className="flex-1 overflow-auto p-3 space-y-2">
+        {/* Batch input mode — expand pending USER INPUT NEEDED tags as a
+            linear form so users can Tab through and fill them all without
+            the per-entry expand/collapse cycle. Other tag types still
+            render below in normal mode. */}
+        {batchInputMode && batchSlotIds.length > 0 && (
+          <div className="rounded-lg border border-[#4F7DF3]/30 bg-[#4F7DF3]/5 p-3 space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#4F7DF3]">
+                Batch fill — user inputs ({batchSlotIds.length})
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={exitBatchInputMode}
+                className="h-6 text-[10px] text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3 w-3" />
+                Exit batch mode
+              </Button>
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              Tab between fields. Cmd/Ctrl+Enter applies the current entry
+              and advances to the next.
+            </p>
+            <div className="space-y-2">
+              {pendingUserInputs.map((tag, i) => (
+                <div
+                  key={tag.id}
+                  className="rounded border border-border bg-card p-3 space-y-1.5"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">
+                      USER INPUT NEEDED — {i + 1}/{pendingUserInputs.length}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground/70">
+                      …{tag.contextBefore.slice(-30)}
+                    </span>
+                  </div>
+                  {tag.hint && (
+                    <p className="text-[10px] italic text-muted-foreground">
+                      Hint: {tag.hint}
+                    </p>
+                  )}
+                  <textarea
+                    data-batch-input="true"
+                    value={batchInputDrafts[tag.id] ?? ""}
+                    onChange={(e) =>
+                      setBatchInputDrafts((d) => ({
+                        ...d,
+                        [tag.id]: e.target.value,
+                      }))
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                        e.preventDefault();
+                        const draft = (batchInputDrafts[tag.id] ?? "").trim();
+                        if (draft) {
+                          onBulkApplyUserInputs?.({ [tag.id]: draft });
+                          setBatchInputDrafts((d) => {
+                            const { [tag.id]: _omit, ...rest } = d;
+                            void _omit;
+                            return rest;
+                          });
+                        }
+                        focusNextBatchInput(e.currentTarget);
+                      }
+                    }}
+                    placeholder={tag.hint ?? "Enter the missing content here"}
+                    aria-label={`User input ${i + 1} of ${pendingUserInputs.length}`}
+                    className={cn(
+                      "w-full min-h-16 resize-y rounded border border-border bg-background p-2",
+                      "text-xs text-foreground placeholder:text-muted-foreground/60",
+                      "focus:outline-none focus:ring-2 focus:ring-[#4F7DF3]/40",
+                    )}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center gap-1.5 pt-1">
+              <Button
+                size="sm"
+                onClick={applyAllUserInputs}
+                disabled={filledBatchCount === 0}
+                className="h-7 text-[11px]"
+              >
+                <Check className="h-3 w-3" />
+                Apply all ({filledBatchCount})
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={exitBatchInputMode}
+                className="h-7 text-[11px] text-muted-foreground"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+
         {filtered.length === 0 ? (
           <p className="py-8 text-center text-xs text-muted-foreground italic">
             No entries match this filter.
           </p>
         ) : (
-          filtered.map((tag) => (
-            <Entry
-              key={tag.id}
-              index={tagInstances.findIndex((t) => t.id === tag.id)}
-              total={total}
-              tag={tag}
-              state={getEntryState(tag.id)}
-              resolution={resolutions[tag.id]}
-              isActive={activeTagId === tag.id}
-              onApply={onApply}
-              onConfirm={onConfirm}
-              onSkip={onSkip}
-              onUndo={onUndo}
-              onFocus={onEntryFocus}
-            />
-          ))
+          filtered
+            // Hide pending USER INPUT NEEDED entries from the normal list
+            // while batch mode is active to avoid double-rendering them.
+            .filter(
+              (tag) =>
+                !(
+                  batchInputMode &&
+                  tag.type === "USER INPUT NEEDED" &&
+                  getEntryState(tag.id) === "pending"
+                ),
+            )
+            .map((tag) => (
+              <Entry
+                key={tag.id}
+                index={tagInstances.findIndex((t) => t.id === tag.id)}
+                total={total}
+                tag={tag}
+                state={getEntryState(tag.id)}
+                resolution={resolutions[tag.id]}
+                isActive={activeTagId === tag.id}
+                onApply={onApply}
+                onConfirm={onConfirm}
+                onSkip={onSkip}
+                onUndo={onUndo}
+                onFocus={onEntryFocus}
+              />
+            ))
         )}
       </div>
     </div>
