@@ -491,8 +491,9 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
               {
                 name: "cvSummary",
                 label: "Your CV or Career Summary",
-                type: "textarea",
-                placeholder: "Paste a summary of your CV, key publications, grants received, and relevant experience...",
+                type: "file-upload-text",
+                placeholder:
+                  "Upload your CV as PDF, or paste a summary — publications, grants, teaching, supervision, and relevant experience.",
               },
             ]}
             onComplete={() => {
