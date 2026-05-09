@@ -87,6 +87,7 @@ const stepStatusLabels: Record<StepStatus, string> = {
   "prompt-copied": "Prompt Copied",
   "output-pasted": "Output Pasted",
   complete: "Complete",
+  "not-applicable": "Not Applicable",
 };
 
 // ─── Animation variants ─────────────────────────────────────────────────────
@@ -342,7 +343,7 @@ function ResponseResultUI({
 export function Phase7Client({ projectId: _pid }: { projectId: string }) {
   void _pid; // extracted from URL instead
   const [projectId] = useState(() => getProjectIdFromUrl());
-  const { setActiveProject } = useProjectStore();
+  const { setActiveProject, activeProject } = useProjectStore();
   const { progress, loadProgress, getPhaseCompletion } = useProgressStore();
   const { documents, loadDocuments } = useDocumentStore();
   const { setBreadcrumbs } = useUiStore();
@@ -391,7 +392,7 @@ export function Phase7Client({ projectId: _pid }: { projectId: string }) {
 
   // ── Phase progress ────────────────────────────────────────────────────────
 
-  const phaseCompletion = getPhaseCompletion(7);
+  const phaseCompletion = getPhaseCompletion(7, activeProject);
   const phase7Steps = PHASE_7.steps;
 
   const getStepStatus = useCallback(

@@ -107,7 +107,8 @@ export type StepStatus =
   | "in-progress"
   | "prompt-copied"
   | "output-pasted"
-  | "complete";
+  | "complete"
+  | "not-applicable";
 
 export type GateStatus = "not-checked" | "passed" | "failed" | "overridden" | "bypassed";
 

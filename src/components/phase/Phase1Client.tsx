@@ -23,6 +23,7 @@ import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
 import { PHASE_DEFINITIONS, GRANT_SCHEME_MAP } from "@/lib/constants";
+import { isStepApplicable, getStepApplicability, getNotApplicableTooltip } from "@/lib/applicability";
 import { advanceToNextStep } from "@/lib/step-navigation";
 import type { StepStatus } from "@/lib/types";
 
@@ -81,6 +82,7 @@ const stepStatusLabels: Record<StepStatus, string> = {
   "prompt-copied": "Prompt Copied",
   "output-pasted": "Output Pasted",
   complete: "Complete",
+  "not-applicable": "Not Applicable",
 };
 
 // ─── Wizard step configs for each method ────────────────────────────────────
@@ -360,11 +362,14 @@ interface NextStepCTAProps {
   projectId: string;
   currentStep: number;
   phase1Steps: typeof PHASE_1.steps;
+  project: import("@/lib/types").Project | null | undefined;
 }
 
-function NextStepCTA({ projectId, currentStep, phase1Steps }: NextStepCTAProps) {
+function NextStepCTA({ projectId, currentStep, phase1Steps, project }: NextStepCTAProps) {
   void projectId; // available for future use
-  const nextStepDef = phase1Steps.find((s) => s.step > currentStep);
+  const nextStepDef = phase1Steps.find(
+    (s) => s.step > currentStep && isStepApplicable(project, 1, s.step),
+  );
   if (!nextStepDef) return null;
 
   const handleNavigate = () => {
@@ -493,24 +498,24 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
 
   // ── Phase progress ────────────────────────────────────────────────────────
 
-  const phaseCompletion = getPhaseCompletion(1);
+  const phaseCompletion = getPhaseCompletion(1, activeProject);
 
-  // ── Conditionally filter Phase 1 steps ──────────────────────────────────
-  const phase1Steps = useMemo(() => {
-    const scheme = activeProject?.grantScheme;
-    const needsGrantMatching = !scheme || scheme === "Other" || scheme === "Undecided";
-    if (needsGrantMatching) {
-      return PHASE_1.steps;
-    }
-    // Hide Step 2 (Grant Matching) when user already has a specific scheme
-    return PHASE_1.steps.filter(s => s.step !== 2);
-  }, [activeProject?.grantScheme]);
+  // ── Phase 1 steps (no filtering — N/A steps render with the unified badge)
+  const phase1Steps = PHASE_1.steps;
 
   const getStepStatus = useCallback(
     (stepNum: number): StepStatus => {
+      if (activeProject && !isStepApplicable(activeProject, 1, stepNum)) {
+        return "not-applicable";
+      }
       return progress.phases[1]?.steps[stepNum] || "not-started";
     },
-    [progress],
+    [progress, activeProject],
+  );
+
+  const applicableStepsCount = useMemo(
+    () => phase1Steps.filter((s) => isStepApplicable(activeProject, 1, s.step)).length,
+    [phase1Steps, activeProject],
   );
 
   // ── Method 4 availability ─────────────────────────────────────────────────
@@ -573,12 +578,10 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
         const step1Status = getStepStatus(1);
         return completedMethods.length > 0 || step1Status !== "not-started";
       }
-      // Step 3 unlocks after Step 2 is complete (or skipped), or if Step 2 is hidden
+      // Step 3 unlocks after Step 2 is complete (or skipped), or if Step 2 is N/A
       if (stepNum === 3) {
-        const scheme = activeProject?.grantScheme;
-        const grantMatchingHidden = scheme && scheme !== "Other" && scheme !== "Undecided";
-        if (grantMatchingHidden) {
-          // Step 2 is hidden, so step 3 unlocks based on step 1
+        if (!isStepApplicable(activeProject, 1, 2)) {
+          // Step 2 is not applicable for this scheme, so step 3 unlocks based on step 1
           return completedMethods.length > 0 || getStepStatus(1) !== "not-started";
         }
         const step2Status = getStepStatus(2);
@@ -587,7 +590,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
       }
       return true;
     },
-    [getStepStatus, completedMethods, activeProject?.grantScheme],
+    [getStepStatus, completedMethods, activeProject],
   );
 
   // ── Method wizard config ──────────────────────────────────────────────────
@@ -637,7 +640,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
           <span className="text-sm text-muted-foreground font-medium">Phase Progress</span>
           <span className="text-sm text-muted-foreground/70">
             {phase1Steps.filter((s) => getStepStatus(s.step) === "complete").length} of{" "}
-            {phase1Steps.length} steps
+            {applicableStepsCount} steps
           </span>
         </div>
         <Progress value={phaseCompletion} className="h-1.5" />
@@ -646,10 +649,12 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
       {/* ── Step Timeline ──────────────────────────────────────────────── */}
       <div className="space-y-0">
         {phase1Steps.map((stepDef, i) => {
+          const applicability = getStepApplicability(activeProject, 1, stepDef.step);
+          const isNA = !applicability.applicable;
           const status = getStepStatus(stepDef.step);
           const isActive = activeStep === stepDef.step;
           const isComplete = status === "complete";
-          const isCurrent = status !== "not-started" && status !== "complete";
+          const isCurrent = status !== "not-started" && status !== "complete" && !isNA;
           const stepDocs = getStepDocuments(stepDef.step);
           const unlocked = isStepUnlocked(stepDef.step);
 
@@ -665,28 +670,36 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                 />
               )}
 
-              {/* Step header (clickable) */}
+              {/* Step header (clickable when applicable) */}
               <button
-                onClick={() => setActiveStep(isActive ? null : stepDef.step)}
+                type="button"
+                onClick={() => {
+                  if (isNA) return;
+                  setActiveStep(isActive ? null : stepDef.step);
+                }}
+                disabled={isNA}
+                title={isNA ? getNotApplicableTooltip(applicability.reason) : undefined}
                 className={cn(
-                  "flex w-full items-center gap-3 py-3 text-left transition-colors",
-                  "hover:bg-muted/50 rounded-xl px-2 -mx-2",
+                  "flex w-full items-center gap-3 py-3 text-left transition-colors rounded-xl px-2 -mx-2",
+                  isNA ? "cursor-default opacity-70" : "hover:bg-muted/50",
                 )}
               >
                 {/* Timeline dot */}
                 <div
                   className={cn(
                     "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 transition-all",
-                    isComplete
-                      ? "border-phase-1 bg-phase-1 text-white"
-                      : isCurrent
-                        ? "border-phase-1 bg-transparent text-phase-1"
-                        : unlocked
-                          ? "border-border bg-transparent text-muted-foreground"
-                          : "border-border bg-transparent text-muted-foreground/50",
+                    isNA
+                      ? "border-border/50 bg-transparent text-muted-foreground/50"
+                      : isComplete
+                        ? "border-phase-1 bg-phase-1 text-white"
+                        : isCurrent
+                          ? "border-phase-1 bg-transparent text-phase-1"
+                          : unlocked
+                            ? "border-border bg-transparent text-muted-foreground"
+                            : "border-border bg-transparent text-muted-foreground/50",
                   )}
                 >
-                  {isComplete ? (
+                  {isComplete && !isNA ? (
                     <Check className="h-4 w-4" />
                   ) : (
                     <span className="text-xs font-medium">{stepDef.step}</span>
@@ -698,24 +711,26 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                     <p
                       className={cn(
                         "text-sm font-semibold",
-                        isComplete
-                          ? "text-foreground"
-                          : isCurrent
+                        isNA
+                          ? "text-muted-foreground/70"
+                          : isComplete
                             ? "text-foreground"
-                            : unlocked
-                              ? "text-foreground/70"
-                              : "text-muted-foreground/50",
+                            : isCurrent
+                              ? "text-foreground"
+                              : unlocked
+                                ? "text-foreground/70"
+                                : "text-muted-foreground/50",
                       )}
                     >
                       {stepDef.name}
                     </p>
-                    {stepDef.type === "multi-method" && (
+                    {stepDef.type === "multi-method" && !isNA && (
                       <Badge variant="outline" className="text-[10px]">
                         Multi-method
                       </Badge>
                     )}
                   </div>
-                  {isComplete && stepDocs.length > 0 && (
+                  {isComplete && !isNA && stepDocs.length > 0 && (
                     <p className="text-xs text-muted-foreground/60 mt-0.5 truncate">
                       {stepDocs.map((d) => d.canonicalName).join(", ")} —{" "}
                       {stepDocs.reduce((sum, d) => sum + d.wordCount, 0).toLocaleString()} words
@@ -724,20 +739,31 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  {status !== "not-started" && (
+                  {isNA ? (
                     <Badge
-                      variant={isComplete ? "default" : "outline"}
-                      className="text-[10px]"
+                      variant="outline"
+                      className="text-[10px] text-muted-foreground/60 border-border/50 font-normal"
                     >
-                      {stepStatusLabels[status]}
+                      Not Applicable
                     </Badge>
+                  ) : (
+                    <>
+                      {status !== "not-started" && (
+                        <Badge
+                          variant={isComplete ? "default" : "outline"}
+                          className="text-[10px]"
+                        >
+                          {stepStatusLabels[status]}
+                        </Badge>
+                      )}
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 text-muted-foreground transition-transform",
+                          isActive && "rotate-180",
+                        )}
+                      />
+                    </>
                   )}
-                  <ChevronDown
-                    className={cn(
-                      "h-4 w-4 text-muted-foreground transition-transform",
-                      isActive && "rotate-180",
-                    )}
-                  />
                 </div>
               </button>
 
@@ -889,13 +915,21 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                                       {isCompleted && (
                                                         <Check className="h-3.5 w-3.5 text-emerald-500" />
                                                       )}
+                                                      {isLocked && (
+                                                        <Badge
+                                                          variant="outline"
+                                                          className="text-[10px] text-muted-foreground/60 border-border/50 font-normal"
+                                                        >
+                                                          Not Applicable
+                                                        </Badge>
+                                                      )}
                                                     </div>
                                                     <p className="text-xs text-muted-foreground mt-0.5">
                                                       {method.description}
                                                     </p>
                                                     {isLocked && (
-                                                      <p className="text-[10px] text-red-500 dark:text-red-400 mt-1">
-                                                        Only needed if you complete both Gap-Based and Trend-Based Discovery
+                                                      <p className="text-[10px] text-muted-foreground/70 mt-1">
+                                                        Available after both Gap-Based and Trend-Based Discovery are complete.
                                                       </p>
                                                     )}
                                                   </div>
@@ -992,6 +1026,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                                 projectId={projectId}
                                 currentStep={1}
                                 phase1Steps={phase1Steps}
+                                project={activeProject}
                               />
                             )}
                           </div>
@@ -1080,6 +1115,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                             projectId={projectId}
                             currentStep={2}
                             phase1Steps={phase1Steps}
+                            project={activeProject}
                           />
                         )}
                       </>

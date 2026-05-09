@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { storage } from "@/lib/storage";
-import type { PhaseProgress, StepStatus, GateStatus } from "@/lib/types";
+import type { PhaseProgress, Project, StepStatus, GateStatus } from "@/lib/types";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { isStepApplicable } from "@/lib/applicability";
 import type { GateResult } from "@/lib/quality-gate";
 
 interface ProgressState {
@@ -27,7 +28,12 @@ interface ProgressState {
     result: GateResult
   ) => void;
   getGateResult: (phase: number) => GateResult | undefined;
-  getPhaseCompletion: (phase: number) => number;
+  getStepStatus: (
+    phase: number,
+    step: number,
+    project?: Project | null,
+  ) => StepStatus;
+  getPhaseCompletion: (phase: number, project?: Project | null) => number;
   canAccessPhase: (phase: number) => boolean;
   bypassPhases: (projectId: string, phases: number[]) => void;
   clearProgress: () => void;
@@ -67,19 +73,33 @@ export const useProgressStore = create<ProgressState>()((set, get) => ({
     set({ progress: { ...progress } });
   },
 
-  getPhaseCompletion: (phase) => {
+  getStepStatus: (phase, step, project) => {
+    if (project && !isStepApplicable(project, phase, step)) {
+      return "not-applicable";
+    }
+    const { progress } = get();
+    return progress.phases[phase]?.steps[step] ?? "not-started";
+  },
+
+  getPhaseCompletion: (phase, project) => {
     const { progress } = get();
     const phaseInfo = PHASE_DEFINITIONS.find((p) => p.phase === phase);
     if (!phaseInfo) return 0;
 
+    const applicable = project
+      ? phaseInfo.steps.filter((s) => isStepApplicable(project, phase, s.step))
+      : phaseInfo.steps;
+
+    if (applicable.length === 0) return 100;
+
     const phaseProgress = progress.phases[phase];
     if (!phaseProgress) return 0;
 
-    const completedSteps = Object.values(phaseProgress.steps).filter(
-      (s) => s === "complete"
+    const completed = applicable.filter(
+      (s) => phaseProgress.steps[s.step] === "complete",
     ).length;
 
-    return Math.round((completedSteps / phaseInfo.steps.length) * 100);
+    return Math.round((completed / applicable.length) * 100);
   },
 
   canAccessPhase: (phase) => {

@@ -126,6 +126,7 @@ const stepStatusLabels: Record<StepStatus, string> = {
   "prompt-copied": "Prompt Copied",
   "output-pasted": "Output Pasted",
   complete: "Complete",
+  "not-applicable": "Not Applicable",
 };
 
 // ─── Animation variants ─────────────────────────────────────────────────────

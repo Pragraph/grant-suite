@@ -6,23 +6,6 @@ import type { DependencyEntry, PhaseDefinition, GrantSchemeInfo, JourneyModeInfo
 export const GRANT_SCHEMES: GrantSchemeInfo[] = [
   // ── Malaysian MOHE Competitive Grants ──────────────────────────────────
   {
-    id: "FRGS",
-    name: "FRGS",
-    fullName: "Fundamental Research Grant Scheme",
-    funder: "Ministry of Higher Education (MOHE)",
-    country: "Malaysia",
-    category: "malaysian",
-    defaultBudgetRange: "RM 100,000 – RM 250,000",
-    maxBudget: 250000,
-    defaultCurrency: "MYR",
-    requiresPatentSearch: false,
-    requiresMyGrants: true,
-    requiresTurnitin: true,
-    maxSimilarityIndex: 20,
-    description:
-      "Funds fundamental research across all disciplines in Malaysian public universities. Maximum RM250,000 for 2–3 years. Evaluated via MyGRANTS with emphasis on novelty, methodology, and researcher competency. Patent search is encouraged (digalakkan). Risk assessment plan is mandatory (dimestikan).",
-  },
-  {
     id: "GET",
     name: "GET",
     fullName: "Geran Penyelidikan Eksploratori dan Transformatif (Exploratory & Transformative Research Grant)",
@@ -56,6 +39,23 @@ export const GRANT_SCHEMES: GrantSchemeInfo[] = [
     ],
     description:
       "Funds exploratory and transformative research in Malaysian public and private universities. Two sub-categories: Exploratory (TRL 1-2, generating hypotheses and conceptual frameworks) and Transformative (TRL 2-3, radical innovation and proof of concept). Maximum RM250,000 for 2–3 years. Industry collaboration is mandatory (LOI/MoU/MoA required). Patent search via lens.org is mandatory. Minimum 1 IP filing required. ROV (Return of Value) is mandatory with 3-year post-completion monitoring. Mentor required for Associate Professor and below.",
+  },
+  {
+    id: "FRGS",
+    name: "FRGS",
+    fullName: "Fundamental Research Grant Scheme",
+    funder: "Ministry of Higher Education (MOHE)",
+    country: "Malaysia",
+    category: "malaysian",
+    defaultBudgetRange: "RM 100,000 – RM 250,000",
+    maxBudget: 250000,
+    defaultCurrency: "MYR",
+    requiresPatentSearch: false,
+    requiresMyGrants: true,
+    requiresTurnitin: true,
+    maxSimilarityIndex: 20,
+    description:
+      "Funds fundamental research across all disciplines in Malaysian public universities. Maximum RM250,000 for 2–3 years. Evaluated via MyGRANTS with emphasis on novelty, methodology, and researcher competency. Patent search is encouraged (digalakkan). Risk assessment plan is mandatory (dimestikan).",
   },
   {
     id: "PRGS",

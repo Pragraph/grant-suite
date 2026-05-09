@@ -23,6 +23,7 @@ import { storage } from "@/lib/storage";
 import { getProjectIdFromUrl } from "@/lib/utils";
 import { exportAllDocuments } from "@/lib/export-all";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { getStepApplicability, getNotApplicableTooltip } from "@/lib/applicability";
 import { useIsHydrated } from "@/hooks/use-is-hydrated";
 import type { Project, StepStatus, Document } from "@/lib/types";
 
@@ -54,6 +55,7 @@ const stepStatusLabels: Record<StepStatus, string> = {
   "prompt-copied": "Prompt Copied",
   "output-pasted": "Output Pasted",
   complete: "Complete",
+  "not-applicable": "Not Applicable",
 };
 
 const stepStatusColors: Record<StepStatus, string> = {
@@ -62,6 +64,7 @@ const stepStatusColors: Record<StepStatus, string> = {
   "prompt-copied": "text-info",
   "output-pasted": "text-accent-400",
   complete: "text-success",
+  "not-applicable": "text-muted-foreground/60",
 };
 
 function getGuidanceMessage(
@@ -386,7 +389,7 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
           {PHASE_DEFINITIONS.map((phase, i) => {
             const isExpanded = expandedPhase === phase.phase;
             const accessible = canAccessPhase(phase.phase);
-            const completion = getPhaseCompletion(phase.phase);
+            const completion = getPhaseCompletion(phase.phase, project);
             const isCurrent = project.currentPhase === phase.phase;
             const isBypassed = progress.phases[phase.phase]?.gateStatus === "bypassed";
             const phaseProgress = progress.phases[phase.phase];
@@ -501,30 +504,66 @@ export function ProjectDetailClient({ id: _id }: { id: string }) {
                       <div className="px-4 py-2 space-y-1">
                         {phase.steps.map((stepDef, stepIdx) => {
                           const stepNum = stepDef.step ?? stepIdx + 1;
-                          const status: StepStatus =
+                          const applicability = getStepApplicability(
+                            project,
+                            phase.phase,
+                            stepNum,
+                          );
+                          const rawStatus: StepStatus =
                             phaseProgress?.steps[stepNum] ?? "not-started";
+                          const status: StepStatus = applicability.applicable
+                            ? rawStatus
+                            : "not-applicable";
+                          const isNA = !applicability.applicable;
 
                           return (
                             <button
                               key={stepNum}
                               type="button"
-                              onClick={() => navigateTo(phaseUrl)}
+                              onClick={() => {
+                                if (isNA) return;
+                                navigateTo(phaseUrl);
+                              }}
                               onKeyDown={(e) => {
+                                if (isNA) return;
                                 if (e.key === "Enter" || e.key === " ") navigateTo(phaseUrl);
                               }}
-                              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left hover:bg-muted/50 transition-colors cursor-pointer"
+                              disabled={isNA}
+                              title={
+                                isNA
+                                  ? getNotApplicableTooltip(applicability.reason)
+                                  : undefined
+                              }
+                              className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition-colors ${
+                                isNA
+                                  ? "cursor-default opacity-70"
+                                  : "hover:bg-muted/50 cursor-pointer"
+                              }`}
                             >
                               <span className="text-xs text-gray-400 font-mono w-5">
                                 {stepIdx + 1}
                               </span>
-                              <span className="text-sm text-foreground/80 flex-1">
+                              <span
+                                className={`text-sm flex-1 ${
+                                  isNA ? "text-muted-foreground/70" : "text-foreground/80"
+                                }`}
+                              >
                                 {stepDef.name}
                               </span>
-                              <span
-                                className={`text-xs font-medium ${stepStatusColors[status]}`}
-                              >
-                                {stepStatusLabels[status]}
-                              </span>
+                              {isNA ? (
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] text-muted-foreground/60 border-border/50 font-normal"
+                                >
+                                  Not Applicable
+                                </Badge>
+                              ) : (
+                                <span
+                                  className={`text-xs font-medium ${stepStatusColors[status]}`}
+                                >
+                                  {stepStatusLabels[status]}
+                                </span>
+                              )}
                             </button>
                           );
                         })}

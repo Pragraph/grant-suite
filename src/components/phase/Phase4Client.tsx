@@ -129,6 +129,7 @@ const stepStatusLabels: Record<StepStatus, string> = {
   "prompt-copied": "Prompt Copied",
   "output-pasted": "Output Pasted",
   complete: "Complete",
+  "not-applicable": "Not Applicable",
 };
 
 // ─── Animation variants ─────────────────────────────────────────────────────
@@ -994,7 +995,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
 
   // ── Phase progress ────────────────────────────────────────────────────────
 
-  const phaseCompletion = getPhaseCompletion(4);
+  const phaseCompletion = getPhaseCompletion(4, activeProject);
   const phase4Steps = PHASE_4.steps;
 
   const getStepStatus = useCallback(
