@@ -143,10 +143,21 @@ describe("parsePlaceholders — asserted bold span scope (Round 4 Group 1)", () 
     expect(tag.scopeRaw).toBe("[CITATION NEEDED]");
   });
 
-  it("falls back to bracket-only scope when no bold span follows", () => {
+  it("uses Pattern C to scope back to the asserted text when no bold span follows", () => {
     const content = "A plain [VERIFY] tag with no assertion here.";
     const [tag] = parsePlaceholders(content);
+    expect(tag.scopePattern).toBe("pattern-c");
+    expect(tag.assertionText).toBe("A plain");
+    expect(tag.scopeEndIndex).toBe(tag.endIndex);
+    expect(tag.scopeRaw).toBe("A plain [VERIFY]");
+  });
+
+  it("falls back to bracket-only when the bracket is at the start of a line", () => {
+    const content = "Some preamble.\n[VERIFY] tag at start of line.";
+    const [tag] = parsePlaceholders(content);
+    expect(tag.scopePattern).toBe("bracket-only");
     expect(tag.assertionText).toBeUndefined();
+    expect(tag.scopeStartIndex).toBe(tag.startIndex);
     expect(tag.scopeEndIndex).toBe(tag.endIndex);
     expect(tag.scopeRaw).toBe("[VERIFY]");
   });
@@ -172,17 +183,24 @@ describe("parsePlaceholders — asserted bold span scope (Round 4 Group 1)", () 
     expect(tags[0].assertionText).toBe("outer with [CITATION NEEDED] inside");
   });
 
-  it("preserves the fixture tag count after Round 4 changes", () => {
-    // Round 3 baseline: the fixture parses to 42 tags. Group 1 widens scope
-    // for confirm-or-replace tags but never adds or removes instances. The
-    // fixture's bold-wrapped tags (e.g. `**[VERIFY]** tag.`) do not match
-    // the lookahead because the closing `**` belongs to the tag's own
-    // bold wrapper.
+  it("preserves the fixture tag count across pattern detection rounds", () => {
+    // Round 3 baseline: the fixture parses to 42 tags. Subsequent rounds
+    // (Pattern A/B/C scope detection) widen scope for confirm-or-replace
+    // tags but never add or remove instances.
     const tags = parsePlaceholders(fixture);
     expect(tags).toHaveLength(42);
-    // None of the fixture tags should pick up an assertion since none
-    // follow the `[TAG] **assertion**` convention.
-    expect(tags.filter((t) => t.assertionText !== undefined)).toHaveLength(0);
+    // Bold/italic/bold-italic-wrapped tags must still bail out of Pattern C
+    // (the prior char is a markdown wrapper). Their scope stays bracket-only.
+    const wrappedSamples = tags.filter((t) =>
+      ["VERIFY", "ESTIMATED", "CHECK DATE"].includes(t.type) &&
+      // Bracket immediately preceded by `*` or `_` in the fixture text.
+      ["*", "_"].includes(fixture[t.startIndex - 1] ?? ""),
+    );
+    expect(wrappedSamples.length).toBeGreaterThan(0);
+    for (const tag of wrappedSamples) {
+      expect(tag.scopePattern).toBe("bracket-only");
+      expect(tag.assertionText).toBeUndefined();
+    }
   });
 });
 
@@ -204,11 +222,28 @@ describe("applyResolutions — wider-scope semantics (Round 4 Group 1 + hotfix)"
     expect(result).toBe("Cap **No minimum stated** confirmed.");
   });
 
-  it("strips the entire scope when confirmed and no assertion follows", () => {
+  it("preserves Pattern C asserted text and strips the bracket on confirm", () => {
+    // Round 7: with no following bold span, Pattern C scopes back to capture
+    // "Bare" as the assertion. Confirm removes the bracket, keeps the
+    // assertion, and trims trailing whitespace — yielding a single space
+    // between the assertion and the rest of the sentence.
     const content = "Bare [VERIFY] tag.";
     const [tag] = parsePlaceholders(content);
+    expect(tag.scopePattern).toBe("pattern-c");
+    expect(tag.assertionText).toBe("Bare");
     const result = applyResolutions(content, {}, new Set([tag.id]));
-    expect(result).toBe("Bare  tag.");
+    expect(result).toBe("Bare tag.");
+  });
+
+  it("strips the entire scope when confirmed and the tag is at start of line", () => {
+    // Bracket-only fallback: the tag starts the line, so Pattern C does not
+    // fire. Confirm removes the bracket and leaves the surrounding spacing
+    // verbatim (the leading newline and trailing space remain).
+    const content = "Preamble.\n[VERIFY] tag.";
+    const [tag] = parsePlaceholders(content);
+    expect(tag.scopePattern).toBe("bracket-only");
+    const result = applyResolutions(content, {}, new Set([tag.id]));
+    expect(result).toBe("Preamble.\n tag.");
   });
 
   it("leaves the scope untouched when neither resolved nor confirmed", () => {

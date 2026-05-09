@@ -190,6 +190,13 @@ function detectPatternA(
  * preceded by a digit (avoids splitting on decimals like `1.5`).
  *
  * Returns null when:
+ *   - the bracket is at position 0,
+ *   - the character immediately before the bracket is a markdown wrapper
+ *     (`*`, `_`, `~`, `` ` ``). Such cases are bold/italic/strikethrough/code
+ *     wrapping that Pattern A or Pattern B already covers — or empty wrapping
+ *     like `**[VERIFY]**` that should fall through to bracket-only. Capturing
+ *     them here would absorb the unbalanced opening marker into the assertion
+ *     and produce malformed markdown on confirm.
  *   - the resulting assertion would be empty (tag is at start of paragraph
  *     or sentence with no prior content),
  *   - the tag is immediately preceded only by whitespace or the boundary.
@@ -201,6 +208,19 @@ function detectPatternC(
   priorTagEnd: number,
 ): ScopeResult | null {
   if (tagStart === 0) return null;
+
+  // Bail if the bracket is wrapped by a markdown formatting marker. Pattern A
+  // and Pattern B handle bold-wrapped cases; this guard prevents Pattern C
+  // from absorbing the leading `*`/`_`/`~`/`` ` `` and producing broken output.
+  const charBefore = content[tagStart - 1];
+  if (
+    charBefore === "*" ||
+    charBefore === "_" ||
+    charBefore === "~" ||
+    charBefore === "`"
+  ) {
+    return null;
+  }
 
   // Lower bound: never scope back past the prior tag's end.
   const floor = Math.max(0, priorTagEnd);
