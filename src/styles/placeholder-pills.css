@@ -1,0 +1,76 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   Placeholder Pill Styles
+   Used by DecoratedMarkdownView. Class names are emitted at runtime by
+   `preprocessPlaceholdersForMarkdown`, so Tailwind cannot statically
+   discover them. Defined here in a dedicated CSS file imported once
+   from the resolver entry point.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.placeholder-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 4px;
+  border-radius: 3px;
+  border: 1px solid;
+  font-size: 0.85em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, outline-color 150ms ease;
+  white-space: nowrap;
+}
+
+.placeholder-pill-required {
+  background-color: rgb(255 241 242);
+  border-color: rgb(254 205 211);
+  color: rgb(190 18 60);
+}
+
+.placeholder-pill-verify {
+  background-color: rgb(255 251 235);
+  border-color: rgb(253 230 138);
+  color: rgb(180 83 9);
+}
+
+.placeholder-pill-info {
+  background-color: rgb(240 249 255);
+  border-color: rgb(186 230 253);
+  color: rgb(3 105 161);
+}
+
+.placeholder-pill[data-active="true"] {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.placeholder-pill[data-resolved="true"] {
+  background-color: rgb(236 253 245);
+  border-color: rgb(167 243 208);
+  color: rgb(4 120 87);
+  text-decoration: line-through;
+  cursor: default;
+}
+
+/* Dark mode — project uses [data-theme="dark"] (see globals.css custom variant). */
+[data-theme="dark"] .placeholder-pill-required {
+  background-color: rgb(76 5 25 / 0.3);
+  border-color: rgb(159 18 57);
+  color: rgb(252 165 165);
+}
+
+[data-theme="dark"] .placeholder-pill-verify {
+  background-color: rgb(69 39 11 / 0.3);
+  border-color: rgb(146 64 14);
+  color: rgb(252 211 77);
+}
+
+[data-theme="dark"] .placeholder-pill-info {
+  background-color: rgb(8 47 73 / 0.3);
+  border-color: rgb(7 89 133);
+  color: rgb(125 211 252);
+}
+
+[data-theme="dark"] .placeholder-pill[data-resolved="true"] {
+  background-color: rgb(6 78 59 / 0.3);
+  border-color: rgb(6 95 70);
+  color: rgb(110 231 183);
+}

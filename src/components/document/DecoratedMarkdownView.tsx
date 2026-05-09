@@ -1,192 +1,87 @@
 "use client";
 
-import React from "react";
+import { useEffect, useMemo, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import { cn } from "@/lib/utils";
 import {
-  PLACEHOLDER_TAG_REGEX,
+  preprocessPlaceholdersForMarkdown,
   type TagInstance,
-  type TagType,
 } from "@/lib/placeholders";
-
-const TAG_PILL_COLORS: Record<TagType, string> = {
-  "CITATION NEEDED":
-    "bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300",
-  "USER INPUT NEEDED":
-    "bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300",
-  VERIFY:
-    "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300",
-  ESTIMATED:
-    "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300",
-  "CHECK DATE":
-    "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300",
-};
+import "@/styles/placeholder-pills.css";
 
 interface DecoratedMarkdownViewProps {
   content: string;
-  tagInstances: TagInstance[];
+  // Kept for backward-compat with the StepExecutor parent contract; the
+  // preprocess function re-derives instances from `content`.
+  tagInstances?: TagInstance[];
   resolutions: Record<string, string>;
   confirmed: Set<string>;
-  skipped: Set<string>;
+  // Skipped tags render with the same styling as pending tags. The set is
+  // accepted for parent compatibility but not used here directly.
+  skipped?: Set<string>;
   activeTagId: string | null;
   onTagClick: (tagId: string) => void;
-}
-
-interface DecorateContext {
-  tagInstances: TagInstance[];
-  counterRef: { current: number };
-  resolutions: Record<string, string>;
-  confirmed: Set<string>;
-  skipped: Set<string>;
-  activeTagId: string | null;
-  onTagClick: (tagId: string) => void;
-}
-
-function decorateText(text: string, ctx: DecorateContext): React.ReactNode[] {
-  const re = new RegExp(PLACEHOLDER_TAG_REGEX.source, "g");
-  const segments: React.ReactNode[] = [];
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-  let key = 0;
-
-  while ((match = re.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      segments.push(
-        <React.Fragment key={`t-${key++}`}>
-          {text.slice(lastIndex, match.index)}
-        </React.Fragment>,
-      );
-    }
-
-    const tag = ctx.tagInstances[ctx.counterRef.current++];
-    if (!tag) {
-      // Mismatch — fall back to plain text
-      segments.push(
-        <React.Fragment key={`t-${key++}`}>{match[0]}</React.Fragment>,
-      );
-    } else {
-      const isResolved = ctx.resolutions[tag.id] !== undefined;
-      const isConfirmed = ctx.confirmed.has(tag.id);
-      const isSkipped = ctx.skipped.has(tag.id);
-      const isActive = ctx.activeTagId === tag.id;
-
-      if (isConfirmed) {
-        // Marker would be removed on save — render nothing visible.
-        // Keep an invisible anchor so scrollIntoView still has a target.
-        segments.push(
-          <span
-            key={`t-${key++}`}
-            id={`tag-pill-${tag.id}`}
-            className="sr-only"
-            aria-hidden="true"
-          />,
-        );
-      } else if (isResolved) {
-        const replacement = ctx.resolutions[tag.id];
-        segments.push(
-          <button
-            key={`t-${key++}`}
-            type="button"
-            id={`tag-pill-${tag.id}`}
-            onClick={(e) => {
-              e.preventDefault();
-              ctx.onTagClick(tag.id);
-            }}
-            className={cn(
-              "inline rounded border px-1 py-0 text-inherit transition-all",
-              "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300",
-              isActive && "ring-2 ring-[#4F7DF3]/60",
-            )}
-          >
-            {replacement}
-          </button>,
-        );
-      } else {
-        segments.push(
-          <button
-            key={`t-${key++}`}
-            type="button"
-            id={`tag-pill-${tag.id}`}
-            onClick={(e) => {
-              e.preventDefault();
-              ctx.onTagClick(tag.id);
-            }}
-            className={cn(
-              "inline rounded border px-1 py-0 font-mono text-[11px] font-medium transition-all",
-              TAG_PILL_COLORS[tag.type],
-              isSkipped && "opacity-50",
-              isActive && "ring-2 ring-[#4F7DF3]/60",
-            )}
-          >
-            {match[0]}
-          </button>,
-        );
-      }
-    }
-
-    lastIndex = match.index + match[0].length;
-  }
-
-  if (lastIndex < text.length) {
-    segments.push(
-      <React.Fragment key={`t-${key++}`}>
-        {text.slice(lastIndex)}
-      </React.Fragment>,
-    );
-  }
-
-  return segments;
-}
-
-function decorateChildren(
-  children: React.ReactNode,
-  ctx: DecorateContext,
-): React.ReactNode {
-  if (typeof children === "string") {
-    return <>{decorateText(children, ctx)}</>;
-  }
-  if (Array.isArray(children)) {
-    return (
-      <>
-        {children.map((child, i) =>
-          typeof child === "string" ? (
-            <React.Fragment key={i}>{decorateText(child, ctx)}</React.Fragment>
-          ) : (
-            <React.Fragment key={i}>{child}</React.Fragment>
-          ),
-        )}
-      </>
-    );
-  }
-  return <>{children}</>;
 }
 
 export function DecoratedMarkdownView({
   content,
-  tagInstances,
   resolutions,
   confirmed,
-  skipped,
   activeTagId,
   onTagClick,
 }: DecoratedMarkdownViewProps) {
-  // Counter resets each render so decoration order matches tagInstances order.
-  const counterRef = { current: 0 };
-  const ctx: DecorateContext = {
-    tagInstances,
-    counterRef,
-    resolutions,
-    confirmed,
-    skipped,
-    activeTagId,
-    onTagClick,
-  };
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const wrap = (children: React.ReactNode) => decorateChildren(children, ctx);
+  const processed = useMemo(
+    () => preprocessPlaceholdersForMarkdown(content, resolutions, confirmed),
+    [content, resolutions, confirmed],
+  );
+
+  // Container-level click delegation.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      const pill = target?.closest<HTMLElement>("[data-tag-id]");
+      if (pill && pill.dataset.tagId) {
+        e.preventDefault();
+        onTagClick(pill.dataset.tagId);
+      }
+    };
+
+    container.addEventListener("click", handleClick);
+    return () => container.removeEventListener("click", handleClick);
+  }, [onTagClick]);
+
+  // Mark resolved pills (rendered text-only, no span) and active pill.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container
+      .querySelectorAll<HTMLElement>("[data-tag-id][data-active='true']")
+      .forEach((el) => el.removeAttribute("data-active"));
+
+    if (activeTagId) {
+      // Escape quotes in the selector value.
+      const safe = activeTagId.replace(/"/g, '\\"');
+      const el = container.querySelector<HTMLElement>(
+        `[data-tag-id="${safe}"]`,
+      );
+      if (el) {
+        el.setAttribute("data-active", "true");
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [activeTagId, processed]);
 
   return (
     <div
+      ref={containerRef}
       className={cn(
         "prose prose-sm prose-gray max-w-none",
         "prose-headings:text-foreground prose-headings:font-semibold prose-headings:tracking-tight",
@@ -210,18 +105,9 @@ export function DecoratedMarkdownView({
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        components={{
-          p: ({ children }) => <p>{wrap(children)}</p>,
-          li: ({ children }) => <li>{wrap(children)}</li>,
-          td: ({ children }) => <td>{wrap(children)}</td>,
-          th: ({ children }) => <th>{wrap(children)}</th>,
-          h1: ({ children }) => <h1>{wrap(children)}</h1>,
-          h2: ({ children }) => <h2>{wrap(children)}</h2>,
-          h3: ({ children }) => <h3>{wrap(children)}</h3>,
-          h4: ({ children }) => <h4>{wrap(children)}</h4>,
-        }}
+        rehypePlugins={[rehypeRaw]}
       >
-        {content}
+        {processed}
       </ReactMarkdown>
     </div>
   );
