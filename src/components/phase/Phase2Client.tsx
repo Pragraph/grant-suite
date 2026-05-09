@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
   ChevronDown,
-  AlertTriangle,
   Brain,
   Zap,
   Target,
@@ -399,7 +398,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
         >
           <span className="flex items-center justify-center gap-2">
             <Layers className="h-4 w-4" />
-            Individual Steps
+            Step-by-Step
             <Badge
               variant="outline"
               className={cn(
@@ -409,7 +408,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
                   : "border-border text-muted-foreground",
               )}
             >
-              recommended
+              First proposal
             </Badge>
           </span>
         </button>
@@ -424,7 +423,18 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
         >
           <span className="flex items-center justify-center gap-2">
             <Sparkles className="h-4 w-4" />
-            Combined Session
+            Single Session
+            <Badge
+              variant="outline"
+              className={cn(
+                "text-[10px] ml-1",
+                mode === "combined"
+                  ? "border-white/40 bg-white/10 text-white"
+                  : "border-[#4F7DF3]/30 text-[#4F7DF3]",
+              )}
+            >
+              Faster
+            </Badge>
           </span>
         </button>
       </div>
@@ -444,17 +454,17 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
       {/* ── Combined Mode ──────────────────────────────────────────────── */}
       {mode === "combined" ? (
         <div className="space-y-4">
-          {/* Context window warning */}
-          <div className="flex items-start gap-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+          {/* Single Session info panel */}
+          <div className="flex items-start gap-3 rounded-lg border border-[#4F7DF3]/20 bg-[#F0F4FF] dark:bg-[#4F7DF3]/10 p-4">
+            <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-[#4F7DF3]" />
             <div>
               <p className="text-sm font-medium text-foreground">
-                Large Context Window Required
+                Single Session combines all 5 analyses into one prompt
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Combined mode works best with AI tools that have large context windows (100K+ tokens).
-                This produces the Proposal Blueprint in a single session, combining all 5 analysis steps.
-                If your AI tool has limited context, use Individual Steps mode instead.
+                Produces the Proposal Blueprint directly. Works with any AI tool that handles 100K+ token
+                context windows, which includes Claude, GPT-4, and Gemini Pro. If your tool returns
+                truncated output, switch to Step-by-Step.
               </p>
             </div>
           </div>
