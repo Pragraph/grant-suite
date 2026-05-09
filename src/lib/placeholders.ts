@@ -5,6 +5,8 @@ export type TagType =
   | "ESTIMATED"
   | "CHECK DATE";
 
+export type ScopePattern = "bracket-only" | "pattern-a" | "pattern-b" | "pattern-c";
+
 export interface TagInstance {
   id: string;
   type: TagType;
@@ -15,11 +17,13 @@ export interface TagInstance {
   startIndex: number;
   endIndex: number;
   // Scope position. May extend beyond the bracket either backward (Pattern B,
-  // tag inside bold span) or forward (Pattern A, bold span follows tag) or
-  // both directions for replace-required types it stays equal to the bracket.
+  // tag inside bold span; Pattern C, plain text precedes tag) or forward
+  // (Pattern A, bold span follows tag). For replace-required types it stays
+  // equal to the bracket.
   scopeStartIndex: number;
   scopeEndIndex: number;
   scopeRaw: string;
+  scopePattern: ScopePattern;
   assertionText?: string;
   contextBefore: string;
   contextAfter: string;
@@ -53,6 +57,7 @@ interface ScopeResult {
   scopeEnd: number;
   scopeRaw: string;
   assertionText: string | undefined;
+  pattern: ScopePattern;
 }
 
 function findCodeBlockRanges(content: string): Array<[number, number]> {
@@ -149,6 +154,7 @@ function detectPatternB(
     scopeEnd,
     scopeRaw: content.slice(scopeStart, scopeEnd),
     assertionText,
+    pattern: "pattern-b",
   };
 }
 
@@ -171,6 +177,77 @@ function detectPatternA(
     scopeEnd,
     scopeRaw: content.slice(tagStart, scopeEnd),
     assertionText: match[1].trim(),
+    pattern: "pattern-a",
+  };
+}
+
+/**
+ * Pattern C: tag with no following bold (Pattern A) and no surrounding bold
+ * (Pattern B). Scope extends BACKWARD from the bracket to the nearest
+ * sentence boundary, line break, table cell pipe, or prior-tag end.
+ *
+ * Sentence terminator = `.`, `!`, or `?` followed by whitespace, NOT
+ * preceded by a digit (avoids splitting on decimals like `1.5`).
+ *
+ * Returns null when:
+ *   - the resulting assertion would be empty (tag is at start of paragraph
+ *     or sentence with no prior content),
+ *   - the tag is immediately preceded only by whitespace or the boundary.
+ */
+function detectPatternC(
+  content: string,
+  tagStart: number,
+  tagEnd: number,
+  priorTagEnd: number,
+): ScopeResult | null {
+  if (tagStart === 0) return null;
+
+  // Lower bound: never scope back past the prior tag's end.
+  const floor = Math.max(0, priorTagEnd);
+
+  let scopeStart = floor;
+  // Walk backward from just before the bracket.
+  for (let i = tagStart - 1; i >= floor; i--) {
+    const ch = content[i];
+
+    if (ch === "\n") {
+      scopeStart = i + 1;
+      break;
+    }
+    if (ch === "|") {
+      scopeStart = i + 1;
+      break;
+    }
+    if (ch === "." || ch === "!" || ch === "?") {
+      const next = content[i + 1];
+      const prev = i > 0 ? content[i - 1] : "";
+      if (next !== undefined && /\s/.test(next) && !/\d/.test(prev)) {
+        scopeStart = i + 1;
+        break;
+      }
+    }
+    if (i === floor) {
+      scopeStart = floor;
+      break;
+    }
+  }
+
+  // Skip leading whitespace after the boundary.
+  while (scopeStart < tagStart && /\s/.test(content[scopeStart])) {
+    scopeStart++;
+  }
+
+  if (scopeStart >= tagStart) return null;
+
+  const assertionText = content.slice(scopeStart, tagStart).trim();
+  if (!assertionText) return null;
+
+  return {
+    scopeStart,
+    scopeEnd: tagEnd,
+    scopeRaw: content.slice(scopeStart, tagEnd),
+    assertionText,
+    pattern: "pattern-c",
   };
 }
 
@@ -178,15 +255,16 @@ function detectPatternA(
  * Determines the scope for a confirm-or-replace tag.
  *
  * Order: Pattern B (tag-inside-bold) first, then Pattern A (bold-follows-tag),
- * then bracket-only fallback. Detected scopes that would overlap an
- * already-claimed range are rejected so the caller can fall through to a
- * narrower pattern.
+ * then Pattern C (asserted text precedes tag, no bold), then bracket-only
+ * fallback. Detected scopes that would overlap an already-claimed range are
+ * rejected so the caller can fall through to a narrower pattern.
  */
 function detectScope(
   content: string,
   tagStart: number,
   tagEnd: number,
   claimedRanges: ReadonlyArray<readonly [number, number]>,
+  priorTagEnd: number,
 ): ScopeResult {
   const b = detectPatternB(content, tagStart, tagEnd);
   if (b && !rangesOverlap(b.scopeStart, b.scopeEnd, claimedRanges)) {
@@ -198,11 +276,17 @@ function detectScope(
     return a;
   }
 
+  const c = detectPatternC(content, tagStart, tagEnd, priorTagEnd);
+  if (c && !rangesOverlap(c.scopeStart, c.scopeEnd, claimedRanges)) {
+    return c;
+  }
+
   return {
     scopeStart: tagStart,
     scopeEnd: tagEnd,
     scopeRaw: content.slice(tagStart, tagEnd),
     assertionText: undefined,
+    pattern: "bracket-only",
   };
 }
 
@@ -218,6 +302,10 @@ export function parsePlaceholders(content: string): TagInstance[] {
 
   const re = new RegExp(PLACEHOLDER_TAG_REGEX.source, "g");
   let match: RegExpExecArray | null;
+  // Lower bound for the next tag's Pattern C backward scan. Updated after
+  // each successfully-emitted tag so two tags in one sentence don't overlap.
+  let priorTagEnd = 0;
+
   while ((match = re.exec(content)) !== null) {
     const startIndex = match.index;
     if (isInsideRange(startIndex, codeRanges)) continue;
@@ -229,7 +317,7 @@ export function parsePlaceholders(content: string): TagInstance[] {
 
     let scope: ScopeResult;
     if (CONFIRM_OR_REPLACE_TYPES.has(type)) {
-      scope = detectScope(content, startIndex, endIndex, claimedRanges);
+      scope = detectScope(content, startIndex, endIndex, claimedRanges, priorTagEnd);
       // Register only widened scopes. Bracket-only scopes don't claim
       // territory because they can coexist with siblings.
       if (
@@ -244,6 +332,7 @@ export function parsePlaceholders(content: string): TagInstance[] {
         scopeEnd: endIndex,
         scopeRaw: match[0],
         assertionText: undefined,
+        pattern: "bracket-only",
       };
     }
 
@@ -266,10 +355,14 @@ export function parsePlaceholders(content: string): TagInstance[] {
       scopeStartIndex: scope.scopeStart,
       scopeEndIndex: scope.scopeEnd,
       scopeRaw: scope.scopeRaw,
+      scopePattern: scope.pattern,
       assertionText: scope.assertionText,
       contextBefore,
       contextAfter,
     });
+
+    // Advance the floor for the next tag's Pattern C scan.
+    priorTagEnd = endIndex;
   }
 
   return instances;
@@ -387,27 +480,30 @@ function escapeHtmlText(value: string): string {
  *
  *   Pattern B  (`**[VERIFY] X**`)         → `<strong>[VERIFY] X</strong>`
  *   Pattern A  (`[VERIFY] **X**`)         → `[VERIFY] <strong>X</strong>`
+ *   Pattern C  (`X [VERIFY]`)             → `X [VERIFY]`
  *   Bracket-only (`[VERIFY]`)             → `[VERIFY]`
  */
 function buildPillInnerHtml(tag: TagInstance): string {
-  // Pattern B: scope opens before the bracket. The whole scope content (with
-  // outer `**` stripped) renders as one bold span containing the tag bracket.
-  if (tag.scopeStartIndex < tag.startIndex) {
-    const stripped = tag.scopeRaw.slice(2, -2);
-    return `<strong>${escapeHtmlText(stripped)}</strong>`;
+  switch (tag.scopePattern) {
+    case "pattern-b": {
+      // Strip outer `**` markers; scope content renders as one bold span.
+      const stripped = tag.scopeRaw.slice(2, -2);
+      return `<strong>${escapeHtmlText(stripped)}</strong>`;
+    }
+    case "pattern-a": {
+      // Bracket plain, asserted bold span follows.
+      const assertion = tag.assertionText ?? "";
+      return `${escapeHtmlText(tag.raw)} <strong>${escapeHtmlText(assertion)}</strong>`;
+    }
+    case "pattern-c": {
+      // Asserted text precedes the bracket, no bold formatting.
+      const assertion = tag.assertionText ?? "";
+      return `${escapeHtmlText(assertion)} ${escapeHtmlText(tag.raw)}`;
+    }
+    case "bracket-only":
+    default:
+      return escapeHtmlText(tag.raw);
   }
-
-  // Pattern A: scope opens at the bracket and extends through a following
-  // bold span. Render bracket plain, assertion in <strong>.
-  if (
-    tag.scopeEndIndex > tag.endIndex &&
-    tag.assertionText !== undefined
-  ) {
-    return `${escapeHtmlText(tag.raw)} <strong>${escapeHtmlText(tag.assertionText)}</strong>`;
-  }
-
-  // Bracket-only fallback.
-  return escapeHtmlText(tag.raw);
 }
 
 /**
