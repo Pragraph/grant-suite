@@ -88,6 +88,8 @@ type ExecutorState =
   | "REVIEWING"
   | "SAVED";
 
+const TRANSIENT_STATES: ReadonlyArray<ExecutorState> = ["CHECKING", "MISSING_DOCS"];
+
 interface ExecutorReducerState {
   state: ExecutorState;
   missingRequired: RequiredDocument[];
@@ -535,6 +537,7 @@ export function StepExecutor({
   const { compile, getTemplate } = usePromptEngine();
   const pipeline = useDocumentPipeline(projectId);
   const saveDocument = useDocumentStore((s) => s.saveDocument);
+  const documents = useDocumentStore((s) => s.documents);
   const activeProject = useProjectStore((s) => s.activeProject);
   const updateStepStatus = useProgressStore((s) => s.updateStepStatus);
 
@@ -564,7 +567,7 @@ export function StepExecutor({
           state: ExecutorReducerState["state"];
         };
         // Don't restore CHECKING or transient states
-        if (parsed.state !== "CHECKING") {
+        if (parsed.state !== "CHECKING" && parsed.state !== "MISSING_DOCS") {
           // Merge any new default values that didn't exist in persisted state
           const mergedFormValues = { ...(parsed.formValues ?? {}) };
           for (const field of additionalFields) {
@@ -606,17 +609,48 @@ export function StepExecutor({
   // ── Persist state changes ───────────────────────────────────────────────
 
   useEffect(() => {
-    if (execState.state !== "CHECKING") {
-      try {
-        localStorage.setItem(
-          getPersistKey(projectId, phase, step),
-          JSON.stringify(execState)
-        );
-      } catch {
-        // Storage full — silently fail
-      }
+    if (TRANSIENT_STATES.includes(execState.state)) return;
+    try {
+      localStorage.setItem(
+        getPersistKey(projectId, phase, step),
+        JSON.stringify(execState)
+      );
+    } catch {
+      // Storage full — silently fail
     }
   }, [execState, projectId, phase, step]);
+
+  // ── Re-check readiness when documents arrive (fixes hydration race) ─────
+
+  useEffect(() => {
+    if (execState.state === "CHECKING" || execState.state === "MISSING_DOCS") {
+      checkReadiness();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [documents]);
+
+  // ── Re-seed defaultValues when they arrive late (after activeProject) ───
+
+  const defaultValuesKey = additionalFields
+    .map((f) => `${f.name}=${f.defaultValue ?? ""}`)
+    .join("|");
+
+  useEffect(() => {
+    for (const field of additionalFields) {
+      const currentValue = execState.formValues[field.name];
+      const hasDefault =
+        field.defaultValue !== undefined && field.defaultValue !== "";
+      const isEmpty = currentValue === undefined || currentValue === "";
+      if (hasDefault && isEmpty) {
+        dispatch({
+          type: "SET_FORM_VALUE",
+          name: field.name,
+          value: field.defaultValue!,
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValuesKey]);
 
   // ── Compile prompt ──────────────────────────────────────────────────────
 
