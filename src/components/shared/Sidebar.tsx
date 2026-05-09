@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
@@ -36,6 +36,8 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import type { Phase } from "@/components/ui/phase-icon";
+import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { isStepApplicable } from "@/lib/applicability";
 
 // ── Phase data ────────────────────────────────────────────────────────────────
 
@@ -79,17 +81,52 @@ interface SidebarContentProps {
 
 function SidebarContent({
   collapsed,
-  currentPhase,
+  currentPhase: _currentPhase,
   phaseStatuses = {},
   hasProject = false,
 }: SidebarContentProps) {
+  void _currentPhase; // legacy prop — active phase is now derived from URL pathname
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { toggleSidebar } = useUiStore();
   const { progress } = useProgressStore();
   const { activeProjectId, activeProject } = useProjectStore();
   const projectIsActive = hasProject || Boolean(activeProjectId);
-  const activePhase = currentPhase ?? activeProject?.currentPhase;
+
+  const derivedPhaseStatuses = useMemo<Record<number, CompletionStatus>>(() => {
+    const statuses: Record<number, CompletionStatus> = {};
+    for (const { phase } of phases) {
+      const phaseProgress = progress.phases[phase];
+      const phaseDef = PHASE_DEFINITIONS.find((p) => p.phase === phase);
+      if (!phaseProgress || !phaseDef) {
+        statuses[phase] = "not-started";
+        continue;
+      }
+      const requiredApplicable = phaseDef.steps.filter(
+        (s) => !s.isOptional && isStepApplicable(activeProject, phase, s.step),
+      );
+      if (requiredApplicable.length === 0) {
+        statuses[phase] = "not-started";
+        continue;
+      }
+      const completedCount = requiredApplicable.filter(
+        (s) => phaseProgress.steps[s.step] === "complete",
+      ).length;
+      if (completedCount === requiredApplicable.length) {
+        statuses[phase] = "complete";
+      } else if (
+        Object.values(phaseProgress.steps).some((s) => s !== "not-started")
+      ) {
+        statuses[phase] = "in-progress";
+      } else {
+        statuses[phase] = "not-started";
+      }
+    }
+    return statuses;
+  }, [progress, activeProject]);
+
+  const effectivePhaseStatuses =
+    Object.keys(phaseStatuses).length > 0 ? phaseStatuses : derivedPhaseStatuses;
 
   return (
     <div className="flex h-full flex-col pb-8 bg-sidebar text-sidebar-foreground">
@@ -169,42 +206,50 @@ function SidebarContent({
             aria-label="Pipeline phases"
           >
             {phases.map(({ phase, name }) => {
-              const status = phaseStatuses[phase] ?? "not-started";
+              const status = effectivePhaseStatuses[phase] ?? "not-started";
               const StatusIcon = statusIcons[status];
-              const isActive = activePhase === phase;
               const disabled = !projectIsActive;
 
               const phaseUrl = activeProjectId
                 ? `/projects/${activeProjectId}/phase/${phase}`
                 : `/projects/phase/${phase}`;
-              const isCurrentRoute = pathname?.startsWith(phaseUrl);
+              const isCurrentRoute = Boolean(pathname?.startsWith(phaseUrl));
+              const isComplete = status === "complete" && !isCurrentRoute;
+              const isInProgress = status === "in-progress" && !isCurrentRoute;
+
+              const itemStyle: React.CSSProperties | undefined =
+                isCurrentRoute || isComplete || isInProgress
+                  ? {
+                      borderLeft: `3px solid var(--phase-${phase})`,
+                      paddingLeft: collapsed ? 0 : "calc(0.5rem - 3px)",
+                      ...(isComplete ? { color: `var(--phase-${phase})` } : {}),
+                    }
+                  : undefined;
 
               const item = (
                 <div
                   className={cn(
                     "group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-fast",
-                    isActive || isCurrentRoute
+                    isCurrentRoute
                       ? "text-[#4F7DF3] bg-accent-50 dark:bg-accent-900/30 font-semibold"
-                      : "text-muted-foreground hover:bg-muted/50",
+                      : isComplete
+                        ? "hover:bg-muted/50 font-medium"
+                        : isInProgress
+                          ? "text-foreground hover:bg-muted/50 font-medium"
+                          : "text-muted-foreground hover:bg-muted/50",
                     disabled && "pointer-events-none opacity-40",
                     collapsed && "justify-center px-0"
                   )}
-                  style={
-                    isActive || isCurrentRoute
-                      ? {
-                          borderLeft: `3px solid var(--phase-${phase})`,
-                          paddingLeft: collapsed
-                            ? 0
-                            : "calc(0.5rem - 3px)",
-                        }
-                      : undefined
-                  }
+                  style={itemStyle}
                 >
                   <PhaseIcon
                     phase={phase}
                     size="sm"
-                    active={isActive || isCurrentRoute}
+                    active={isCurrentRoute || isComplete}
                   />
+                  {isComplete && (
+                    <span className="sr-only">Complete</span>
+                  )}
                   {!collapsed && (
                     <>
                       <span className="flex-1 truncate text-xs font-medium">
