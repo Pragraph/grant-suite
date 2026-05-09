@@ -41,6 +41,8 @@ import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { StepExecutor } from "@/components/phase/StepExecutor";
 import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
+import { JumpToStartButton } from "@/components/shared/JumpToStartButton";
+import { PhaseDangerZone } from "@/components/shared/PhaseDangerZone";
 
 // ─── Phase 3 definition ────────────────────────────────────────────────────
 
@@ -371,6 +373,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
             Design your research methodology and optionally enhance your proposal with partnership evidence, novelty analysis, and merit modules.
           </p>
         </div>
+        <JumpToStartButton phase={3} />
       </div>
 
       {/* ── Progress Bar ───────────────────────────────────────────────── */}
@@ -1169,6 +1172,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
       )}
 
       <PhaseCompleteCTA projectId={projectId} phase={3} phaseCompletion={phaseCompletion} />
+      <PhaseDangerZone projectId={projectId} phase={3} />
     </motion.div>
   );
 }

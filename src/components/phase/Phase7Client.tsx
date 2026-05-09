@@ -40,6 +40,8 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { StepExecutor, type FormFieldConfig } from "@/components/phase/StepExecutor";
+import { JumpToStartButton } from "@/components/shared/JumpToStartButton";
+import { PhaseDangerZone } from "@/components/shared/PhaseDangerZone";
 
 // ─── Phase 7 definition ────────────────────────────────────────────────────
 
@@ -469,6 +471,7 @@ export function Phase7Client({ projectId: _pid }: { projectId: string }) {
               proposal with a formal response to reviewers.
             </p>
           </div>
+          <JumpToStartButton phase={7} />
         </div>
 
         {/* ── Progress Bar ───────────────────────────────────────────────── */}
@@ -833,6 +836,8 @@ export function Phase7Client({ projectId: _pid }: { projectId: string }) {
             </Card>
           </motion.div>
         )}
+
+        <PhaseDangerZone projectId={projectId} phase={7} />
       </motion.div>
     </TooltipProvider>
   );

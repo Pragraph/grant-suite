@@ -35,6 +35,8 @@ import { StepExecutor } from "@/components/phase/StepExecutor";
 import { QuickFillGI } from "@/components/shared/QuickFillGI";
 import { MethodWizard, type WizardStepConfig } from "@/components/phase/MethodWizard";
 import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
+import { JumpToStartButton } from "@/components/shared/JumpToStartButton";
+import { PhaseDangerZone } from "@/components/shared/PhaseDangerZone";
 
 // ─── Phase 1 definition ────────────────────────────────────────────────────
 
@@ -632,6 +634,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
             Discover your research direction through systematic exploration of gaps, trends, and emerging frontiers.
           </p>
         </div>
+        <JumpToStartButton phase={1} />
       </div>
 
       {/* ── Progress Bar ───────────────────────────────────────────────── */}
@@ -1277,6 +1280,7 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
       </div>
 
       <PhaseCompleteCTA projectId={projectId} phase={1} phaseCompletion={phaseCompletion} />
+      <PhaseDangerZone projectId={projectId} phase={1} />
     </motion.div>
   );
 }

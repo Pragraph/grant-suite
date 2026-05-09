@@ -52,6 +52,8 @@ import {
 } from "@/components/ui/tooltip";
 import { StepExecutor } from "@/components/phase/StepExecutor";
 import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
+import { JumpToStartButton } from "@/components/shared/JumpToStartButton";
+import { PhaseDangerZone } from "@/components/shared/PhaseDangerZone";
 import { PlaceholderTracker } from "@/components/shared/PlaceholderTracker";
 
 // ─── Phase 5 definition ────────────────────────────────────────────────────
@@ -715,6 +717,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
               the previous ones, ensuring narrative coherence and evidence alignment.
             </p>
           </div>
+          <JumpToStartButton phase={5} />
         </div>
 
         {/* ── Progress Bar ───────────────────────────────────────────────── */}
@@ -1518,6 +1521,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
 
         {/* ── Phase Complete CTA ─────────────────────────────────────────── */}
         <PhaseCompleteCTA projectId={projectId} phase={5} phaseCompletion={phaseCompletion} />
+        <PhaseDangerZone projectId={projectId} phase={5} />
       </motion.div>
     </TooltipProvider>
   );

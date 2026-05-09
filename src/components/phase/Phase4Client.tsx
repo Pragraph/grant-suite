@@ -46,6 +46,8 @@ import {
 } from "@/components/ui/dialog";
 import { MarkdownRenderer } from "@/components/document/MarkdownRenderer";
 import { StepExecutor } from "@/components/phase/StepExecutor";
+import { JumpToStartButton } from "@/components/shared/JumpToStartButton";
+import { PhaseDangerZone } from "@/components/shared/PhaseDangerZone";
 
 // ─── Phase 4 definition ────────────────────────────────────────────────────
 
@@ -1167,6 +1169,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
             Budget_Justification.md — the financial backbone of your proposal.
           </p>
         </div>
+        <JumpToStartButton phase={4} />
       </div>
 
       {/* ── Progress Bar ───────────────────────────────────────────────── */}
@@ -1516,6 +1519,8 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <PhaseDangerZone projectId={projectId} phase={4} />
     </motion.div>
   );
 }

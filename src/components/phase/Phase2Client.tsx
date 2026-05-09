@@ -33,6 +33,8 @@ import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Progress } from "@/components/ui/progress";
 import { StepExecutor } from "@/components/phase/StepExecutor";
 import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
+import { JumpToStartButton } from "@/components/shared/JumpToStartButton";
+import { PhaseDangerZone } from "@/components/shared/PhaseDangerZone";
 
 // ─── Phase 2 definition ────────────────────────────────────────────────────
 
@@ -381,6 +383,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
             Analyze requirements, competition, evaluator psychology, and impact to build your strategic Proposal Blueprint.
           </p>
         </div>
+        <JumpToStartButton phase={2} />
       </div>
 
       {/* ── Mode Toggle ────────────────────────────────────────────────── */}
@@ -678,6 +681,7 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
       )}
 
       <PhaseCompleteCTA projectId={projectId} phase={2} phaseCompletion={phaseCompletion} />
+      <PhaseDangerZone projectId={projectId} phase={2} />
     </motion.div>
   );
 }

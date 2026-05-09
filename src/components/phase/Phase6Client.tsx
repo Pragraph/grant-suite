@@ -41,6 +41,8 @@ import {
 import { StepExecutor } from "@/components/phase/StepExecutor";
 import { MarkdownRenderer } from "@/components/document/MarkdownRenderer";
 import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
+import { JumpToStartButton } from "@/components/shared/JumpToStartButton";
+import { PhaseDangerZone } from "@/components/shared/PhaseDangerZone";
 import { PlaceholderTracker } from "@/components/shared/PlaceholderTracker";
 
 // ─── Phase 6 definition ────────────────────────────────────────────────────
@@ -827,6 +829,7 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
               compliance checks, then produce an optimized final version.
             </p>
           </div>
+          <JumpToStartButton phase={6} />
         </div>
 
         {/* ── Progress Bar ───────────────────────────────────────────────── */}
@@ -1056,6 +1059,7 @@ export function Phase6Client({ projectId: _pid }: { projectId: string }) {
 
         {/* ── Phase Complete CTA ─────────────────────────────────────────── */}
         <PhaseCompleteCTA projectId={projectId} phase={6} phaseCompletion={phaseCompletion} />
+        <PhaseDangerZone projectId={projectId} phase={6} />
       </motion.div>
     </TooltipProvider>
   );
