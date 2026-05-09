@@ -332,6 +332,103 @@ export const storage = {
     }
   },
 
+  // ── Phase / Step Reset Helpers ────────────────────────────────────────
+
+  async getDocumentsByPhase(
+    projectId: string,
+    phase: number,
+  ): Promise<Document[]> {
+    const docs = await this.getDocuments(projectId);
+    return docs.filter((d) => d.phase === phase);
+  },
+
+  async deleteDocumentsByPhase(
+    projectId: string,
+    phase: number,
+  ): Promise<void> {
+    const allKeys = await keys();
+    const prefix = `${STORAGE_KEYS.DOCUMENTS_PREFIX}${projectId}/`;
+    for (const key of allKeys) {
+      if (typeof key !== "string" || !key.startsWith(prefix)) continue;
+      const doc = await get<Document>(key);
+      if (doc && doc.phase === phase) {
+        await del(key);
+      }
+    }
+  },
+
+  async deleteDocumentByCanonicalName(
+    projectId: string,
+    canonicalName: string,
+  ): Promise<void> {
+    const docs = await this.getDocumentHistory(projectId, canonicalName);
+    for (const doc of docs) {
+      const key = `${STORAGE_KEYS.DOCUMENTS_PREFIX}${projectId}/${doc.id}`;
+      await del(key);
+    }
+  },
+
+  resetPhaseLocalStorage(projectId: string, phase: number): void {
+    if (typeof window === "undefined") return;
+
+    const executorPrefix = `grant-suite-executor-${projectId}-${phase}-`;
+    const phasePrefix = `grant-suite-phase${phase}-`;
+    const phaseSuffix = `-${projectId}`;
+
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key) continue;
+      if (key.startsWith(executorPrefix)) {
+        keysToRemove.push(key);
+      } else if (key.startsWith(phasePrefix) && key.endsWith(phaseSuffix)) {
+        keysToRemove.push(key);
+      }
+    }
+    for (const key of keysToRemove) {
+      localStorage.removeItem(key);
+    }
+
+    const gateKey = `grant-suite-gate-results-${projectId}`;
+    try {
+      const raw = localStorage.getItem(gateKey);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Record<string, unknown>;
+        delete parsed[String(phase)];
+        if (Object.keys(parsed).length === 0) {
+          localStorage.removeItem(gateKey);
+        } else {
+          localStorage.setItem(gateKey, JSON.stringify(parsed));
+        }
+      }
+    } catch {
+      localStorage.removeItem(gateKey);
+    }
+  },
+
+  resetStepLocalStorage(projectId: string, phase: number, step: number): void {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem(
+      `grant-suite-executor-${projectId}-${phase}-${step}`,
+    );
+  },
+
+  clearPhaseProgress(projectId: string, phase: number): void {
+    const progress = this.getProgress(projectId);
+    if (progress.phases[phase]) {
+      delete progress.phases[phase];
+      writeJSON(STORAGE_KEYS.PROGRESS_PREFIX + projectId, progress);
+    }
+  },
+
+  revertStepStatus(projectId: string, phase: number, step: number): void {
+    const progress = this.getProgress(projectId);
+    if (progress.phases[phase]?.steps[step]) {
+      delete progress.phases[phase].steps[step];
+      writeJSON(STORAGE_KEYS.PROGRESS_PREFIX + projectId, progress);
+    }
+  },
+
   // ── Utilities ─────────────────────────────────────────────────────────
 
   createId(): string {
