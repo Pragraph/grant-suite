@@ -444,9 +444,10 @@ export function Phase7Client({ projectId: _pid }: { projectId: string }) {
     () => [
       {
         name: "reviewerFeedback",
-        label: "Paste Reviewer Feedback",
-        type: "textarea" as const,
-        placeholder: "Paste the reviewer comments / feedback you received here...",
+        label: "Reviewer Feedback",
+        type: "file-upload-text" as const,
+        placeholder:
+          "Upload the reviewer feedback as PDF, or paste the comments you received.",
         required: true,
       },
     ],

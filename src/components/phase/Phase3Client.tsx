@@ -1019,8 +1019,9 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                           {
                             name: "patentSearchResults",
                             label: "Patent Search Results",
-                            type: "textarea",
-                            placeholder: "Paste your patent search results from Google Patents, Espacenet, or academic databases here...",
+                            type: "file-upload-text",
+                            placeholder:
+                              "Upload your patent search results as PDF, or paste them — exports from Google Patents, Espacenet, or academic databases.",
                             required: true,
                           },
                         ]}
