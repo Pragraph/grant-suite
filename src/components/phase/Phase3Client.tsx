@@ -682,13 +682,6 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                                   placeholder: "e.g., Malaysia",
                                   defaultValue: activeProject?.country || undefined,
                                 },
-                                {
-                                  name: "careerStage",
-                                  label: "Career Stage",
-                                  type: "text",
-                                  placeholder: "e.g., Early Career Researcher",
-                                  defaultValue: activeProject?.careerStage || undefined,
-                                },
                               ]}
                               onComplete={() => loadDocuments(projectId)}
                             />
@@ -1324,13 +1317,6 @@ function getModuleFields(
           type: "file-upload-text" as const,
           placeholder: "Upload your CV as PDF, or paste a summary — publications, grants, teaching, supervision, and relevant experience.",
           required: true,
-        },
-        {
-          name: "careerStage",
-          label: "Career Stage",
-          type: "text" as const,
-          placeholder: "e.g., Early Career Researcher",
-          defaultValue: project?.careerStage || undefined,
         },
         {
           name: "country",

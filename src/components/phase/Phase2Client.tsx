@@ -709,13 +709,6 @@ function getAdditionalFields(
           defaultValue: project?.country || undefined,
         },
         {
-          name: "careerStage",
-          label: "Career Stage",
-          type: "text" as const,
-          placeholder: "e.g., Early Career Researcher",
-          defaultValue: project?.careerStage || undefined,
-        },
-        {
           name: "cvSummary",
           label: "Your CV or Career Summary",
           type: "file-upload-text" as const,
@@ -733,24 +726,10 @@ function getAdditionalFields(
           placeholder: "e.g., Malaysia",
           defaultValue: project?.country || undefined,
         },
-        {
-          name: "careerStage",
-          label: "Career Stage",
-          type: "text" as const,
-          placeholder: "e.g., Early Career Researcher",
-          defaultValue: project?.careerStage || undefined,
-        },
       ];
     case 3:
       return [
         ...baseFields,
-        {
-          name: "careerStage",
-          label: "Career Stage",
-          type: "text" as const,
-          placeholder: "e.g., Early Career Researcher",
-          defaultValue: project?.careerStage || undefined,
-        },
       ];
     case 4:
       return [
@@ -762,13 +741,6 @@ function getAdditionalFields(
           placeholder: "e.g., Malaysia",
           defaultValue: project?.country || undefined,
         },
-        {
-          name: "careerStage",
-          label: "Career Stage",
-          type: "text" as const,
-          placeholder: "e.g., Early Career Researcher",
-          defaultValue: project?.careerStage || undefined,
-        },
       ];
     case 5:
       return [
@@ -779,13 +751,6 @@ function getAdditionalFields(
           type: "text" as const,
           placeholder: "e.g., Malaysia",
           defaultValue: project?.country || undefined,
-        },
-        {
-          name: "careerStage",
-          label: "Career Stage",
-          type: "text" as const,
-          placeholder: "e.g., Early Career Researcher",
-          defaultValue: project?.careerStage || undefined,
         },
       ];
     default:

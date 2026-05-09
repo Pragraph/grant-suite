@@ -1080,13 +1080,6 @@ export function Phase1Client({ projectId: _pid }: { projectId: string }) {
                               defaultValue: activeProject?.country || undefined,
                             },
                             {
-                              name: "careerStage",
-                              label: "Career Stage",
-                              type: "text",
-                              placeholder: "e.g., Associate Professor",
-                              defaultValue: activeProject?.careerStage || undefined,
-                            },
-                            {
                               name: "budgetRange",
                               label: "Funding Range",
                               type: "select",
