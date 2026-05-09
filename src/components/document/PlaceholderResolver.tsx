@@ -122,7 +122,13 @@ function Entry({
   onUndo,
   onFocus,
 }: EntryProps) {
-  const [draft, setDraft] = useState<string>(resolution ?? "");
+  // For confirm-or-replace tags carrying an asserted bold span, seed the
+  // draft with the assertion text so users edit in place rather than
+  // retyping. Replace-required tags start blank.
+  const initialDraft =
+    resolution ??
+    (!isReplaceRequired(tag.type) ? (tag.assertionText ?? "") : "");
+  const [draft, setDraft] = useState<string>(initialDraft);
   const [editingConfirmable, setEditingConfirmable] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const Icon = TAG_ICONS[tag.type];
@@ -247,12 +253,29 @@ function Entry({
       {/* Pending state */}
       {state === "pending" && (
         <div className="space-y-2">
-          {/* Context preview */}
+          {/* Context preview — shows the full scope (tag + asserted bold)
+              so the user sees what they're acting on. */}
           <p className="text-[11px] text-muted-foreground leading-snug line-clamp-3">
             <span className="text-muted-foreground/60">…{tag.contextBefore} </span>
-            <span className={cn("font-medium", colors.text)}>{tag.raw}</span>
+            <span className={cn("font-medium", colors.text)}>
+              {tag.raw}
+              {tag.assertionText !== undefined && (
+                <>
+                  {" "}
+                  <strong>{tag.assertionText}</strong>
+                </>
+              )}
+            </span>
             <span className="text-muted-foreground/60"> {tag.contextAfter}…</span>
           </p>
+
+          {/* Asserted text summary — makes the action target unambiguous. */}
+          {tag.assertionText !== undefined && (
+            <p className="text-[10px] text-muted-foreground">
+              <span className="font-medium">Verifying:</span>{" "}
+              <span className="italic">{tag.assertionText}</span>
+            </p>
+          )}
 
           {/* Hint */}
           {tag.hint && (

@@ -50,6 +50,26 @@
   cursor: default;
 }
 
+/* Wider scope: pill covers the tag plus an asserted bold span.
+   Overrides the default inline-flex/nowrap so the assertion can wrap
+   across lines while keeping the background continuous. */
+.placeholder-pill-wide {
+  display: inline;
+  white-space: normal;
+  padding: 1px 4px;
+  line-height: 1.6;
+  /* Continuous background across line breaks. */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.placeholder-pill-wide strong {
+  /* The asserted bold inherits the pill's color so the visual scope
+     reads as one unit instead of a tag plus an unrelated bold span. */
+  color: inherit;
+  font-weight: 600;
+}
+
 /* Dark mode — project uses [data-theme="dark"] (see globals.css custom variant). */
 [data-theme="dark"] .placeholder-pill-required {
   background-color: rgb(76 5 25 / 0.3);
