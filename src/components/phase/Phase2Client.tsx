@@ -397,7 +397,17 @@ export function Phase2Client({ projectId: _pid }: { projectId: string }) {
           <span className="flex items-center justify-center gap-2">
             <Layers className="h-4 w-4" />
             Individual Steps
-            <Badge variant="outline" className="text-[10px] ml-1">recommended</Badge>
+            <Badge
+              variant="outline"
+              className={cn(
+                "text-[10px] ml-1",
+                mode === "individual"
+                  ? "border-white/40 bg-white/10 text-white"
+                  : "border-border text-muted-foreground",
+              )}
+            >
+              recommended
+            </Badge>
           </span>
         </button>
         <button
