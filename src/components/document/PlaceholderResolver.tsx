@@ -1,12 +1,29 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Check, RotateCcw, BookOpen, Edit3, ShieldCheck, Sigma, CalendarClock } from "lucide-react";
+import {
+  Check,
+  CheckCheck,
+  RotateCcw,
+  BookOpen,
+  Edit3,
+  ShieldCheck,
+  Sigma,
+  CalendarClock,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { TagInstance, TagType } from "@/lib/placeholders";
 import { isReplaceRequired } from "@/lib/placeholders";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export type ResolverFilter = "all" | "pending" | "resolved";
 
@@ -21,9 +38,16 @@ interface PlaceholderResolverProps {
   onConfirm: (tagId: string) => void;
   onSkip: (tagId: string) => void;
   onUndo: (tagId: string) => void;
+  onBulkConfirm?: (tagIds: string[]) => void;
   onFilterChange: (filter: ResolverFilter) => void;
   onEntryFocus: (tagId: string) => void;
 }
+
+const VERIFY_LIKE_TYPES: ReadonlySet<TagType> = new Set([
+  "VERIFY",
+  "ESTIMATED",
+  "CHECK DATE",
+]);
 
 const TAG_ICONS: Record<TagType, React.ComponentType<{ className?: string }>> = {
   "CITATION NEEDED": BookOpen,
@@ -383,12 +407,14 @@ export function PlaceholderResolver({
   onConfirm,
   onSkip,
   onUndo,
+  onBulkConfirm,
   onFilterChange,
   onEntryFocus,
 }: PlaceholderResolverProps) {
   const total = tagInstances.length;
   const resolvedCount = Object.keys(resolutions).length + confirmed.size;
   const progress = total === 0 ? 100 : Math.round((resolvedCount / total) * 100);
+  const [bulkConfirmDialogOpen, setBulkConfirmDialogOpen] = useState(false);
 
   const getEntryState = (id: string): "pending" | "resolved" | "confirmed" | "skipped" => {
     if (resolutions[id] !== undefined) return "resolved";
@@ -403,6 +429,15 @@ export function PlaceholderResolver({
     if (filter === "resolved") return state === "resolved" || state === "confirmed";
     return true;
   });
+
+  // Pending confirm-or-replace tags eligible for the bulk-confirm action.
+  // VERIFY/ESTIMATED/CHECK DATE only — replace-required tags need explicit
+  // human input and are skipped.
+  const eligibleForBulkConfirm = tagInstances.filter(
+    (t) =>
+      VERIFY_LIKE_TYPES.has(t.type) && getEntryState(t.id) === "pending",
+  );
+  const eligibleCount = eligibleForBulkConfirm.length;
 
   return (
     <div className="flex h-full flex-col">
@@ -438,7 +473,55 @@ export function PlaceholderResolver({
             </button>
           ))}
         </div>
+
+        {/* Bulk action strip — surfaces only when at least one verify-class
+            tag is pending and a bulk handler is wired by the parent. */}
+        {onBulkConfirm && eligibleCount > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setBulkConfirmDialogOpen(true)}
+              className="h-7 text-[11px]"
+            >
+              <CheckCheck className="h-3 w-3" />
+              Confirm all verifications ({eligibleCount})
+            </Button>
+          </div>
+        )}
       </div>
+
+      {/* Bulk confirmation dialog. Soft confirmation — never auto-fires. */}
+      <Dialog open={bulkConfirmDialogOpen} onOpenChange={setBulkConfirmDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm all verifications?</DialogTitle>
+            <DialogDescription>
+              This will mark {eligibleCount} placeholder
+              {eligibleCount === 1 ? "" : "s"} as confirmed without reviewing
+              each one. Use this when you&apos;ve already read the document and
+              trust the LLM&apos;s assertions. Individual confirmations can be
+              undone afterward.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setBulkConfirmDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                onBulkConfirm?.(eligibleForBulkConfirm.map((t) => t.id));
+                setBulkConfirmDialogOpen(false);
+              }}
+            >
+              Confirm all {eligibleCount}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Entry list */}
       <div className="flex-1 overflow-auto p-3 space-y-2">

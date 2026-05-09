@@ -126,6 +126,7 @@ type ExecutorAction =
   | { type: "CONFIRM_TAG"; tagId: string }
   | { type: "SKIP_TAG"; tagId: string }
   | { type: "UNDO_TAG"; tagId: string }
+  | { type: "BULK_CONFIRM_VERIFICATIONS"; tagIds: string[] }
   | { type: "SET_TAG_FILTER"; filter: ResolverFilter }
   | { type: "SET_ACTIVE_TAG"; tagId: string | null }
   | { type: "TOGGLE_RESOLVER" }
@@ -234,6 +235,16 @@ function reducer(state: ExecutorReducerState, action: ExecutorAction): ExecutorR
         resolutions: remaining,
         confirmed: state.confirmed.filter((id) => id !== action.tagId),
         skipped: state.skipped.filter((id) => id !== action.tagId),
+      };
+    }
+    case "BULK_CONFIRM_VERIFICATIONS": {
+      const next = new Set(state.confirmed);
+      for (const id of action.tagIds) {
+        next.add(id);
+      }
+      return {
+        ...state,
+        confirmed: Array.from(next),
       };
     }
     case "SET_TAG_FILTER":
@@ -1238,6 +1249,9 @@ export function StepExecutor({
                       onConfirm={(tagId) => dispatch({ type: "CONFIRM_TAG", tagId })}
                       onSkip={(tagId) => dispatch({ type: "SKIP_TAG", tagId })}
                       onUndo={(tagId) => dispatch({ type: "UNDO_TAG", tagId })}
+                      onBulkConfirm={(tagIds) =>
+                        dispatch({ type: "BULK_CONFIRM_VERIFICATIONS", tagIds })
+                      }
                       onFilterChange={(filter) =>
                         dispatch({ type: "SET_TAG_FILTER", filter })
                       }
