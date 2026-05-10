@@ -82,25 +82,31 @@ Draft a support letter from {{partnerName}} at {{partnerInstitution}} that:
 ---
 
 ## OUTPUT FORMAT
-\`\`\`
-[LETTERHEAD — {{partnerInstitution}}]
 
-[DATE]
+Produce two artefacts in this order.
 
-To: [Grant Program / Review Panel]
-Re: Letter of Support for [Project Title]
+### 1. Downloadable .docx letter
 
-Dear [Review Committee / Program Director],
+Use Code Interpreter (python-docx) to generate a Microsoft Word file the user can download from the chat. The file must read as a real, sign-ready letter:
 
-[Letter body — 400-500 words]
+- **Letterhead block** at the top: \`[LETTERHEAD — {{partnerInstitution}}]\` on its own line, then \`[Address line 1]\`, \`[Address line 2]\`, \`[Phone]\`, \`[Email]\` as bracketed placeholders the partner will fill.
+- **Date line** below the letterhead: \`[DATE]\`.
+- **Recipient block**: \`To: [Grant Program / Review Panel]\` and \`Re: Letter of Support for [Project Title]\`.
+- **Salutation**: \`Dear Review Committee,\`.
+- **Body** of approximately 400 to 500 words structured as: opening paragraph stating the partner's credentials and relationship to the principal investigator, second paragraph endorsing the research and explaining its timeliness, third paragraph naming specific contributions (personnel time, data access, in-kind value, facilities, mentorship, equipment, be concrete), fourth paragraph stating mutual benefit and alignment with the partner's institutional priorities, closing paragraph with strong forward-looking endorsement.
+- **Sign-off block**: \`Sincerely,\` then a four-line signature gap, then \`{{partnerName}}\`, \`[Title]\`, \`{{partnerInstitution}}\`, \`[Contact information]\`.
 
-Sincerely,
+Typography: Calibri or Times New Roman 11pt, single line spacing, paragraph spacing for body. Mark every section requiring partner customization with \`[PARTNER TO CUSTOMIZE]\`.
 
-{{partnerName}}
-[Title]
-{{partnerInstitution}}
-[Contact information placeholder]
-\`\`\`
+Save the file as \`Support_Letter_{{partnerName}}.docx\` (replace any spaces in the partner name with underscores) and confirm to the user the file is ready for download.
 
-**NOTE:** This is a draft for the partner to review, customize, and sign. Mark sections requiring partner input with [PARTNER TO CUSTOMIZE].`,
+### 2. Email version (inline)
+
+Directly below the .docx download, output an email-friendly plain-text version under a \`## Email version\` heading.
+
+- **Subject line**: \`Subject: Letter of Support for [Project Title] — {{partnerName}} ({{partnerInstitution}})\`.
+- **Body**: plain text, no markdown formatting (no asterisks for bold, no headers, no bullets), ready to paste into Gmail or Outlook. Same core content as the letter, condensed slightly for email register (shorter paragraphs, more direct phrasing). Preserve the specific contributions and endorsements verbatim. Mark partner-edit sections with \`[PARTNER TO CUSTOMIZE]\`.
+- **End marker**: end the body with \`[End of email]\` so the user knows where the email body finishes.
+
+**NOTE:** Both artefacts are drafts for the partner to review, customize, and sign. Do not invent the partner's exact title, real phone numbers, real signature, or real institutional letterhead artwork. Use bracketed placeholders for everything requiring the partner's input.`,
 };
