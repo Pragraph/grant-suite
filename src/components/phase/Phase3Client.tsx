@@ -830,7 +830,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                                           phase={3}
                                           step={10}
                                           title={`Support Letter — ${partner.name}`}
-                                          description={`Generate a personalized support letter from ${partner.name} at ${partner.institution}.`}
+                                          description={`Generate a sign-ready support letter (.docx + email) for ${partner.name} at ${partner.institution}.`}
                                           additionalFields={[
                                             {
                                               name: "discipline",
