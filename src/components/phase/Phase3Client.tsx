@@ -686,7 +686,15 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                                   defaultValue: activeProject?.country || undefined,
                                 },
                               ]}
-                              onComplete={() => loadDocuments(projectId)}
+                              onComplete={() => {
+                                loadDocuments(projectId);
+                                setActiveSection("3A-letters");
+                                setTimeout(() => {
+                                  document
+                                    .getElementById("phase3-3a-letters")
+                                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                                }, 350);
+                              }}
                             />
                           </motion.div>
                         )}
@@ -694,7 +702,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                     </div>
 
                     {/* Sub-step b: Letter Generator */}
-                    <div className="space-y-3">
+                    <div id="phase3-3a-letters" className="space-y-3">
                       <button
                         onClick={() => setActiveSection(activeSection === "3A-letters" ? null : "3A-letters")}
                         className="flex w-full items-center gap-3 text-left"
@@ -866,7 +874,10 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                                               placeholder: partner.commitments,
                                             },
                                           ]}
-                                          onComplete={() => loadDocuments(projectId)}
+                                          onComplete={() => {
+                                            loadDocuments(projectId);
+                                            setActivePartnerLetter(null);
+                                          }}
                                         />
                                       </motion.div>
                                     )}
@@ -966,6 +977,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                           ]}
                           onComplete={() => {
                             loadDocuments(projectId);
+                            setPatentSubStep("novelty");
                           }}
                         />
 
@@ -1028,7 +1040,15 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                             required: true,
                           },
                         ]}
-                        onComplete={() => loadDocuments(projectId)}
+                        onComplete={() => {
+                          loadDocuments(projectId);
+                          setTimeout(() => {
+                            const target = moduleToggles.module3C
+                              ? document.getElementById("phase3-module-3c")
+                              : document.getElementById("phase3-complete-cta");
+                            target?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          }, 350);
+                        }}
                       />
                     )}
                   </CardContent>
@@ -1041,6 +1061,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
           <AnimatePresence>
             {moduleToggles.module3C && (
               <motion.div
+                id="phase3-module-3c"
                 initial="collapsed"
                 animate="expanded"
                 exit="collapsed"
@@ -1152,7 +1173,25 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                                         title={mod.label}
                                         description={mod.description}
                                         additionalFields={getModuleFields(mod.id, activeProject)}
-                                        onComplete={() => loadDocuments(projectId)}
+                                        onComplete={() => {
+                                          loadDocuments(projectId);
+                                          const nextMod = MODULE_3C.find(
+                                            (m) =>
+                                              m.id !== mod.id &&
+                                              moduleToggles.enabledMeritModules.includes(m.id) &&
+                                              getStepStatus(m.step) !== "complete",
+                                          );
+                                          if (nextMod) {
+                                            setActive3CModule(nextMod.id);
+                                          } else {
+                                            setActive3CModule(null);
+                                            setTimeout(() => {
+                                              document
+                                                .getElementById("phase3-complete-cta")
+                                                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                                            }, 350);
+                                          }
+                                        }}
                                       />
                                     </motion.div>
                                   )}
@@ -1171,7 +1210,9 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
         </motion.div>
       )}
 
-      <PhaseCompleteCTA projectId={projectId} phase={3} phaseCompletion={phaseCompletion} />
+      <div id="phase3-complete-cta">
+        <PhaseCompleteCTA projectId={projectId} phase={3} phaseCompletion={phaseCompletion} />
+      </div>
       <PhaseDangerZone projectId={projectId} phase={3} />
     </motion.div>
   );

@@ -1418,6 +1418,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                         ]}
                                         onComplete={() => {
                                           loadDocuments(projectId);
+                                          advanceToNextStep(projectId, 5, 8);
                                         }}
                                       />
                                     )}
@@ -1469,6 +1470,7 @@ export function Phase5Client({ projectId: _pid }: { projectId: string }) {
                                         ]}
                                         onComplete={() => {
                                           loadDocuments(projectId);
+                                          advanceToNextStep(projectId, 5, 8);
                                         }}
                                       />
                                     )}
