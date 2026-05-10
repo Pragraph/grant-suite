@@ -668,7 +668,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                               phase={3}
                               step={10}
                               title="Partnership Strategy"
-                              description="Develop a strategic partnership and collaboration plan."
+                              description="Build a partnership scaffold for your proposal: who to approach this week, what to ask, what evidence to collect."
                               additionalFields={[
                                 {
                                   name: "discipline",
