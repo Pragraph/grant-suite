@@ -67,6 +67,17 @@ export interface FormFieldConfig {
   defaultValue?: string;
   options?: { label: string; value: string }[];
   helperLink?: { url: string; label: string };
+  /**
+   * When true, the field is bound (defaultValue seeds formValues, value is
+   * included in compile context) but no UI element is rendered. Useful when a
+   * parent component has already collected the value and wants to pipe it into
+   * the StepExecutor without showing a duplicate input.
+   *
+   * Hidden + required fields MUST be supplied with a non-empty defaultValue by
+   * the parent. If empty, the "Missing required inputs" warning will surface a
+   * field name the user cannot see or correct.
+   */
+  hidden?: boolean;
 }
 
 interface StepExecutorProps {
@@ -1044,6 +1055,8 @@ export function StepExecutor({
   const renderField = useCallback(
     (field: FormFieldConfig) => {
       const value = execState.formValues[field.name] ?? "";
+
+      if (field.hidden) return null;
 
       switch (field.type) {
         case "text":
