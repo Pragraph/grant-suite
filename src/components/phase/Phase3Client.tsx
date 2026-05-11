@@ -191,6 +191,45 @@ function savePartners(projectId: string, partners: Partner[]) {
 
 type PatentSubStep = "search" | "novelty";
 
+// ─── Phase 3 next-target resolution ────────────────────────────────────────
+
+type Phase3Target =
+  | { kind: "module-3a" }
+  | { kind: "module-3b"; sub: PatentSubStep }
+  | { kind: "module-3c"; moduleId: string }
+  | { kind: "complete" };
+
+function findNextPhase3Target(
+  toggles: ModuleToggles,
+  getStepStatus: (step: number) => StepStatus,
+): Phase3Target {
+  if (toggles.module3A && getStepStatus(10) !== "complete") {
+    return { kind: "module-3a" };
+  }
+  if (toggles.module3B && getStepStatus(11) !== "complete") {
+    return { kind: "module-3b", sub: "search" };
+  }
+  if (toggles.module3C) {
+    const nextMod = MODULE_3C.find(
+      (m) =>
+        toggles.enabledMeritModules.includes(m.id) &&
+        getStepStatus(m.step) !== "complete",
+    );
+    if (nextMod) {
+      return { kind: "module-3c", moduleId: nextMod.id };
+    }
+  }
+  return { kind: "complete" };
+}
+
+function scrollToId(elementId: string) {
+  setTimeout(() => {
+    document
+      .getElementById(elementId)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 350);
+}
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export function Phase3Client({ projectId: _pid }: { projectId: string }) {
@@ -315,6 +354,29 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
   }, [moduleToggles, getStepStatus]);
 
   const phaseCompletion = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+
+  // ── Module-aware navigation ──────────────────────────────────────────────
+
+  const advancePhase3 = useCallback(() => {
+    const target = findNextPhase3Target(moduleToggles, getStepStatus);
+    switch (target.kind) {
+      case "module-3a":
+        setActiveSection("3A-strategy");
+        scrollToId("phase3-module-3a");
+        return;
+      case "module-3b":
+        setPatentSubStep(target.sub);
+        scrollToId("phase3-module-3b");
+        return;
+      case "module-3c":
+        setActive3CModule(target.moduleId);
+        scrollToId("phase3-module-3c");
+        return;
+      case "complete":
+        scrollToId("phase3-complete-cta");
+        return;
+    }
+  }, [moduleToggles, getStepStatus]);
 
   // ── Toggle handlers ──────────────────────────────────────────────────────
 
@@ -623,6 +685,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
           <AnimatePresence>
             {moduleToggles.module3A && (
               <motion.div
+                id="phase3-module-3a"
                 initial="collapsed"
                 animate="expanded"
                 exit="collapsed"
@@ -915,6 +978,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
           <AnimatePresence>
             {moduleToggles.module3B && (
               <motion.div
+                id="phase3-module-3b"
                 initial="collapsed"
                 animate="expanded"
                 exit="collapsed"
@@ -1047,12 +1111,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                         ]}
                         onComplete={() => {
                           loadDocuments(projectId);
-                          setTimeout(() => {
-                            const target = moduleToggles.module3C
-                              ? document.getElementById("phase3-module-3c")
-                              : document.getElementById("phase3-complete-cta");
-                            target?.scrollIntoView({ behavior: "smooth", block: "start" });
-                          }, 350);
+                          advancePhase3();
                         }}
                       />
                     )}
@@ -1190,11 +1249,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                                             setActive3CModule(nextMod.id);
                                           } else {
                                             setActive3CModule(null);
-                                            setTimeout(() => {
-                                              document
-                                                .getElementById("phase3-complete-cta")
-                                                ?.scrollIntoView({ behavior: "smooth", block: "start" });
-                                            }, 350);
+                                            advancePhase3();
                                           }
                                         }}
                                       />
