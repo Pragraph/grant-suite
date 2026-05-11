@@ -1105,7 +1105,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                             label: "Patent Search Results",
                             type: "file-upload-text",
                             placeholder:
-                              "Upload your patent search results as PDF, or paste them — exports from Google Patents, Espacenet, or academic databases.",
+                              "Upload your patent search results as PDF, or paste them. Exports from Lens.org (required for GET), Google Patents, or Espacenet work.",
                             required: true,
                           },
                         ]}
