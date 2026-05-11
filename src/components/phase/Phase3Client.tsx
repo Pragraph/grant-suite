@@ -962,7 +962,7 @@ export function Phase3Client({ projectId: _pid }: { projectId: string }) {
                           phase={3}
                           step={11}
                           title="Patent Search Strategy"
-                          description="Generate targeted search queries for patent databases. Execute the searches and paste results in the next step."
+                          description="Walk through a Lens.org search session and populate a one-page patent search worksheet that maps to MyGRANTS or your funder's required form."
                           additionalFields={[
                             {
                               name: "discipline",
