@@ -109,7 +109,7 @@ const STEP_META: Record<number, StepMeta> = {
   1: {
     icon: Users,
     description:
-      "Define team roles, responsibilities, and effort allocation aligned with your research design.",
+      "Commit to four team-shape decisions that drive your budget and your proposal collaborator section.",
   },
   2: {
     icon: DollarSign,
