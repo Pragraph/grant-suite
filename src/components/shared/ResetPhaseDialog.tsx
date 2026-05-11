@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
+import { storage } from "@/lib/storage";
 import { getDownstreamProgress } from "@/lib/phase-dependencies";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
 
@@ -73,16 +74,21 @@ export function ResetPhaseDialog({
     try {
       await deleteDocumentsByPhase(projectId, phase);
       resetPhaseProgress(projectId, phase);
+      // Round 15.1: clear component-local localStorage drafts (roles, letters,
+      // budget rows, partner cards, module toggles, executor form inputs).
+      // The Zustand-managed document store and progress store are already
+      // reactive, but useState hooks in phase clients lazy-init from
+      // localStorage and don't auto-sync. The reload below flushes them.
+      storage.resetPhaseLocalStorage(projectId, phase);
       toast.success(`Phase ${phase} reset`, {
         description: `${phaseDocs.length} document${phaseDocs.length === 1 ? "" : "s"} deleted, all step statuses cleared.`,
       });
-      window.dispatchEvent(
-        new CustomEvent("grant-suite:expand-step", {
-          detail: { phase, step: 1 },
-        }),
-      );
       onOpenChange(false);
       setConfirmText("");
+      // Force a reload so phase clients re-mount with empty in-memory state.
+      // Without this, cleared localStorage gets overwritten by stale useState
+      // on the next state change.
+      setTimeout(() => window.location.reload(), 400);
     } catch (err) {
       toast.error("Reset failed", {
         description: err instanceof Error ? err.message : "Unknown error",
