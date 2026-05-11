@@ -69,34 +69,36 @@ If the scheme is GET or PRGS, label the worksheet "MyGRANTS Simplified Patent Se
 
 ## GOAL
 
-Produce a Patent_Search_Strategy.md that does four things:
+Produce a Patent Search Strategy that does four things:
 
-1. Names the reader's invention in plain language across three layers (problem, technical solution, protectable claim), with tagged slots for project-specific facts the reader must supply.
+1. Names the reader's invention in plain language across three layers (problem, technical solution, protectable claim), with the first two drafted from background and the third left for the reader's specific decision.
 2. Walks the reader through a single Lens.org search session, step by step, with copy-paste-ready Boolean queries and exact filter settings.
-3. Maps each output field to the MyGRANTS Simplified Patent Search Report so the reader can transfer their findings directly into the form their funder requires.
+3. Provides a one-page worksheet that maps each MyGRANTS Simplified Patent Search Report field to the exact Lens.org filter or output where the value comes from, so the reader can transfer their findings directly into the form their funder requires.
 4. Stays under 1,500 words total.
 
 ## SUCCESS CRITERIA
 
 Your output succeeds if:
 
+- The output renders inline in the chat as a properly formatted document, with tables, italics, and bullets rendered visually. NOT as a downloadable file artifact. NOT wrapped in a code fence.
 - A senior academician with no prior patent-search experience can complete the search in one 30 to 45 minute Lens.org session.
 - The opening "Quick read" delivers the core message in four scannable bullets, before the reader commits attention to detail.
 - Lens.org is the primary tool throughout. Espacenet and Google Patents appear only as a short opt-in cross-check section with at most two queries each. If the Espacenet and Google Patents text takes up more lines than the Lens.org section, you have failed the brief.
 - Every Boolean query string is paste-ready, uses at most six Boolean operators, and stays under 250 characters.
 - Every patent classification code is defined inline on first use. CPC is the Cooperative Patent Classification system. IPC is the International Patent Classification system. Any specific sub-class introduced (for example, G16H 50/20) is described in one plain-language phrase such as "ICT for medical diagnosis or decision support".
 - Every domain-specific abbreviation used in queries is glossed inline on first use, including any clinical, technical, or device-class shorthand. UACR, eGFR, EHR, EMR, FTO, MyIPO are examples. Define on first use, then use freely.
-- Every project-specific claim the LLM cannot verify from the injected background is marked [USER INPUT NEEDED: <one-sentence prompt>]: exact research title, primary protectable claim, target jurisdictions beyond Malaysia, partner identity if relevant.
-- Every MyGRANTS form field has a one-row worksheet line in Section 3 with example text in brackets showing what the filled answer should look like.
+- Drafted prose answers appear only where the LLM can plausibly infer from the injected background. Specifically: Quick read bullets 1 through 3, Section 1 rows 1 and 2 (Problem and Technical solution), Section 2 query strings, Section 5 cross-check queries, Section 6 FAQ answers.
+- Italicized reader-prompt text appears where the reader's own judgment or Lens.org execution is required. Specifically: Section 1 row 3 (Protectable claim), every cell of the Section 3 worksheet, the underscore blanks in the Section 4 narrative template.
+- No square-bracketed placeholder syntax appears anywhere in the output. No [USER INPUT NEEDED]. No [PLACEHOLDER]. No [TO FILL]. No [FILL IN].
 - If the grant scheme is GET or PRGS, the Quick read explicitly states that patent search is MANDATORY for this scheme in one of the four bullets.
 
 ## CONSTRAINTS
 
 Do use the injected background documents to extract project specifics. Generic advice fails this brief.
 
-Do not invent specific assignee names, specific patent numbers, specific named inventors, or specific competitor companies. That intelligence comes from running the search on Lens.org. It does not come from the LLM. If you find yourself naming Oracle, Cerner, Epic, IBM, Philips, Siemens, Google, Microsoft, or any other organization as relevant, stop and replace with [USER INPUT NEEDED: Names the reader will fill in after running the search.].
+Do not invent specific assignee names, specific patent numbers, specific named inventors, or specific competitor companies. That intelligence comes from running the search on Lens.org. It does not come from the LLM. If you find yourself listing Oracle, Cerner, Epic, IBM, Philips, Siemens, Google, Microsoft, or any other organization as a relevant stakeholder or competitor in Section 3, stop. Leave those worksheet rows as italicized guidance describing where on Lens.org the reader will get the values. Never name specific companies as stakeholders or competitors in the output.
 
-Do not produce a freedom-to-operate analysis. Do not produce a competitive landscape table. Do not list assignee portfolios to review. Those belong in the next sub-step of the application, Novelty and TRL Assessment.
+Do not produce a freedom-to-operate analysis. Do not produce a competitive landscape table with named organizations. Do not list assignee portfolios to review. Those belong in the next sub-step of the application, Novelty and TRL Assessment.
 
 Do not produce a separate "patent result capture template" worksheet for the reader to fill row by row during searching. The MyGRANTS Simplified Patent Search Report IS the form the reader fills. Anything else duplicates it.
 
@@ -109,6 +111,8 @@ Do not produce more than 4 Lens.org Boolean queries. The reader has 30 to 45 min
 Do not invent Lens.org UI labels. Use the actual filter names: Classifications, Jurisdictions, Applicants, Inventors, and the Simple Patent Family grouping toggle.
 
 Do not write methods-paper register. No "model card", no "subgroup calibration", no TRIPOD+AI, no PROBAST+AI, no DECIDE-AI, no "fairness audit metric". Those belong in the methods section of the proposal, not in a patent-search worksheet.
+
+Do not use bracketed placeholder syntax of any kind. No [USER INPUT NEEDED]. No [PLACEHOLDER]. No [TO FILL]. No [FILL IN]. No square brackets around prompt text. The output is read directly by the reader, not parsed by another LLM. Use italicized guidance, underscore blanks with italic parenthetical hints, or plain prose only.
 
 Write in plain research register. Short sentences. Active voice. No em-dashes. No semicolons.
 
@@ -129,15 +133,13 @@ If the grant scheme requires patent search (GET or PRGS), state that fact in bul
 
 ### 1. Your invention in plain language
 
-A three-row table. No more, no less.
+Produce a three-row, two-column table. Left column is "Layer". Right column is "Plain-language answer". For each row, the right-column cell content is as follows:
 
-| Layer | Plain-language answer |
-| --- | --- |
-| Problem you are solving | [USER INPUT NEEDED: One sentence naming the specific problem in plain language.] |
-| Technical solution | [USER INPUT NEEDED: One sentence naming what your invention does technically.] |
-| Protectable claim | [USER INPUT NEEDED: One sentence naming the specific thing you would file an IP claim around, such as the rule set, the workflow, the apparatus, the formulation, the algorithm output, or the device design.] |
+1. **Row 1: Problem you are solving.** You (the LLM) draft a single sentence in plain language, inferred from the injected background documents. No italics. No brackets. Just the drafted sentence.
+2. **Row 2: Technical solution.** You (the LLM) draft a single sentence in plain language, inferred from background, naming what the invention does technically. No italics. No brackets. Just the drafted sentence.
+3. **Row 3: Protectable claim.** Do NOT draft an answer. The cell contains exactly this italicized text: *"Your decision: one sentence naming the specific thing you would file an IP claim around. Examples: the risk-action rule set, the workflow logic, the dashboard architecture, the apparatus, the formulation, the algorithm output, or the device design."*
 
-Below the table, write two to three sentences (no more) summarizing how the three layers fit together. Use plain language. No CPC codes in this section.
+Below the table, write two to three sentences (no more) summarizing how the three layers fit together. Use plain language. No CPC codes in this section. End with one italicized note exactly as follows: *"Refine the Problem or Technical solution rows above if they do not match your specific project. The Protectable claim row needs your own decision before you search."*
 
 ### 2. Lens.org search session
 
@@ -161,36 +163,38 @@ Then provide the 4 Lens.org Boolean queries in a table:
 Each query MUST:
 - Use Boolean operators AND, OR, NOT, with quoted phrases for multi-word terms.
 - Stay under 250 characters.
-- Target a distinct layer of the invention. Suggested coverage: (1) the problem space, (2) the technical method, (3) the protectable claim narrowed to your specific differentiator, (4) the application context if relevant.
-- Mark any term cluster the LLM cannot derive from background as [USER INPUT NEEDED: One-sentence prompt explaining what the reader fills in.].
+- Target a distinct layer of the invention. Suggested coverage: (1) the problem space, (2) the technical method, (3) the protectable claim narrowed to the differentiator, (4) the application context if relevant.
+- Be derived from the injected background documents. Do not insert placeholder term clusters.
 
 For each query, write one sentence (no more) explaining what it is meant to surface. Do not speculate about specific patent numbers, specific assignees, or expected result counts.
 
 ### 3. MyGRANTS Simplified Patent Search Report worksheet
 
-A one-page worksheet structured to match the MyGRANTS form fields. The reader fills each row from their Lens.org session results. Use this exact table structure:
+A reference table mapping each MyGRANTS form field to the Lens.org filter or output where the reader gets the value. The reader uses this table while filling the MyGRANTS web portal. Do NOT pre-fill specific values. Each cell in the right column contains italicized guidance text only.
+
+Produce a two-column table. The left column is the MyGRANTS form field name in regular text. The right column is italicized guidance text (markdown single-asterisk italics) describing where on Lens.org the reader will get the value. Use this exact content, reproducing the italics verbatim:
 
 | Field | What to write |
 | --- | --- |
-| Research title | [USER INPUT NEEDED: Your project title, exactly as it will appear on the application.] |
-| Search keywords | The 4 Boolean strings from Section 2 above, joined by line breaks. |
-| Number of patents found | [Reader fills from Lens.org result count, after grouping by Simple Patent Family.] |
-| Highest CPC classification | [Reader fills the top CPC code from the Lens.org Classifications filter, with one plain-language phrase describing what it covers.] |
-| Does the CPC classification accurately represent your research? | [Reader answers Yes or No with one-sentence rationale.] |
-| Top 5 patent applicants, potential STAKEHOLDERS | [Reader fills 5 names from the Lens.org Applicants filter. Stakeholders share the problem space and would benefit from your solution.] |
-| Top 5 patent applicants, potential COMPETITORS | [Reader fills 5 names from the same filter. Competitors own IP you would have to design around to commercialize.] |
-| Similar patents already filed in Malaysia | [Reader fills count and 1 to 2 example titles, or "None found".] |
-| Similar patents in Thailand, Indonesia, Singapore | [Reader fills count per country, or "None found per country".] |
-| Top inventor with more than 2 patents | [Reader fills name and patent count from the Lens.org Inventors filter, or "None with more than 2".] |
-| Novelty narrative | [Reader writes 2 to 3 sentences. Template provided in Section 4.] |
+| Research title | *Your project title, exactly as it will appear on the MyGRANTS application.* |
+| Search keywords | *The 4 Boolean strings from Section 2 above, joined by line breaks.* |
+| Number of patents found | *The Lens.org result count, after grouping by Simple Patent Family. Use the largest of the 4 query result counts, or the union if you ran them in sequence.* |
+| Highest CPC classification | *The top CPC code from the Lens.org Classifications filter on your most relevant query, plus one plain-language phrase describing what it covers. Example phrasing: "G16H 50/20, ICT for medical diagnosis or decision support".* |
+| Does the CPC classification accurately represent your research? | *Yes or No, with one sentence of rationale. If No, name the classification that better fits.* |
+| Top 5 patent applicants, potential STAKEHOLDERS | *Five names from the Lens.org Applicants filter that share your problem space and would benefit from your solution. Read each applicant's top 2 to 3 patent titles in Lens.org to decide stakeholder versus competitor.* |
+| Top 5 patent applicants, potential COMPETITORS | *Five names from the same Lens.org Applicants filter whose patents claim something close to your protectable claim and could affect your commercialization. Same source list as the stakeholder row, different judgment.* |
+| Similar patents already filed in Malaysia | *Result count from Lens.org with Jurisdictions filter set to Malaysia, plus 1 to 2 example titles. If zero, write "None found".* |
+| Similar patents in Thailand, Indonesia, Singapore | *Result count per country from Lens.org with Jurisdictions filter set to each in turn. If all zero, write "None found per country".* |
+| Top inventor with more than 2 patents | *Name and patent count from the Lens.org Inventors filter. If no inventor has more than 2 patents in this space, write "None with more than 2".* |
+| Novelty narrative | *2 to 3 sentences. Use the template in Section 4 below.* |
 
-Below the table, add one short paragraph (50 words or fewer) explaining the stakeholders versus competitors heuristic, since the MyGRANTS form asks the reader to separate the two. Do not pre-classify named organizations. The reader makes that call.
+Below the table, add one short paragraph (50 words or fewer) explaining the stakeholders versus competitors heuristic, since the MyGRANTS form asks the reader to separate the two. Do not pre-classify named organizations. The reader makes that call after reading the patent titles in Lens.org.
 
 ### 4. Novelty narrative template
 
-Provide a 2-3 sentence template the reader adapts. Use this exact structure:
+Provide a 2 to 3 sentence template the reader adapts. The template uses underscore blanks for the reader to fill, with italicized parenthetical hints. Do NOT use bracketed placeholder tags. Reproduce this structure verbatim:
 
-"Existing patents in this space focus on [USER INPUT NEEDED: what the existing patents do, in plain language, based on what you found in Lens.org]. My research differs because [USER INPUT NEEDED: what your invention does that the existing patents do not, in plain language]. This positions the work as [USER INPUT NEEDED: one phrase from this list: a new technical method, a new application of an existing method, an improvement on an existing system, a workflow transformation, a regional adaptation for Malaysian context, or a safety- or equity-audited variant]."
+"Existing patents in this space focus on ______________ *(describe what the closest patents do, in plain language, from your Lens.org findings).* My research differs because ______________ *(what your invention does that those patents do not, in plain language).* This positions the work as ______________ *(pick one: a new technical method, a new application of an existing method, an improvement on an existing system, a workflow transformation, a regional adaptation for Malaysian context, or a safety- or equity-audited variant).*"
 
 After the template, write two to three sentences (no more) explaining what makes a defensible novelty claim versus an indefensible one. Defensible novelty is specific, technical, and tied to the protectable claim from Section 1. Indefensible novelty is "first of its kind in Malaysia" with no search evidence, or "no one has done this before" without naming the closest prior art.
 
@@ -224,17 +228,23 @@ If you are about to produce a competitive landscape table with named assignees, 
 
 If you are about to produce more than 4 Lens.org queries, you are over-engineering. The reader has 45 minutes. Trim.
 
-If you are about to invent a specific patent number, a specific inventor name, a specific company name, or a specific CPC code without one plain-language phrase explaining what it covers, stop. Replace with [USER INPUT NEEDED] or add the gloss.
+If you are about to invent a specific patent number, a specific inventor name, a specific company name, or a specific CPC code without one plain-language phrase explaining what it covers, stop. Leave the worksheet cell as italicized guidance, or add the gloss, or cut.
 
 If you find yourself writing methods-paper jargon (TRIPOD+AI, PROBAST+AI, DECIDE-AI, "model card", "subgroup calibration"), stop. Replace with plain language or cut.
 
-If you find yourself adding a result-capture template worksheet for the reader to fill while searching, stop. The MyGRANTS worksheet in Section 3 IS the capture template.
+If you find yourself adding a result-capture template worksheet for the reader to fill while searching, stop. The Section 3 worksheet IS the capture key, and it is a reference, not a fillable form.
 
 If the Espacenet and Google Patents content is taking up more text than the Lens.org content, stop. Cut the cross-check section back to the minimum.
+
+If you find yourself using bracketed placeholder syntax like [USER INPUT NEEDED], [TO FILL], [PLACEHOLDER], or any square-bracket-wrapped prompt tag, stop. Use italicized guidance or underscore blanks with italic parenthetical hints instead.
+
+If you find yourself about to wrap the entire response in a fenced code block (three backticks at top and bottom), stop. The output must render as a normal formatted document in the chat, not a monospace code preview.
 
 Do not narrate what you are about to do. Do not summarize what you wrote at the end. Do not add an "Executive Summary", "Interpretation Rule", or "Methodological Claim" section no matter how natural the closing feels.
 
 ## BEGIN
 
-Produce Patent_Search_Strategy.md now.`,
+Produce the Patent Search Strategy now.
+
+Render the output inline as standard markdown that this chat interface will render visually as tables, headers, bullets, and italics. Do NOT produce a downloadable file artifact. Do NOT use a file-creation tool or Code Interpreter to materialize a .md file. Do NOT wrap the entire response in a fenced code block. The reader should see a properly formatted document directly in the chat, not a monospace preview or a file card with a download button.`,
 };
