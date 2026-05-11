@@ -13,9 +13,6 @@ import {
   Download,
   Eye,
   Sparkles,
-  Mail,
-  Send,
-  Inbox,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -34,7 +31,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { PhaseIcon } from "@/components/ui/phase-icon";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -69,13 +65,12 @@ interface TeamRole {
   effort: number;
 }
 
-interface LetterStatus {
-  id: string;
-  roleId: string;
-  memberName: string;
-  drafted: boolean;
-  sent: boolean;
-  received: boolean;
+// Round 15.2: parsed from the Section 7 JSON scaffold in Team_Strategy.md.
+// Recommendation only — the user overrides everything in the Role Matrix.
+interface RoleRecommendation {
+  role: string;
+  responsibility: string;
+  suggested_effort_pct: number;
 }
 
 interface BudgetRow {
@@ -152,9 +147,6 @@ const stepExpandVariants = {
 function getRolesKey(projectId: string) {
   return `grant-suite-phase4-roles-${projectId}`;
 }
-function getLettersKey(projectId: string) {
-  return `grant-suite-phase4-letters-${projectId}`;
-}
 function getBudgetKey(projectId: string) {
   return `grant-suite-phase4-budget-${projectId}`;
 }
@@ -188,9 +180,11 @@ function saveJson(key: string, value: unknown) {
 function RoleMatrixUI({
   roles,
   setRoles,
+  step1Output,
 }: {
   roles: TeamRole[];
   setRoles: (roles: TeamRole[]) => void;
+  step1Output: string | null;
 }) {
   const updateRole = (id: string, field: keyof TeamRole, value: string | number) => {
     setRoles(
@@ -216,6 +210,28 @@ function RoleMatrixUI({
     setRoles(roles.filter((r) => r.id !== id));
   };
 
+  // Round 15.2: import recommendations from the Section 7 JSON scaffold in
+  // Team_Strategy.md. Appends rows with role/responsibility/effort pre-filled,
+  // leaves name and institution blank for the user to fill.
+  const recommendations = useMemo(
+    () => (step1Output ? parseTeamRecommendations(step1Output) : []),
+    [step1Output],
+  );
+  const hasRecommendations = recommendations.length > 0;
+
+  const importRecommendations = () => {
+    if (recommendations.length === 0) return;
+    const newRoles: TeamRole[] = recommendations.map((rec) => ({
+      id: crypto.randomUUID(),
+      role: rec.role,
+      name: "",
+      institution: "",
+      responsibility: rec.responsibility,
+      effort: rec.suggested_effort_pct,
+    }));
+    setRoles([...roles, ...newRoles]);
+  };
+
   return (
     <Card className="border-phase-4/30 bg-phase-4/5">
       <CardContent className="p-4">
@@ -227,9 +243,22 @@ function RoleMatrixUI({
               {roles.length} roles
             </Badge>
           </div>
-          <Button size="sm" variant="ghost" onClick={addRole} className="h-7 text-xs gap-1">
-            <Plus className="h-3 w-3" /> Add Role
-          </Button>
+          <div className="flex items-center gap-1">
+            {hasRecommendations && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={importRecommendations}
+                className="h-7 text-xs gap-1"
+                title={`Append ${recommendations.length} recommended role${recommendations.length === 1 ? "" : "s"} from Team_Strategy.md (you fill name and institution)`}
+              >
+                <Sparkles className="h-3 w-3" /> Import from Team Strategy
+              </Button>
+            )}
+            <Button size="sm" variant="ghost" onClick={addRole} className="h-7 text-xs gap-1">
+              <Plus className="h-3 w-3" /> Add Role
+            </Button>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -313,98 +342,6 @@ function RoleMatrixUI({
           <p className="text-xs text-muted-foreground text-center py-4">
             Your Team Strategy commits to team shape, not specific names. Add each
             team member you&apos;ll list in your MyGRANTS submission form here.
-          </p>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-// ─── Letters of Support Tracker ────────────────────────────────────────────
-
-function LettersTrackerUI({
-  letters,
-  setLetters,
-  hasPartnership,
-}: {
-  letters: LetterStatus[];
-  setLetters: (letters: LetterStatus[]) => void;
-  hasPartnership: boolean;
-}) {
-  const toggleLetter = (id: string, field: "drafted" | "sent" | "received") => {
-    setLetters(
-      letters.map((l) => (l.id === id ? { ...l, [field]: !l[field] } : l)),
-    );
-  };
-
-  const completedCount = letters.filter((l) => l.received).length;
-
-  return (
-    <Card className="border-phase-4/30 bg-phase-4/5">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Mail className="h-4 w-4 text-phase-4" />
-          <p className="text-sm font-medium text-foreground">Letters of Support Tracker</p>
-          <Badge className="text-[10px] bg-phase-4/20 text-phase-4">
-            {completedCount}/{letters.length} received
-          </Badge>
-        </div>
-
-        {hasPartnership && (
-          <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-2.5 mb-3">
-            <Sparkles className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
-            <p className="text-[11px] text-muted-foreground">
-              Partnership letters from Phase 3A are tracked separately in the Partnership module.
-            </p>
-          </div>
-        )}
-
-        {letters.length > 0 ? (
-          <div className="space-y-2">
-            {letters.map((letter) => (
-              <div
-                key={letter.id}
-                className="flex items-center gap-3 rounded-md border border-border bg-card px-3 py-2"
-              >
-                <span className="text-xs font-medium text-foreground flex-1 truncate">
-                  {letter.memberName || "Unnamed"}
-                </span>
-                <div className="flex items-center gap-3 shrink-0">
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <Checkbox
-                      checked={letter.drafted}
-                      onCheckedChange={() => toggleLetter(letter.id, "drafted")}
-                    />
-                    <span className="text-[10px] text-muted-foreground">Drafted</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <Checkbox
-                      checked={letter.sent}
-                      onCheckedChange={() => toggleLetter(letter.id, "sent")}
-                    />
-                    <span className="text-[10px] text-muted-foreground">
-                      <Send className="h-2.5 w-2.5 inline mr-0.5" />
-                      Sent
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <Checkbox
-                      checked={letter.received}
-                      onCheckedChange={() => toggleLetter(letter.id, "received")}
-                    />
-                    <span className="text-[10px] text-muted-foreground">
-                      <Inbox className="h-2.5 w-2.5 inline mr-0.5" />
-                      Received
-                    </span>
-                  </label>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-xs text-muted-foreground text-center py-4">
-            Add team members in the Role Matrix above. Track which need formal
-            letters of support from their institutions here.
           </p>
         )}
       </CardContent>
@@ -687,6 +624,44 @@ function BudgetTableUI({
   );
 }
 
+// ─── Team recommendations parser ───────────────────────────────────────────
+//
+// Round 15.2: parses the Section 7 JSON scaffold at the end of Team_Strategy.md.
+// The team-assembly.ts prompt commits to appending a fenced ```json block with
+// recommended_roles[] entries. This function extracts the array safely:
+// JSON-fenced regex captures only the block contents (no cross-section
+// consumption risk like the removed parseRoleMatrix had), defensive try/catch
+// on JSON.parse, per-field type guards. Returns [] on any failure (missing
+// block, malformed JSON, wrong shape, empty array).
+
+function parseTeamRecommendations(content: string): RoleRecommendation[] {
+  const match = content.match(/```json\s*\n([\s\S]+?)\n\s*```/);
+  if (!match) return [];
+
+  try {
+    const data = JSON.parse(match[1]);
+    if (
+      !data ||
+      typeof data !== "object" ||
+      !Array.isArray((data as { recommended_roles?: unknown }).recommended_roles)
+    ) {
+      return [];
+    }
+    const arr = (data as { recommended_roles: unknown[] }).recommended_roles;
+    return arr
+      .filter((r): r is Record<string, unknown> => typeof r === "object" && r !== null)
+      .map((r) => ({
+        role: typeof r.role === "string" ? r.role : "",
+        responsibility: typeof r.responsibility === "string" ? r.responsibility : "",
+        suggested_effort_pct:
+          typeof r.suggested_effort_pct === "number" ? r.suggested_effort_pct : 0,
+      }))
+      .filter((r) => r.role.length > 0);
+  } catch {
+    return [];
+  }
+}
+
 // ─── Budget rows parser from markdown ──────────────────────────────────────
 
 function parseBudgetRows(content: string, years: number): BudgetRow[] {
@@ -815,9 +790,6 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
 
   // Step 1 state
   const [roles, setRoles] = useState<TeamRole[]>(() => loadJson(getRolesKey(projectId), []));
-  const [letters, setLetters] = useState<LetterStatus[]>(() =>
-    loadJson(getLettersKey(projectId), []),
-  );
 
   // Step 2 state
   const [budgetRows, setBudgetRows] = useState<BudgetRow[]>(() =>
@@ -870,50 +842,12 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
   }, [projectId, roles]);
 
   useEffect(() => {
-    saveJson(getLettersKey(projectId), letters);
-  }, [projectId, letters]);
-
-  useEffect(() => {
     saveJson(getBudgetKey(projectId), budgetRows);
   }, [projectId, budgetRows]);
 
   useEffect(() => {
     saveJson(getBudgetMetaKey(projectId), budgetMeta);
   }, [projectId, budgetMeta]);
-
-  // ── Sync letters with roles ──────────────────────────────────────────────
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setLetters((currentLetters) => {
-        const roleIds = new Set(roles.map((r) => r.id));
-        // Remove letters for deleted roles
-        const existing = currentLetters.filter((l) => roleIds.has(l.roleId));
-        // Add letters for new roles
-        const existingRoleIds = new Set(existing.map((l) => l.roleId));
-        const newLetters = roles
-          .filter((r) => !existingRoleIds.has(r.id))
-          .map((r) => ({
-            id: crypto.randomUUID(),
-            roleId: r.id,
-            memberName: r.name || r.role,
-            drafted: false,
-            sent: false,
-            received: false,
-          }));
-        // Update names for existing letters
-        const updated = existing.map((l) => {
-          const role = roles.find((r) => r.id === l.roleId);
-          return role ? { ...l, memberName: role.name || role.role } : l;
-        });
-        const merged = [...updated, ...newLetters];
-        return JSON.stringify(merged) === JSON.stringify(currentLetters)
-          ? currentLetters
-          : merged;
-      });
-    }, 0);
-    return () => window.clearTimeout(timeoutId);
-  }, [roles]);
 
   // ── Track step outputs from saved documents ──────────────────────────────
 
@@ -941,17 +875,6 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
     }, 0);
     return () => window.clearTimeout(timeoutId);
   }, [budgetMeta.duration, budgetRows.length, step2Output]);
-
-  // ── Check if Phase 3A partnership was completed ──────────────────────────
-
-  const hasPartnership = useMemo(() => {
-    return documents.some(
-      (d) =>
-        d.projectId === projectId &&
-        d.canonicalName === "Partnership_Plan.md" &&
-        d.isCurrent,
-    );
-  }, [documents, projectId]);
 
   // ── Phase progress ────────────────────────────────────────────────────────
 
@@ -1282,16 +1205,11 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
                             <motion.div
                               initial={{ opacity: 0, y: 8 }}
                               animate={{ opacity: 1, y: 0 }}
-                              className="space-y-4"
                             >
                               <RoleMatrixUI
                                 roles={roles}
                                 setRoles={setRoles}
-                              />
-                              <LettersTrackerUI
-                                letters={letters}
-                                setLetters={setLetters}
-                                hasPartnership={hasPartnership}
+                                step1Output={step1Output}
                               />
                             </motion.div>
                           )}

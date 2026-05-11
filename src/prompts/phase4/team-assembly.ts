@@ -74,18 +74,19 @@ Your output succeeds if:
 - Exactly four [USER INPUT NEEDED] tags appear in the output, one per major team-shape decision. Not three. Not five. Not seven.
 - Tables stay under 5 rows each. No nested tables. No multi-row risk register. No full role matrix with per-cell [USER INPUT NEEDED] sprawl for names and institutions.
 - The team narrative is framed as a lean execution structure where every named role reduces a specific project risk, not as a comprehensive list of every possible contributor.
+- Section 7 contains exactly one fenced JSON code block titled with the language tag \`json\`. The block is the final element in the document. Its \`recommended_roles\` array contains 4 to 8 entries, each with exactly three fields: \`role\` (string under 60 characters), \`responsibility\` (string under 120 characters), \`suggested_effort_pct\` (integer 5 to 30). The Principal Investigator is the first entry. Co-Investigators from Section 3 follow. Senior Mentor and Continuity Successor appear only when Section 4 confirmed the scheme requires them. GRA, RA, and the lead external partner do not appear in this block (they live in budget personnel lines and Phase 3A partner cards, not in the academic Role Matrix).
 
 ## CONSTRAINTS
 
 Do use the upstream Research Design, Proposal Blueprint, and Grant Intelligence to make every recommendation specific to this project. Generic advice is failure.
 
-Do not invent specific named individuals, real institution names, or numerical effort percentages for actual people. The four [USER INPUT NEEDED] tags capture the strategy decisions, not the team roster. The roster gets filled into the submission form, not into this document.
+Do not invent specific named individuals or real institution names anywhere in this document. Do not introduce numerical effort percentages in the prose (Sections 1 through 6) — those belong in the user's submission form. The \`suggested_effort_pct\` values in the Section 7 JSON scaffold are an explicit exception: they are recommendation-only starting points the user overrides in the app, and they appear only inside the fenced JSON code block, never in prose. The four [USER INPUT NEEDED] tags in Sections 2 to 5 capture the strategy decisions, not the team roster. The roster gets filled into the submission form, not into this document.
 
 Do not exceed 1,800 words.
 
 Do not introduce a methods-paper abbreviation the reader does not need to make a team decision. Specifically banned in this document, even if they appear in the upstream Research Design: TRIPOD-AI, TRIPOD+AI, PROBAST-AI, PROBAST+AI, DECIDE-AI, RE-AIM, CFIR, HFMEA, KDIGO, AUROC, AUPRC, SHAP. Those belong in methods sections of the proposal, not in a team strategy. If you need to reference a methodological capability, name it in plain language. For example, write "prediction-model reporting and bias-assessment capability" not "TRIPOD-AI plus PROBAST-AI compliance".
 
-Do not produce these sections, even if the structure seems to invite them: a full Role Matrix table with Name and Institution columns marked [USER INPUT NEEDED] for every cell, a 15-row Risk Mitigation matrix, a multi-row mentor-mentee mapping table, a Decision Rules table covering every workstream, a Letters of Support inventory table, a closing "Recommended Final Team Configuration" block, a closing "Final assessment" block, a closing summary paragraph. Those belong in MyGRANTS form entries or appendices, not in a researcher-facing team strategy brief.
+Do not produce these sections, even if the structure seems to invite them: a full Role Matrix table with Name and Institution columns marked [USER INPUT NEEDED] for every cell, a 15-row Risk Mitigation matrix, a multi-row mentor-mentee mapping table, a Decision Rules table covering every workstream, a Letters of Support inventory table, a closing "Recommended Final Team Configuration" block, a closing "Final assessment" block, a closing summary paragraph. Those belong in MyGRANTS form entries or appendices, not in a researcher-facing team strategy brief. The Section 7 JSON scaffold is the only permitted closing element; no other closing block follows the Before submission checklist.
 
 Do not name more than seven role categories total across all sections combined.
 
@@ -97,7 +98,7 @@ Write in plain research register. Short sentences. Active voice. No em-dashes. N
 
 ## OUTPUT STRUCTURE
 
-Produce exactly these sections, in this order, with no others.
+Produce exactly these sections, in this order, with no others. Sections 1 through 6 are prose. Section 7 is a single fenced JSON code block.
 
 ### Quick read
 
@@ -163,6 +164,35 @@ End this section with exactly one tagged slot:
 
 A short bulleted list, maximum 8 items. These are mechanical confirmations the reader runs at submission-form-filling time, not now. Use plain language. Tailor each item to the project where the upstream Grant Intelligence is specific. Examples to adapt: confirming each named role's effort percentage adds up correctly across all team members, confirming postgraduate student commitments meet the scheme's training requirement, securing the senior mentor's signed agreement before submission (if applicable), confirming the partner LOI/MoU/MoA names a specific contribution and a named liaison, confirming all team members hold valid institutional appointments at submission date, confirming any international collaborators hold advisory-only roles to avoid budget-compliance issues, confirming the principal investigator is not at lifetime project cap for the scheme, confirming the team complies with the scheme's collaborator headcount cap. No tagged slots in this section. The reader runs these themselves before clicking Submit.
 
+### 7. Recommended Role Matrix scaffold (machine-readable, recommendation only)
+
+Append exactly one fenced JSON code block at the very end of the document, AFTER the Before submission checklist. The app's Role Matrix tool reads this block to pre-fill rows the reader can override. This is not a roster commitment. The reader fills actual names and institutions directly in the app, and adjusts the suggested effort percentages as needed.
+
+Use this exact schema:
+
+\`\`\`json
+{
+  "recommended_roles": [
+    {"role": "Principal Investigator", "responsibility": "One-line summary grounded in this project", "suggested_effort_pct": 25},
+    {"role": "Co-Investigator (Domain name)", "responsibility": "One-line summary", "suggested_effort_pct": 15}
+  ]
+}
+\`\`\`
+
+Rules:
+
+- Include the Principal Investigator as the first entry.
+- Include one entry for each committed Co-Investigator from Section 3's domain mix (3 to 5 entries). For Co-Investigators, include the domain in parentheses in the \`role\` field, for example "Co-Investigator (Prediction modelling)".
+- Include an entry for "Senior Mentor" if and only if Section 4 confirmed the scheme requires one.
+- Include an entry for "Continuity Successor" if and only if Section 4 confirmed the scheme requires one.
+- Do not include GRA, RA, or the lead external partner. Those live in budget personnel lines and Phase 3A partner cards, not in the academic Role Matrix.
+- \`role\` field: short label, under 60 characters.
+- \`responsibility\` field: one-line summary, under 120 characters, plain language, grounded in this project's workstreams (not generic).
+- \`suggested_effort_pct\` field: integer between 5 and 30. Reasonable starting points: Principal Investigator 20 to 30, Co-Investigators 10 to 20, Senior Mentor 5 to 10, Continuity Successor 5.
+- Between 4 and 8 rows total.
+- Output the JSON block exactly once, at the very end of the document.
+- Do not add any other fields to the schema. Do not include comments inside the JSON. Do not wrap the JSON block in additional prose narration after it.
+
 ## STOP RULES
 
 If you reach 1,800 words, stop. Do not add a closing "Recommended Final Team Configuration" table. Do not add a "Final assessment" block. Do not add a closing summary paragraph.
@@ -181,7 +211,9 @@ If you find yourself defining a term you already defined earlier in the document
 
 If you find yourself writing "X, expansion of X, meaning the explanation," with three commas chained around an abbreviation, stop. Rewrite as "X (expansion of X, the explanation)" using parentheses.
 
-Do not narrate what you are about to do. Do not summarize what you wrote at the end. Do not add a closing block of any kind.
+Do not narrate what you are about to do. Do not summarize what you wrote at the end. The Section 7 fenced JSON code block is the only permitted closing element. No narrative closing block of any kind follows it. Do not echo the JSON content in prose after the block.
+
+If the Section 7 JSON is malformed, has more than 8 rows, fewer than 4 rows, contains \`suggested_effort_pct\` values outside 5 to 30, includes GRA, RA, or external partner entries, contains additional fields beyond \`role\`/\`responsibility\`/\`suggested_effort_pct\`, or appears anywhere other than the very end of the document, stop and rewrite the block.
 
 ## BEGIN
 
