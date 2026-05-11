@@ -176,45 +176,14 @@ function saveJson(key: string, value: unknown) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-// ─── Role Matrix Parser ────────────────────────────────────────────────────
-
-function parseRoleMatrix(content: string): TeamRole[] {
-  const roles: TeamRole[] = [];
-  // Match markdown table rows: | Role | Name | Institution | Responsibility | Effort % | ...
-  const tableRegex =
-    /\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|/g;
-  let match;
-  let isHeader = true;
-
-  while ((match = tableRegex.exec(content)) !== null) {
-    const col1 = match[1].trim();
-    // Skip header row and separator
-    if (col1.startsWith("---") || col1.startsWith("Role") || col1 === "---") {
-      isHeader = false;
-      continue;
-    }
-    if (isHeader) {
-      isHeader = false;
-      continue;
-    }
-
-    const effortStr = match[5].trim().replace(/%/g, "");
-    const effort = parseInt(effortStr, 10);
-
-    roles.push({
-      id: crypto.randomUUID(),
-      role: col1,
-      name: match[2].trim().replace(/\[USER INPUT NEEDED\]/g, ""),
-      institution: match[3].trim().replace(/\[USER INPUT NEEDED\]/g, ""),
-      responsibility: match[4].trim(),
-      effort: isNaN(effort) ? 0 : effort,
-    });
-  }
-
-  return roles;
-}
-
 // ─── Role Matrix UI ────────────────────────────────────────────────────────
+//
+// Round 15 (2026-05-12): the previous auto-extraction parser was removed.
+// Team_Strategy.md is a SHAPE commitment document (four [USER INPUT NEEDED]
+// decisions about team architecture), not a roster. Names, institutions, and
+// effort percentages are entered directly here by the user and filed into the
+// MyGRANTS submission form. The roster does not exist in the strategy doc by
+// design (see v20 Round 14 / Round 15 notes).
 
 function RoleMatrixUI({
   roles,
@@ -342,7 +311,8 @@ function RoleMatrixUI({
         </div>
         {roles.length === 0 && (
           <p className="text-xs text-muted-foreground text-center py-4">
-            No roles parsed. Click &quot;Add Role&quot; to add team members manually.
+            Your Team Strategy commits to team shape, not specific names. Add each
+            team member you&apos;ll list in your MyGRANTS submission form here.
           </p>
         )}
       </CardContent>
@@ -433,7 +403,8 @@ function LettersTrackerUI({
           </div>
         ) : (
           <p className="text-xs text-muted-foreground text-center py-4">
-            Complete Step 1 and add team roles to populate letter tracking.
+            Add team members in the Role Matrix above. Track which need formal
+            letters of support from their institutions here.
           </p>
         )}
       </CardContent>
@@ -957,19 +928,6 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
       (d) => d.projectId === projectId && d.canonicalName === "Budget_Draft.md" && d.isCurrent,
     )?.content ?? null;
   }, [documents, projectId]);
-
-  // ── Parse roles from Step 1 output (when first saved) ────────────────────
-
-  useEffect(() => {
-    if (!step1Output || roles.length > 0) return;
-    const parsed = parseRoleMatrix(step1Output);
-    if (parsed.length === 0) return;
-
-    const timeoutId = window.setTimeout(() => {
-      setRoles((currentRoles) => (currentRoles.length === 0 ? parsed : currentRoles));
-    }, 0);
-    return () => window.clearTimeout(timeoutId);
-  }, [roles.length, step1Output]);
 
   // ── Parse budget from Step 2 output (when first saved) ───────────────────
 
