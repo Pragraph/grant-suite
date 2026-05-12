@@ -24,7 +24,6 @@ import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
 import { PHASE_DEFINITIONS, CURRENCIES } from "@/lib/constants";
-import { advanceToNextStep } from "@/lib/step-navigation";
 import type { StepStatus } from "@/lib/types";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -80,6 +79,7 @@ interface BudgetRow {
   item: string;
   amounts: number[]; // one per year
   justification: string;
+  vot?: string; // Round 17: MOHE Vot code (e.g. "11000"). Optional for backward compat with pre-R17 saves.
 }
 
 type BudgetCategory =
@@ -98,6 +98,26 @@ const BUDGET_CATEGORIES: BudgetCategory[] = [
   "Publication",
   "Other",
 ];
+
+// Round 17: per-scheme cap percentages. Cap display in BudgetTableUI is gated on
+// the project's grantScheme matching one of these keys. For schemes not listed,
+// cap chips do not render. Source: MOHE GET 2026 Transformative scheme guidelines
+// (Travel ≤ 20% of project budget, Equipment ≤ 30%, no overheads).
+type SchemeCaps = {
+  travelPct: number;
+  equipmentPct: number;
+};
+
+const SCHEME_CAPS: Record<string, SchemeCaps> = {
+  GET: { travelPct: 20, equipmentPct: 30 },
+};
+
+function getSchemeCaps(grantScheme: string | null | undefined): SchemeCaps | null {
+  if (!grantScheme) return null;
+  // Resilient matching: project's grantScheme may be "GET", "MOHE GET", "GET 2026", etc.
+  if (grantScheme.includes("GET")) return SCHEME_CAPS.GET;
+  return null;
+}
 
 // ─── Step metadata ─────────────────────────────────────────────────────────
 
@@ -393,13 +413,16 @@ function BudgetTableUI({
   years,
   budgetLimit,
   currency,
+  grantScheme,
 }: {
   rows: BudgetRow[];
   setRows: (rows: BudgetRow[]) => void;
   years: number;
   budgetLimit: number;
   currency: string;
+  grantScheme: string | null | undefined;
 }) {
+  const schemeCaps = getSchemeCaps(grantScheme);
   const updateRow = (id: string, field: string, value: string | number | number[]) => {
     setRows(rows.map((r) => (r.id === id ? { ...r, [field]: value } : r)));
   };
@@ -496,29 +519,81 @@ function BudgetTableUI({
           </Button>
         </div>
 
-        {/* Budget vs limit indicator */}
+        {/* Budget vs limit indicator + per-year totals */}
         {budgetLimit > 0 && (
           <div
             className={cn(
-              "flex items-center justify-between rounded-md border px-3 py-2 mb-3 text-xs",
+              "rounded-md border px-3 py-2 mb-3 text-xs space-y-1",
               isOverBudget
                 ? "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"
                 : "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400",
             )}
           >
-            <span>
-              Total: {currency} {fmt(grandTotal)}
-            </span>
-            <span>
-              Limit: {currency} {fmt(budgetLimit)}
-            </span>
-            <span>
-              {isOverBudget
-                ? `Over by ${currency} ${fmt(grandTotal - budgetLimit)}`
-                : `Remaining: ${currency} ${fmt(budgetLimit - grandTotal)}`}
-            </span>
+            <div className="flex items-center justify-between">
+              <span>
+                Total: {currency} {fmt(grandTotal)}
+              </span>
+              <span>
+                Limit: {currency} {fmt(budgetLimit)}
+              </span>
+              <span>
+                {isOverBudget
+                  ? `Over by ${currency} ${fmt(grandTotal - budgetLimit)}`
+                  : `Remaining: ${currency} ${fmt(budgetLimit - grandTotal)}`}
+              </span>
+            </div>
+            {/* Round 17: per-year totals strip */}
+            <div className="flex items-center justify-between text-[10px] opacity-80 pt-1 border-t border-current/10">
+              {yearTotals.map((yt, i) => (
+                <span key={i}>
+                  Year {i + 1}: {currency} {fmt(yt)}
+                </span>
+              ))}
+            </div>
           </div>
         )}
+
+        {/* Round 17: scheme-cap compliance chip strip (GET only for now) */}
+        {schemeCaps && grandTotal > 0 && (() => {
+          const travelTotal = rows
+            .filter((r) => r.category === "Travel")
+            .reduce((sum, r) => sum + r.amounts.reduce((a, b) => a + b, 0), 0);
+          const equipmentTotal = rows
+            .filter((r) => r.category === "Equipment")
+            .reduce((sum, r) => sum + r.amounts.reduce((a, b) => a + b, 0), 0);
+          const travelPct = (travelTotal / grandTotal) * 100;
+          const equipmentPct = (equipmentTotal / grandTotal) * 100;
+          const chipClass = (pct: number, cap: number) => {
+            if (pct > cap)
+              return "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400";
+            if (pct > cap * 0.8)
+              return "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400";
+            return "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400";
+          };
+          return (
+            <div className="flex flex-wrap items-center gap-2 mb-3 text-[10px]">
+              <span className="text-muted-foreground">Funder caps:</span>
+              <span
+                className={cn(
+                  "rounded-full border px-2 py-0.5",
+                  chipClass(travelPct, schemeCaps.travelPct),
+                )}
+              >
+                Travel {travelPct.toFixed(1)}% / {schemeCaps.travelPct}%
+                {travelPct > schemeCaps.travelPct ? " over" : ""}
+              </span>
+              <span
+                className={cn(
+                  "rounded-full border px-2 py-0.5",
+                  chipClass(equipmentPct, schemeCaps.equipmentPct),
+                )}
+              >
+                Equipment {equipmentPct.toFixed(1)}% / {schemeCaps.equipmentPct}%
+                {equipmentPct > schemeCaps.equipmentPct ? " over" : ""}
+              </span>
+            </div>
+          );
+        })()}
 
         {/* Categories */}
         <div className="space-y-4 overflow-x-auto">
@@ -551,18 +626,18 @@ function BudgetTableUI({
                   <table className="w-full text-xs mb-1">
                     <thead>
                       <tr className="border-b border-phase-4/20">
-                        <th className="text-left py-1 px-1 text-muted-foreground font-medium w-32">
+                        <th className="text-left py-1 px-1 text-muted-foreground font-medium w-56">
                           Item
                         </th>
                         {Array.from({ length: years }, (_, i) => (
                           <th
                             key={i}
-                            className="text-right py-1 px-1 text-muted-foreground font-medium w-24"
+                            className="text-right py-1 px-1 text-muted-foreground font-medium w-20"
                           >
                             Year {i + 1}
                           </th>
                         ))}
-                        <th className="text-right py-1 px-1 text-muted-foreground font-medium w-24">
+                        <th className="text-right py-1 px-1 text-muted-foreground font-medium w-20">
                           Total
                         </th>
                         <th className="text-left py-1 px-1 text-muted-foreground font-medium">
@@ -577,12 +652,23 @@ function BudgetTableUI({
                         return (
                           <tr key={row.id} className="border-b border-border">
                             <td className="py-1 px-0.5">
-                              <Input
-                                value={row.item}
-                                onChange={(e) => updateRow(row.id, "item", e.target.value)}
-                                className="h-6 text-[11px]"
-                                placeholder="Item name"
-                              />
+                              <div className="flex items-center gap-1">
+                                {row.vot && (
+                                  <span
+                                    className="shrink-0 rounded bg-phase-4/15 text-phase-4 px-1 py-0.5 text-[9px] font-mono"
+                                    title={`MOHE Vot ${row.vot}`}
+                                  >
+                                    {row.vot}
+                                  </span>
+                                )}
+                                <Input
+                                  value={row.item}
+                                  onChange={(e) => updateRow(row.id, "item", e.target.value)}
+                                  className="h-6 text-[11px]"
+                                  placeholder="Item name"
+                                  title={row.item || undefined}
+                                />
+                              </div>
                             </td>
                             {Array.from({ length: years }, (_, yi) => (
                               <td key={yi} className="py-1 px-0.5">
@@ -608,6 +694,7 @@ function BudgetTableUI({
                                 }
                                 className="h-6 text-[11px]"
                                 placeholder="Justification"
+                                title={row.justification || undefined}
                               />
                             </td>
                             <td className="py-1 px-0.5">
@@ -641,19 +728,37 @@ function BudgetTableUI({
           <div className="flex items-center gap-2 text-xs">
             <span className="font-medium text-foreground flex-1">Grand Total</span>
             {yearTotals.map((yt, i) => (
-              <span key={i} className="w-24 text-right text-muted-foreground">
+              <span key={i} className="w-20 text-right text-muted-foreground">
                 {fmt(yt)}
               </span>
             ))}
             <span
               className={cn(
-                "w-24 text-right font-bold",
+                "w-20 text-right font-bold",
                 isOverBudget ? "text-red-500" : "text-foreground",
               )}
             >
               {currency} {fmt(grandTotal)}
             </span>
           </div>
+        </div>
+
+        {/* Round 17: canonical Step 2→3 advance trigger (mirrors Round 15.3 Role Matrix Continue) */}
+        <div className="mt-3 pt-3 border-t border-phase-4/20 flex justify-end">
+          <Button
+            size="sm"
+            onClick={() => {
+              window.dispatchEvent(
+                new CustomEvent("grant-suite:expand-step", {
+                  detail: { phase: 4, step: 3 },
+                }),
+              );
+            }}
+            className="h-8 gap-1 bg-phase-4 hover:bg-phase-4/90 text-white"
+          >
+            Continue
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Button>
         </div>
       </CardContent>
     </Card>
@@ -752,12 +857,16 @@ function parseBudgetJson(content: string, years: number): BudgetRow[] {
           .slice(0, years)
           .map((n) => (typeof n === "number" && !isNaN(n) ? n : 0));
         while (amounts.length < years) amounts.push(0);
+        const rawVot = typeof r.vot === "string" ? r.vot.trim() : "";
+        // Round 17: capture Vot code, treat "—" / "-" / empty as undefined (no badge displayed).
+        const vot = rawVot && rawVot !== "—" && rawVot !== "-" ? rawVot : undefined;
         return {
           id: crypto.randomUUID(),
           category,
           item: typeof r.item === "string" ? r.item : "",
           amounts,
           justification: typeof r.justification === "string" ? r.justification : "",
+          vot,
         };
       })
       .filter((r) => r.item.length > 0 && r.amounts.some((a) => a > 0));
@@ -774,17 +883,30 @@ function budgetToMarkdown(rows: BudgetRow[], years: number, currency: string): s
 
   const fmt = (n: number) => n.toLocaleString();
 
+  // Round 17: include Vot column in markdown only when at least one row carries
+  // a Vot code. Keeps non-MOHE projects' assembled docs clean.
+  const hasAnyVot = rows.some((r) => r.vot);
+
   for (const cat of BUDGET_CATEGORIES) {
     const catRows = rows.filter((r) => r.category === cat);
     if (catRows.length === 0) continue;
 
     md += `### ${cat}\n\n`;
-    md += `| Item | ${yearHeaders.join(" | ")} | Total | Justification |\n`;
-    md += `|------|${yearHeaders.map(() => "-------").join("|")}|-------|---------------|\n`;
+    if (hasAnyVot) {
+      md += `| Item | ${yearHeaders.join(" | ")} | Total | Vot | Justification |\n`;
+      md += `|------|${yearHeaders.map(() => "-------").join("|")}|-------|-----|---------------|\n`;
+    } else {
+      md += `| Item | ${yearHeaders.join(" | ")} | Total | Justification |\n`;
+      md += `|------|${yearHeaders.map(() => "-------").join("|")}|-------|---------------|\n`;
+    }
 
     for (const row of catRows) {
       const total = row.amounts.reduce((a, b) => a + b, 0);
-      md += `| ${row.item} | ${row.amounts.map((a) => fmt(a)).join(" | ")} | ${fmt(total)} | ${row.justification} |\n`;
+      if (hasAnyVot) {
+        md += `| ${row.item} | ${row.amounts.map((a) => fmt(a)).join(" | ")} | ${fmt(total)} | ${row.vot || "—"} | ${row.justification} |\n`;
+      } else {
+        md += `| ${row.item} | ${row.amounts.map((a) => fmt(a)).join(" | ")} | ${fmt(total)} | ${row.justification} |\n`;
+      }
     }
     md += "\n";
   }
@@ -1358,13 +1480,21 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
                             additionalFields={budgetAdditionalFields}
                             onComplete={() => {
                               loadDocuments(projectId);
-                              advanceToNextStep(projectId, 4, 2);
+                              // Round 17: scroll to Budget Table instead of auto-advancing.
+                              // User reviews/edits the Budget Table below, then clicks its
+                              // Continue button. Mirrors Round 15.3 Step 1 → Role Matrix flow.
+                              setTimeout(() => {
+                                document
+                                  .getElementById("phase4-budget-table")
+                                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                              }, 100);
                             }}
                           />
 
                           {/* Budget Table — show after step is complete or has output */}
                           {(isComplete || step2Output) && (
                             <motion.div
+                              id="phase4-budget-table"
                               initial={{ opacity: 0, y: 8 }}
                               animate={{ opacity: 1, y: 0 }}
                             >
@@ -1374,6 +1504,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
                                 years={budgetMeta.duration}
                                 budgetLimit={budgetMeta.budgetLimit}
                                 currency={budgetMeta.currency}
+                                grantScheme={activeProject?.grantScheme}
                               />
                             </motion.div>
                           )}
