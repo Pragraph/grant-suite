@@ -43,6 +43,7 @@ import {
 import { MarkdownRenderer } from "@/components/document/MarkdownRenderer";
 import { StepExecutor } from "@/components/phase/StepExecutor";
 import { JumpToStartButton } from "@/components/shared/JumpToStartButton";
+import { PhaseCompleteCTA } from "@/components/shared/PhaseCompleteCTA";
 import { PhaseDangerZone } from "@/components/shared/PhaseDangerZone";
 
 // ─── Phase 4 definition ────────────────────────────────────────────────────
@@ -1144,13 +1145,15 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
 
   const handleStep3Complete = useCallback(() => {
     loadDocuments(projectId);
-    // Trigger assembly after a short delay to allow document to save
+    // Round 19: removed auto-popup of Assembly Preview modal. The assembly-success
+    // card below exposes a voluntary "Preview Assembled Document" button, and the
+    // PhaseCompleteCTA at the bottom of the page handles Phase 4 → Phase 5.
     setTimeout(() => {
-      const content = assembleDocument();
-      setAssembledContent(content);
-      setShowAssemblyPreview(true);
-    }, 500);
-  }, [projectId, loadDocuments, assembleDocument]);
+      document
+        .getElementById("phase4-assembly-success")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+  }, [projectId, loadDocuments]);
 
   const handleConfirmAssembly = useCallback(async () => {
     const content = assembledContent || assembleDocument();
@@ -1527,6 +1530,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
                           {/* Assembly success indicator */}
                           {isComplete && (
                             <motion.div
+                              id="phase4-assembly-success"
                               initial={{ opacity: 0, scale: 0.95 }}
                               animate={{ opacity: 1, scale: 1 }}
                               className="rounded-lg border border-accent-500/30 bg-accent-500/5 p-4"
@@ -1565,6 +1569,14 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
           );
         })}
       </div>
+
+      {/* Round 19: Phase 4 → Phase 5 advance affordance. Renders only when
+          phaseCompletion === 100. Mirrors Phase1/2/3Client canonical pattern. */}
+      <PhaseCompleteCTA
+        projectId={projectId}
+        phase={4}
+        phaseCompletion={phaseCompletion}
+      />
 
       {/* ── Assembly Preview Modal ─────────────────────────────────────── */}
       <Dialog open={showAssemblyPreview} onOpenChange={setShowAssemblyPreview}>
