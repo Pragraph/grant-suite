@@ -261,63 +261,81 @@ This section embeds upstream JSON blocks verbatim.
 
 **Key justification points** in 3-5 bullets, each pointing to a specific budget line and its activity linkage to a Research Design work package. Source: Budget_Justification.md §2 through §7.
 
-{{#if Partnership_Plan.md}}
 ### §6 — Partnership & Collaboration
 
+{{#if Partnership_Plan.md}}
 From Partnership_Plan.md:
 
 - **Partner organizations** as a table with columns Partner | Type (industry / academic / community) | Role in project | Letter status (✓ / ✗ / Pending verification). No tags in cells.
 - **Collaboration framework** in one paragraph: how the partnerships fit the funder's evidence-of-collaboration requirement.
 - **Letters of support outstanding** as a bulleted list naming each missing letter with a target date, or tag in adjacent prose \`[USER INPUT NEEDED: confirm letter target date for <partner>]\`.
 {{/if}}
+{{#unless Partnership_Plan.md}}
+Partnership_Plan.md was not provided. State this absence in one sentence and tag with \`[USER INPUT NEEDED: provide Partnership_Plan.md from Phase 3A or supply partner roster and collaboration framework manually]\`. Do not invent partner names, organization types, roles, or letter statuses. Proceed to §7.
+{{/unless}}
 
-{{#if Patent_Analysis.md}}
 ### §7 — Novelty & IP Landscape
 
+{{#if Patent_Analysis.md}}
 From Patent_Analysis.md:
 
 - **Key prior art findings** in one paragraph: the closest 2-3 existing patents or publications and what they do.
 - **Novelty claims** as a numbered list. Each claim states what this project does that the prior art does not. Cite specific patents or publications in each claim.
 - **IP strategy** in one paragraph: filing intent, freedom-to-operate position, institutional IP ownership pathway. Tag any commercial-pathway claim with \`[VERIFY: <hint>]\` in adjacent prose if the source is exploratory.
 {{/if}}
+{{#unless Patent_Analysis.md}}
+Patent_Analysis.md was not provided. State this absence in one sentence and tag with \`[USER INPUT NEEDED: provide Patent_Analysis.md from Phase 3B or supply prior-art findings, novelty claims, and IP strategy manually]\`. Do not invent patent numbers, assignees, or freedom-to-operate positions. Proceed to §8.
+{{/unless}}
 
-{{#if SDG_Alignment.md}}
 ### §8 — SDG Alignment
 
+{{#if SDG_Alignment.md}}
 From SDG_Alignment.md:
 
 - **Relevant SDGs** with SDG number, title, and specific target (e.g., "SDG 3.4: Reduce premature mortality from non-communicable diseases by one third by 2030").
 - **Alignment rationale** in one paragraph per SDG explaining how this project contributes specifically. No generic alignment claims.
 {{/if}}
+{{#unless SDG_Alignment.md}}
+SDG_Alignment.md was not provided. State this absence in one sentence and tag with \`[USER INPUT NEEDED: provide SDG_Alignment.md from Phase 3C or supply relevant SDGs and alignment rationale manually]\`. Do not invent SDG numbers, targets, or alignment claims. Proceed to §9.
+{{/unless}}
 
-{{#if National_Alignment.md}}
 ### §9 — National Priority Alignment
 
+{{#if National_Alignment.md}}
 From National_Alignment.md:
 
 - **Relevant national priorities** with policy document name and specific clause (e.g., "RMKe-13 Thrust 2: Health and Wellbeing, Strategy B2: Strengthen non-communicable disease prevention and management").
 - **Alignment rationale** in one paragraph per priority. No platitudes.
 {{/if}}
+{{#unless National_Alignment.md}}
+National_Alignment.md was not provided. State this absence in one sentence and tag with \`[USER INPUT NEEDED: provide National_Alignment.md from Phase 3C or supply relevant national policies and clauses manually]\`. Do not invent policy document names, thrust numbers, or strategy codes. Proceed to §10.
+{{/unless}}
 
-{{#if KPI_Plan.md}}
 ### §10 — KPIs & Success Metrics
 
+{{#if KPI_Plan.md}}
 From KPI_Plan.md:
 
 - **KPIs** as a table with columns Indicator | Baseline | Year 1 Target | Year 2 Target | Year 3 Target | Measurement Method. No tags in cells.
 - **Success thresholds** in a short paragraph identifying which KPIs are floor (must achieve) vs ceiling (stretch).
 - Apply \`[USER INPUT NEEDED: provide baseline measurement for <KPI>]\` in adjacent prose for any KPI with no baseline.
 {{/if}}
+{{#unless KPI_Plan.md}}
+KPI_Plan.md was not provided. State this absence in one sentence and tag with \`[USER INPUT NEEDED: provide KPI_Plan.md from Phase 3C or supply KPI indicators, baselines, year-by-year targets, and measurement methods manually]\`. Do not invent KPI names, baselines, targets, or measurement methods. Proceed to §11.
+{{/unless}}
 
-{{#if Researcher_Profile.md}}
 ### §11 — Researcher Profile & Track Record
 
+{{#if Researcher_Profile.md}}
 From Researcher_Profile.md, verbatim. No reframing beyond clarity. No embellishment.
 
 - **PI track record** as 3-5 bullets, each one quantified achievement (publications, citations, grants, patents). Numbers and dates verbatim from source.
 - **Recent grants and outcomes** as a small table with columns Grant | Funder | Amount | Period | Outcome. Outcome is one phrase per row with no value-laden adjectives. No tags in cells.
 - **Alignment with this grant's criteria** in one paragraph mapping specific PI experience to specific funder requirements. If a criterion is unmet, state the gap plainly and tag in adjacent prose with \`[USER INPUT NEEDED: confirm gap mitigation strategy for <criterion>]\`.
 {{/if}}
+{{#unless Researcher_Profile.md}}
+Researcher_Profile.md was not provided. State this absence in one sentence and tag with \`[USER INPUT NEEDED: provide Researcher_Profile.md from Phase 3C or supply PI track record, recent grants, and criterion alignment manually]\`. Do not invent publication counts, citation counts, grant amounts, dates, or institutional affiliations. The downstream Step 7 (Supporting Documents) prompt depends on this section being verifiable. Proceed to §12.
+{{/unless}}
 
 ### §12 — Cross-Reference Matrix
 
