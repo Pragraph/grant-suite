@@ -103,8 +103,8 @@ Your output succeeds when:
 - **Funder prohibitions are absolute.** If Grant Intelligence states an item is prohibited, omit the row entirely. Do not include "0-value with apology" rows like "PI honorarium | 0 | 0 | 0 | 0 | GET prohibits honoraria." Just don't produce the row.
 - **Funder caps enforced inline.** Show cap compliance in row justifications where relevant.
 - **Personnel rates respect funder rules.** For MOHE GET: PhD GRA ≤ RM3,000/month, Master's GRA ≤ RM2,500/month.
-- **Quotation tags on high-value rows.** Single items > RM3,000 carry \`[VERIFY: supplier quotation required]\` in the justification. Use UPPERCASE \`VERIFY\` with colon-hint syntax — the in-app placeholder resolver only recognizes canonical tag names (\`CITATION NEEDED\`, \`USER INPUT NEEDED\`, \`VERIFY\`, \`ESTIMATED\`, \`CHECK DATE\`).
-- **User-input tags on uncertain values.** Rates, eligibility, institutional rules carry \`[USER INPUT NEEDED: <what to confirm>]\` in the justification.
+- **Quotation tags on high-value rows.** Single items > RM3,000 carry \`[VERIFY: supplier quotation required]\` in the **narrative table justification cell only** (Part 1). The JSON \`justification\` field (Part 3) carries the same prose with the tag removed. Use UPPERCASE \`VERIFY\` with colon-hint syntax — the in-app placeholder resolver only recognizes canonical tag names (\`CITATION NEEDED\`, \`USER INPUT NEEDED\`, \`VERIFY\`, \`ESTIMATED\`, \`CHECK DATE\`). Lowercase or non-canonical variants (\`[verify quotation]\`, \`[needs citation]\`) are NEVER recognized — use canonical syntax only.
+- **User-input tags on uncertain values.** Rates, eligibility, institutional rules carry \`[USER INPUT NEEDED: <what to confirm>]\` in the **narrative table justification cell only** (Part 1). The JSON \`justification\` field (Part 3) carries the same prose with the tag removed.
 
 ## STOP RULES
 
@@ -117,7 +117,8 @@ Do not produce any of the following. Each is a failure of the round:
 5. **Items not justified by Research Design.** Every row exists because some specific activity in the Research Design requires it. Generic items without activity linkage do not appear.
 6. **Generic placeholder text in amount cells.** No "...", no "TBD" without a [USER INPUT NEEDED] tag, no "varies", no "as needed". Give a specific number. If you must estimate, tag with [USER INPUT NEEDED].
 7. **Duplicate (category, item) tuples.** Each (category, item) pair appears exactly once across all rows.
-8. **JSON block divergent from narrative tables.** The narrative tables in Part 1 and the JSON block in Part 3 must contain identical data. If you cannot guarantee agreement, produce only the JSON block (the narrative is optional, the JSON is the source of truth for tooling).
+8. **JSON block divergent from narrative tables.** The narrative tables in Part 1 and the JSON block in Part 3 must contain identical NUMERIC and STRUCTURAL data (same items, same amounts, same Vot codes, same activity-linkage prose). The only permitted difference is bracket tags: narrative justifications carry \`[VERIFY: ...]\` and \`[USER INPUT NEEDED: ...]\` tags inline; JSON justifications carry the same prose with those bracket tags stripped out. If you cannot guarantee agreement, produce only the JSON block (the narrative is optional, the JSON is the source of truth for tooling).
+9. **Lowercase or non-canonical tag names anywhere in the output.** \`[verify quotation]\`, \`[needs citation]\`, \`[check this]\`, \`[tbd]\`, or any free-form lowercase bracket is silently ignored by the in-app placeholder resolver and renders as inert prose. Use ONLY the five canonical UPPERCASE tag types with optional colon-hint syntax: \`[CITATION NEEDED: <hint>]\`, \`[USER INPUT NEEDED: <what to confirm>]\`, \`[VERIFY: <hint>]\`, \`[ESTIMATED: <hint>]\`, \`[CHECK DATE: <hint>]\`. Brackets in any other form are a hard failure of the round.
 
 ## OUTPUT STRUCTURE
 
@@ -149,7 +150,7 @@ Rules for narrative tables:
 
 - Year and Total columns hold NUMERIC values only. No text, no "...", no "—" in amount cells.
 - Vot column holds the funder's native code as a string (e.g., "11000") or "—" if the funder uses no codes.
-- Justification column carries the activity link AND any \`[VERIFY: <hint>]\` / \`[USER INPUT NEEDED: <what to confirm>]\` tags inline.
+- Justification column carries the activity link AND any \`[VERIFY: <hint>]\` / \`[USER INPUT NEEDED: <what to confirm>]\` tags inline. Tags use canonical UPPERCASE syntax only — lowercase variants are invisible to the placeholder resolver. **Tags appear ONLY in this narrative justification column, NOT in the Part 3 JSON \`justification\` field.**
 
 ### Part 2: Budget Notes (prose only — no numeric tables)
 
@@ -174,14 +175,14 @@ Place this as the LAST section of the output, inside a single fenced JSON code b
       "item": "PhD GRA — prediction modelling and pilot documentation",
       "amounts": [18000, 24000, 18000],
       "vot": "11000",
-      "justification": "Supports dataset construction, model documentation, pilot logging, manuscript preparation. 30 funded months at RM2,000/month average. [USER INPUT NEEDED: confirm PhD vs Master's rate.]"
+      "justification": "Supports dataset construction, model documentation, pilot logging, and manuscript preparation. Budgeted at RM2,000/month average for 30 funded months, below the GET PhD GRA cap of RM3,000/month."
     },
     {
       "category": "Other",
       "item": "EHR data extraction service",
       "amounts": [18000, 6000, 0],
       "vot": "29000",
-      "justification": "Vot 29000 professional service. SQL extraction, data dictionary, de-identification workflow. [VERIFY: supplier quotation required]"
+      "justification": "Vot 29000 professional service covering SQL extraction, data dictionary construction, and de-identification workflow for the retrospective EHR cohort."
     }
   ],
   "budget_summary": {
@@ -211,7 +212,7 @@ JSON schema rules (STRICT — violations break the downstream parser):
 - \`amounts\` is an array of exactly {{projectDuration}} numbers. Whole numbers preferred. No strings, no nulls.
 - \`vot\` is a string. For MOHE: one of "11000", "21000", "24000", "27000", "28000", "29000", "35000". For non-MOHE funders or rows that map to no funder code: "—". Never null, never missing.
 - \`item\` is a non-empty string, unique within its category (no duplicate (category, item) tuples across budget_rows).
-- \`justification\` is a non-empty string. May contain inline \`[VERIFY: <hint>]\` or \`[USER INPUT NEEDED: <what to confirm>]\` tags. Both use UPPERCASE canonical syntax recognized by the in-app resolver.
+- \`justification\` is a non-empty string of plain prose, 1-3 sentences, naming a specific Research Design activity, phase, or work package. **It MUST NOT contain any bracket tags** (\`[VERIFY: ...]\`, \`[USER INPUT NEEDED: ...]\`, \`[CITATION NEEDED: ...]\`, or any other bracketed marker). Bracket tags belong only in Part 1's narrative justification cells, where the in-app placeholder resolver can act on them. The JSON \`justification\` is the post-resolution clean form that the Budget Table UI displays directly.
 - \`budget_summary.by_category\` arrays have length exactly {{projectDuration}}. Aggregations match \`budget_rows\` exactly.
 - \`budget_summary.grand_total\` equals sum of all flattened \`budget_rows.amounts\` AND sum of \`budget_summary.by_year\`.
 - \`compliance.notes\` is a single sentence.
