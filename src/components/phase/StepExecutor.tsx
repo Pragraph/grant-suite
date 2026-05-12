@@ -758,6 +758,8 @@ export function StepExecutor({
         careerStage: activeProject.careerStage,
         targetFunder: activeProject.targetFunder,
         budgetRange: activeProject.budgetRange,
+        grantScheme: activeProject.grantScheme,
+        grantName: activeProject.grantScheme,
         grantSubCategory: titleCase(activeProject.grantSubCategory),
       },
       documents: documentMap,
