@@ -190,6 +190,8 @@ Do not produce any of the following. Each is a failure of the round:
     - "Current DKD screening in Malaysian Klinik Kesihatan relies on passive annual UACR/eGFR testing with no risk-prioritisation; the only Asian-derived models (2 of 23 published) exclude the ethnicity stratification this work delivers."
     The first 20-30 words MUST contain the competitive comparator, not the generic problem framing. SUCCESS CRITERIA 10 governs the affirmative requirement; STOP RULE 29 enforces the negative.
 
+30. **Tick-list section structure — banned (elevator-pitch failure).** Sections MUST NOT read as N independent sentences each delivering one rule-compliance element ("first sentence carries the output, second sentence carries the KPI, third sentence carries capacity-building, fourth sentence carries budget anchor"). This pattern is rule-compliant but reads as a checkbox exercise and fails the elevator-pitch criterion that executive summaries must satisfy. Each section is ONE integrated argument; required elements appear embedded in the narrative, not as separate items in a sequence. The test: if removing any one required element from the section still leaves coherent argument prose, the element was integrated; if removing it collapses the prose into disconnected fragments, the section was a stack of items. If you find yourself starting a new sentence to carry a different required element, integrate it into the previous sentence instead. Most-enforced for Expected Output / Outcomes / Implications (high inventory risk: outputs + KPI + capacity-building + budget anchor + implication all required) and Significance of Output (medium inventory risk: cost-of-inaction + adoption pathway + ROV + TRL + policy alignment). Required elements per section are listed under OUTPUT STRUCTURE; the listing is for completeness, not for direct translation to sentence-per-bullet prose.
+
 ---
 
 ## OUTPUT STRUCTURE
@@ -235,21 +237,33 @@ Specificity matters most here. If a sentence could appear in any clinical-AI pro
 ### Expected Output / Outcomes / Implications
 Word budget: 0.20 × {{wordLimit}} words. At {{wordLimit}}=300, target 60 words; hard cap 66. At {{wordLimit}}=500, target 100; hard cap 110.
 
-Content to include:
-- 1 to 2 concrete outputs from §4's expected-outputs list, quantified (e.g., "1 patent filing, 1 PhD trained, an SOP toolkit deployable in 4 Klinik Kesihatan sites"). NOT the full inventory — pick the two most reviewer-relevant outputs and commit to numbers.
-- **KPI benchmarking REQUIRED for every numeric figure** (per STOP RULE 27). Each percentage or absolute number carries baseline OR comparator. "A 15% UACR action increase" fails. "From baseline ~30% UACR follow-up to ≥45% (15-point absolute increase) by month 36" passes. "A 15-point absolute increase over matched-control clinics during the pilot" passes. If the baseline is not available from §4 or §10, tag with \`[VERIFY: baseline value needed for KPI benchmarking]\` rather than presenting the unbenchmarked figure.
-- **Capacity-building output REQUIRED for 3-year RM250K-class projects.** At least ONE capacity signal MUST appear as one of the 1-2 listed outputs. Options: "1 PhD GRA trained", "1 Masters student trained", "N clinic-staff trained in [specific skill]", "integration into [named institutional] curriculum". The trainee or training output is the institutional knowledge carrier for adoption after the grant closes; reviewers form low-confidence judgments on multi-year multi-RM-class projects without one. If §4 or §5 carries capacity-building content, use it verbatim. If neither carries one, tag with \`[USER INPUT NEEDED: capacity-building output count and type needed for 3-year project]\` and continue — do NOT omit.
-- **Optional budget anchor:** ONE clause referencing the funded ask within the scheme ceiling, only if it strengthens the case (e.g., "within the RM250,000 GET ceiling over 36 months"). Reviewers reward ceiling-aware applicants but not over-explained budget rationale (that belongs in Phase 5 Step 6 Budget Justification).
-- The implication for the field, system, or beneficiary, as a single concrete consequence (e.g., "the first Malaysian fairness-audited DKD screening evidence", "policy-ready risk-action SOP for KKM primary-care adoption").
+**This section is the elevator pitch's payoff line.** NOT a tick-list of deliverables (STOP RULE 30). Write it as ONE integrated argument linking outputs to their measurable impact for a named beneficiary, so a reviewer at 11pm thinks "this project matters and the team can do it." 2-3 connected sentences where each sentence advances the case. NOT one sentence per required element.
 
-Avoid the trap of listing every deliverable. Two concrete outputs with their implication beat eleven outputs with no through-line. This section names WHAT the project produces; the next section (Significance of Output) names WHY that production matters.
+Required elements (integrated into 2-3 sentences, NOT as separate sentences each carrying one element):
+- 1 to 2 concrete outputs from §4's expected-outputs list, quantified.
+- KPI benchmarking for every numeric figure (per STOP RULE 27): baseline+target, comparator, or \`[VERIFY: baseline value needed for KPI benchmarking]\` tag.
+- ONE capacity-building output (1 PhD GRA, 1 Masters, N clinic-staff trained, named institutional curriculum integration). If §4/§5 carries one, use verbatim. If neither, tag with \`[USER INPUT NEEDED: capacity-building output count and type needed for 3-year project]\`.
+- Optional: budget anchor referencing scheme ceiling, ONE clause only if it strengthens the case.
+- The implication for the field, system, or named beneficiary, as a single concrete consequence.
+
+**Bad (rule-compliant but tick-list, fails STOP RULE 30):**
+"By month 36, the project delivers 1 IP filing for the risk-action ruleset and trains 1 PhD GRA as the analytics continuity holder. The pilot targets a 15-point UACR action increase over baseline usual-care patterns, \`[VERIFY: baseline value needed]\`. Outputs sit within RM243,000 against the RM250,000 GET ceiling."
+↑ Three detached sentences, each carrying one required element. Reads as checkbox exercise. Reviewer sees a list of compliance items, not an argument.
+
+**Good (integrated argument, passes STOP RULE 30):**
+"Within 36 months and within the RM250,000 GET ceiling, the project delivers a fairness-audited DKD risk-action workflow ready for MOH primary-care adoption review — currently the only Asian-derived alternative to US/EU-trained models. The pilot demonstrates a 15-point UACR action increase over the current ~30% Klinik Kesihatan baseline \`[VERIFY: baseline value needed]\`, with 1 PhD GRA trained as the institutional continuity holder for adoption beyond month 36."
+↑ Two integrated sentences. Outputs, KPI, capacity-building, budget anchor, and implication ALL embedded in narrative. Argues for impact AND feasibility.
+
+The test: if your draft reads as a sequence of independent sentences each carrying one required element, STOP RULE 30 failed. Rewrite as integrated narrative. This section names WHAT the project produces; the next section (Significance of Output) names WHY that production matters.
 
 ### Significance of Output
 Word budget: 0.20 × {{wordLimit}} words. At {{wordLimit}}=300, target 60 words; hard cap 66. At {{wordLimit}}=500, target 100; hard cap 110.
 
 This is the section MyGRANTS form D(i) explicitly names "kepentingan output daripada projek penyelidikan" / "significance of output from the research project". It is NOT interchangeable with Expected Output. Expected Output names what gets produced; Significance names why that production matters for a specific person making a specific decision.
 
-Content to include:
+**This section is the elevator pitch's "why this matters" close.** NOT a tick-list of impact angles (STOP RULE 30). Write it as ONE integrated argument linking the cost of inaction for a named beneficiary to the specific adoption mechanism that delivers Return of Value. 2-3 connected sentences. Opening sentence names beneficiary + cost-of-inaction; subsequent sentences name the adoption pathway, ROV mechanism, and TRL exit state EMBEDDED in deliverable language — NOT as separate items each in its own sentence.
+
+Content to include (integrated into 2-3 sentences per the directive above, NOT as separate sentences each carrying one element):
 - The concrete consequence of NOT doing this work, named for a specific beneficiary (e.g., "clinicians at Klinik Kesihatan", not "stakeholders") and a specific decision point (e.g., "before eGFR crosses 60", not "in clinical practice").
 - The adoption pathway: who uses the output after the grant, and through which institutional route (e.g., "KKM primary-care SOP through MOH Family Health Development Division", or "MOH policy unit through Malaysian Primary Care Digital Health Unit liaison"). A partner-name clause from §6 fits here if the partner is the adoption route.
 - The funder's ROV phrasing verbatim from §2 (for GET: "Return of Value" or "ROV"). Significance is where ROV does its work — name the value that returns, to whom, and through what mechanism.
