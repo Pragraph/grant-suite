@@ -29,7 +29,7 @@ Your task is to translate the Research Design and Team Strategy into a line-item
 - Drives Personnel rows from the Team Strategy's recommended_roles JSON (each role is a row, sized by effort %).
 - Respects every funder-specific prohibition by OMITTING the prohibited item entirely (never include zero-value placeholder rows).
 - Links every cost to a specific Research Design activity, phase, or work package.
-- Carries per-row \`[verify quotation]\` and \`[USER INPUT NEEDED: <what to confirm>]\` tags where institutional rates, eligibility, or supplier quotes require human verification.
+- Carries per-row \`[VERIFY: <hint>]\` and \`[USER INPUT NEEDED: <what to confirm>]\` tags where institutional rates, eligibility, or supplier quotes require human verification. Tag names are UPPERCASE — the in-app placeholder resolver only recognizes canonical syntax.
 
 ## USER CONTEXT
 - **Field/Discipline:** {{discipline}}
@@ -79,7 +79,7 @@ Use MOHE Vot codes as the value of the \`vot\` field on each budget row. Each Vo
 - Travel (Vot 21000) ≤ 20% of total budget under GET.
 - Equipment (Vot 35000) ≤ 30% of total budget under GET.
 - Special services/short courses ≤ 5% of total budget.
-- Single items > RM3,000 require \`[verify quotation]\` tag.
+- Single items > RM3,000 require a \`[VERIFY: supplier quotation required]\` tag appended to the row's justification.
 
 **Budget philosophy (GET):** Principle of Commensurability — ROV must be commensurate with the budget requested. Over-requesting with weak ROV projections is a red flag. Stay 2-5% below ceiling to signal genuine costing.
 {{/if}}
@@ -103,7 +103,7 @@ Your output succeeds when:
 - **Funder prohibitions are absolute.** If Grant Intelligence states an item is prohibited, omit the row entirely. Do not include "0-value with apology" rows like "PI honorarium | 0 | 0 | 0 | 0 | GET prohibits honoraria." Just don't produce the row.
 - **Funder caps enforced inline.** Show cap compliance in row justifications where relevant.
 - **Personnel rates respect funder rules.** For MOHE GET: PhD GRA ≤ RM3,000/month, Master's GRA ≤ RM2,500/month.
-- **Quotation tags on high-value rows.** Single items > RM3,000 carry \`[verify quotation]\` in the justification.
+- **Quotation tags on high-value rows.** Single items > RM3,000 carry \`[VERIFY: supplier quotation required]\` in the justification. Use UPPERCASE \`VERIFY\` with colon-hint syntax — the in-app placeholder resolver only recognizes canonical tag names (\`CITATION NEEDED\`, \`USER INPUT NEEDED\`, \`VERIFY\`, \`ESTIMATED\`, \`CHECK DATE\`).
 - **User-input tags on uncertain values.** Rates, eligibility, institutional rules carry \`[USER INPUT NEEDED: <what to confirm>]\` in the justification.
 
 ## STOP RULES
@@ -149,7 +149,7 @@ Rules for narrative tables:
 
 - Year and Total columns hold NUMERIC values only. No text, no "...", no "—" in amount cells.
 - Vot column holds the funder's native code as a string (e.g., "11000") or "—" if the funder uses no codes.
-- Justification column carries the activity link AND any \`[verify quotation]\` / \`[USER INPUT NEEDED: ...]\` tags inline.
+- Justification column carries the activity link AND any \`[VERIFY: <hint>]\` / \`[USER INPUT NEEDED: <what to confirm>]\` tags inline.
 
 ### Part 2: Budget Notes (prose only — no numeric tables)
 
@@ -181,7 +181,7 @@ Place this as the LAST section of the output, inside a single fenced JSON code b
       "item": "EHR data extraction service",
       "amounts": [18000, 6000, 0],
       "vot": "29000",
-      "justification": "Vot 29000 professional service. SQL extraction, data dictionary, de-identification workflow. [verify quotation]"
+      "justification": "Vot 29000 professional service. SQL extraction, data dictionary, de-identification workflow. [VERIFY: supplier quotation required]"
     }
   ],
   "budget_summary": {
@@ -211,7 +211,7 @@ JSON schema rules (STRICT — violations break the downstream parser):
 - \`amounts\` is an array of exactly {{projectDuration}} numbers. Whole numbers preferred. No strings, no nulls.
 - \`vot\` is a string. For MOHE: one of "11000", "21000", "24000", "27000", "28000", "29000", "35000". For non-MOHE funders or rows that map to no funder code: "—". Never null, never missing.
 - \`item\` is a non-empty string, unique within its category (no duplicate (category, item) tuples across budget_rows).
-- \`justification\` is a non-empty string. May contain inline \`[verify quotation]\` or \`[USER INPUT NEEDED: ...]\` tags.
+- \`justification\` is a non-empty string. May contain inline \`[VERIFY: <hint>]\` or \`[USER INPUT NEEDED: <what to confirm>]\` tags. Both use UPPERCASE canonical syntax recognized by the in-app resolver.
 - \`budget_summary.by_category\` arrays have length exactly {{projectDuration}}. Aggregations match \`budget_rows\` exactly.
 - \`budget_summary.grand_total\` equals sum of all flattened \`budget_rows.amounts\` AND sum of \`budget_summary.by_year\`.
 - \`compliance.notes\` is a single sentence.
