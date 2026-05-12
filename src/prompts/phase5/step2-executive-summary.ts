@@ -6,7 +6,7 @@ export const template: PromptTemplate = {
   step: 2,
   name: "Executive Summary Writer",
   description:
-    "Draft a reviewer-grade executive summary with GET-weight-driven word allocation, anti-AI-voice discipline (Writer-Voice canonical), canonical tag handling, and a Promise Registry that Steps 3-8 must defend.",
+    "Draft a reviewer-grade executive summary aligned to MyGRANTS form D(i) content requirements (problem statement, objectives, methodology, expected output, significance), with anti-AI-voice discipline (Writer-Voice canonical), canonical tag handling, and a Promise Registry that Steps 3-8 must defend.",
   requiredInputs: ["discipline", "grantName", "country", "wordLimit"],
   optionalInputs: ["careerStage", "targetFunder", "Proposal_Data.md", "grantScheme"],
   outputName: "Executive_Summary_Draft.md",
@@ -41,9 +41,9 @@ The injected \`Proposal_Data.md\` is the single source of truth. Read these spec
 - **§3 Strategic Positioning** → competitive advantage, narrative arc beats, key claims the proposal must support. The Opening Frame draws directly from §3's competitive advantage paragraph.
 - **§4 Research Design Summary** → research questions verbatim (numbered), methodology overview, work packages, expected outputs.
 - **§5 Team & Budget Summary** → when §5 embeds the "Recommended Role Matrix scaffold" fenced JSON block, extract \`recommended_roles[].role\` and \`suggested_effort_pct\` verbatim. When §5 embeds the "Part 3: Machine-readable budget JSON" block, extract \`budget_summary.grand_total\` and \`compliance.ceiling\` verbatim. **Effort percentages and budget totals appear in this executive summary in their exact source-document form** (e.g., "25%" not "approximately 25%"; "RM243,000" not "approximately RM240,000").
-- **§6 Partnership & Collaboration** → partner organisation name and operational contribution. The funder requires industry/agency collaboration evidence; the executive summary names the partner and their concrete contribution.
+- **§6 Partnership & Collaboration** → partner organisation name and operational contribution. The executive summary does NOT contain a dedicated partnership section (per MyGRANTS form D(i) — partner LOI/MoU lives in form sections E/F and as attachment, not in D(i)). The partner may appear in Research Methodology if partner access is what makes the method feasible (e.g., "via the Klinik Kesihatan network coordinated through Malaysian Primary Care Digital Health Unit"), or in Significance of Output if the partner is the adoption pathway (e.g., "adoption supported by Malaysian Primary Care Digital Health Unit's MOH liaison role"). One clause maximum in either case, not a paragraph.
 - **§7 Novelty & IP Landscape** → novelty claim, IP filing intent.
-- **§11 Researcher Profile** → when present, extract verbatim PI track-record fact for the Team & Partnership section. When §11 carries a \`[USER INPUT NEEDED: ...]\` absence tag (Researcher_Profile.md not provided), preserve the absence with a fresh tag in this output and do not invent metrics.
+- **§11 Researcher Profile** → when present, extract verbatim PI track-record fact. The executive summary does NOT contain a dedicated team or PI-profile section (per MyGRANTS form D(i) — team composition and PI CV live in form sections E/F, not D(i)). PI track-record may appear in the Research Methodology section as a single-clause credibility signal ONLY when the track record makes the methodology more credible (e.g., "the team's prior DKD audit work in three KKM clinics underpins clinic-network access"). When §11 carries a \`[USER INPUT NEEDED: ...]\` absence tag (Researcher_Profile.md not provided), preserve the absence with a fresh tag if and only if PI track-record is referenced in Methodology; do not invent metrics. If PI track record is not load-bearing for any methodology or significance claim, do not reference it at all in D(i).
 
 **Absence rule.** If a fact is required by a section below but is absent from Proposal_Data.md (a section is empty or tag-routed to §13), preserve the absence with a fresh \`[USER INPUT NEEDED: <what to confirm>]\` tag in this output. Do not invent.
 
@@ -76,11 +76,11 @@ Your output succeeds when:
 1. **Prose word count within budget, and the declared count is true.** Total prose (above the \`---\` separator, excluding the title line) is between 90% and 100% of {{wordLimit}}. Hitting 280 words against a 300-word limit is acceptable; 240 words is under-developed and fails. The **Word count:** line shows the arithmetic per-section (N1 + N2 + N3 + N4 + N5 = TOTAL), TOTAL equals the actual sum within ±2, and TOTAL ≤ {{wordLimit}}. A fabricated count (declaring 295 when the actual prose is 404 words) is a hard failure regardless of section content quality.
 2. **Funder vocabulary mirrored verbatim.** Priority terminology, scheme name, score-weight category names, ROV phrasing — all appear in the executive summary in their exact §2-source form. A reviewer reading the executive summary sees their own assessment criteria reflected back.
 3. **Numeric agreement with §5 JSON.** Every effort percentage, team-member role count, budget total, and ceiling reference matches the embedded JSON exactly. No paraphrasing of numbers.
-4. **Section structure mandatory.** Five sections in this exact order: Opening Frame, Objectives & Hypothesis, Methodology Preview, Expected Results & ROV Preview, Team & Partnership. No reordering. No skipping. No section title variation.
-5. **GET weight allocation honoured.** When \`grantScheme = GET\`, word distribution across the five sections approximates 20/10/25/25/20. Methodology Preview and Expected Results & ROV each receive ~25% of the word budget because they map to the highest-weighted GET score items (20% each).
-6. **Promise Registry complete.** Every substantive claim in the executive summary has a corresponding row in the Promise Registry JSON with a downstream-step anchor and a Proposal_Data.md evidence source. Claims about methodology anchor to Methods (Step 3), claims about ROV anchor to Impact (Step 5), claims about IP anchor to Background (Step 4), claims about cost-effectiveness anchor to Budget Justification (Step 6), claims about team or partnership anchor to Supporting Documents (Step 7).
+4. **Section structure mandatory, aligned to MyGRANTS form D(i) content requirements.** Five sections in this exact order: Problem Statement, Objectives, Research Methodology, Expected Output / Outcomes / Implications, Significance of Output. This order and these labels mirror the form's stated content requirements (pernyataan masalah, objektif, metodologi penyelidikan, jangkaan output/hasil/implikasi, kepentingan output) verbatim. No reordering. No skipping. No section title variation. No Team & Partnership section in D(i) — team composition lives in MyGRANTS form sections E/F, not D(i).
+5. **Form-aligned word allocation.** Word distribution across the five sections approximates 20/10/30/20/20 (Problem Statement, Objectives, Research Methodology, Expected Output, Significance of Output). Research Methodology gets the largest share (30%) because reviewers decide execution-readiness here. Problem, Expected Output, and Significance get equal 20% each as the three make-the-case sections. Objectives is shortest at 10%. This allocation reflects MyGRANTS form D(i)'s content density requirements per stated element, NOT the overall GET scoring weights (which apply across the whole proposal, not within D(i)).
+6. **Promise Registry complete.** Every substantive claim in the executive summary has a corresponding row in the Promise Registry JSON with a downstream-step anchor and a Proposal_Data.md evidence source. Claims about methodology anchor to Methods (Step 3). Claims about significance and beneficiary impact anchor to Impact (Step 5). Claims about IP and prior art anchor to Background (Step 4). Claims about cost or budget anchor to Budget Justification (Step 6). Incidental team or partnership claims (a methodology clause referencing partner access, a significance clause referencing adoption-pathway partner) anchor to Supporting Documents (Step 7).
 7. **Tag discipline.** Bracket tags appear ONLY in narrative prose paragraphs, NEVER as free-floating JSON keys or values in the Promise Registry. Tag names are canonical UPPERCASE with mandatory colon-hint: \`[CITATION NEEDED: <hint>]\`, \`[USER INPUT NEEDED: <what to confirm>]\`, \`[VERIFY: <hint>]\`. Bare \`[CITATION NEEDED]\` is a hard failure.
-8. **PI track record verbatim.** Team & Partnership section preserves any PI track-record fact from Proposal_Data §11 in its source form (e.g., "5 publications" not "extensive publication record"). If §11 carries an absence tag, this section carries the same tag forward and does not invent credibility.
+8. **PI track record verbatim, if referenced.** The executive summary does NOT require a PI track-record statement (no dedicated Team section in D(i)). When PI track record IS referenced as a methodology-credibility signal, it appears verbatim from Proposal_Data §11 in its source form (e.g., "5 publications" not "extensive publication record"). If §11 carries an absence tag and the methodology references PI track record, this section carries the same tag forward and does not invent credibility. If PI track record is not load-bearing for any methodology or significance claim, do not reference it at all in D(i).
 9. **Voice discipline.** The prose does not betray AI authorship. Sentence length varies (mix of short and long, occasional fragment). Paragraphs are not symmetric. No banned words or banned constructions appear. Specific numbers and named mechanisms replace abstractions where source data exists. Hedge constructions are absent. A reviewer reading the first two paragraphs does not pattern-match to AI.
 
 ---
@@ -138,7 +138,7 @@ Do not produce any of the following. Each is a failure of the round:
 
 15. **Word count over {{wordLimit}}.** Submission prose at 510 words against a 500-word limit fails. Cut. The Methodology Preview and Expected Results sections are the first targets because they receive the largest budget; remove one detail rather than truncate every section equally.
 
-16. **Section reordering or skipping.** The five sections appear in this exact order: Opening Frame, Objectives & Hypothesis, Methodology Preview, Expected Results & ROV Preview, Team & Partnership. A section with thin source material is shorter, not omitted.
+16. **Section reordering or skipping.** The five sections appear in this exact order: Problem Statement, Objectives, Research Methodology, Expected Output / Outcomes / Implications, Significance of Output. This order and these labels match MyGRANTS form D(i)'s stated content requirements verbatim. A section with thin source material is shorter, not omitted.
 
 17. **Source attribution in submission prose.** "(from Proposal_Data §3)" inside the executive-summary prose is a hard failure. Attributions live in the Promise Registry's \`evidence_source\` field, never in the prose the user copies to the funder portal.
 
@@ -158,21 +158,23 @@ Do not produce any of the following. Each is a failure of the round:
 
 ## OUTPUT STRUCTURE
 
-Produce a markdown document titled "# Executive Summary: [Project Title from Proposal_Data §1]" with the following five prose sections, followed by a \`---\` separator, followed by the Promise Registry JSON block.
+Produce a markdown document titled "# Executive Summary: [Project Title from Proposal_Data §1]" with the following five prose sections, followed by a \`---\` separator, followed by the Promise Registry JSON block. The five sections are aligned to MyGRANTS form D(i)'s stated content requirements (problem statement, objectives, research methodology, expected output/outcomes/implications, significance of output) in that exact order.
 
-The five sections appear in this exact order. The word budget per section is fixed. The internal rhythm — how many paragraphs, how many sentences per paragraph, sentence length variation — is yours, subject to the VOICE rules above. Do not impose symmetric paragraph patterns. Vary deliberately.
+The five sections use \`### Section Name\` markdown headers for in-document scannability. The user may strip these headers when pasting to MyGRANTS (the form D(i) field is a single text box) or may keep them as bold-inline labels (\`**Problem Statement.**\`) depending on portal rendering. Either is acceptable.
 
-### Opening Frame
+The word budget per section is fixed. The internal rhythm — how many paragraphs, how many sentences per paragraph, sentence length variation — is yours, subject to the VOICE rules above. Do not impose symmetric paragraph patterns. Vary deliberately.
+
+### Problem Statement
 Word budget: 0.20 × {{wordLimit}} words. At {{wordLimit}}=300, target 60 words; hard cap 66. At {{wordLimit}}=500, target 100; hard cap 110. The budget is a function of {{wordLimit}}, not a free range to hit at the upper bound.
 
 Content to include:
-- The specific Malaysian or local problem in §3's competitive-advantage vocabulary verbatim. Name a beneficiary group, a clinical workflow, or a policy gap that fails today.
-- The funder priority terms verbatim from §2 (e.g., "exploratory and transformative research", "Return of Value", "TRL 2 to TRL 3" for GET).
+- The specific Malaysian or local problem in §3's competitive-advantage vocabulary verbatim. Name a beneficiary group, a clinical workflow, or a policy gap that fails today — what fails, who notices, when.
+- The funder priority terms verbatim from §2 where they anchor the problem framing (e.g., "exploratory and transformative research", "TRL 2 to TRL 3" for GET).
 - The project's core proposition as a declarative claim using the verb the funder rewards (for GET: "develops", "transforms", "delivers", not "explores" or "investigates").
 
-Open on the specific, not the abstract. Do not start with "In..." or "Research has shown" or "Recent advances". The first sentence names a real problem in concrete terms.
+Open on the specific problem, not on the abstract domain. Do not start with "In..." or "Research has shown" or "Recent advances". The first sentence names the real problem in concrete terms.
 
-### Objectives & Hypothesis
+### Objectives
 Word budget: 0.10 × {{wordLimit}} words. At {{wordLimit}}=300, target 30 words; hard cap 33. At {{wordLimit}}=500, target 50; hard cap 55.
 
 Content to include:
@@ -181,46 +183,49 @@ Content to include:
 
 Shortest section. One declarative move per element. Do not pad.
 
-### Methodology Preview
-Word budget: 0.25 × {{wordLimit}} words. At {{wordLimit}}=300, target 75 words; hard cap 82. At {{wordLimit}}=500, target 125; hard cap 137. Highest-weight section after Expected Results.
+### Research Methodology
+Word budget: 0.30 × {{wordLimit}} words. At {{wordLimit}}=300, target 90 words; hard cap 99. At {{wordLimit}}=500, target 150; hard cap 165. Largest section. This is where reviewers decide execution-readiness.
 
 Content to include:
 - The core method named precisely (LASSO logistic, retrospective cohort, prospective RCT, in-vitro assay, etc.). Name the specific class, not "a machine learning approach" or "advanced analytics".
-- The analytical population or sample size from §4 verbatim (e.g., "8,400 UM Medical Centre records" not "a large retrospective dataset").
+- The analytical population or sample size from §4 verbatim, committed to ONE number (e.g., "8,400 UM Medical Centre records" not "5,000-10,000 records"). Reviewers reward commitment.
 - One technical pillar named precisely (e.g., "TRIPOD+AI compliance", "subgroup fairness audit across ethnicity, sex, and clinic-resource strata", "decision-curve analysis at probability thresholds 0.1 to 0.3").
-- One reviewer-credibility signal (registered protocol, NMRR pathway, named co-investigator institutional access).
+- One reviewer-credibility signal — registered protocol, NMRR pathway, named co-investigator institutional access, OR (only when load-bearing) a single PI-track-record clause from §11 or a partner-access clause from §6 (e.g., "via the Klinik Kesihatan network coordinated through Malaysian Primary Care Digital Health Unit"). One clause only; if used, it earns its place by making the method feasible.
 
-This section is where the reviewer decides whether the project is execution-ready. Specificity matters most here. If a sentence could appear in any clinical-AI proposal, rewrite it with the actual mechanism, dataset, or assay named.
+Specificity matters most here. If a sentence could appear in any clinical-AI proposal, rewrite it with the actual mechanism, dataset, or assay named.
 
-### Expected Results & ROV Preview
-Word budget: 0.25 × {{wordLimit}} words. At {{wordLimit}}=300, target 75 words; hard cap 82. At {{wordLimit}}=500, target 125; hard cap 137. Highest-weight section, ties with Methodology.
-
-Content to include:
-- Concrete outputs from §4's expected-outputs list, quantified (e.g., "≥2 Q1 publications, 1 patent filing, 1 trained PhD, an SOP toolkit deployable in 4-6 Klinik Kesihatan sites").
-- The primary beneficiary group named specifically (KKM, primary-care clinicians at Klinik Kesihatan, T2DM patients with eGFR <60, MOH policy unit). "Stakeholders" or "the broader community" fails.
-- The concrete consequence of NOT doing this work, named for a specific beneficiary and a specific decision point.
-- The funder's ROV phrasing verbatim from §2 (for GET: "Return of Value" or "ROV").
-
-### Team & Partnership
+### Expected Output / Outcomes / Implications
 Word budget: 0.20 × {{wordLimit}} words. At {{wordLimit}}=300, target 60 words; hard cap 66. At {{wordLimit}}=500, target 100; hard cap 110.
 
 Content to include:
-- One verbatim PI track-record fact from §11 (one specific metric with a citation source, not "extensive experience"). When §11 carries a \`[USER INPUT NEEDED: ...]\` tag, this section preserves the absence with a fresh tag for the missing metric.
-- Team composition from §5 in funder-relevant form (e.g., "Seven-member team across three Malaysian institutions, PI 25%, four Co-Investigators at 15/15/15/10%, mentor 5%, continuity successor 5%").
-- The partner organisation name from §6 and their concrete operational contribution (e.g., "Malaysian Primary Care Digital Health Unit provides clinic-network access, EHR field-mapping support, and pilot-feedback liaison").
+- 1 to 2 concrete outputs from §4's expected-outputs list, quantified (e.g., "1 patent filing, 1 PhD trained, an SOP toolkit deployable in 4 Klinik Kesihatan sites"). NOT the full inventory — pick the two most reviewer-relevant outputs and commit to numbers.
+- The implication for the field, system, or beneficiary, as a single concrete consequence (e.g., "the first Malaysian fairness-audited DKD screening evidence", "policy-ready risk-action SOP for KKM primary-care adoption").
+
+Avoid the trap of listing every deliverable. Two concrete outputs with their implication beat eleven outputs with no through-line. This section names WHAT the project produces; the next section (Significance of Output) names WHY that production matters.
+
+### Significance of Output
+Word budget: 0.20 × {{wordLimit}} words. At {{wordLimit}}=300, target 60 words; hard cap 66. At {{wordLimit}}=500, target 100; hard cap 110.
+
+This is the section MyGRANTS form D(i) explicitly names "kepentingan output daripada projek penyelidikan" / "significance of output from the research project". It is NOT interchangeable with Expected Output. Expected Output names what gets produced; Significance names why that production matters for a specific person making a specific decision.
+
+Content to include:
+- The concrete consequence of NOT doing this work, named for a specific beneficiary (e.g., "clinicians at Klinik Kesihatan", not "stakeholders") and a specific decision point (e.g., "before eGFR crosses 60", not "in clinical practice").
+- The adoption pathway: who uses the output after the grant, and through which institutional route (e.g., "KKM primary-care SOP through MOH Family Health Development Division", or "MOH policy unit through Malaysian Primary Care Digital Health Unit liaison"). A partner-name clause from §6 fits here if the partner is the adoption route.
+- The funder's ROV phrasing verbatim from §2 (for GET: "Return of Value" or "ROV"). Significance is where ROV does its work — name the value that returns, to whom, and through what mechanism.
+- Optional, only if it strengthens the case: TRL exit state (e.g., "TRL 3 by month 36") or policy alignment (MADANI, RPTM, MySTIE, SDG 3) as a single clause, not a paragraph.
 
 ### Word Count
 
 After the five prose sections, on its own line, in this exact format:
 
-\`**Word count:** Opening Frame N1 + Objectives N2 + Methodology N3 + Expected Results N4 + Team N5 = TOTAL / {{wordLimit}}\`
+\`**Word count:** Problem N1 + Objectives N2 + Methodology N3 + Expected N4 + Significance N5 = TOTAL / {{wordLimit}}\`
 
-Where N1 through N5 are the actual word counts of the five sections (Opening Frame, Objectives & Hypothesis, Methodology Preview, Expected Results & ROV Preview, Team & Partnership respectively) and TOTAL is their arithmetic sum.
+Where N1 through N5 are the actual word counts of the five sections (Problem Statement, Objectives, Research Methodology, Expected Output / Outcomes / Implications, Significance of Output respectively) and TOTAL is their arithmetic sum.
 
 **Mandatory verification protocol.** Before writing this line, count words in each section by reading the section back. Show the arithmetic in the format above. Three hard failures around this line:
 1. Declaring a TOTAL that does not equal the actual sum of words in the five sections within ±2 words is a hard failure.
 2. Declaring a TOTAL that exceeds {{wordLimit}} is a hard failure; return to the longest section and cut before submitting output.
-3. Omitting the per-section enumeration (writing "295 / 300" instead of "80 + 44 + 97 + 97 + 86 = 415 / 300") is a hard failure.
+3. Omitting the per-section enumeration (writing "295 / 300" instead of "Problem 60 + Objectives 30 + Methodology 90 + Expected 60 + Significance 60 = 300 / 300") is a hard failure.
 
 The user strips this line before pasting the prose to the MyGRANTS abstract field. Title line is not counted unless {{wordLimit}} represents the funder's inclusive abstract capacity.
 
