@@ -6,7 +6,7 @@ export const template: PromptTemplate = {
   step: 3,
   name: "Grant Intelligence Gathering",
   description:
-    "Analyze grant guidelines to extract evaluation criteria, requirements, and strategic insights. Produces the foundational Grant_Intelligence.md document.",
+    "Analyze grant guidelines to extract evaluation criteria, form-field-level content requirements, submission rules, and strategic insights. Produces the foundational Grant_Intelligence.md document that downstream Phase 5 writers (Steps 2-8) use to derive each proposal section's structure from its corresponding form field's stated content requirements.",
   requiredInputs: ["discipline", "country", "grantName"],
   optionalInputs: [
     "grant_guidelines_text",
@@ -20,7 +20,7 @@ export const template: PromptTemplate = {
   ],
   outputName: "Grant_Intelligence.md",
   epTags: ["EP-01", "EP-02", "EP-04"],
-  estimatedWords: 4000,
+  estimatedWords: 4500,
   template: `You are a research intelligence analyst specializing in grant funding landscapes. Your task is to conduct an exhaustive analysis of the specified grant opportunity, extracting every relevant detail that will inform a competitive proposal. This document will serve as the FOUNDATION for the entire proposal — every subsequent step depends on the accuracy and completeness of this analysis.
 
 ## USER CONTEXT
@@ -136,11 +136,41 @@ Create a summary table:
 |-----------|--------|-----------|----------------|
 
 ### 4. Formatting & Submission Requirements
-- Page limits for each section
+
+#### 4.1 Form Structure & Content Requirements per Field (CRITICAL)
+
+For EVERY form section/field referenced in the application form source (e.g., A, B(i), C(xv), D(i), D(ii), E, F, G — IDs vary per funder), extract the following four data points into a single structured table:
+
+1. **Form section ID** verbatim from the source form (e.g., "D(i)", not "Section D part 1" or "Executive Summary section")
+2. **Field name in source language(s)** — when the form is bilingual (e.g., Bahasa Malaysia + English in MyGRANTS), preserve BOTH languages joined by " / " (e.g., "Ringkasan Eksekutif Cadangan Penyelidikan / Executive Summary of Research Proposal"). Do not paraphrase.
+3. **Word/page limit** verbatim from the form (e.g., "Not more than 300 words", "Max 5 pages", "No limit specified"). If no limit is stated, record "No limit stated" exactly.
+4. **Stated content requirements** — the parenthetical or directive in the form that specifies what content goes in that field. Preserve verbatim including punctuation, brackets, and bilingual content. If the form has no stated content requirements for a field, record "No content requirements stated; verify against actual form" exactly.
+
+**Why this matters:** The content requirements parenthetical is the funder's contract for that field. It tells the applicant what MUST be included in that specific field. Downstream proposal-writing steps (Phase 5 Steps 2-8) derive their section structure from this column. Missing or paraphrasing the content requirements forces downstream steps to guess section structure from scoring weights — which is a different input. Scoring weights tell you what to be good at across the whole proposal. Content requirements tell you what to put where in each field. Conflating them is the root cause of Round 21's executive-summary structural error (see project history).
+
+**Output the table in this exact format:**
+
+| Form section ID | Field name (source language / English if bilingual) | Word/page limit | Stated content requirements |
+|---|---|---|---|
+| [ID] | [Name] | [Limit] | [Content requirements verbatim] |
+
+**Example extraction** (from the MyGRANTS GET 2026 form, field D(i)):
+
+| Form section ID | Field name (BM / EN) | Word/page limit | Stated content requirements |
+|---|---|---|---|
+| D(i) | Ringkasan Eksekutif Cadangan Penyelidikan / Executive Summary of Research Proposal | Not more than 300 words | (Sila sertakan pernyataan masalah, objektif, metodologi penyelidikan, jangkaan output/hasil/implikasi, dan kepentingan output daripada projek penyelidikan) / (Please include the problem statement, objectives, research methodology, expected output/outcomes/implication, and significance of output from the research project) |
+
+**Rules:**
+- Do NOT invent field IDs. If the form is not provided in {{application_form_text}} or {{grant_guidelines_text}}, state explicitly that "Form structure could not be captured at field level because the application form source was not provided. Applicant must supply the actual form for downstream Phase 5 steps to align section structures to form fields." Then provide only the rows you can verify from public sources, and flag each with [VERIFY: confirm against actual form].
+- Do NOT paraphrase content requirements. If the form says "(Please include problem statement, objectives, research methodology, expected output/outcomes/implication, and significance of output from the research project)", do not shorten it to "include problem, objectives, methodology, output, significance" — the verbatim version is what downstream writers consume.
+- Do NOT collapse multiple form fields into "Other sections | No limits stated". Each form field gets its own row, even when its word limit is "No limit stated". Missing rows hide structure from downstream.
+- Do NOT fabricate content requirements from scoring weights or "what reviewers typically want". If the form does not state content requirements for a field, the cell value is "No content requirements stated; verify against actual form" — nothing more.
+
+#### 4.2 General Submission Requirements
+
 - Font, margins, spacing requirements
-- Required sections and their order
-- Mandatory attachments (CV format, letters of support, data management plan, etc.)
-- Submission portal/system details
+- Mandatory attachments (CV format, letters of support, data management plan, patent search report, ROV projection, risk assessment, Gantt chart, etc. — verify each against the actual call)
+- Submission portal/system details (MyGRANTS, ReDI, agency-specific portal)
 - File format requirements (PDF, Word, etc.)
 - Language requirements
 - Any templates or forms that must be used
