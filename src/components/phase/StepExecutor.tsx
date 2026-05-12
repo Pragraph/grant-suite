@@ -708,6 +708,14 @@ export function StepExecutor({
   }, [documents]);
 
   // ── Re-seed defaultValues when they arrive late (after activeProject) ───
+  //
+  // Round 15.3 (2026-05-12) extension: hidden fields always sync to current
+  // defaultValue (not just when empty). Hidden fields are externally
+  // controlled by contract, so the user cannot have modified them via UI.
+  // The "preserve user input" rationale that drives the visible-field branch
+  // does not apply. Backward compatible with the v17 round 9 Support Letter
+  // pattern (5 hidden partner fields; re-syncing to current partner data on
+  // partner change is correct behavior, not regression).
 
   const defaultValuesKey = additionalFields
     .map((f) => `${f.name}=${f.defaultValue ?? ""}`)
@@ -719,7 +727,7 @@ export function StepExecutor({
       const hasDefault =
         field.defaultValue !== undefined && field.defaultValue !== "";
       const isEmpty = currentValue === undefined || currentValue === "";
-      if (hasDefault && isEmpty) {
+      if (hasDefault && (isEmpty || field.hidden)) {
         dispatch({
           type: "SET_FORM_VALUE",
           name: field.name,

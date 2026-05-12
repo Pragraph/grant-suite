@@ -59,6 +59,7 @@ const COUNTRIES = [
   "Canada",
   "India",
   "China",
+  "Saudi Arabia",
   "Other",
 ] as const;
 

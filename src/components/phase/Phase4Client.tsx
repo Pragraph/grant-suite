@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
   ChevronDown,
+  ChevronRight,
   Users,
   DollarSign,
   FileCheck,
@@ -22,7 +23,7 @@ import { useProjectStore } from "@/stores/project-store";
 import { useProgressStore } from "@/stores/progress-store";
 import { useDocumentStore } from "@/stores/document-store";
 import { useUiStore } from "@/stores/ui-store";
-import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { PHASE_DEFINITIONS, CURRENCIES } from "@/lib/constants";
 import { advanceToNextStep } from "@/lib/step-navigation";
 import type { StepStatus } from "@/lib/types";
 
@@ -166,6 +167,24 @@ function loadJson<T>(key: string, fallback: T): T {
 
 function saveJson(key: string, value: unknown) {
   localStorage.setItem(key, JSON.stringify(value));
+}
+
+// Round 15.3: extract the highest digit run from a budget range string.
+// Handles formats from CreateProjectDrawer's getBudgetRangesForScheme:
+//   "RM 100,000 – RM 250,000" → 250000
+//   "Up to RM 60,000" → 60000
+//   "< RM 100,000" → 100000
+// Returns 0 if nothing parseable.
+
+function parseBudgetCeiling(rangeStr: string | undefined): number {
+  if (!rangeStr) return 0;
+  const matches = rangeStr.replace(/[^\d,–-]/g, " ").match(/[\d,]+/g);
+  if (!matches) return 0;
+  const numbers = matches
+    .map((m) => parseInt(m.replace(/,/g, ""), 10))
+    .filter((n) => !isNaN(n) && n > 0);
+  if (numbers.length === 0) return 0;
+  return Math.max(...numbers);
 }
 
 // ─── Role Matrix UI ────────────────────────────────────────────────────────
@@ -344,6 +363,23 @@ function RoleMatrixUI({
             team member you&apos;ll list in your MyGRANTS submission form here.
           </p>
         )}
+        {/* Round 15.3: explicit advance trigger to Phase 4 Step 2 */}
+        <div className="mt-3 pt-3 border-t border-phase-4/20 flex justify-end">
+          <Button
+            size="sm"
+            onClick={() => {
+              window.dispatchEvent(
+                new CustomEvent("grant-suite:expand-step", {
+                  detail: { phase: 4, step: 2 },
+                }),
+              );
+            }}
+            className="h-8 gap-1 bg-phase-4 hover:bg-phase-4/90 text-white"
+          >
+            Continue
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
@@ -805,6 +841,30 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
   const [showAssemblyPreview, setShowAssemblyPreview] = useState(false);
   const [assembledContent, setAssembledContent] = useState("");
 
+  // Round 15.3: prefill budgetMeta from activeProject when it becomes available.
+  // Uses the React docs "Adjusting state when a prop changes" pattern (setState
+  // during render, guarded by a previous-value comparison) instead of useEffect,
+  // which would trigger the react-hooks/set-state-in-effect lint rule. The
+  // pristine check (values matching the initial defaults { 0, 3, "USD" })
+  // preserves customized values across re-mounts via localStorage. activeProject
+  // arrives in a post-mount useEffect via setActiveProject(projectId), so this
+  // render-time conditional fires once on the render immediately after that.
+  const [prefilledFor, setPrefilledFor] = useState<string | null>(null);
+  if (activeProject && prefilledFor !== activeProject.id) {
+    setPrefilledFor(activeProject.id);
+    const isPristine =
+      budgetMeta.budgetLimit === 0 &&
+      budgetMeta.duration === 3 &&
+      budgetMeta.currency === "USD";
+    if (isPristine) {
+      setBudgetMeta({
+        budgetLimit: parseBudgetCeiling(activeProject.budgetRange),
+        duration: 3,
+        currency: activeProject.currency || "MYR",
+      });
+    }
+  }
+
   // ── Initialize ────────────────────────────────────────────────────────────
 
   useEffect(() => {
@@ -1000,40 +1060,41 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
 
   // ── Budget form fields ────────────────────────────────────────────────────
 
+  // Round 15.3: budgetAdditionalFields are hidden, sourced from budgetMeta
+  // (the visible Budget Parameters card above). The hidden+defaultValue
+  // pattern relies on the StepExecutor re-seed effect's Round-15.3 extension
+  // that always syncs hidden fields when defaultValue changes.
   const budgetAdditionalFields = useMemo(
     () => [
       {
         name: "budgetLimit",
         label: "Total Budget Limit",
         type: "text" as const,
-        placeholder: activeProject?.budgetRange || "e.g., 500000",
+        defaultValue: budgetMeta.budgetLimit > 0 ? String(budgetMeta.budgetLimit) : "",
+        hidden: true,
         required: true,
       },
       {
         name: "projectDuration",
         label: "Project Duration (years)",
         type: "text" as const,
-        placeholder: "e.g., 3",
+        defaultValue: budgetMeta.duration > 0 ? String(budgetMeta.duration) : "",
+        hidden: true,
         required: true,
       },
       {
         name: "currency",
         label: "Currency",
         type: "select" as const,
-        options: [
-          { label: "USD ($)", value: "USD" },
-          { label: "EUR (€)", value: "EUR" },
-          { label: "GBP (£)", value: "GBP" },
-          { label: "MYR (RM)", value: "MYR" },
-          { label: "AUD (A$)", value: "AUD" },
-          { label: "CAD (C$)", value: "CAD" },
-          { label: "SGD (S$)", value: "SGD" },
-          { label: "JPY (¥)", value: "JPY" },
-          { label: "CHF (CHF)", value: "CHF" },
-        ],
+        defaultValue: budgetMeta.currency || "MYR",
+        hidden: true,
+        options: CURRENCIES.map((c) => ({
+          label: `${c.code} (${c.symbol})`,
+          value: c.code,
+        })),
       },
     ],
-    [activeProject?.budgetRange],
+    [budgetMeta.budgetLimit, budgetMeta.duration, budgetMeta.currency],
   );
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -1197,12 +1258,19 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
                             description={meta?.description}
                             onComplete={() => {
                               loadDocuments(projectId);
-                              advanceToNextStep(projectId, 4, 1);
+                              // Round 15.3: scroll to Role Matrix instead of auto-advancing.
+                              // User fills Role Matrix below, then clicks its Continue button.
+                              setTimeout(() => {
+                                document
+                                  .getElementById("phase4-role-matrix")
+                                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                              }, 100);
                             }}
                           />
                           {/* Role Matrix — show after step is complete or has output */}
                           {(isComplete || step1Output) && (
                             <motion.div
+                              id="phase4-role-matrix"
                               initial={{ opacity: 0, y: 8 }}
                               animate={{ opacity: 1, y: 0 }}
                             >
@@ -1270,15 +1338,11 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
                                     }
                                     className="w-full h-8 rounded-md border border-border bg-muted px-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-accent-500"
                                   >
-                                    <option value="USD">USD ($)</option>
-                                    <option value="EUR">EUR (€)</option>
-                                    <option value="GBP">GBP (£)</option>
-                                    <option value="MYR">MYR (RM)</option>
-                                    <option value="AUD">AUD (A$)</option>
-                                    <option value="CAD">CAD (C$)</option>
-                                    <option value="SGD">SGD (S$)</option>
-                                    <option value="JPY">JPY (¥)</option>
-                                    <option value="CHF">CHF</option>
+                                    {CURRENCIES.map((c) => (
+                                      <option key={c.code} value={c.code}>
+                                        {c.code} ({c.symbol})
+                                      </option>
+                                    ))}
                                   </select>
                                 </div>
                               </div>
