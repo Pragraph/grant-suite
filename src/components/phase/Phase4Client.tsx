@@ -698,73 +698,72 @@ function parseTeamRecommendations(content: string): RoleRecommendation[] {
   }
 }
 
-// ─── Budget rows parser from markdown ──────────────────────────────────────
+// ─── Budget rows parser from Section R JSON block ──────────────────────────
+//
+// Round 16 (2026-05-12): replaced parseBudgetRows (line-by-line markdown-table
+// iteration) with parseBudgetJson. Round 15.3 paste-test exposed the line-by-line
+// parser as vulnerable to trailing-table consumption: any markdown table appearing
+// after the last legitimate category section (In-kind contributions, Compliance
+// checks, Budget Summary) was parsed as additional "Other" rows because
+// currentCategory persisted past the last header it recognized, yielding a
+// Budget Table total of MYR 500,064 against an intended MYR 250,000 ceiling.
+//
+// parseBudgetJson mirrors parseTeamRecommendations' structural safety (Round 15.2):
+// JSON-fenced regex with unambiguous delimiters, defensive try/catch on JSON.parse,
+// per-field type guards, category-enum validation, returns [] on any failure.
+// The post-Round-16 budget-construction.ts prompt outputs a single fenced JSON
+// block at the end (Part 3, OUTPUT STRUCTURE) which is the source of truth. The
+// narrative markdown tables in Part 1 are for human reading only; the parser
+// does not touch them.
 
-function parseBudgetRows(content: string, years: number): BudgetRow[] {
-  const rows: BudgetRow[] = [];
-  // Try to match budget table rows with amounts
-  let currentCategory: BudgetCategory = "Personnel";
+function parseBudgetJson(content: string, years: number): BudgetRow[] {
+  const match = content.match(/```json\s*\n([\s\S]+?)\n\s*```/);
+  if (!match) return [];
 
-  const lines = content.split("\n");
-  for (const line of lines) {
-    // Detect category headers
-    const catMatch = line.match(/^#{2,4}\s*(Personnel|Equipment|Travel|Material|Publication|Other)/i);
-    if (catMatch) {
-      const cat = catMatch[1];
-      if (cat.toLowerCase().startsWith("personnel")) currentCategory = "Personnel";
-      else if (cat.toLowerCase().startsWith("equipment")) currentCategory = "Equipment";
-      else if (cat.toLowerCase().startsWith("travel")) currentCategory = "Travel";
-      else if (cat.toLowerCase().startsWith("material")) currentCategory = "Materials";
-      else if (cat.toLowerCase().startsWith("publication")) currentCategory = "Publication";
-      else currentCategory = "Other";
-      continue;
+  try {
+    const data = JSON.parse(match[1]);
+    if (
+      !data ||
+      typeof data !== "object" ||
+      !Array.isArray((data as { budget_rows?: unknown }).budget_rows)
+    ) {
+      return [];
     }
 
-    // Parse table rows with numbers
-    if (!line.startsWith("|")) continue;
-    const cells = line
-      .split("|")
-      .map((c) => c.trim())
-      .filter(Boolean);
-    if (cells.length < 3) continue;
-    // Skip header/separator rows
-    if (cells[0].startsWith("---") || cells[0] === "Item" || cells[0] === "Category") continue;
-    if (cells.every((c) => c.startsWith("---"))) continue;
-    // Skip summary/total rows
-    if (cells[0].toLowerCase().includes("total") || cells[0] === "**TOTAL**") continue;
+    const arr = (data as { budget_rows: unknown[] }).budget_rows;
+    const validCategories: readonly BudgetCategory[] = [
+      "Personnel",
+      "Equipment",
+      "Travel",
+      "Materials",
+      "Publication",
+      "Other",
+    ];
 
-    // Try to extract amounts
-    const amounts: number[] = [];
-    for (let i = 1; i < cells.length && amounts.length < years; i++) {
-      const num = parseFloat(cells[i].replace(/[,\s]/g, ""));
-      if (!isNaN(num)) amounts.push(num);
-    }
-
-    if (amounts.length === 0) continue;
-
-    // Pad amounts to match years
-    while (amounts.length < years) amounts.push(0);
-
-    // Find justification (last non-number cell)
-    let justification = "";
-    for (let i = cells.length - 1; i >= 1; i--) {
-      const num = parseFloat(cells[i].replace(/[,\s]/g, ""));
-      if (isNaN(num) && cells[i].length > 3) {
-        justification = cells[i];
-        break;
-      }
-    }
-
-    rows.push({
-      id: crypto.randomUUID(),
-      category: currentCategory,
-      item: cells[0].replace(/\*\*/g, ""),
-      amounts: amounts.slice(0, years),
-      justification,
-    });
+    return arr
+      .filter((r): r is Record<string, unknown> => typeof r === "object" && r !== null)
+      .map((r) => {
+        const rawCategory = typeof r.category === "string" ? r.category : "";
+        const category = (validCategories as readonly string[]).includes(rawCategory)
+          ? (rawCategory as BudgetCategory)
+          : "Other";
+        const rawAmounts = Array.isArray(r.amounts) ? r.amounts : [];
+        const amounts: number[] = rawAmounts
+          .slice(0, years)
+          .map((n) => (typeof n === "number" && !isNaN(n) ? n : 0));
+        while (amounts.length < years) amounts.push(0);
+        return {
+          id: crypto.randomUUID(),
+          category,
+          item: typeof r.item === "string" ? r.item : "",
+          amounts,
+          justification: typeof r.justification === "string" ? r.justification : "",
+        };
+      })
+      .filter((r) => r.item.length > 0 && r.amounts.some((a) => a > 0));
+  } catch {
+    return [];
   }
-
-  return rows;
 }
 
 // ─── Budget to markdown ────────────────────────────────────────────────────
@@ -927,7 +926,7 @@ export function Phase4Client({ projectId: _pid }: { projectId: string }) {
 
   useEffect(() => {
     if (!step2Output || budgetRows.length > 0) return;
-    const parsed = parseBudgetRows(step2Output, budgetMeta.duration);
+    const parsed = parseBudgetJson(step2Output, budgetMeta.duration);
     if (parsed.length === 0) return;
 
     const timeoutId = window.setTimeout(() => {

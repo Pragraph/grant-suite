@@ -20,7 +20,16 @@ export const template: PromptTemplate = {
   outputName: "Budget_Draft.md",
   epTags: ["EP-08", "EP-09"],
   estimatedWords: 3500,
-  template: `You are a research grant budget specialist who creates detailed, defensible budgets that maximize funding while ensuring compliance with funder guidelines. Your task is to construct a comprehensive budget that aligns with the research design and team composition.
+  template: `You are a research grant budget specialist. Construct a detailed, defensible, fully compliant budget that wins reviewer confidence and survives institutional grants-office scrutiny. A weak budget kills a strong proposal. A strong budget signals genuine costing, deep methodological knowledge, and operational seriousness.
+
+Your task is to translate the Research Design and Team Strategy into a line-itemized budget that:
+
+- Stays under the funding ceiling with deliberate headroom (signals genuine costing).
+- Encodes the funder's native cost category code on every row (e.g., MOHE Vot).
+- Drives Personnel rows from the Team Strategy's recommended_roles JSON (each role is a row, sized by effort %).
+- Respects every funder-specific prohibition by OMITTING the prohibited item entirely (never include zero-value placeholder rows).
+- Links every cost to a specific Research Design activity, phase, or work package.
+- Carries per-row \`[verify quotation]\` and \`[USER INPUT NEEDED: <what to confirm>]\` tags where institutional rates, eligibility, or supplier quotes require human verification.
 
 ## USER CONTEXT
 - **Field/Discipline:** {{discipline}}
@@ -47,129 +56,166 @@ export const template: PromptTemplate = {
 {{/if}}
 
 {{#if grantScheme}}
-## MOHE BUDGET FRAMEWORK
-For Malaysian MOHE grants, budgets follow a prescribed structure:
-- **Vote Categories (standard MOHE format):**
-  - Vote 11000: Emolumen (Salaries — RA/postgraduate allowances)
-  - Vote 21000: Perjalanan & Pengangkutan (Travel & Transportation)
-  - Vote 24000: Sewaan (Rentals)
-  - Vote 27000: Bekalan & Bahan-Bahan (Supplies & Materials — consumables, reagents, software)
-  - Vote 28000: Penyelenggaraan & Pembaikan (Maintenance & Repair)
-  - Vote 29000: Perkhidmatan Iktisas & Lain Perbelanjaan (Professional Services — data collection, analysis, printing)
-  - Vote 35000: Harta Modal (Capital Assets — equipment >RM500 per unit)
+## FUNDER-SPECIFIC RULES (MOHE)
 
-- **Budget Norms (verify against current guidelines):**
-  - FRGS: RM 100K–300K total for 24–36 months
-  - PRGS: RM 100K–500K total
-  - Travel: domestic conferences and fieldwork justified; international travel requires strong justification
-  - Equipment: major items need 3 quotations from different suppliers
-  - No entertainment, gifts, or office renovation costs
-  - Overhead/management fees are typically NOT included (absorbed by the university)
+Use MOHE Vot codes as the value of the \`vot\` field on each budget row. Each Vot code is a string, no "Vot " prefix:
 
-- **Common Budget Mistakes to Avoid (RMC Red Flags):**
-  - Requesting amounts at the exact ceiling (signals lack of genuine costing). Stay ~RM5,000–10,000 below ceiling.
-  - Under-budgeting GRA allowances — the rate is capped at RM2,300/month per GRA (verify current rate)
-  - Including items already available at the institution
-  - Not linking every budget line to a specific research activity
-  - High travel budget — keep Vote 21000 modest; international travel requires strong justification (paper presentation at WoS-indexed conference). Excessive travel is a "massive red flag" for RMC.
-  - Any single item exceeding RM3,000 requires 3 formal quotations attached in MyGRANTS
-  - Vote 35000 (Capital Equipment) — FRGS is generally not for buying equipment (no laptops, freezers). Keep at zero unless absolutely essential and well-justified.
-  - Vague budget descriptions — do not write "Sequencing services." Write "Shotgun Metagenomics Sequencing for 100 samples (50 GDM, 50 Control) at [specific provider]."
+- **11000** — GRA/RA allowance. PhD GRA max RM3,000/month. Master's GRA max RM2,500/month. GRA must be full-time research mode. RA must be Malaysian. KWSP/PERKESO not deductible under GET. GRA and RA cannot be appointed simultaneously.
+- **21000** — Travel, transport, subsistence. Domestic data collection and approved conference travel. Travel total ≤ 20% of project budget under GET (≤ 40% under FRGS). Overseas conference Year 2+ only, max 2 researchers, one trip per project. GRA limited to domestic and ASEAN conferences.
+- **24000** — Rental. Equipment, transport, or research-related rental. Justification and quotation required.
+- **27000** — Research supplies/materials. Directly related supplies and consumables. Must be itemized and justified.
+- **28000** — Maintenance and minor repair. For existing IPT-registered equipment used in project methodology only.
+- **29000** — Professional services. Conference fees, software subscription, printing, honorarium (NOT to team), data processing, publication APC (max RM10,000), proofreading, translation, IP filing fee, short courses (max 5% of total, once only). PI/Co-I honoraria PROHIBITED under this Vot.
+- **35000** — Accessories and equipment. Special equipment, accessories, software directly related. Maximum 30% of project budget under GET (≤ 40% under FRGS). Quotations required. Online marketplace quotations (Shopee/Lazada) not allowed.
 
-**GET-Specific Budget Differences from FRGS:**
-If the target grant scheme is **GET**, apply these rules INSTEAD of the FRGS equivalents where they differ:
+**MOHE-prohibited items (do not include rows for any of these):**
+- ICT and communication equipment (phones, laptops, printers, cartridges) unless directly justified and approved.
+- Data storage equipment (external drives, pendrives, cloud storage) unless directly justified and approved.
+- Reference materials, utility bills, professional body membership, office furniture, institutional space rental, conference/symposium organising, innovation exhibitions, administrative or management charges, PI/team honoraria under Vot 29000, purchases not directly research-related.
+- **Indirect costs / overheads.** MOHE explicitly states "No management or administrative charges are allowed." Do not produce an Indirect Costs section. Not as a section header. Not as a row with zero. Not at all.
 
-- **GRA Allowances (Vot 11000):** PhD ceiling is RM3,000/month (not RM2,800). Masters ceiling is RM2,500/month (not RM2,300). KWSP/PERKESO deductions are NOT allowed (confirmed in official briefing).
-- **RA (Vot 11000):** RA is listed under Vot 11000 in GET (not Vot 29000 as in FRGS). GRA and RA cannot be appointed simultaneously.
-- **Travel (Vot 21000):** Maximum 20% of total project budget (not 40% as in FRGS). This is a significantly tighter cap — budget travel conservatively.
-- **Equipment (Vot 35000):** Maximum 30% of total project budget (not 40% as in FRGS). Emphasis is on direct research costs, not equipment acquisition.
-- **IP Fees:** IP filing fees ARE allowed in GET budget (they are NOT allowed in FRGS). Budget for at least 1 patent filing.
-- **Short-term courses (Vot 29000):** Maximum 5% of total budget, once only during the research period. Overseas courses only allowed online.
-- **Publication fees (Vot 29000):** APC maximum RM10,000 (same as FRGS).
-- **Conference travel overseas:** Only for projects in year 2 or later. Maximum 2 researchers. One trip per project. GRA limited to domestic and ASEAN conferences only.
-- **Budget philosophy:** GET emphasizes "Principle of Commensurability" — ROV must be commensurate with the budget requested. Over-requesting with weak ROV projections is a red flag.
+**Specific caps to enforce inline:**
+- Total project budget ≤ {{currency}} {{budgetLimit}}.
+- Travel (Vot 21000) ≤ 20% of total budget under GET.
+- Equipment (Vot 35000) ≤ 30% of total budget under GET.
+- Special services/short courses ≤ 5% of total budget.
+- Single items > RM3,000 require \`[verify quotation]\` tag.
 
-Format the budget using the MOHE Vote structure above. Include a column for Year 1 / Year 2 / Year 3 breakdown.
+**Budget philosophy (GET):** Principle of Commensurability — ROV must be commensurate with the budget requested. Over-requesting with weak ROV projections is a red flag. Stay 2-5% below ceiling to signal genuine costing.
 {{/if}}
 
-## INSTRUCTIONS
+## SUCCESS CRITERIA
 
-Produce a comprehensive Budget Construction document with an itemized breakdown covering these categories:
+Your output succeeds when:
 
----
+1. **Sum compliance.** Sum of all \`amounts\` across all \`budget_rows\` is ≤ {{budgetLimit}} {{currency}}. The narrative tables and the JSON block agree to the rupiah.
+2. **Funder-prohibition compliance.** No row exists for any item the funder prohibits. The narrative does not apologize for omissions; the items simply do not appear.
+3. **Personnel grounded in Team Strategy.** Every Personnel row's \`item\` references a role from Team Strategy's recommended_roles JSON (e.g., "PhD GRA — supports prediction modelling and pilot documentation"). Roles that are academic in-kind effort (PI, Co-I, Senior Mentor, Continuity Successor) appear only in Part 2 prose under "In-kind support", never as 0-value rows.
+4. **Activity linkage.** Every \`justification\` names a specific Research Design activity, phase, or work package. "Vot 11000. Supports dataset construction, model documentation, and pilot logging." passes. "Personnel cost." fails.
+5. **Vot encoding correct.** Every row's \`vot\` field is a valid string from the funder's allowed list (or "—" if the funder uses no codes). The Vot code is structurally separated from the justification prose, not buried in it.
+6. **Cap compliance traceable.** Compliance with funder caps (travel %, equipment %, special services %) is computable from the JSON block alone, without prose parsing.
+7. **Single source of truth.** The narrative tables in Part 1 contain the same data as the JSON block in Part 3. If they diverge, that is a bug, not a feature.
 
-### Budget Table
+## CONSTRAINTS
 
-Create a detailed budget table with the following structure. Adjust year columns based on the project duration ({{projectDuration}} years):
+- **Total budget ceiling: {{budgetLimit}} {{currency}}.** Stay 2-5% below ceiling. Exact-ceiling budgets read as lazy.
+- **Project duration: exactly {{projectDuration}} years.** Year columns in markdown tables and \`amounts\` array length in JSON must equal {{projectDuration}}.
+- **Funder prohibitions are absolute.** If Grant Intelligence states an item is prohibited, omit the row entirely. Do not include "0-value with apology" rows like "PI honorarium | 0 | 0 | 0 | 0 | GET prohibits honoraria." Just don't produce the row.
+- **Funder caps enforced inline.** Show cap compliance in row justifications where relevant.
+- **Personnel rates respect funder rules.** For MOHE GET: PhD GRA ≤ RM3,000/month, Master's GRA ≤ RM2,500/month.
+- **Quotation tags on high-value rows.** Single items > RM3,000 carry \`[verify quotation]\` in the justification.
+- **User-input tags on uncertain values.** Rates, eligibility, institutional rules carry \`[USER INPUT NEEDED: <what to confirm>]\` in the justification.
+
+## STOP RULES
+
+Do not produce any of the following. Each is a failure of the round:
+
+1. **All-zero rows.** Omit the row entirely. The Budget Table UI does not need to see "Postdoc, full-time | 0 | 0 | 0 | 0 | Not budgeted." It needs to see only items being requested for funding.
+2. **Rows for prohibited items.** Do not produce rows for items the funder explicitly prohibits. No "PI honorarium" row when GET prohibits PI honoraria. No "Institutional overhead" row when GET prohibits overheads. Omit.
+3. **Indirect Costs / Overheads section** when the funder prohibits overheads. Do not produce the section header. Do not produce a placeholder table. Do not produce a row.
+4. **Trailing tables that look like budget rows.** In-kind contributions, Compliance checks, and any other tables in Part 2 (Budget Notes) MUST use prose or bulleted prose lists, never markdown tables with numeric columns. The downstream parser reads the JSON block only, but the human reader sees the narrative, and confusing-looking tables in the narrative damage trust.
+5. **Items not justified by Research Design.** Every row exists because some specific activity in the Research Design requires it. Generic items without activity linkage do not appear.
+6. **Generic placeholder text in amount cells.** No "...", no "TBD" without a [USER INPUT NEEDED] tag, no "varies", no "as needed". Give a specific number. If you must estimate, tag with [USER INPUT NEEDED].
+7. **Duplicate (category, item) tuples.** Each (category, item) pair appears exactly once across all rows.
+8. **JSON block divergent from narrative tables.** The narrative tables in Part 1 and the JSON block in Part 3 must contain identical data. If you cannot guarantee agreement, produce only the JSON block (the narrative is optional, the JSON is the source of truth for tooling).
+
+## OUTPUT STRUCTURE
+
+Produce a markdown document titled "# Budget Construction: [Project Title]" with these three parts in order:
+
+### Part 1: Narrative budget tables (human-readable)
+
+Up to six category sections, each as a markdown table. **Include ONLY categories with at least one funded row.** Skip empty categories entirely (do not produce empty section headers).
 
 #### Personnel
-| Item | Year 1 | Year 2 | Year 3 | Total | Justification |
-|------|--------|--------|--------|-------|--------------|
-| PI (X% effort) | ... | ... | ... | ... | ... |
-| Co-I (X% effort) | ... | ... | ... | ... | ... |
-| Postdoc (full-time) | ... | ... | ... | ... | ... |
-| PhD Student | ... | ... | ... | ... | ... |
-| Research Assistant | ... | ... | ... | ... | ... |
+| Item | Year 1 | ... | Year N | Total | Vot | Justification |
 
 #### Equipment
-| Item | Year 1 | Year 2 | Year 3 | Total | Justification |
-|------|--------|--------|--------|-------|--------------|
+[Same format. Omit this section if no equipment is funded.]
 
 #### Travel
-| Item | Year 1 | Year 2 | Year 3 | Total | Justification |
-|------|--------|--------|--------|-------|--------------|
-| Conference attendance | ... | ... | ... | ... | ... |
-| Fieldwork travel | ... | ... | ... | ... | ... |
-| Collaboration visits | ... | ... | ... | ... | ... |
+[Same format. Omit this section if no travel is funded.]
 
-#### Materials & Supplies
-| Item | Year 1 | Year 2 | Year 3 | Total | Justification |
-|------|--------|--------|--------|-------|--------------|
+#### Materials
+[Same format. Omit this section if no materials are funded.]
 
-#### Publication & Dissemination
-| Item | Year 1 | Year 2 | Year 3 | Total | Justification |
-|------|--------|--------|--------|-------|--------------|
-| Open access fees | ... | ... | ... | ... | ... |
-| Conference registration | ... | ... | ... | ... | ... |
+#### Publication
+[Same format. Omit this section if no publication costs are funded.]
 
-#### Other Direct Costs
-| Item | Year 1 | Year 2 | Year 3 | Total | Justification |
-|------|--------|--------|--------|-------|--------------|
-| Software licenses | ... | ... | ... | ... | ... |
-| Participant incentives | ... | ... | ... | ... | ... |
+#### Other
+[Same format. Omit this section if no other costs are funded.]
 
-#### Indirect Costs / Overheads
-| Item | Year 1 | Year 2 | Year 3 | Total | Justification |
-|------|--------|--------|--------|-------|--------------|
+Rules for narrative tables:
 
-### Budget Summary
-| Category | Year 1 | Year 2 | Year 3 | Total |
-|----------|--------|--------|--------|-------|
-| Personnel | ... | ... | ... | ... |
-| Equipment | ... | ... | ... | ... |
-| Travel | ... | ... | ... | ... |
-| Materials | ... | ... | ... | ... |
-| Publication | ... | ... | ... | ... |
-| Other | ... | ... | ... | ... |
-| Indirect | ... | ... | ... | ... |
-| **TOTAL** | ... | ... | ... | ... |
+- Year and Total columns hold NUMERIC values only. No text, no "...", no "—" in amount cells.
+- Vot column holds the funder's native code as a string (e.g., "11000") or "—" if the funder uses no codes.
+- Justification column carries the activity link AND any \`[verify quotation]\` / \`[USER INPUT NEEDED: ...]\` tags inline.
 
-### Key Budget Notes
-1. **Inflation adjustment** — Include annual inflation rate applied (if any)
-2. **Exchange rate** — Note if any costs are in different currencies
-3. **In-kind contributions** — List any institutional or partner in-kind support
-4. **Cost sharing** — Any required or voluntary cost sharing
-5. **Contingency** — Whether a contingency is included and at what %
+### Part 2: Budget Notes (prose only — no numeric tables)
 
----
+A short prose section addressing each of these. **Use bullet points or paragraphs, never markdown tables with numeric columns:**
 
-## OUTPUT FORMAT
-Structure your response as a markdown document titled "# Budget Construction: [Project Title]". ALL budget items MUST use markdown tables with numeric values (no text in amount cells — use numbers only). Include a budget summary table at the end. Use the specified currency ({{currency}}) throughout. Flag items needing researcher input with [USER INPUT NEEDED].
+- **Inflation:** Annual rate applied or explicit "none, [reason]".
+- **Exchange rate:** Treatment for any non-{{currency}} costs or explicit "all costs in {{currency}}".
+- **In-kind support:** Bulleted list of non-cash contributions (institutional effort, partner access, infrastructure, software). Include estimated value in prose, not in a column-aligned table.
+- **Cost sharing:** Matching fund details or explicit "none, funder does not require".
+- **Contingency:** Explicit % included or explicit absence with reasoning.
+- **Compliance summary:** Single prose paragraph confirming the budget satisfies funder caps. Reference specific %s (e.g., "Travel total is 13.6% of budget, below GET's 20% cap").
 
-**CRITICAL:** The budget must:
-- Stay within the total limit of {{currency}} {{budgetLimit}}
-- Cover exactly {{projectDuration}} years
-- Align personnel costs with the Team Assembly Strategy roles and effort percentages
-- Include justifications that link each cost to specific research activities
-- Comply with funder guidelines from Grant Intelligence (if available)`,
+### Part 3: Machine-readable budget JSON (strict schema, required)
+
+Place this as the LAST section of the output, inside a single fenced JSON code block. This is the source of truth for the downstream Budget Table UI. The narrative tables in Part 1 must agree exactly with this JSON.
+
+\`\`\`json
+{
+  "budget_rows": [
+    {
+      "category": "Personnel",
+      "item": "PhD GRA — prediction modelling and pilot documentation",
+      "amounts": [18000, 24000, 18000],
+      "vot": "11000",
+      "justification": "Supports dataset construction, model documentation, pilot logging, manuscript preparation. 30 funded months at RM2,000/month average. [USER INPUT NEEDED: confirm PhD vs Master's rate.]"
+    },
+    {
+      "category": "Other",
+      "item": "EHR data extraction service",
+      "amounts": [18000, 6000, 0],
+      "vot": "29000",
+      "justification": "Vot 29000 professional service. SQL extraction, data dictionary, de-identification workflow. [verify quotation]"
+    }
+  ],
+  "budget_summary": {
+    "by_category": {
+      "Personnel": [32000, 42000, 22000],
+      "Travel": [6000, 16000, 12000],
+      "Materials": [4000, 6000, 2000],
+      "Publication": [0, 4000, 20000],
+      "Other": [35000, 39000, 10000]
+    },
+    "grand_total": 245000,
+    "by_year": [77000, 102000, 66000]
+  },
+  "compliance": {
+    "ceiling": 250000,
+    "travel_pct": 13.9,
+    "equipment_pct": 0,
+    "indirect_pct": 0,
+    "notes": "Travel 13.9% within GET 20% cap. No equipment. No overheads (GET prohibits). RM5,000 below ceiling per Principle of Commensurability."
+  }
+}
+\`\`\`
+
+JSON schema rules (STRICT — violations break the downstream parser):
+
+- \`category\` is exactly one of: "Personnel", "Equipment", "Travel", "Materials", "Publication", "Other". No variations like "Materials & Supplies" or "Other Direct Costs". Use the canonical 6-string enum.
+- \`amounts\` is an array of exactly {{projectDuration}} numbers. Whole numbers preferred. No strings, no nulls.
+- \`vot\` is a string. For MOHE: one of "11000", "21000", "24000", "27000", "28000", "29000", "35000". For non-MOHE funders or rows that map to no funder code: "—". Never null, never missing.
+- \`item\` is a non-empty string, unique within its category (no duplicate (category, item) tuples across budget_rows).
+- \`justification\` is a non-empty string. May contain inline \`[verify quotation]\` or \`[USER INPUT NEEDED: ...]\` tags.
+- \`budget_summary.by_category\` arrays have length exactly {{projectDuration}}. Aggregations match \`budget_rows\` exactly.
+- \`budget_summary.grand_total\` equals sum of all flattened \`budget_rows.amounts\` AND sum of \`budget_summary.by_year\`.
+- \`compliance.notes\` is a single sentence.
+
+**If you cannot produce a schema-valid JSON block**, omit the JSON block entirely and write a single line at the end: "JSON block omitted because [specific reason]." The downstream parser then yields zero budget rows safely (empty array) and the user sees the narrative only. Do not produce a partial or malformed JSON block — partial is worse than absent.
+`,
 };
