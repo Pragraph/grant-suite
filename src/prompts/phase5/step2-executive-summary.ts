@@ -73,7 +73,7 @@ The injected \`Proposal_Data.md\` is the single source of truth. Read these spec
 
 Your output succeeds when:
 
-1. **Prose word count within budget.** Total prose (above the \`---\` separator, excluding the title line) is between 90% and 100% of {{wordLimit}}. Hitting 280 words against a 300-word limit is acceptable; 240 words is under-developed and fails.
+1. **Prose word count within budget, and the declared count is true.** Total prose (above the \`---\` separator, excluding the title line) is between 90% and 100% of {{wordLimit}}. Hitting 280 words against a 300-word limit is acceptable; 240 words is under-developed and fails. The **Word count:** line shows the arithmetic per-section (N1 + N2 + N3 + N4 + N5 = TOTAL), TOTAL equals the actual sum within ±2, and TOTAL ≤ {{wordLimit}}. A fabricated count (declaring 295 when the actual prose is 404 words) is a hard failure regardless of section content quality.
 2. **Funder vocabulary mirrored verbatim.** Priority terminology, scheme name, score-weight category names, ROV phrasing — all appear in the executive summary in their exact §2-source form. A reviewer reading the executive summary sees their own assessment criteria reflected back.
 3. **Numeric agreement with §5 JSON.** Every effort percentage, team-member role count, budget total, and ceiling reference matches the embedded JSON exactly. No paraphrasing of numbers.
 4. **Section structure mandatory.** Five sections in this exact order: Opening Frame, Objectives & Hypothesis, Methodology Preview, Expected Results & ROV Preview, Team & Partnership. No reordering. No skipping. No section title variation.
@@ -142,6 +142,18 @@ Do not produce any of the following. Each is a failure of the round:
 
 17. **Source attribution in submission prose.** "(from Proposal_Data §3)" inside the executive-summary prose is a hard failure. Attributions live in the Promise Registry's \`evidence_source\` field, never in the prose the user copies to the funder portal.
 
+18. **Inventory lists.** Any list of 4 or more items in submission prose, regardless of separator (commas, semicolons, "and"), is banned. If a draft contains a 4-or-more-item list, cut to the 1-2 most reviewer-relevant items, named concretely with numbers. The rest live in Proposal_Data §4 or §10 downstream, not in the executive summary. This rule supersedes and broadens rule 4's tricolon-only ban: 11-item lists, 6-item lists, and 4-item lists in single sentences all fail under this rule.
+
+19. **Meta-commentary about scoring or evaluation.** "The funder test is...", "Reviewers will assess...", "This proposal scores on...", "The funder rewards..." — banned. Reviewers know their own rubric. Demonstrate fit through specific claims that align with their criteria, not through commentary about how the proposal will be scored.
+
+20. **Self-announcing adjectives before nouns.** "Deliberately X", "intentionally X", "carefully X", "rigorously X", "systematically X" — banned. Demonstrate the property through content; do not announce it. "Expected Results are deliberately concrete:" is a failure twice over (self-announcing AND, when followed by a long list, inventory).
+
+21. **Unprompted defensive framing.** "X, not Y" pattern where Y is not a concern raised in Proposal_Data §2 — banned. Pre-emptive defense ("this is a workflow, not an autonomous diagnostic system") signals weakness. If reviewers have not raised the concern in §2, do not preempt it.
+
+22. **Numerical option-dumping.** When upstream data offers a range or alternatives (e.g., "5,000-10,000 records"), commit to ONE realistic target number in the executive summary. Backup minimums and contingency thresholds belong in Proposal_Data §13 or the downstream Step 3 Methods draft, not in the executive summary. Reviewers reward commitment, not optionality.
+
+23. **Empty filler sentences.** Any sentence that asserts a property without naming the specific content the property describes — banned. "The hypothesis is practical", "The approach is innovative" (also banned by rule 2), "The plan is comprehensive" (also rule 2), "The team is strong" — all fail. Either name what makes the hypothesis practical (its specific testable form), the approach distinctive (its specific mechanism), the plan workable (its specific contingency logic), the team credible (its specific track record) — or cut the sentence entirely.
+
 ---
 
 ## OUTPUT STRUCTURE
@@ -151,7 +163,7 @@ Produce a markdown document titled "# Executive Summary: [Project Title from Pro
 The five sections appear in this exact order. The word budget per section is fixed. The internal rhythm — how many paragraphs, how many sentences per paragraph, sentence length variation — is yours, subject to the VOICE rules above. Do not impose symmetric paragraph patterns. Vary deliberately.
 
 ### Opening Frame
-Word budget: ~{{wordLimit}} × 0.20 (60-100 words when {{wordLimit}} = 300-500).
+Word budget: 0.20 × {{wordLimit}} words. At {{wordLimit}}=300, target 60 words; hard cap 66. At {{wordLimit}}=500, target 100; hard cap 110. The budget is a function of {{wordLimit}}, not a free range to hit at the upper bound.
 
 Content to include:
 - The specific Malaysian or local problem in §3's competitive-advantage vocabulary verbatim. Name a beneficiary group, a clinical workflow, or a policy gap that fails today.
@@ -161,7 +173,7 @@ Content to include:
 Open on the specific, not the abstract. Do not start with "In..." or "Research has shown" or "Recent advances". The first sentence names a real problem in concrete terms.
 
 ### Objectives & Hypothesis
-Word budget: ~{{wordLimit}} × 0.10 (30-50 words when {{wordLimit}} = 300-500).
+Word budget: 0.10 × {{wordLimit}} words. At {{wordLimit}}=300, target 30 words; hard cap 33. At {{wordLimit}}=500, target 50; hard cap 55.
 
 Content to include:
 - The central research question from §4, paraphrased only to fit length; numeric figures preserved exactly.
@@ -170,7 +182,7 @@ Content to include:
 Shortest section. One declarative move per element. Do not pad.
 
 ### Methodology Preview
-Word budget: ~{{wordLimit}} × 0.25 (75-125 words when {{wordLimit}} = 300-500). Highest-weight section after Expected Results.
+Word budget: 0.25 × {{wordLimit}} words. At {{wordLimit}}=300, target 75 words; hard cap 82. At {{wordLimit}}=500, target 125; hard cap 137. Highest-weight section after Expected Results.
 
 Content to include:
 - The core method named precisely (LASSO logistic, retrospective cohort, prospective RCT, in-vitro assay, etc.). Name the specific class, not "a machine learning approach" or "advanced analytics".
@@ -181,7 +193,7 @@ Content to include:
 This section is where the reviewer decides whether the project is execution-ready. Specificity matters most here. If a sentence could appear in any clinical-AI proposal, rewrite it with the actual mechanism, dataset, or assay named.
 
 ### Expected Results & ROV Preview
-Word budget: ~{{wordLimit}} × 0.25 (75-125 words when {{wordLimit}} = 300-500). Highest-weight section, ties with Methodology.
+Word budget: 0.25 × {{wordLimit}} words. At {{wordLimit}}=300, target 75 words; hard cap 82. At {{wordLimit}}=500, target 125; hard cap 137. Highest-weight section, ties with Methodology.
 
 Content to include:
 - Concrete outputs from §4's expected-outputs list, quantified (e.g., "≥2 Q1 publications, 1 patent filing, 1 trained PhD, an SOP toolkit deployable in 4-6 Klinik Kesihatan sites").
@@ -190,7 +202,7 @@ Content to include:
 - The funder's ROV phrasing verbatim from §2 (for GET: "Return of Value" or "ROV").
 
 ### Team & Partnership
-Word budget: ~{{wordLimit}} × 0.20 (60-100 words when {{wordLimit}} = 300-500).
+Word budget: 0.20 × {{wordLimit}} words. At {{wordLimit}}=300, target 60 words; hard cap 66. At {{wordLimit}}=500, target 100; hard cap 110.
 
 Content to include:
 - One verbatim PI track-record fact from §11 (one specific metric with a citation source, not "extensive experience"). When §11 carries a \`[USER INPUT NEEDED: ...]\` tag, this section preserves the absence with a fresh tag for the missing metric.
@@ -199,11 +211,18 @@ Content to include:
 
 ### Word Count
 
-After the five prose sections, on its own line:
+After the five prose sections, on its own line, in this exact format:
 
-\`**Word count:** <prose word count> / {{wordLimit}}\`
+\`**Word count:** Opening Frame N1 + Objectives N2 + Methodology N3 + Expected Results N4 + Team N5 = TOTAL / {{wordLimit}}\`
 
-The prose word count covers the five sections from "Opening Frame" through the last sentence of "Team & Partnership". Title line is not counted unless {{wordLimit}} represents the funder's inclusive abstract capacity.
+Where N1 through N5 are the actual word counts of the five sections (Opening Frame, Objectives & Hypothesis, Methodology Preview, Expected Results & ROV Preview, Team & Partnership respectively) and TOTAL is their arithmetic sum.
+
+**Mandatory verification protocol.** Before writing this line, count words in each section by reading the section back. Show the arithmetic in the format above. Three hard failures around this line:
+1. Declaring a TOTAL that does not equal the actual sum of words in the five sections within ±2 words is a hard failure.
+2. Declaring a TOTAL that exceeds {{wordLimit}} is a hard failure; return to the longest section and cut before submitting output.
+3. Omitting the per-section enumeration (writing "295 / 300" instead of "80 + 44 + 97 + 97 + 86 = 415 / 300") is a hard failure.
+
+The user strips this line before pasting the prose to the MyGRANTS abstract field. Title line is not counted unless {{wordLimit}} represents the funder's inclusive abstract capacity.
 
 ---
 
