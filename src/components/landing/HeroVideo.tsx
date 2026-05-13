@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 
 const VIDEO_SRC =
-  "https://ik.imagekit.io/k5rticge6/Research%20Grant%20Landing%20Page.mp4?tr=f-auto,q-80";
+  "https://ik.imagekit.io/k5rticge6/Research%20Grant%20Landing%20Page.mp4?tr=f-auto,q-80&updatedAt=1778686788699";
 
 const POSTER_SRC =
-  "https://ik.imagekit.io/k5rticge6/Research%20Grant%20Landing%20Page.mp4/ik-thumbnail.jpg?tr=so-23,w-1280";
+  "https://ik.imagekit.io/k5rticge6/Research%20Grant%20Landing%20Page.mp4/ik-thumbnail.jpg?tr=so-23,w-1280&updatedAt=1778686788699";
 
 const POSTER_ALT =
   "Research Grant Suite workflow: from research idea to submission-ready proposal";
