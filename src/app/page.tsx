@@ -8,7 +8,6 @@ import {
   Zap,
   Brain,
   FileOutput,
-  PlayCircle,
   Search,
   PenTool,
   FileText,
@@ -18,6 +17,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { HeroVideo } from "@/components/landing/HeroVideo";
 
 // ─── Scroll helper ──────────────────────────────────────────────────────────
 
@@ -235,11 +235,8 @@ export default function LandingPage() {
             Watch how Research Grant Suite guides you from research idea to submission-ready proposal.
           </p>
 
-          <div className="max-w-4xl mx-auto mt-12 rounded-2xl overflow-hidden shadow-2xl border border-gray-200 aspect-video bg-gray-100 flex items-center justify-center">
-            <div className="text-center text-gray-400">
-              <PlayCircle className="w-16 h-16 mx-auto mb-3 opacity-40" />
-              <p className="text-sm font-medium">Video walkthrough coming soon</p>
-            </div>
+          <div className="max-w-4xl mx-auto mt-12 rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-gray-100">
+            <HeroVideo />
           </div>
         </div>
       </section>
