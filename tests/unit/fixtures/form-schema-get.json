@@ -1,0 +1,1576 @@
+{
+  "schema_version": "1.0",
+  "form_metadata": {
+    "form_id": "get-2026-transformative",
+    "form_title": {
+      "ms": "Borang Permohonan Geran Penyelidikan Eksploratori & Transformatif (GET) (Tahun 2026)",
+      "en": "Application Form Exploratory & Transformative Research Grant (GET) (Year 2026)"
+    },
+    "funder": {
+      "name": "Jabatan Pendidikan Tinggi, Kementerian Pendidikan Tinggi",
+      "name_en": "Department of Higher Education, Ministry of Higher Education",
+      "country": "Malaysia",
+      "scheme": "GET",
+      "scheme_full_name": "Exploratory and Transformative Research Grant",
+      "year": 2026
+    },
+    "primary_language": "ms",
+    "supported_languages": ["ms", "en"],
+    "submission_portal": "MyGRANTS",
+    "submission_portal_url": "https://mygrants.gov.my",
+    "currency": "MYR",
+    "duration_options_years": [2, 3],
+    "budget_ceiling": 250000,
+    "source": {
+      "type": "uploaded",
+      "extracted_from": "BORANG_PERMOHONAN_TAHUN_2026_v2__1_.docx",
+      "extraction_date": "2026-05-13",
+      "extraction_method": "docx-to-llm",
+      "extraction_confidence": "high",
+      "reviewed_by_user": false,
+      "reviewed_at": null,
+      "page_audit_trail": [
+        { "section_id": "A", "source_page": 1 },
+        { "section_id": "B1", "source_page": 1 },
+        { "section_id": "B2", "source_page": 2 },
+        { "section_id": "C", "source_page": 2 },
+        { "section_id": "D", "source_page": 4 },
+        { "section_id": "E", "source_page": 6 },
+        { "section_id": "F", "source_page": 6 },
+        { "section_id": "G", "source_page": 7 },
+        { "section_id": "H", "source_page": 7 },
+        { "section_id": "I", "source_page": 7 },
+        { "section_id": "J", "source_page": 8 }
+      ]
+    }
+  },
+  "sections": [
+    {
+      "section_id": "A",
+      "label": {
+        "ms": "Butiran Permohonan",
+        "en": "Application Details"
+      },
+      "description": null,
+      "level": 1,
+      "ordering": 1,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "A-i-grant-type",
+          "label": {
+            "ms": "Geran",
+            "en": "Grant"
+          },
+          "type": "radio",
+          "required": true,
+          "ordering": 1,
+          "options": [
+            {
+              "value": "exploratory",
+              "label": {
+                "ms": "Geran Eksploratori",
+                "en": "Exploratory Grant"
+              }
+            },
+            {
+              "value": "transformative",
+              "label": {
+                "ms": "Geran Transformatif",
+                "en": "Transformative Grant"
+              }
+            }
+          ],
+          "layout": "horizontal",
+          "ai_generation": {
+            "supported": true,
+            "mode": "recommend",
+            "default_sources": ["Grant_Intelligence.md", "Proposal_Data.md"]
+          }
+        },
+        {
+          "field_id": "A-ii-research-field",
+          "label": {
+            "ms": "Bidang Penyelidikan",
+            "en": "Research Field"
+          },
+          "type": "radio",
+          "required": true,
+          "ordering": 2,
+          "options": [
+            {
+              "value": "stem",
+              "label": {
+                "ms": "Sains, Teknologi, Kejuruteraan dan Matematik (STEM)",
+                "en": "Science, Technology, Engineering and Mathematics (STEM)"
+              }
+            },
+            {
+              "value": "hass",
+              "label": {
+                "ms": "Sains Kemanusiaan, Seni dan Sosial (HASS)",
+                "en": "Humanities, Arts and Social Sciences (HASS)"
+              }
+            }
+          ],
+          "layout": "horizontal",
+          "ai_generation": {
+            "supported": true,
+            "mode": "recommend",
+            "default_sources": ["Grant_Intelligence.md", "Proposal_Data.md", "Research_Design.md"]
+          }
+        },
+        {
+          "field_id": "A-iii-trl-target",
+          "label": {
+            "ms": "Sasaran Tahap Kesediaan Teknologi (TRL)",
+            "en": "Target Technology Readiness Level (TRL)"
+          },
+          "type": "radio",
+          "required": true,
+          "ordering": 3,
+          "options": [
+            {
+              "value": "trl-1",
+              "label": {
+                "ms": "TRL: 1 (Prinsip Asas Dikaji)",
+                "en": "TRL: 1 (Basic Principles Observed)"
+              }
+            },
+            {
+              "value": "trl-2",
+              "label": {
+                "ms": "TRL: 2 (Konsep Teknologi yang diformulasikan)",
+                "en": "TRL: 2 (Technology Concept Formulated)"
+              }
+            },
+            {
+              "value": "trl-3",
+              "label": {
+                "ms": "TRL: 3 (Eksperimen Pembuktian Konsep)",
+                "en": "TRL: 3 (Experimental Proof of Concept)"
+              }
+            }
+          ],
+          "layout": "horizontal",
+          "ai_generation": {
+            "supported": true,
+            "mode": "recommend",
+            "default_sources": ["Proposal_Data.md", "Research_Design.md", "Patent_Analysis.md"]
+          }
+        },
+        {
+          "field_id": "A-iv-project-title",
+          "label": {
+            "ms": "Tajuk Projek Penyelidikan yang Dicadangkan",
+            "en": "Title of Proposed Research Project"
+          },
+          "type": "text",
+          "required": true,
+          "ordering": 4,
+          "length_limit": {
+            "kind": "characters",
+            "max": 250,
+            "soft": false,
+            "source_phrasing": null
+          },
+          "input_mode": "text",
+          "ai_generation": {
+            "supported": true,
+            "mode": "generate",
+            "default_sources": ["Proposal_Data.md", "Research_Design.md"]
+          }
+        },
+        {
+          "field_id": "A-v-keywords",
+          "label": {
+            "ms": "Kata Kunci",
+            "en": "Keywords"
+          },
+          "type": "text",
+          "required": true,
+          "ordering": 5,
+          "length_limit": {
+            "kind": "characters",
+            "max": 300,
+            "soft": false,
+            "source_phrasing": null
+          },
+          "input_mode": "text",
+          "ai_generation": {
+            "supported": true,
+            "mode": "generate",
+            "default_sources": ["Proposal_Data.md", "Research_Design.md", "Patent_Analysis.md"]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "B1",
+      "label": {
+        "ms": "Butiran Ketua Projek",
+        "en": "Details of Project Leader"
+      },
+      "level": 1,
+      "ordering": 2,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "B1-i-name",
+          "label": { "ms": "Nama", "en": "Name" },
+          "type": "text",
+          "required": true,
+          "ordering": 1,
+          "length_limit": { "kind": "characters", "max": 200, "soft": false },
+          "input_mode": "text",
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-ii-qualification",
+          "label": { "ms": "Kelayakan Akademik tertinggi", "en": "Higher Academic Qualification" },
+          "type": "text",
+          "required": true,
+          "ordering": 2,
+          "length_limit": { "kind": "characters", "max": 100, "soft": false },
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-iii-nationality",
+          "label": { "ms": "Kewarganegaraan", "en": "Nationality" },
+          "type": "text",
+          "required": true,
+          "ordering": 3,
+          "length_limit": { "kind": "characters", "max": 50, "soft": false },
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-iv-ic-number",
+          "label": { "ms": "No. Kad Pengenalan", "en": "IC No." },
+          "type": "text",
+          "required": true,
+          "ordering": 4,
+          "length_limit": { "kind": "characters", "max": 20, "soft": false },
+          "validation": [
+            {
+              "kind": "regex",
+              "pattern": "^[0-9]{6}-[0-9]{2}-[0-9]{4}$",
+              "message": { "ms": "Format: XXXXXX-XX-XXXX", "en": "Format: XXXXXX-XX-XXXX" }
+            }
+          ],
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        },
+        {
+          "field_id": "B1-v-position-grade",
+          "label": { "ms": "Jawatan / Gred", "en": "Position / Grade" },
+          "type": "text",
+          "required": true,
+          "ordering": 5,
+          "length_limit": { "kind": "characters", "max": 100, "soft": false },
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-vi-institution",
+          "label": { "ms": "Institusi", "en": "Institution" },
+          "type": "text",
+          "required": true,
+          "ordering": 6,
+          "length_limit": { "kind": "characters", "max": 200, "soft": false },
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-vii-faculty",
+          "label": { "ms": "Fakulti / Pusat", "en": "Faculty / Centre" },
+          "type": "text",
+          "required": true,
+          "ordering": 7,
+          "length_limit": { "kind": "characters", "max": 200, "soft": false },
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-viii-department",
+          "label": { "ms": "Unit / Jabatan", "en": "Unit / Department" },
+          "type": "text",
+          "required": true,
+          "ordering": 8,
+          "length_limit": { "kind": "characters", "max": 200, "soft": false },
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-ix-office-phone",
+          "label": { "ms": "No. Tel. pejabat", "en": "Office Phone No." },
+          "type": "text",
+          "required": false,
+          "ordering": 9,
+          "length_limit": { "kind": "characters", "max": 30, "soft": false },
+          "input_mode": "tel",
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-x-mobile",
+          "label": { "ms": "No Tel. Bimbit", "en": "Handphone No." },
+          "type": "text",
+          "required": true,
+          "ordering": 10,
+          "length_limit": { "kind": "characters", "max": 30, "soft": false },
+          "input_mode": "tel",
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-xi-email",
+          "label": { "ms": "Alamat E-mel", "en": "E-mail Address" },
+          "type": "text",
+          "required": true,
+          "ordering": 11,
+          "length_limit": { "kind": "characters", "max": 100, "soft": false },
+          "input_mode": "email",
+          "validation": [
+            {
+              "kind": "regex",
+              "pattern": "^[\\w.+-]+@[\\w-]+(?:\\.[\\w-]+)+$",
+              "message": { "en": "Valid email address required" }
+            }
+          ],
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-xii-first-appointment-date",
+          "label": { "ms": "Tarikh Lantikan Pertama di Institusi", "en": "Date of First Appointment with this Institution" },
+          "type": "date",
+          "required": true,
+          "ordering": 12,
+          "format": "YYYY-MM-DD",
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-xiii-service-type",
+          "label": { "ms": "Jenis Lantikan (Tetap/Kontrak)", "en": "Type of Service (Permanent/Contract)" },
+          "type": "radio",
+          "required": true,
+          "ordering": 13,
+          "options": [
+            { "value": "permanent", "label": { "ms": "Tetap", "en": "Permanent" } },
+            { "value": "contract", "label": { "ms": "Kontrak", "en": "Contract" } }
+          ],
+          "layout": "horizontal",
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-xiii-contract-end-date",
+          "label": { "ms": "Tarikh tamat lantikan kontrak", "en": "Last date of contract appointment" },
+          "type": "date",
+          "required": false,
+          "ordering": 14,
+          "format": "YYYY-MM-DD",
+          "visibility": {
+            "type": "conditional",
+            "condition": {
+              "field_id": "B1-xiii-service-type",
+              "operator": "equals",
+              "value": "contract"
+            }
+          },
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        },
+        {
+          "field_id": "B1-xiv-expertise",
+          "label": { "ms": "Bidang kepakaran", "en": "Area of Expertise" },
+          "type": "longtext",
+          "required": true,
+          "ordering": 15,
+          "length_limit": { "kind": "words", "max": 150, "soft": true },
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Researcher_Profile.md"] }
+        }
+      ]
+    },
+    {
+      "section_id": "B2",
+      "label": {
+        "ms": "Butiran Mentor",
+        "en": "Details of Mentor"
+      },
+      "description": {
+        "ms": "Tidak berkaitan sekiranya pemohon bertaraf Profesor",
+        "en": "Not relevant if the applicant is a Professor"
+      },
+      "level": 1,
+      "ordering": 3,
+      "required": false,
+      "visibility": {
+        "type": "conditional",
+        "condition": {
+          "field_id": "B1-v-position-grade",
+          "operator": "not-contains",
+          "value": "Profesor"
+        },
+        "operator_message": {
+          "ms": "Tidak berkaitan sekiranya pemohon bertaraf Profesor",
+          "en": "Not relevant if the applicant is a Professor"
+        }
+      },
+      "fields": [
+        {
+          "field_id": "B2-i-name",
+          "label": { "ms": "Nama", "en": "Name" },
+          "type": "text",
+          "required": true,
+          "ordering": 1,
+          "length_limit": { "kind": "characters", "max": 200, "soft": false },
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        },
+        {
+          "field_id": "B2-ii-qualification",
+          "label": { "ms": "Kelayakan Akademik tertinggi", "en": "Higher Academic Qualification" },
+          "type": "text",
+          "required": true,
+          "ordering": 2,
+          "length_limit": { "kind": "characters", "max": 100, "soft": false },
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        },
+        {
+          "field_id": "B2-v-position-grade",
+          "label": { "ms": "Jawatan / Gred", "en": "Position / Grade" },
+          "type": "text",
+          "required": true,
+          "ordering": 5,
+          "length_limit": { "kind": "characters", "max": 100, "soft": false },
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        },
+        {
+          "field_id": "B2-xi-email",
+          "label": { "ms": "Alamat E-mel", "en": "E-mail Address" },
+          "type": "text",
+          "required": true,
+          "ordering": 11,
+          "length_limit": { "kind": "characters", "max": 100, "soft": false },
+          "input_mode": "email",
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        },
+        {
+          "field_id": "B2-xiv-expertise",
+          "label": { "ms": "Bidang kepakaran", "en": "Area of Expertise" },
+          "type": "longtext",
+          "required": true,
+          "ordering": 15,
+          "length_limit": { "kind": "words", "max": 150, "soft": true },
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        }
+      ]
+    },
+    {
+      "section_id": "C",
+      "label": {
+        "ms": "Maklumat Penyelidikan",
+        "en": "Research Information"
+      },
+      "description": {
+        "ms": "Sila tanda (√) satu dari setiap bidang keutamaan",
+        "en": "Please tick (√) one for each priority area"
+      },
+      "level": 1,
+      "ordering": 4,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "C-i-research-area",
+          "label": {
+            "ms": "Bidang Penyelidikan",
+            "en": "Research Area"
+          },
+          "type": "radio",
+          "required": true,
+          "ordering": 1,
+          "options": [
+            { "value": "technology-engineering", "label": { "ms": "Teknologi dan Kejuruteraan", "en": "Technology and Engineering" } },
+            { "value": "ict", "label": { "ms": "Teknologi Maklumat dan Komunikasi", "en": "Information and Communication Technology" } },
+            { "value": "clinical-health", "label": { "ms": "Sains Kesihatan dan Klinikal", "en": "Clinical and Health Sciences" } },
+            { "value": "pure-applied-sciences", "label": { "ms": "Sains Tulen dan Gunaan", "en": "Pure and Applied Sciences" } },
+            { "value": "arts-applied-arts", "label": { "ms": "Sastera dan Sastera Ikhtisas", "en": "Arts and Applied Arts" } },
+            { "value": "social-sciences", "label": { "ms": "Sains Sosial", "en": "Social Sciences" } },
+            { "value": "environment-heritage", "label": { "ms": "Warisan dan Alam Sekitar", "en": "Environment and Heritage" } }
+          ],
+          "layout": "searchable-list",
+          "ai_generation": {
+            "supported": true,
+            "mode": "recommend",
+            "default_sources": ["Proposal_Data.md", "Research_Design.md"]
+          }
+        },
+        {
+          "field_id": "C-i-research-sub-area",
+          "label": {
+            "ms": "Sub-Bidang Penyelidikan",
+            "en": "Research Sub-Area"
+          },
+          "description": {
+            "en": "Sub-area depends on selected Research Area. The schema editor allows users to populate the dependent option list based on C-i-research-area selection. For brevity, sub-areas for Clinical and Health Sciences are populated here as the worked example covers a clinical project."
+          },
+          "type": "radio",
+          "required": true,
+          "ordering": 2,
+          "visibility": {
+            "type": "conditional",
+            "condition": {
+              "field_id": "C-i-research-area",
+              "operator": "equals",
+              "value": "clinical-health"
+            }
+          },
+          "options": [
+            { "value": "basic-medical", "label": { "en": "Basic Medical Sciences", "ms": "Sains Perubatan Asas" } },
+            { "value": "clinical-studies", "label": { "en": "Clinical Studies", "ms": "Kajian Klinikal" } },
+            { "value": "medicine", "label": { "en": "Medicine", "ms": "Perubatan" } },
+            { "value": "surgery", "label": { "en": "Surgery", "ms": "Pembedahan" } },
+            { "value": "community-medicine", "label": { "en": "Community Medicine", "ms": "Perubatan Komuniti" } },
+            { "value": "health-science", "label": { "en": "Health Science", "ms": "Sains Kesihatan" } },
+            { "value": "dental", "label": { "en": "Dental", "ms": "Pergigian" } },
+            { "value": "medical-microbiology", "label": { "en": "Medical Microbiology", "ms": "Mikrobiologi Perubatan" } },
+            { "value": "nursing", "label": { "en": "Nursing", "ms": "Kejururawatan" } },
+            { "value": "parasitology", "label": { "en": "Parasitology", "ms": "Parasitologi" } },
+            { "value": "pathology", "label": { "en": "Pathology", "ms": "Patologi" } },
+            { "value": "pharmacy", "label": { "en": "Pharmacy", "ms": "Farmasi" } },
+            { "value": "pharmacology", "label": { "en": "Pharmacology", "ms": "Farmakologi" } },
+            { "value": "veterinary", "label": { "en": "Veterinary", "ms": "Veterinar" } },
+            { "value": "clinical-psychology", "label": { "en": "Clinical Psychology", "ms": "Psikologi Klinikal" } },
+            { "value": "alternative-medicine", "label": { "en": "Alternative Medicine", "ms": "Perubatan Alternatif" } }
+          ],
+          "layout": "searchable-list",
+          "ai_generation": {
+            "supported": true,
+            "mode": "recommend",
+            "default_sources": ["Proposal_Data.md", "Research_Design.md"]
+          }
+        },
+        {
+          "field_id": "C-ii-mega-trend",
+          "label": { "ms": "Trend Mega", "en": "Mega Trend" },
+          "type": "radio",
+          "required": true,
+          "ordering": 3,
+          "options": [
+            { "value": "economic-blocs", "label": { "ms": "Perubahan Susunan Blok Ekonomi", "en": "Changes in the Structure of Economic Blocs" } },
+            { "value": "future-tech-digital", "label": { "ms": "Perubahan Teknologi dan Digital Masa Hadapan", "en": "Changes in Future Technology and Digital" } },
+            { "value": "demography-quality-of-life", "label": { "ms": "Perubahan Demografi dan Kualiti Hidup", "en": "Shifts in Demography and Quality of Life" } },
+            { "value": "planetary-health-crisis", "label": { "ms": "Krisis Kesihatan Bumi", "en": "Planetary Health Crisis" } },
+            { "value": "education", "label": { "ms": "Pendidikan", "en": "Education" } },
+            { "value": "national-security", "label": { "ms": "Keselamatan Negara", "en": "National Security" } },
+            { "value": "heritage-local-knowledge", "label": { "ms": "Warisan dan Kearifan Tempatan", "en": "Heritage and Local Knowledge" } }
+          ],
+          "layout": "vertical",
+          "ai_generation": { "supported": true, "mode": "recommend", "default_sources": ["Proposal_Data.md"] }
+        },
+        {
+          "field_id": "C-iii-bitara",
+          "label": { "ms": "Bidang keutamaan BITARA", "en": "BITARA Niche Areas" },
+          "type": "radio",
+          "required": false,
+          "ordering": 4,
+          "options": [
+            { "value": "e-and-e-high-value", "label": { "ms": "Elektrik dan elektronik (E&E) bernilai tinggi", "en": "High-Value Electrical and Electronics (E&E)" } },
+            { "value": "aerospace", "label": { "ms": "Aeroangkasa", "en": "Aerospace" } },
+            { "value": "chemical", "label": { "ms": "Kimia", "en": "Chemical Sciences" } },
+            { "value": "machinery-equipment", "label": { "ms": "Mesin dan peralatan", "en": "Machinery and Equipment (M&E)" } },
+            { "value": "digital-ict", "label": { "ms": "Digital dan ICT", "en": "Digital and ICT" } },
+            { "value": "pharmaceuticals", "label": { "ms": "Farmaseutikal", "en": "Pharmaceuticals" } },
+            { "value": "medical-devices", "label": { "ms": "Peranti perubatan", "en": "Medical Devices" } },
+            { "value": "palm-oil-products", "label": { "ms": "Produk berasaskan kelapa sawit", "en": "Palm Oil-Based Products" } },
+            { "value": "rubber-products", "label": { "ms": "Produk berasaskan getah", "en": "Rubber-Based Products" } }
+          ],
+          "layout": "vertical",
+          "ai_generation": { "supported": true, "mode": "recommend", "default_sources": ["Proposal_Data.md"] }
+        },
+        {
+          "field_id": "C-iv-research-cluster",
+          "label": { "ms": "Kluster Penyelidikan", "en": "Research Cluster" },
+          "type": "radio",
+          "required": true,
+          "ordering": 5,
+          "options": [
+            { "value": "food-safety-security", "label": { "ms": "Sekuriti dan Keselamatan Makanan", "en": "Food Safety & Security" } },
+            { "value": "basic-infrastructure", "label": { "ms": "Infrastruktur Asas", "en": "Basic Infrastructure" } },
+            { "value": "climate-environment", "label": { "ms": "Perubahan Iklim dan Alam Sekitar", "en": "Climate Change & Environment" } },
+            { "value": "health", "label": { "ms": "Kesihatan", "en": "Health" } },
+            { "value": "education-civil-society", "label": { "ms": "Pendidikan dan Masyarakat Madani Celik Ilmu", "en": "Education & Knowledgeable Civil Society" } },
+            { "value": "national-security", "label": { "ms": "Keselamatan Negara", "en": "National Security" } },
+            { "value": "social-economic-wellbeing", "label": { "ms": "Kesejahteraan Sosial dan Ekonomi", "en": "Social & Economic Well Being" } },
+            { "value": "frontier-tech-advanced-manufacturing", "label": { "ms": "Teknologi Terkehadapan & Pembuatan Termaju", "en": "Frontier Technologies & Advanced Manufacturing" } }
+          ],
+          "layout": "vertical",
+          "ai_generation": { "supported": true, "mode": "recommend", "default_sources": ["Proposal_Data.md"] }
+        },
+        {
+          "field_id": "C-vii-sdg",
+          "label": { "ms": "Matlamat Pembangunan Mampan (SDGs)", "en": "Sustainable Development Goals (SDGs)" },
+          "type": "radio",
+          "required": true,
+          "ordering": 8,
+          "options": [
+            { "value": "sdg-1", "label": { "en": "SDG 1 - No Poverty" } },
+            { "value": "sdg-2", "label": { "en": "SDG 2 - Zero Hunger" } },
+            { "value": "sdg-3", "label": { "en": "SDG 3 - Good Health and Well-being" } },
+            { "value": "sdg-4", "label": { "en": "SDG 4 - Quality Education" } },
+            { "value": "sdg-5", "label": { "en": "SDG 5 - Gender Equality" } },
+            { "value": "sdg-6", "label": { "en": "SDG 6 - Clean Water and Sanitation" } },
+            { "value": "sdg-7", "label": { "en": "SDG 7 - Affordable and Clean Energy" } },
+            { "value": "sdg-8", "label": { "en": "SDG 8 - Decent Work and Economic Growth" } },
+            { "value": "sdg-9", "label": { "en": "SDG 9 - Industry, Innovation and Infrastructure" } },
+            { "value": "sdg-10", "label": { "en": "SDG 10 - Reduced Inequalities" } },
+            { "value": "sdg-11", "label": { "en": "SDG 11 - Sustainable Cities and Communities" } },
+            { "value": "sdg-12", "label": { "en": "SDG 12 - Responsible Consumption and Production" } },
+            { "value": "sdg-13", "label": { "en": "SDG 13 - Climate Action" } },
+            { "value": "sdg-14", "label": { "en": "SDG 14 - Life below Water" } },
+            { "value": "sdg-15", "label": { "en": "SDG 15 - Life on Land" } },
+            { "value": "sdg-16", "label": { "en": "SDG 16 - Peace, Justice and Strong Institutions" } },
+            { "value": "sdg-17", "label": { "en": "SDG 17 - Partnerships for the Goals" } },
+            { "value": "others-societal-harmony", "label": { "ms": "Kebahagian dan Keharmonian Masyarakat", "en": "Others - Societal Harmony and Happiness" } }
+          ],
+          "layout": "searchable-list",
+          "ai_generation": { "supported": true, "mode": "recommend", "default_sources": ["Proposal_Data.md", "SDG_Alignment.md"] }
+        },
+        {
+          "field_id": "C-viii-esg",
+          "label": { "ms": "Komponen ESG", "en": "Component ESG (Environmental, Social, and Governance)" },
+          "type": "radio",
+          "required": true,
+          "ordering": 9,
+          "options": [
+            { "value": "environmental", "label": { "ms": "Alam Sekitar", "en": "Environmental" } },
+            { "value": "social", "label": { "ms": "Sosial", "en": "Social" } },
+            { "value": "governance", "label": { "ms": "Tadbir Urus", "en": "Governance" } }
+          ],
+          "layout": "horizontal",
+          "ai_generation": { "supported": true, "mode": "recommend", "default_sources": ["Proposal_Data.md"] }
+        },
+        {
+          "field_id": "C-xi-duration",
+          "label": { "ms": "Tempoh Penyelidikan", "en": "Duration of this research" },
+          "type": "radio",
+          "required": true,
+          "ordering": 12,
+          "options": [
+            { "value": "2-years", "label": { "ms": "2 Tahun", "en": "2 Years" } },
+            { "value": "3-years", "label": { "ms": "3 Tahun", "en": "3 Years" } }
+          ],
+          "layout": "horizontal",
+          "ai_generation": { "supported": true, "mode": "recommend", "default_sources": ["Proposal_Data.md", "Budget_Draft.md"] }
+        },
+        {
+          "field_id": "C-xi-start-date",
+          "label": { "ms": "Tarikh Mula", "en": "Start Date" },
+          "type": "date",
+          "required": true,
+          "ordering": 13,
+          "format": "YYYY-MM-DD",
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        },
+        {
+          "field_id": "C-xi-end-date",
+          "label": { "ms": "Tarikh Akhir", "en": "End Date" },
+          "type": "date",
+          "required": true,
+          "ordering": 14,
+          "format": "YYYY-MM-DD",
+          "constraints": {
+            "must_be_after_field_id": "C-xi-start-date"
+          },
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        },
+        {
+          "field_id": "C-xii-team-members",
+          "label": { "ms": "Ahli Pasukan", "en": "Other Researchers" },
+          "type": "table",
+          "required": true,
+          "ordering": 15,
+          "table_structure": {
+            "row_mode": "dynamic",
+            "min_rows": 0,
+            "max_rows": null,
+            "columns": [
+              { "column_id": "name", "label": { "ms": "Nama", "en": "Name" }, "type": "text", "required": true, "width_hint": "wide" },
+              { "column_id": "ic-passport", "label": { "ms": "No KP / Pasport", "en": "IC / Passport Number" }, "type": "text", "required": true, "width_hint": "medium" },
+              { "column_id": "faculty-institution", "label": { "ms": "Fakulti & Institusi atau Agensi", "en": "Faculty & Institution or Agency" }, "type": "text", "required": true, "width_hint": "wide" },
+              { "column_id": "grade", "label": { "ms": "Gred atau setara", "en": "Grade or equivalent" }, "type": "text", "required": true, "width_hint": "narrow" },
+              { "column_id": "expertise", "label": { "ms": "Bidang kepakaran", "en": "Area of Expertise" }, "type": "text", "required": true, "width_hint": "wide" },
+              {
+                "column_id": "role",
+                "label": { "ms": "Peranan", "en": "Role" },
+                "type": "radio",
+                "required": true,
+                "width_hint": "narrow",
+                "options": [
+                  { "value": "nal", "label": { "ms": "NAL", "en": "Next Appointed Leader" } },
+                  { "value": "mentor", "label": { "ms": "Mentor", "en": "Mentor" } },
+                  { "value": "member", "label": { "ms": "Ahli", "en": "Member" } }
+                ]
+              }
+            ],
+            "row_groups": null,
+            "fixed_rows": null,
+            "has_grand_total_row": false,
+            "per_row_attachments": [
+              {
+                "attachment_id": "cv",
+                "label": {
+                  "ms": "CV ahli pasukan mengikut templat institusi/agensi",
+                  "en": "CV of the research member according to institutional/agency template"
+                },
+                "required": true,
+                "default_source_pattern": "Researcher_Profile.md or institutional CV template"
+              }
+            ]
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "import-from-source",
+            "default_sources": ["Team_Strategy.md"]
+          }
+        },
+        {
+          "field_id": "C-xv-previous-research-synopsis",
+          "label": {
+            "ms": "Sinopsis penyelidikan terdahulu yang berkaitan dengan cadangan penyelidikan ini",
+            "en": "Synopsis of previous research related to this research proposal"
+          },
+          "description": {
+            "ms": "Sekiranya berkaitan",
+            "en": "If relevant"
+          },
+          "type": "longtext",
+          "required": false,
+          "ordering": 16,
+          "length_limit": {
+            "kind": "words",
+            "max": 300,
+            "soft": false,
+            "source_phrasing": "tidak melebihi 300 patah perkataan"
+          },
+          "verbatim_user_facing": true,
+          "ai_generation": {
+            "supported": true,
+            "mode": "generate",
+            "default_sources": ["Researcher_Profile.md", "Proposal_Data.md"]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "D",
+      "label": { "ms": "Butiran Penyelidikan", "en": "Research Details" },
+      "level": 1,
+      "ordering": 5,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "D-i-executive-summary",
+          "label": {
+            "ms": "Ringkasan Eksekutif Cadangan Penyelidikan",
+            "en": "Executive Summary of Research Proposal"
+          },
+          "type": "longtext",
+          "required": true,
+          "ordering": 1,
+          "length_limit": {
+            "kind": "words",
+            "max": 300,
+            "soft": false,
+            "source_phrasing": "tidak melebihi 300 patah perkataan"
+          },
+          "content_requirements": {
+            "ms": "Sila sertakan pernyataan masalah, objektif, metodologi penyelidikan, jangkaan output/hasil/implikasi, dan kepentingan output daripada projek penyelidikan",
+            "en": "Please include the problem statement, objectives, research methodology, expected output/outcomes/implication, and significance of output from the research project"
+          },
+          "verbatim_user_facing": true,
+          "ai_generation": {
+            "supported": true,
+            "mode": "generate",
+            "default_sources": ["Proposal_Data.md", "Research_Design.md", "Budget_Justification.md", "Team_Strategy.md"]
+          }
+        }
+      ],
+      "subsections": [
+        {
+          "section_id": "D-ii",
+          "label": { "ms": "Perancangan Penyelidikan", "en": "Research Planning" },
+          "level": 2,
+          "ordering": 2,
+          "required": true,
+          "visibility": { "type": "always-visible" },
+          "subsections": [
+            {
+              "section_id": "D-ii-a",
+              "label": { "ms": "Latar belakang penyelidikan", "en": "Research background" },
+              "level": 3,
+              "ordering": 1,
+              "required": true,
+              "visibility": { "type": "always-visible" },
+              "fields": [
+                {
+                  "field_id": "D-ii-a-1-problem-statement",
+                  "label": { "ms": "Penyataan Masalah", "en": "Problem Statement" },
+                  "type": "longtext",
+                  "required": true,
+                  "ordering": 1,
+                  "length_limit": { "kind": "words", "max": 500, "soft": true },
+                  "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md"] }
+                },
+                {
+                  "field_id": "D-ii-a-2-hypothesis",
+                  "label": { "ms": "Hipotesis", "en": "Hypothesis" },
+                  "type": "longtext",
+                  "required": true,
+                  "ordering": 2,
+                  "length_limit": { "kind": "words", "max": 200, "soft": true },
+                  "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md"] }
+                },
+                {
+                  "field_id": "D-ii-a-3-research-questions",
+                  "label": { "ms": "Persoalan Penyelidikan", "en": "Research Questions" },
+                  "type": "longtext",
+                  "required": true,
+                  "ordering": 3,
+                  "length_limit": { "kind": "words", "max": 300, "soft": true },
+                  "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md"] }
+                },
+                {
+                  "field_id": "D-ii-a-4-literature-review",
+                  "label": { "ms": "Kajian Literatur", "en": "Literature Review" },
+                  "type": "longtext",
+                  "required": true,
+                  "ordering": 4,
+                  "length_limit": { "kind": "words", "max": 1500, "soft": true },
+                  "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md", "Literature_Map.md"] }
+                },
+                {
+                  "field_id": "D-ii-a-5-policy-relevance",
+                  "label": { "ms": "Kerelevenan dengan Dasar Kerajaan", "en": "Relevance to Government Policy" },
+                  "type": "longtext",
+                  "required": true,
+                  "ordering": 5,
+                  "length_limit": { "kind": "words", "max": 500, "soft": true },
+                  "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "National_Alignment.md", "Grant_Intelligence.md"] }
+                }
+              ]
+            },
+            {
+              "section_id": "D-ii-b",
+              "label": { "ms": "Rujukan", "en": "References" },
+              "level": 3,
+              "ordering": 2,
+              "required": true,
+              "visibility": { "type": "always-visible" },
+              "fields": [
+                {
+                  "field_id": "D-ii-b-references",
+                  "label": { "ms": "Rujukan", "en": "References" },
+                  "type": "longtext",
+                  "required": true,
+                  "ordering": 1,
+                  "length_limit": { "kind": "none", "max": null },
+                  "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Literature_Map.md"] }
+                }
+              ]
+            },
+            {
+              "section_id": "D-ii-c",
+              "label": { "ms": "Objektif Penyelidikan", "en": "Objective(s) of the Research" },
+              "level": 3,
+              "ordering": 3,
+              "required": true,
+              "visibility": { "type": "always-visible" },
+              "fields": [
+                {
+                  "field_id": "D-ii-c-objectives",
+                  "label": { "ms": "Objektif Penyelidikan", "en": "Research Objectives" },
+                  "type": "longtext",
+                  "required": true,
+                  "ordering": 1,
+                  "length_limit": { "kind": "words", "max": 300, "soft": true },
+                  "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md"] }
+                }
+              ]
+            },
+            {
+              "section_id": "D-ii-d",
+              "label": { "ms": "Metodologi", "en": "Methodology" },
+              "level": 3,
+              "ordering": 4,
+              "required": true,
+              "visibility": { "type": "always-visible" },
+              "fields": [
+                {
+                  "field_id": "D-ii-d-1-methodology-description",
+                  "label": { "ms": "Huraian Metodologi", "en": "Description of Methodology" },
+                  "type": "longtext",
+                  "required": true,
+                  "ordering": 1,
+                  "length_limit": { "kind": "words", "max": 2000, "soft": true },
+                  "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md", "Budget_Draft.md", "Team_Strategy.md"] }
+                },
+                {
+                  "field_id": "D-ii-d-2-flowchart",
+                  "label": { "ms": "Carta Alir Aktiviti Penyelidikan", "en": "Flow Chart of Research Activities" },
+                  "type": "file-upload",
+                  "required": true,
+                  "ordering": 2,
+                  "accepted_formats": ["pdf", "png", "jpg", "jpeg"],
+                  "max_file_size_mb": 5,
+                  "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+                },
+                {
+                  "field_id": "D-ii-d-3-activities",
+                  "label": { "ms": "Aktiviti Penyelidikan", "en": "Research Activities" },
+                  "type": "table",
+                  "required": true,
+                  "ordering": 3,
+                  "table_structure": {
+                    "row_mode": "dynamic",
+                    "min_rows": 1,
+                    "max_rows": null,
+                    "columns": [
+                      { "column_id": "activity", "label": { "ms": "Aktiviti", "en": "Activity" }, "type": "text", "required": true, "width_hint": "wide" },
+                      { "column_id": "start-date", "label": { "ms": "Tarikh Mula", "en": "Start Date" }, "type": "date", "required": true, "width_hint": "medium" },
+                      { "column_id": "end-date", "label": { "ms": "Tarikh Tamat", "en": "End Date" }, "type": "date", "required": true, "width_hint": "medium" }
+                    ],
+                    "has_grand_total_row": false
+                  },
+                  "ai_generation": {
+                    "supported": true,
+                    "mode": "import-from-source",
+                    "default_sources": ["Research_Design.md", "Budget_Draft.md"]
+                  }
+                },
+                {
+                  "field_id": "D-ii-d-4-milestones",
+                  "label": { "ms": "Jejak Kunci", "en": "Milestones" },
+                  "type": "table",
+                  "required": true,
+                  "ordering": 4,
+                  "table_structure": {
+                    "row_mode": "dynamic",
+                    "min_rows": 1,
+                    "columns": [
+                      { "column_id": "description", "label": { "ms": "Butiran", "en": "Description" }, "type": "text", "required": true, "width_hint": "wide" },
+                      { "column_id": "date", "label": { "ms": "Tarikh", "en": "Date" }, "type": "date", "required": true, "width_hint": "medium" },
+                      { "column_id": "cumulative-pct", "label": { "ms": "Peratusan Kumulatif Projek Siap (%)", "en": "Cumulative Project Completion Percentage (%)" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 0, "max": 100, "decimal_places": 0 } }
+                    ],
+                    "has_grand_total_row": false
+                  },
+                  "ai_generation": {
+                    "supported": true,
+                    "mode": "import-from-source",
+                    "default_sources": ["Research_Design.md", "Budget_Draft.md"]
+                  }
+                },
+                {
+                  "field_id": "D-ii-d-gantt-chart",
+                  "label": { "ms": "Carta Gantt Aktiviti Penyelidikan dengan Pencapaian Jejak Kunci", "en": "Gantt Chart of Research Activities with Milestones" },
+                  "type": "file-upload",
+                  "required": true,
+                  "ordering": 5,
+                  "accepted_formats": ["pdf", "png", "jpg", "jpeg", "xlsx"],
+                  "max_file_size_mb": 5,
+                  "default_source_pattern": "Gantt_Chart artifact from Phase 4 timeline",
+                  "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Research_Design.md"] }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "section_id": "D-iii",
+          "label": { "ms": "Jangkaan Hasil Penyelidikan / Manfaat", "en": "Expected Results / Benefit" },
+          "description": { "ms": "Sila lampirkan jangkaan ROV", "en": "Please provide the expected ROV" },
+          "level": 2,
+          "ordering": 3,
+          "required": true,
+          "visibility": { "type": "always-visible" },
+          "fields": [
+            {
+              "field_id": "D-iii-1-ip",
+              "label": { "ms": "Harta Intelek", "en": "Intellectual Properties (IPs)" },
+              "type": "table",
+              "required": true,
+              "ordering": 1,
+              "table_structure": {
+                "row_mode": "fixed-rows",
+                "columns": [
+                  { "column_id": "quantity", "label": { "ms": "Kuantiti", "en": "Quantity" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 0, "decimal_places": 0 } },
+                  { "column_id": "description", "label": { "ms": "Penerangan", "en": "Description" }, "type": "longtext", "required": false, "width_hint": "wide" }
+                ],
+                "fixed_rows": [
+                  { "row_id": "patent", "row_label": { "ms": "Paten", "en": "Patent" } },
+                  { "row_id": "utility-innovation", "row_label": { "ms": "Inovasi Utiliti", "en": "Utility Innovation" } },
+                  { "row_id": "copyright", "row_label": { "ms": "Hak Cipta", "en": "Copyright" } },
+                  { "row_id": "industrial-design", "row_label": { "ms": "Rekabentuk Industri", "en": "Industrial Design" } },
+                  { "row_id": "geographical-indication", "row_label": { "ms": "Penanda Geografi", "en": "Geographical Indication" } },
+                  { "row_id": "layout-design", "row_label": { "ms": "Reka Bentuk Susun Atur", "en": "Layout Design" } },
+                  { "row_id": "trade-secret", "row_label": { "ms": "Rahsia Perdagangan", "en": "Trade Secret" } }
+                ],
+                "has_grand_total_row": true,
+                "grand_total_expression": "sum_over_rows(quantity)"
+              },
+              "ai_generation": {
+                "supported": true,
+                "mode": "import-from-source",
+                "default_sources": ["Patent_Analysis.md", "Research_Design.md"]
+              }
+            },
+            {
+              "field_id": "D-iii-3-trainees",
+              "label": { "ms": "Bilangan Pelajar PhD atau Sarjana", "en": "Number of PhD or Masters Students (research mode)" },
+              "type": "table",
+              "required": true,
+              "ordering": 3,
+              "table_structure": {
+                "row_mode": "fixed-rows",
+                "columns": [
+                  { "column_id": "count", "label": { "ms": "Jumlah", "en": "Total Number" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 0, "decimal_places": 0 } },
+                  { "column_id": "scope", "label": { "ms": "Skop", "en": "Scope" }, "type": "longtext", "required": false, "width_hint": "wide" }
+                ],
+                "fixed_rows": [
+                  { "row_id": "phd", "row_label": { "ms": "Pelajar PhD (mod penyelidikan)", "en": "PhD Students (research mode)" } },
+                  { "row_id": "masters", "row_label": { "ms": "Pelajar Sarjana (mod penyelidikan)", "en": "Masters Students (research mode)" } },
+                  { "row_id": "ra", "row_label": { "ms": "Pembantu Penyelidik", "en": "Research Assistants" } }
+                ]
+              },
+              "ai_generation": {
+                "supported": true,
+                "mode": "import-from-source",
+                "default_sources": ["Team_Strategy.md", "Budget_Draft.md"]
+              }
+            },
+            {
+              "field_id": "D-iii-4-novel-findings",
+              "label": { "ms": "Teori baharu / Penemuan baharu / Pengetahuan baharu", "en": "Novel theories / New findings / New knowledge" },
+              "type": "longtext",
+              "required": true,
+              "ordering": 4,
+              "length_limit": { "kind": "words", "max": 500, "soft": true },
+              "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md"] }
+            },
+            {
+              "field_id": "D-iii-6-beneficiaries",
+              "label": { "ms": "Penerima manfaat", "en": "Beneficiaries" },
+              "type": "longtext",
+              "required": true,
+              "ordering": 6,
+              "length_limit": { "kind": "words", "max": 500, "soft": true },
+              "content_requirements": {
+                "en": "Beneficiaries include Government/Local Government, Industry, Village Community, School, NGO etc."
+              },
+              "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Impact_Plan.md"] }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section_id": "E",
+      "label": { "ms": "Akses kepada Peralatan & Bahan", "en": "Access to Equipment & Material(s)" },
+      "level": 1,
+      "ordering": 6,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "E-equipment-materials",
+          "label": { "ms": "Peralatan dan Bahan", "en": "Equipment and Materials" },
+          "type": "table",
+          "required": true,
+          "ordering": 1,
+          "table_structure": {
+            "row_mode": "dynamic",
+            "min_rows": 0,
+            "columns": [
+              { "column_id": "type", "label": { "ms": "Jenis", "en": "Type" }, "type": "text", "required": true, "width_hint": "narrow" },
+              { "column_id": "description", "label": { "ms": "Butiran", "en": "Description" }, "type": "text", "required": true, "width_hint": "wide" },
+              { "column_id": "owner", "label": { "ms": "Pemilik", "en": "Owner" }, "type": "text", "required": true, "width_hint": "medium" },
+              { "column_id": "location", "label": { "ms": "Lokasi Spesifik", "en": "Specific Location" }, "type": "text", "required": true, "width_hint": "medium" }
+            ]
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "import-from-source",
+            "default_sources": ["Research_Design.md", "Budget_Draft.md"]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "F",
+      "label": { "ms": "Bajet", "en": "Budget" },
+      "description": { "ms": "Sila perincikan setiap item", "en": "Please detail out each item" },
+      "level": 1,
+      "ordering": 7,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "F-budget",
+          "label": { "ms": "Bajet Projek", "en": "Project Budget" },
+          "type": "table",
+          "required": true,
+          "ordering": 1,
+          "table_structure": {
+            "row_mode": "row-groups",
+            "columns": [
+              { "column_id": "description", "label": { "ms": "Butiran", "en": "Description" }, "type": "text", "required": true, "width_hint": "wide" },
+              { "column_id": "year1", "label": { "ms": "Tahun 1", "en": "Year 1" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 0, "currency": "MYR", "decimal_places": 2 } },
+              { "column_id": "year2", "label": { "ms": "Tahun 2", "en": "Year 2" }, "type": "number", "required": false, "width_hint": "narrow", "constraints": { "min": 0, "currency": "MYR", "decimal_places": 2 } },
+              { "column_id": "year3", "label": { "ms": "Tahun 3", "en": "Year 3" }, "type": "number", "required": false, "width_hint": "narrow", "constraints": { "min": 0, "currency": "MYR", "decimal_places": 2 } },
+              { "column_id": "grand-total", "label": { "ms": "Jumlah Keseluruhan", "en": "Grand Total" }, "type": "number", "required": true, "width_hint": "narrow", "computed": "sum(year1, year2, year3)", "constraints": { "currency": "MYR", "decimal_places": 2 } },
+              { "column_id": "percentage", "label": { "ms": "Peratusan (%)", "en": "Percentage (%)" }, "type": "number", "required": false, "width_hint": "narrow", "computed": "value(grand-total) / value(F-budget-grand-total) * 100", "constraints": { "min": 0, "max": 100, "decimal_places": 2 } }
+            ],
+            "row_groups": [
+              {
+                "group_id": "vot-11000",
+                "group_label": { "ms": "11000 - Elaun", "en": "11000 - Allowance" },
+                "group_constraints": {},
+                "rows": [
+                  {
+                    "row_id": "gra-masters",
+                    "row_label": {
+                      "ms": "GRA Sarjana (Siling RM2,500.00/seorang untuk dua (2) tahun)",
+                      "en": "GRA Master (Max RM2,500.00/person for two (2) years)"
+                    },
+                    "row_constraints": {
+                      "per_person_per_year_max": 2500,
+                      "max_duration_years": 2,
+                      "currency": "MYR"
+                    },
+                    "removable": false
+                  },
+                  {
+                    "row_id": "gra-phd",
+                    "row_label": {
+                      "ms": "GRA PhD (Siling RM3,000.00/seorang untuk tiga (3) tahun)",
+                      "en": "GRA PhD (Max RM3,000.00/person for 3 years)"
+                    },
+                    "row_constraints": {
+                      "per_person_per_year_max": 3000,
+                      "max_duration_years": 3,
+                      "currency": "MYR"
+                    },
+                    "removable": false
+                  },
+                  {
+                    "row_id": "ra",
+                    "row_label": {
+                      "ms": "RA (termasuk potongan KWSP/SOCSO jika berkaitan)",
+                      "en": "RA (including EPF/SOCSO deductions if relevant)"
+                    },
+                    "row_constraints": { "include_epf_socso": true, "currency": "MYR" },
+                    "removable": false
+                  }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "ms": "Jumlah keseluruhan vot 11000", "en": "Vot 11000 - Total" }
+              },
+              {
+                "group_id": "vot-21000",
+                "group_label": { "ms": "21000 - Perjalanan dan Pengangkutan", "en": "21000 - Travelling and Transportation" },
+                "group_constraints": { "max_percent_of_total": 20 },
+                "rows": [
+                  { "row_id": "local", "row_label": { "ms": "Dalam Negara (termasuk kerja lapangan)", "en": "Local (including field work)" }, "removable": false },
+                  { "row_id": "overseas", "row_label": { "ms": "Luar Negara", "en": "Overseas" }, "removable": false }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "ms": "Jumlah keseluruhan vot 21000", "en": "Vot 21000 - Total" }
+              },
+              {
+                "group_id": "vot-24000",
+                "group_label": { "ms": "24000 - Sewaan", "en": "24000 - Rental" },
+                "rows": [
+                  { "row_id": "rental", "row_label": { "ms": "Sewaan", "en": "Rental" }, "removable": false }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "ms": "Jumlah keseluruhan vot 24000", "en": "Vot 24000 - Total" }
+              },
+              {
+                "group_id": "vot-27000",
+                "group_label": { "ms": "27000 - Bekalan dan Bahan Penyelidikan", "en": "27000 - Research Materials and Supplies" },
+                "rows": [
+                  { "row_id": "supplies", "row_label": { "ms": "Bekalan dan Bahan Penyelidikan", "en": "Research Materials and Supplies" }, "removable": false }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "ms": "Jumlah keseluruhan vot 27000", "en": "Vot 27000 - Total" }
+              },
+              {
+                "group_id": "vot-28000",
+                "group_label": { "ms": "28000 - Penyelenggaraan dan Pembaikan Kecil", "en": "28000 - Maintenance and Minor Repair Services" },
+                "rows": [
+                  { "row_id": "maintenance", "row_label": { "ms": "Penyelenggaraan dan Pembaikan Kecil", "en": "Maintenance and Minor Repair Services" }, "removable": false }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "ms": "Jumlah keseluruhan vot 28000", "en": "Vot 28000 - Total" }
+              },
+              {
+                "group_id": "vot-29000",
+                "group_label": { "ms": "29000 - Perkhidmatan Ikhtisas", "en": "29000 - Professional Services" },
+                "rows": [
+                  { "row_id": "professional-services", "row_label": { "ms": "Perkhidmatan Ikhtisas", "en": "Professional Services" }, "removable": false },
+                  { "row_id": "journal-page-charges", "row_label": { "ms": "Caj Halaman Jurnal termasuk pembacaan pruf/penyuntingan/penterjemahan", "en": "Journal Page Charges including proofread/editing/translating" }, "removable": false },
+                  { "row_id": "conference-fee", "row_label": { "ms": "Yuran Persidangan", "en": "Conference Fee" }, "removable": false },
+                  { "row_id": "short-term-course", "row_label": { "ms": "Kursus Jangka Pendek", "en": "Short term course" }, "removable": false },
+                  { "row_id": "ip-fee", "row_label": { "ms": "Yuran IP", "en": "IP Fee" }, "removable": false }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "ms": "Jumlah keseluruhan vot 29000", "en": "Vot 29000 - Total" }
+              },
+              {
+                "group_id": "vot-35000",
+                "group_label": { "ms": "35000 - Aksesori dan Peralatan", "en": "35000 - Accessories and Equipment" },
+                "group_constraints": { "max_percent_of_total": 30 },
+                "rows": [
+                  { "row_id": "accessories-equipment", "row_label": { "ms": "Aksesori dan Peralatan", "en": "Accessories and Equipment" }, "removable": false }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "ms": "Jumlah keseluruhan vot 35000", "en": "Vot 35000 - Total" }
+              }
+            ],
+            "has_grand_total_row": true,
+            "grand_total_expression": "sum_over_rows(grand-total)"
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "import-from-source",
+            "default_sources": ["Budget_Draft.md", "Budget_Justification.md"]
+          }
+        },
+        {
+          "field_id": "F-budget-grand-total",
+          "label": { "ms": "Jumlah Keseluruhan Bajet", "en": "Budget Grand Total" },
+          "type": "number",
+          "required": true,
+          "ordering": 2,
+          "constraints": { "min": 0, "max": 250000, "currency": "MYR", "decimal_places": 2 },
+          "computed": "sum_over_rows(F-budget.grand-total)",
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [], "computed_from": "F-budget rows grand-total column" }
+        }
+      ]
+    },
+    {
+      "section_id": "G",
+      "label": { "ms": "Carian Paten", "en": "Patent Search" },
+      "description": {
+        "ms": "Huraikan bagaimana hasil penyelidikan anda akan menghasilkan idea atau teknologi inovatif yang berpotensi menjadi penyelesaian untuk pihak berkepentingan (komuniti, industri, kerajaan dll.) dan menawarkan cadangan yang unik",
+        "en": "Describe how your research output shall produce an innovative idea or technology that has the potential to be a solution for stakeholders (community, industry, government etc.) and offers a unique proposition"
+      },
+      "level": 1,
+      "ordering": 8,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "G-patent-search-narrative",
+          "label": { "ms": "Huraian Carian Paten", "en": "Patent Search Narrative" },
+          "type": "longtext",
+          "required": true,
+          "ordering": 1,
+          "length_limit": { "kind": "words", "max": 1000, "soft": true },
+          "content_requirements": {
+            "en": "To identify if the researcher is able to coherently present a compelling argument for his/her proposal in light of the IP landscape and factors identified in the (Yes/No) Section. The answer would reflect an understanding of the applicant's research advantage and limitations and the prospect of moving the completed research beyond this stage of funding. Must use the same keywords as section A(v). For patent search please visit www.lens.org"
+          },
+          "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Patent_Analysis.md", "Patent_Search.md", "Proposal_Data.md"] }
+        },
+        {
+          "field_id": "G-patent-search-attachment",
+          "label": { "ms": "Borang Carian Paten", "en": "Patent Search Form" },
+          "type": "attachment-reference",
+          "required": true,
+          "ordering": 2,
+          "attachment_type": "patent-search-form",
+          "preparation_guidance": {
+            "ms": "Sila lampirkan fail Borang Carian Paten",
+            "en": "Please attach file Patent Search Form"
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "generate",
+            "default_sources": ["Patent_Search.md"]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "H",
+      "label": { "ms": "Kolaborator Penyelidikan", "en": "Research Collaborator" },
+      "level": 1,
+      "ordering": 9,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "H-industry-linkages",
+          "label": { "ms": "Hubungan Industri", "en": "Industrial Linkages" },
+          "type": "longtext",
+          "required": false,
+          "ordering": 1,
+          "length_limit": { "kind": "words", "max": 500, "soft": true },
+          "content_requirements": {
+            "en": "Please identify any industry or end-user group involved in the project, and describe its role/contribution to the project"
+          },
+          "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Partnership_Plan.md", "Proposal_Data.md"] }
+        },
+        {
+          "field_id": "H-agency-organisations",
+          "label": { "ms": "Agensi/Organisasi", "en": "Agency/Organisation" },
+          "type": "longtext",
+          "required": false,
+          "ordering": 2,
+          "length_limit": { "kind": "words", "max": 500, "soft": true },
+          "content_requirements": {
+            "en": "Please identify all agencies/organisations collaborating in the project, and describe their role/contribution to the project"
+          },
+          "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Partnership_Plan.md", "Proposal_Data.md"] }
+        },
+        {
+          "field_id": "H-collaborator-attachments",
+          "label": { "ms": "LOI / MoA / MoU", "en": "Letters of Intent / MoA / MoU" },
+          "type": "attachment-reference",
+          "required": false,
+          "ordering": 3,
+          "attachment_type": "collaborator-letters",
+          "preparation_guidance": {
+            "ms": "Lampirkan fail yang diperlukan (LOI, MoA, MoU)",
+            "en": "Attach necessary file (LOI, MoA, MoU)"
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "generate",
+            "default_sources": ["Support_Letter.md", "Partnership_Plan.md"]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "I",
+      "label": { "ms": "Penilaian Risiko", "en": "Risk Assessment" },
+      "description": {
+        "ms": "Sila berikan justifikasi yang boleh menyebabkan kelewatan dalam, atau menghalang pelaksanaan, projek seperti yang dicadangkan di atas; anggarkan juga tahap risiko",
+        "en": "Please provide justification that may cause delays in, or prevent implementation of, the project as proposed above; estimate also the degree of risk"
+      },
+      "level": 1,
+      "ordering": 10,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "I-risk-matrix",
+          "label": { "ms": "Matriks Risiko", "en": "Risk Matrix" },
+          "type": "table",
+          "required": true,
+          "ordering": 1,
+          "table_structure": {
+            "row_mode": "fixed-rows",
+            "columns": [
+              {
+                "column_id": "level",
+                "label": { "ms": "Tahap Risiko", "en": "Risk Level" },
+                "type": "radio",
+                "required": true,
+                "width_hint": "narrow",
+                "options": [
+                  { "value": "low", "label": { "ms": "Rendah", "en": "Low" } },
+                  { "value": "medium", "label": { "ms": "Sederhana", "en": "Medium" } },
+                  { "value": "high", "label": { "ms": "Tinggi", "en": "High" } }
+                ]
+              },
+              { "column_id": "justification", "label": { "ms": "Justifikasi", "en": "Justification" }, "type": "longtext", "required": true, "width_hint": "wide" }
+            ],
+            "fixed_rows": [
+              { "row_id": "technical", "row_label": { "ms": "Teknikal", "en": "Technical" } },
+              { "row_id": "timing", "row_label": { "ms": "Masa", "en": "Timing" } },
+              { "row_id": "budget", "row_label": { "ms": "Bajet", "en": "Budget" } }
+            ]
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "generate",
+            "default_sources": ["Proposal_Data.md", "Research_Design.md", "Budget_Justification.md"]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "J",
+      "label": { "ms": "Perakuan", "en": "Declaration" },
+      "level": 1,
+      "ordering": 11,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "J-declarations",
+          "label": { "ms": "Perakuan Pemohon", "en": "Applicant Declarations" },
+          "type": "checkbox",
+          "required": true,
+          "ordering": 1,
+          "min_selections": 8,
+          "max_selections": 8,
+          "options": [
+            {
+              "value": "details-accurate",
+              "label": {
+                "ms": "Semua butiran yang diberikan dalam permohonan ini adalah tepat. JPT berhak untuk menolak atau membatalkan tawaran tanpa notis terlebih dahulu sekiranya terdapat maklumat yang diberikan tidak tepat",
+                "en": "All details provided in this application are accurate. JPT has the right to reject or to cancel the offer without prior notice if there is any inaccurate information given"
+              }
+            },
+            {
+              "value": "not-considered-elsewhere",
+              "label": {
+                "ms": "Cadangan ini tidak dipertimbangkan untuk sebarang geran penyelidikan lain",
+                "en": "This proposal is not currently considered for any other research grant(s)"
+              }
+            },
+            {
+              "value": "not-funded-elsewhere",
+              "label": {
+                "ms": "Cadangan kajian tidak dibiayai melalui geran penyelidikan lain",
+                "en": "The exact proposed work has not been funded through other research grant(s)"
+              }
+            },
+            {
+              "value": "ethics-approval",
+              "label": {
+                "ms": "Saya akan mendapatkan kelulusan daripada badan berkaitan (iaitu: Jawatankuasa Etika) sebelum aktiviti penyelidikan dimulakan (dalam tempoh enam (6) bulan dari tarikh mula penyelidikan)",
+                "en": "I will get necessary approvals from relevant bodies (i.e.: Ethics Committee) before the research activities commence (within six (6) months from the starting date)"
+              }
+            },
+            {
+              "value": "original-work",
+              "label": {
+                "ms": "Penyelidikan yang dicadangkan ini adalah karya asli saya, bukan disalin daripada tesis MSc atau Ph.D. saya atau mana-mana karya lain dan belum dihantar untuk permohonan geran sama ada di KPT atau di tempat lain",
+                "en": "This proposed research is my original work, is not copied from my MSc. or Ph.D. thesis or any other work and has not been submitted for grant application either at KPT or elsewhere"
+              }
+            },
+            {
+              "value": "nal-succession",
+              "label": {
+                "ms": "Sekiranya saya tidak berupaya sebagai Ketua Projek atau tidak berkhidmat dengan universiti, projek tersebut mesti diambil alih oleh Ketua yang Dilantik Seterusnya dari universiti yang sama",
+                "en": "In the event that I am not fit as a Project Leader or affiliated to the university, the project must be taken over by the Next Appointed Leader from the same university"
+              }
+            },
+            {
+              "value": "ai-disclosure",
+              "label": {
+                "ms": "Aplikasi yang dijana AI telah digunakan untuk membangunkan cadangan ini",
+                "en": "An AI-generated application was used to develop this proposal"
+              }
+            },
+            {
+              "value": "no-disciplinary-action",
+              "label": {
+                "ms": "Saya bebas daripada tindakan tatatertib termasuk amaran atau turun pangkat. Saya tidak diisytihar bankrap/mempunyai keberhutangan yang tinggi bagi penjawat awam",
+                "en": "I am not subject to any disciplinary action, including warnings, or demotion. I have not been declared bankrupt and am not subject to excessive indebtedness as a public officer"
+              }
+            }
+          ],
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        },
+        {
+          "field_id": "J-applicant-signature",
+          "label": { "ms": "Tandatangan Pemohon", "en": "Applicant Signature" },
+          "type": "signature",
+          "required": true,
+          "ordering": 2,
+          "signer_role": "principal_investigator",
+          "requires_date": true,
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        },
+        {
+          "field_id": "J-endorser-signature",
+          "label": {
+            "ms": "Pengesahan TNC(PI) / Pengarah RMC",
+            "en": "Endorsement by TNC(PI) / Director of RMC"
+          },
+          "type": "signature",
+          "required": true,
+          "ordering": 3,
+          "signer_role": "institutional_endorser",
+          "requires_date": true,
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [] }
+        }
+      ]
+    }
+  ],
+  "cross_field_rules": [
+    {
+      "rule_id": "patent-search-keywords-match-a-v",
+      "kind": "value-equality",
+      "source_field_id": "A-v-keywords",
+      "target_field_id": "G-patent-search-narrative",
+      "user_facing_message": {
+        "ms": "Mesti menggunakan kata kunci yang sama dalam bahagian A(v) untuk carian paten",
+        "en": "Must use the same keywords as section A(v) for patent search"
+      },
+      "severity": "warning"
+    },
+    {
+      "rule_id": "duration-matches-budget-years",
+      "kind": "value-equality",
+      "source_field_id": "C-xi-duration",
+      "target_field_id": "F-budget",
+      "user_facing_message": {
+        "en": "Number of active budget years must match the project duration selected in C(xi)"
+      },
+      "severity": "error"
+    },
+    {
+      "rule_id": "vot-21000-travel-cap",
+      "kind": "computed-bound",
+      "expression": "sum_over_rows(F-budget.rows where group_id='vot-21000').grand-total / value(F-budget-grand-total) <= 0.20",
+      "user_facing_message": {
+        "ms": "Vot 21000 Perjalanan tidak boleh melebihi 20% daripada jumlah keseluruhan bajet",
+        "en": "Vot 21000 Travel must not exceed 20% of the grand total budget"
+      },
+      "severity": "warning"
+    },
+    {
+      "rule_id": "vot-35000-equipment-cap",
+      "kind": "computed-bound",
+      "expression": "sum_over_rows(F-budget.rows where group_id='vot-35000').grand-total / value(F-budget-grand-total) <= 0.30",
+      "user_facing_message": {
+        "ms": "Vot 35000 Aksesori dan Peralatan tidak boleh melebihi 30% daripada jumlah keseluruhan bajet",
+        "en": "Vot 35000 Accessories and Equipment must not exceed 30% of the grand total budget"
+      },
+      "severity": "warning"
+    },
+    {
+      "rule_id": "budget-ceiling",
+      "kind": "computed-bound",
+      "expression": "value(F-budget-grand-total) <= 250000",
+      "user_facing_message": {
+        "ms": "Jumlah keseluruhan bajet tidak boleh melebihi RM250,000",
+        "en": "Budget grand total must not exceed RM250,000"
+      },
+      "severity": "error"
+    },
+    {
+      "rule_id": "end-date-after-start-date",
+      "kind": "value-equality",
+      "source_field_id": "C-xi-start-date",
+      "target_field_id": "C-xi-end-date",
+      "user_facing_message": {
+        "en": "End date must be after start date"
+      },
+      "severity": "error"
+    }
+  ],
+  "validation_artifacts": [
+    {
+      "artifact_id": "patent-search-form",
+      "label": { "ms": "Borang Carian Paten", "en": "Patent Search Form" },
+      "filename_pattern": "Borang_Carian_Paten*.pdf",
+      "linked_field_id": "G-patent-search-attachment",
+      "required": true,
+      "user_guidance": {
+        "ms": "Sila lampirkan Borang Carian Paten yang lengkap sebagai PDF berasingan apabila menghantar",
+        "en": "Attach the completed Patent Search Form as a separate PDF when submitting"
+      }
+    }
+  ]
+}

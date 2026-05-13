@@ -1,0 +1,945 @@
+{
+  "schema_version": "1.0",
+  "form_metadata": {
+    "form_id": "horizon-europe-msca-staff-exchanges-2026",
+    "form_title": {
+      "en": "Horizon Europe — Marie Skłodowska-Curie Actions Staff Exchanges 2026 — Application Form"
+    },
+    "funder": {
+      "name": "European Research Executive Agency",
+      "name_en": "European Research Executive Agency (REA)",
+      "country": "European Union",
+      "scheme": "MSCA-SE",
+      "scheme_full_name": "Marie Skłodowska-Curie Actions Staff Exchanges",
+      "year": 2026
+    },
+    "primary_language": "en",
+    "supported_languages": ["en"],
+    "submission_portal": "EU Funding & Tenders Portal",
+    "submission_portal_url": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/home",
+    "currency": "EUR",
+    "duration_options_years": [1, 2, 3, 4],
+    "budget_ceiling": null,
+    "source": {
+      "type": "web-reconstructed",
+      "extracted_from": null,
+      "extraction_date": "2026-05-13",
+      "extraction_method": "web-search-and-llm-synthesis",
+      "extraction_confidence": "medium",
+      "reviewed_by_user": false,
+      "reviewed_at": null,
+      "page_audit_trail": [
+        { "section_id": "part-a", "source_page": "Portal Part A admin form" },
+        { "section_id": "part-b-section-1", "source_page": "Application template Part B Section 1 Excellence" },
+        { "section_id": "part-b-section-2", "source_page": "Application template Part B Section 2 Impact" },
+        { "section_id": "part-b-section-3", "source_page": "Application template Part B Section 3 Implementation" },
+        { "section_id": "part-b-section-4", "source_page": "Application template Part B Section 4 Members of the Consortium" },
+        { "section_id": "ethics-self-assessment", "source_page": "Application template Section 5 Ethics and Security" },
+        { "section_id": "security-self-assessment", "source_page": "Application template Section 5 Ethics and Security" },
+        { "section_id": "annexes", "source_page": "Application template Annexes" }
+      ]
+    }
+  },
+  "sections": [
+    {
+      "section_id": "part-a",
+      "label": { "en": "Part A — Administrative Form" },
+      "description": { "en": "General information about the proposal, list of participants, budget overview. Completed directly in the EU Funding & Tenders Portal interface." },
+      "level": 1,
+      "ordering": 1,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "A-proposal-acronym",
+          "label": { "en": "Proposal Acronym" },
+          "type": "text",
+          "required": true,
+          "ordering": 1,
+          "length_limit": { "kind": "characters", "max": 20, "soft": false },
+          "input_mode": "text",
+          "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md"] }
+        },
+        {
+          "field_id": "A-proposal-title",
+          "label": { "en": "Proposal Title" },
+          "type": "text",
+          "required": true,
+          "ordering": 2,
+          "length_limit": { "kind": "characters", "max": 200, "soft": false },
+          "input_mode": "text",
+          "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md"] }
+        },
+        {
+          "field_id": "A-duration-months",
+          "label": { "en": "Duration in Months" },
+          "type": "number",
+          "required": true,
+          "ordering": 3,
+          "constraints": { "min": 12, "max": 48, "step": 1, "unit_label": "months", "decimal_places": 0 },
+          "ai_generation": { "supported": true, "mode": "recommend", "default_sources": ["Proposal_Data.md", "Budget_Draft.md"] }
+        },
+        {
+          "field_id": "A-keywords",
+          "label": { "en": "Keywords" },
+          "description": { "en": "Free keywords plus selection from EuroSciVoc taxonomy" },
+          "type": "text",
+          "required": true,
+          "ordering": 4,
+          "length_limit": { "kind": "characters", "max": 500, "soft": false },
+          "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md"] }
+        },
+        {
+          "field_id": "A-abstract",
+          "label": { "en": "Abstract" },
+          "type": "longtext",
+          "required": true,
+          "ordering": 5,
+          "length_limit": { "kind": "characters", "max": 2000, "soft": false, "source_phrasing": "max 2000 characters" },
+          "content_requirements": {
+            "en": "The abstract should provide the reader with a clear understanding of the objectives, how they will be achieved, and the expected impact. The abstract will be used by the Commission as a public summary if your proposal is awarded a grant."
+          },
+          "verbatim_user_facing": true,
+          "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md", "Impact_Plan.md"] }
+        },
+        {
+          "field_id": "A-participants",
+          "label": { "en": "List of Participants" },
+          "description": { "en": "All consortium members. Each entry includes PIC, organisation legal name, country, role (Beneficiary / Associated Partner / Affiliated Entity), and short name." },
+          "type": "table",
+          "required": true,
+          "ordering": 6,
+          "table_structure": {
+            "row_mode": "dynamic",
+            "min_rows": 3,
+            "max_rows": null,
+            "columns": [
+              { "column_id": "number", "label": { "en": "No." }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 1, "decimal_places": 0 } },
+              { "column_id": "pic", "label": { "en": "PIC" }, "type": "text", "required": true, "width_hint": "narrow" },
+              { "column_id": "legal-name", "label": { "en": "Legal Name" }, "type": "text", "required": true, "width_hint": "wide" },
+              { "column_id": "short-name", "label": { "en": "Short Name" }, "type": "text", "required": true, "width_hint": "narrow" },
+              { "column_id": "country", "label": { "en": "Country" }, "type": "text", "required": true, "width_hint": "narrow" },
+              {
+                "column_id": "role",
+                "label": { "en": "Role" },
+                "type": "radio",
+                "required": true,
+                "width_hint": "medium",
+                "options": [
+                  { "value": "coordinator", "label": { "en": "Coordinator (Beneficiary)" } },
+                  { "value": "beneficiary", "label": { "en": "Beneficiary" } },
+                  { "value": "associated-partner", "label": { "en": "Associated Partner" } },
+                  { "value": "affiliated-entity", "label": { "en": "Affiliated Entity" } }
+                ]
+              },
+              {
+                "column_id": "organisation-type",
+                "label": { "en": "Organisation Type" },
+                "type": "radio",
+                "required": true,
+                "width_hint": "medium",
+                "options": [
+                  { "value": "academic", "label": { "en": "Academic (HE/RES)" } },
+                  { "value": "non-academic", "label": { "en": "Non-academic" } },
+                  { "value": "sme", "label": { "en": "SME" } },
+                  { "value": "large-enterprise", "label": { "en": "Large enterprise" } },
+                  { "value": "public-body", "label": { "en": "Public body" } },
+                  { "value": "ngo", "label": { "en": "NGO / civil society" } }
+                ]
+              }
+            ],
+            "has_grand_total_row": false
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "import-from-source",
+            "default_sources": ["Partnership_Plan.md", "Team_Strategy.md"]
+          }
+        },
+        {
+          "field_id": "A-budget-summary",
+          "label": { "en": "Budget Summary" },
+          "description": {
+            "en": "MSCA Staff Exchanges uses person-month unit costs. Costs categorised as: Top-up allowance for seconded staff (paid by sending organisation to staff), Travel and subsistence (institutional unit cost), Research/training/networking costs, Management/indirect costs."
+          },
+          "type": "table",
+          "required": true,
+          "ordering": 7,
+          "table_structure": {
+            "row_mode": "row-groups",
+            "columns": [
+              { "column_id": "person-months", "label": { "en": "Person-Months" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 0, "decimal_places": 1 } },
+              { "column_id": "unit-cost", "label": { "en": "Unit Cost (EUR/person-month)" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 0, "currency": "EUR", "decimal_places": 0 } },
+              { "column_id": "total", "label": { "en": "Total (EUR)" }, "type": "number", "required": true, "width_hint": "narrow", "computed": "value(person-months) * value(unit-cost)", "constraints": { "currency": "EUR", "decimal_places": 2 } }
+            ],
+            "row_groups": [
+              {
+                "group_id": "direct-costs",
+                "group_label": { "en": "Direct Costs" },
+                "rows": [
+                  {
+                    "row_id": "top-up-allowance",
+                    "row_label": { "en": "Top-up Allowance for Seconded Staff" },
+                    "row_constraints": { "fixed_unit_cost": 2300, "currency": "EUR", "unit": "person-month" },
+                    "removable": false
+                  },
+                  {
+                    "row_id": "travel-subsistence",
+                    "row_label": { "en": "Travel and Subsistence" },
+                    "row_constraints": { "currency": "EUR", "unit": "person-month" },
+                    "removable": false
+                  },
+                  {
+                    "row_id": "research-training-networking",
+                    "row_label": { "en": "Research, Training and Networking Costs" },
+                    "row_constraints": { "fixed_unit_cost": 1300, "currency": "EUR", "unit": "person-month" },
+                    "removable": false
+                  },
+                  {
+                    "row_id": "management",
+                    "row_label": { "en": "Management Costs" },
+                    "row_constraints": { "fixed_unit_cost": 700, "currency": "EUR", "unit": "person-month" },
+                    "removable": false
+                  }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "en": "Direct Costs Subtotal" }
+              },
+              {
+                "group_id": "indirect-costs",
+                "group_label": { "en": "Indirect Costs" },
+                "group_constraints": { "fixed_percent_of_direct": 25 },
+                "rows": [
+                  {
+                    "row_id": "indirect-flat-rate",
+                    "row_label": { "en": "Indirect Costs (flat rate 25% of Direct Costs)" },
+                    "row_constraints": { "currency": "EUR" },
+                    "removable": false
+                  }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "en": "Indirect Costs Subtotal" }
+              }
+            ],
+            "has_grand_total_row": true,
+            "grand_total_expression": "sum_over_rows(total)"
+          },
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Budget_Draft.md", "Budget_Justification.md"] }
+        },
+        {
+          "field_id": "A-total-person-months",
+          "label": { "en": "Total Person-Months Across Consortium" },
+          "description": { "en": "Maximum 360 person-months per project under MSCA Staff Exchanges." },
+          "type": "number",
+          "required": true,
+          "ordering": 8,
+          "constraints": { "min": 0, "max": 360, "unit_label": "person-months", "decimal_places": 1 },
+          "computed": "sum_over_rows(A-budget-summary.person-months)",
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [], "computed_from": "A-budget-summary person-months column" }
+        }
+      ]
+    },
+    {
+      "section_id": "part-b-section-1",
+      "label": { "en": "Part B Section 1 — Excellence" },
+      "description": { "en": "Quality and credibility of the research/innovation action, methodology, gender dimension, training quality. Page-based limit: maximum 14 pages combined across all subsections of Section 1." },
+      "level": 1,
+      "ordering": 2,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "B1-page-limit-tracker",
+          "label": { "en": "Section 1 Combined Page Count" },
+          "type": "number",
+          "required": false,
+          "ordering": 99,
+          "constraints": { "min": 0, "max": 14, "decimal_places": 1, "unit_label": "pages" },
+          "computed": "page_count(B1-quality-credibility) + page_count(B1-methodology) + page_count(B1-gender-dimension) + page_count(B1-training-quality) + page_count(B1-supervision-quality)",
+          "ai_generation": { "supported": false, "mode": "none", "default_sources": [], "computed_from": "Aggregated page count across B1 fields" }
+        }
+      ],
+      "subsections": [
+        {
+          "section_id": "B1-1",
+          "label": { "en": "1.1 Quality and Credibility of the Research/Innovation Action" },
+          "level": 2,
+          "ordering": 1,
+          "required": true,
+          "visibility": { "type": "always-visible" },
+          "fields": [
+            {
+              "field_id": "B1-quality-credibility",
+              "label": { "en": "Quality and Credibility of the Research/Innovation Action" },
+              "type": "longtext",
+              "required": true,
+              "ordering": 1,
+              "length_limit": { "kind": "pages", "max": 5, "soft": true, "source_phrasing": "Page-based limit allocated within 14-page Section 1 budget" },
+              "content_requirements": {
+                "en": "Describe the research and innovation objectives of the proposal. Describe the soundness of the proposed methodology, including underlying concepts, models, assumptions, inter-disciplinary approaches, appropriate consideration of the gender dimension in research and innovation content, and the quality of open science practices."
+              },
+              "verbatim_user_facing": true,
+              "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md"] }
+            }
+          ]
+        },
+        {
+          "section_id": "B1-2",
+          "label": { "en": "1.2 Methodology" },
+          "level": 2,
+          "ordering": 2,
+          "required": true,
+          "visibility": { "type": "always-visible" },
+          "fields": [
+            {
+              "field_id": "B1-methodology",
+              "label": { "en": "Methodology" },
+              "type": "longtext",
+              "required": true,
+              "ordering": 1,
+              "length_limit": { "kind": "pages", "max": 4, "soft": true },
+              "content_requirements": {
+                "en": "Describe the methodology, highlighting its novelty and credibility. Describe how research data will be managed, made FAIR (Findable, Accessible, Interoperable, Reusable) where applicable. Reference the EU TRL scale (TRL 1 through TRL 9) where relevant to the action."
+              },
+              "verbatim_user_facing": true,
+              "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Research_Design.md", "Proposal_Data.md"] }
+            },
+            {
+              "field_id": "B1-trl-target",
+              "label": { "en": "Target Technology Readiness Level (TRL)" },
+              "description": { "en": "EU TRL scale 1-9 (basic research through full commercial deployment). Optional for staff exchange actions that are not technology-focused." },
+              "type": "radio",
+              "required": false,
+              "ordering": 2,
+              "options": [
+                { "value": "trl-1", "label": { "en": "TRL 1 — Basic principles observed" } },
+                { "value": "trl-2", "label": { "en": "TRL 2 — Technology concept formulated" } },
+                { "value": "trl-3", "label": { "en": "TRL 3 — Experimental proof of concept" } },
+                { "value": "trl-4", "label": { "en": "TRL 4 — Technology validated in lab" } },
+                { "value": "trl-5", "label": { "en": "TRL 5 — Technology validated in relevant environment" } },
+                { "value": "trl-6", "label": { "en": "TRL 6 — Technology demonstrated in relevant environment" } },
+                { "value": "trl-7", "label": { "en": "TRL 7 — System prototype demonstration in operational environment" } },
+                { "value": "trl-8", "label": { "en": "TRL 8 — System complete and qualified" } },
+                { "value": "trl-9", "label": { "en": "TRL 9 — Actual system proven in operational environment" } }
+              ],
+              "layout": "vertical",
+              "ai_generation": { "supported": true, "mode": "recommend", "default_sources": ["Proposal_Data.md", "Research_Design.md"] }
+            }
+          ]
+        },
+        {
+          "section_id": "B1-3",
+          "label": { "en": "1.3 Gender Dimension and Other Diversity Aspects" },
+          "level": 2,
+          "ordering": 3,
+          "required": true,
+          "visibility": { "type": "always-visible" },
+          "fields": [
+            {
+              "field_id": "B1-gender-dimension",
+              "label": { "en": "Gender Dimension and Other Diversity Aspects in the Research and Innovation Content" },
+              "type": "longtext",
+              "required": true,
+              "ordering": 1,
+              "length_limit": { "kind": "pages", "max": 1, "soft": true },
+              "content_requirements": {
+                "en": "Describe how sex and/or gender analysis is taken into account in the research and innovation content of the proposed action, where relevant. If no specific gender dimension is relevant, explain why."
+              },
+              "verbatim_user_facing": true,
+              "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md"] }
+            }
+          ]
+        },
+        {
+          "section_id": "B1-4",
+          "label": { "en": "1.4 Quality of Training and Supervision" },
+          "level": 2,
+          "ordering": 4,
+          "required": true,
+          "visibility": { "type": "always-visible" },
+          "fields": [
+            {
+              "field_id": "B1-training-quality",
+              "label": { "en": "Quality of Training Provided to Seconded Staff" },
+              "type": "longtext",
+              "required": true,
+              "ordering": 1,
+              "length_limit": { "kind": "pages", "max": 2, "soft": true },
+              "content_requirements": {
+                "en": "Describe the training programme for seconded staff, including hard and soft skills development, transferable skills, and how the training will benefit both individuals and their home organisations after the secondment."
+              },
+              "verbatim_user_facing": true,
+              "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Team_Strategy.md", "Proposal_Data.md"] }
+            },
+            {
+              "field_id": "B1-supervision-quality",
+              "label": { "en": "Quality of Supervision" },
+              "type": "longtext",
+              "required": true,
+              "ordering": 2,
+              "length_limit": { "kind": "pages", "max": 2, "soft": true },
+              "content_requirements": {
+                "en": "Describe the supervision arrangements at both sending and hosting organisations, the qualifications and experience of supervisors, and the mentoring approach."
+              },
+              "verbatim_user_facing": true,
+              "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Team_Strategy.md", "Researcher_Profile.md"] }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section_id": "part-b-section-2",
+      "label": { "en": "Part B Section 2 — Impact" },
+      "description": { "en": "Credibility of the pathways to achieve the expected outcomes and impacts. Quality and effectiveness of the proposed measures to maximise expected outcomes and impacts, including dissemination and exploitation activities. Page-based limit: maximum 5 pages combined." },
+      "level": 1,
+      "ordering": 3,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "subsections": [
+        {
+          "section_id": "B2-1",
+          "label": { "en": "2.1 Pathway Towards Impact" },
+          "level": 2,
+          "ordering": 1,
+          "required": true,
+          "visibility": { "type": "always-visible" },
+          "fields": [
+            {
+              "field_id": "B2-pathway-impact",
+              "label": { "en": "Pathway Towards Impact" },
+              "type": "longtext",
+              "required": true,
+              "ordering": 1,
+              "length_limit": { "kind": "pages", "max": 2, "soft": true },
+              "content_requirements": {
+                "en": "Describe the credibility of the pathways to achieve the expected outcomes and impacts specified in the work programme. Describe the scale and significance of the project's contribution to the expected outcomes and impacts."
+              },
+              "verbatim_user_facing": true,
+              "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Impact_Plan.md", "Proposal_Data.md"] }
+            }
+          ]
+        },
+        {
+          "section_id": "B2-2",
+          "label": { "en": "2.2 Measures to Maximise Impact — Dissemination, Exploitation and Communication" },
+          "level": 2,
+          "ordering": 2,
+          "required": true,
+          "visibility": { "type": "always-visible" },
+          "fields": [
+            {
+              "field_id": "B2-dissemination-exploitation",
+              "label": { "en": "Dissemination and Exploitation Plan" },
+              "type": "longtext",
+              "required": true,
+              "ordering": 1,
+              "length_limit": { "kind": "pages", "max": 2, "soft": true },
+              "content_requirements": {
+                "en": "Describe how the consortium will manage and make use of the project's results, including measures for dissemination, exploitation, and intellectual property management. Include knowledge transfer back to home organisations as a core MSCA-SE objective."
+              },
+              "verbatim_user_facing": true,
+              "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Impact_Plan.md", "Patent_Analysis.md", "Partnership_Plan.md"] }
+            },
+            {
+              "field_id": "B2-communication-public-engagement",
+              "label": { "en": "Communication and Public Engagement" },
+              "type": "longtext",
+              "required": true,
+              "ordering": 2,
+              "length_limit": { "kind": "pages", "max": 1, "soft": true },
+              "content_requirements": {
+                "en": "Describe the communication strategy targeting different audiences, including the general public. Outline public engagement activities planned during the project."
+              },
+              "verbatim_user_facing": true,
+              "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Impact_Plan.md", "Proposal_Data.md"] }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section_id": "part-b-section-3",
+      "label": { "en": "Part B Section 3 — Implementation" },
+      "description": { "en": "Work plan with work packages, deliverables, milestones, consortium composition, risks, and resources. Page-based limit: maximum 10 pages combined (excluding tables which do not count towards the page limit)." },
+      "level": 1,
+      "ordering": 4,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "B3-work-plan-narrative",
+          "label": { "en": "Work Plan Narrative" },
+          "type": "longtext",
+          "required": true,
+          "ordering": 1,
+          "length_limit": { "kind": "pages", "max": 4, "soft": true },
+          "content_requirements": {
+            "en": "Describe the overall structure of the work plan, the timing of work packages and tasks, the secondment plan, the risk management approach, and how the consortium will manage the project. Reference the work packages, deliverables and milestones tables, and the Gantt chart."
+          },
+          "verbatim_user_facing": true,
+          "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Research_Design.md", "Partnership_Plan.md", "Proposal_Data.md"] }
+        },
+        {
+          "field_id": "B3-work-packages",
+          "label": { "en": "Work Packages with Tasks and Deliverables" },
+          "description": { "en": "Decompose the project into work packages. Each WP contains tasks, deliverables, and the lead beneficiary. Tables do not count against the page limit." },
+          "type": "table",
+          "required": true,
+          "ordering": 2,
+          "table_structure": {
+            "row_mode": "row-groups",
+            "columns": [
+              { "column_id": "ref", "label": { "en": "Ref" }, "type": "text", "required": true, "width_hint": "narrow" },
+              { "column_id": "title", "label": { "en": "Title" }, "type": "text", "required": true, "width_hint": "wide" },
+              { "column_id": "lead-beneficiary", "label": { "en": "Lead Beneficiary" }, "type": "text", "required": true, "width_hint": "medium" },
+              { "column_id": "person-months", "label": { "en": "Person-Months" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 0, "decimal_places": 1 } },
+              { "column_id": "start-month", "label": { "en": "Start Month" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 1, "decimal_places": 0 } },
+              { "column_id": "end-month", "label": { "en": "End Month" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 1, "decimal_places": 0 } }
+            ],
+            "row_groups": [
+              {
+                "group_id": "wp-1",
+                "group_label": { "en": "WP1 — Project Management and Coordination" },
+                "rows": [
+                  { "row_id": "wp1-task-1", "row_label": { "en": "Task 1.1 — Consortium governance and decision-making" }, "removable": true },
+                  { "row_id": "wp1-task-2", "row_label": { "en": "Task 1.2 — Financial and administrative coordination" }, "removable": true },
+                  { "row_id": "wp1-deliverable-1", "row_label": { "en": "D1.1 — Project Management Plan (Month 3)" }, "removable": true }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "en": "WP1 Subtotal" }
+              },
+              {
+                "group_id": "wp-2",
+                "group_label": { "en": "WP2 — Research Activities (placeholder; user populates per project)" },
+                "rows": [
+                  { "row_id": "wp2-task-1", "row_label": { "en": "Task 2.1 — Define here" }, "removable": true },
+                  { "row_id": "wp2-deliverable-1", "row_label": { "en": "D2.1 — Define here" }, "removable": true }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "en": "WP2 Subtotal" }
+              },
+              {
+                "group_id": "wp-3",
+                "group_label": { "en": "WP3 — Training, Mobility and Knowledge Transfer" },
+                "rows": [
+                  { "row_id": "wp3-task-1", "row_label": { "en": "Task 3.1 — Secondment scheduling and execution" }, "removable": true },
+                  { "row_id": "wp3-task-2", "row_label": { "en": "Task 3.2 — Training programme delivery" }, "removable": true },
+                  { "row_id": "wp3-deliverable-1", "row_label": { "en": "D3.1 — Training Programme Report (Month 12)" }, "removable": true }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "en": "WP3 Subtotal" }
+              },
+              {
+                "group_id": "wp-4",
+                "group_label": { "en": "WP4 — Dissemination, Exploitation and Communication" },
+                "rows": [
+                  { "row_id": "wp4-task-1", "row_label": { "en": "Task 4.1 — Dissemination activities" }, "removable": true },
+                  { "row_id": "wp4-task-2", "row_label": { "en": "Task 4.2 — Exploitation and IP management" }, "removable": true },
+                  { "row_id": "wp4-deliverable-1", "row_label": { "en": "D4.1 — Dissemination and Exploitation Plan (Month 6)" }, "removable": true }
+                ],
+                "has_subtotal": true,
+                "subtotal_label": { "en": "WP4 Subtotal" }
+              }
+            ],
+            "has_grand_total_row": true,
+            "grand_total_expression": "sum_over_rows(person-months)"
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "import-from-source",
+            "default_sources": ["Research_Design.md", "Partnership_Plan.md", "Budget_Draft.md"]
+          }
+        },
+        {
+          "field_id": "B3-milestones",
+          "label": { "en": "List of Milestones" },
+          "type": "table",
+          "required": true,
+          "ordering": 3,
+          "table_structure": {
+            "row_mode": "dynamic",
+            "min_rows": 3,
+            "columns": [
+              { "column_id": "ref", "label": { "en": "Milestone No." }, "type": "text", "required": true, "width_hint": "narrow" },
+              { "column_id": "name", "label": { "en": "Milestone Name" }, "type": "text", "required": true, "width_hint": "wide" },
+              { "column_id": "wp", "label": { "en": "Related WP" }, "type": "text", "required": true, "width_hint": "narrow" },
+              { "column_id": "due-month", "label": { "en": "Due Month" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 1, "decimal_places": 0 } },
+              { "column_id": "verification", "label": { "en": "Means of Verification" }, "type": "text", "required": true, "width_hint": "wide" }
+            ]
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "import-from-source",
+            "default_sources": ["Research_Design.md"]
+          }
+        },
+        {
+          "field_id": "B3-gantt-chart",
+          "label": { "en": "Gantt Chart" },
+          "type": "file-upload",
+          "required": true,
+          "ordering": 4,
+          "accepted_formats": ["pdf", "png", "jpg", "jpeg"],
+          "max_file_size_mb": 5,
+          "default_source_pattern": "Gantt chart from Phase 4 timeline aligned to MSCA work packages",
+          "ai_generation": { "supported": true, "mode": "import-from-source", "default_sources": ["Research_Design.md"] }
+        },
+        {
+          "field_id": "B3-secondment-plan",
+          "label": { "en": "Secondment Plan" },
+          "description": { "en": "Detailed plan of who is seconded where, when, and for how long. Each secondment contributes person-months to the WP person-month totals." },
+          "type": "table",
+          "required": true,
+          "ordering": 5,
+          "table_structure": {
+            "row_mode": "dynamic",
+            "min_rows": 1,
+            "columns": [
+              { "column_id": "staff-member", "label": { "en": "Staff Member Name / Role" }, "type": "text", "required": true, "width_hint": "wide" },
+              { "column_id": "sending-org", "label": { "en": "Sending Organisation" }, "type": "text", "required": true, "width_hint": "medium" },
+              { "column_id": "hosting-org", "label": { "en": "Hosting Organisation" }, "type": "text", "required": true, "width_hint": "medium" },
+              { "column_id": "wp", "label": { "en": "WP" }, "type": "text", "required": true, "width_hint": "narrow" },
+              { "column_id": "person-months", "label": { "en": "Person-Months" }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 0.5, "decimal_places": 1 } },
+              { "column_id": "purpose", "label": { "en": "Purpose / Activity" }, "type": "longtext", "required": true, "width_hint": "wide" }
+            ]
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "import-from-source",
+            "default_sources": ["Team_Strategy.md", "Partnership_Plan.md"]
+          }
+        },
+        {
+          "field_id": "B3-risks",
+          "label": { "en": "Critical Risks for Implementation" },
+          "type": "table",
+          "required": true,
+          "ordering": 6,
+          "table_structure": {
+            "row_mode": "dynamic",
+            "min_rows": 3,
+            "columns": [
+              { "column_id": "description", "label": { "en": "Description of Risk" }, "type": "longtext", "required": true, "width_hint": "wide" },
+              { "column_id": "wp", "label": { "en": "WP(s) Involved" }, "type": "text", "required": true, "width_hint": "narrow" },
+              {
+                "column_id": "likelihood",
+                "label": { "en": "Likelihood" },
+                "type": "radio",
+                "required": true,
+                "width_hint": "narrow",
+                "options": [
+                  { "value": "low", "label": { "en": "Low" } },
+                  { "value": "medium", "label": { "en": "Medium" } },
+                  { "value": "high", "label": { "en": "High" } }
+                ]
+              },
+              {
+                "column_id": "severity",
+                "label": { "en": "Severity" },
+                "type": "radio",
+                "required": true,
+                "width_hint": "narrow",
+                "options": [
+                  { "value": "low", "label": { "en": "Low" } },
+                  { "value": "medium", "label": { "en": "Medium" } },
+                  { "value": "high", "label": { "en": "High" } }
+                ]
+              },
+              { "column_id": "mitigation", "label": { "en": "Risk-Mitigation Measures" }, "type": "longtext", "required": true, "width_hint": "wide" }
+            ]
+          },
+          "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Proposal_Data.md", "Research_Design.md", "Partnership_Plan.md"] }
+        }
+      ]
+    },
+    {
+      "section_id": "part-b-section-4",
+      "label": { "en": "Part B Section 4 — Members of the Consortium" },
+      "description": { "en": "Per-participant descriptions. Each beneficiary, associated partner, and affiliated entity provides organisation profile, key personnel, infrastructure, and previous projects. Pages devoted to Section 4 do not count against Section 1-3 page limits." },
+      "level": 1,
+      "ordering": 5,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "B4-participants-profiles",
+          "label": { "en": "Participant Profiles" },
+          "description": { "en": "One entry per consortium participant. Each entry typically 1-2 pages. The schema represents this as a table for structural extraction; the workspace renders one card per participant." },
+          "type": "table",
+          "required": true,
+          "ordering": 1,
+          "table_structure": {
+            "row_mode": "dynamic",
+            "min_rows": 3,
+            "columns": [
+              { "column_id": "participant-number", "label": { "en": "Participant No." }, "type": "number", "required": true, "width_hint": "narrow", "constraints": { "min": 1, "decimal_places": 0 } },
+              { "column_id": "legal-name", "label": { "en": "Legal Name" }, "type": "text", "required": true, "width_hint": "wide" },
+              { "column_id": "organisation-description", "label": { "en": "Organisation Description" }, "type": "longtext", "required": true, "width_hint": "wide" },
+              { "column_id": "key-personnel", "label": { "en": "Key Personnel" }, "type": "longtext", "required": true, "width_hint": "wide" },
+              { "column_id": "infrastructure-facilities", "label": { "en": "Infrastructure and Facilities" }, "type": "longtext", "required": true, "width_hint": "wide" },
+              { "column_id": "previous-projects", "label": { "en": "Previous Relevant Projects" }, "type": "longtext", "required": false, "width_hint": "wide" }
+            ],
+            "per_row_attachments": [
+              {
+                "attachment_id": "letter-of-commitment",
+                "label": { "en": "Letter of Commitment (for Associated Partners only)" },
+                "required": false,
+                "default_source_pattern": "Support_Letter.md adapted per partner"
+              }
+            ]
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "import-from-source",
+            "default_sources": ["Partnership_Plan.md", "Team_Strategy.md", "Researcher_Profile.md"]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "ethics-self-assessment",
+      "label": { "en": "Section 5.1 — Ethics Self-Assessment" },
+      "description": { "en": "Ethics issues table. For each issue, indicate Yes/No and reference the page in your proposal where the issue is addressed. A 'Yes' to any item may trigger ethics review during evaluation." },
+      "level": 1,
+      "ordering": 6,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "ethics-issues-table",
+          "label": { "en": "Ethics Issues Table" },
+          "type": "table",
+          "required": true,
+          "ordering": 1,
+          "table_structure": {
+            "row_mode": "fixed-rows",
+            "columns": [
+              {
+                "column_id": "answer",
+                "label": { "en": "Applicable?" },
+                "type": "radio",
+                "required": true,
+                "width_hint": "narrow",
+                "options": [
+                  { "value": "yes", "label": { "en": "Yes" } },
+                  { "value": "no", "label": { "en": "No" } }
+                ]
+              },
+              { "column_id": "page-reference", "label": { "en": "Page Reference in Proposal" }, "type": "text", "required": false, "width_hint": "narrow" },
+              { "column_id": "explanation", "label": { "en": "Brief Explanation" }, "type": "longtext", "required": false, "width_hint": "wide" }
+            ],
+            "fixed_rows": [
+              { "row_id": "human-embryos-stem-cells", "row_label": { "en": "Does your research involve Human Embryonic Stem Cells or Human Embryos?" } },
+              { "row_id": "humans", "row_label": { "en": "Does your research involve Humans?" } },
+              { "row_id": "human-cells-tissues", "row_label": { "en": "Does your research involve Human Cells or Tissues (other than from Human Embryos / Foetuses)?" } },
+              { "row_id": "personal-data", "row_label": { "en": "Does your research involve Personal Data?" } },
+              { "row_id": "animals", "row_label": { "en": "Does your research involve Animals?" } },
+              { "row_id": "third-countries", "row_label": { "en": "Does your research involve Third Countries (non-EU) and is potentially sensitive?" } },
+              { "row_id": "environmental-protection-safety", "row_label": { "en": "Does your research raise Environmental Protection and Safety issues?" } },
+              { "row_id": "dual-use", "row_label": { "en": "Does your research involve Dual Use items?" } },
+              { "row_id": "civil-applications", "row_label": { "en": "Does your research focus exclusively on civil applications?" } },
+              { "row_id": "misuse", "row_label": { "en": "Does your research have the potential for Misuse?" } },
+              { "row_id": "other-ethics-issues", "row_label": { "en": "Are there any Other Ethics Issues that should be taken into consideration?" } }
+            ]
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "recommend",
+            "default_sources": ["Proposal_Data.md", "Research_Design.md"]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "security-self-assessment",
+      "label": { "en": "Section 5.2 — Security Self-Assessment" },
+      "description": { "en": "Security issues table. EU classification matters for sensitive results, dual-use technologies, and EU classified information." },
+      "level": 1,
+      "ordering": 7,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "security-issues-table",
+          "label": { "en": "Security Issues Table" },
+          "type": "table",
+          "required": true,
+          "ordering": 1,
+          "table_structure": {
+            "row_mode": "fixed-rows",
+            "columns": [
+              {
+                "column_id": "answer",
+                "label": { "en": "Applicable?" },
+                "type": "radio",
+                "required": true,
+                "width_hint": "narrow",
+                "options": [
+                  { "value": "yes", "label": { "en": "Yes" } },
+                  { "value": "no", "label": { "en": "No" } }
+                ]
+              },
+              { "column_id": "explanation", "label": { "en": "Brief Explanation" }, "type": "longtext", "required": false, "width_hint": "wide" }
+            ],
+            "fixed_rows": [
+              { "row_id": "eu-classified-information", "row_label": { "en": "Does the project involve information and/or materials subject to national/EU security classification?" } },
+              { "row_id": "sensitive-not-classified", "row_label": { "en": "Does the project involve information and/or materials that, while not classified, are nonetheless sensitive?" } },
+              { "row_id": "produces-classified-results", "row_label": { "en": "Will the project potentially produce results requiring classification?" } },
+              { "row_id": "dual-use-export", "row_label": { "en": "Does the project involve Dual Use items subject to EU export control regulations?" } },
+              { "row_id": "controlled-substances", "row_label": { "en": "Does the project involve materials/substances/processes subject to specific control regulations?" } },
+              { "row_id": "non-eu-cooperation-security", "row_label": { "en": "Does the project involve cooperation with non-EU entities that raises security considerations?" } }
+            ]
+          },
+          "ai_generation": {
+            "supported": true,
+            "mode": "recommend",
+            "default_sources": ["Proposal_Data.md", "Research_Design.md", "Patent_Analysis.md"]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "annexes",
+      "label": { "en": "Annexes" },
+      "level": 1,
+      "ordering": 8,
+      "required": true,
+      "visibility": { "type": "always-visible" },
+      "fields": [
+        {
+          "field_id": "annex-open-science-practices",
+          "label": { "en": "Open Science Practices (Annex 5)" },
+          "description": { "en": "Multi-select declaration of which open science practices the consortium commits to. All commitments described in the Section 1 methodology must be selected here." },
+          "type": "checkbox",
+          "required": true,
+          "ordering": 1,
+          "min_selections": 1,
+          "max_selections": null,
+          "options": [
+            { "value": "open-access-publications", "label": { "en": "Open Access to scientific publications (gold or green OA, Plan S compliant)" } },
+            { "value": "fair-data", "label": { "en": "Responsible management of research data following FAIR principles (Findable, Accessible, Interoperable, Reusable)" } },
+            { "value": "rdmp", "label": { "en": "Production of a Research Data Management Plan (RDMP)" } },
+            { "value": "open-source-software", "label": { "en": "Open source software publication" } },
+            { "value": "early-sharing", "label": { "en": "Early and open sharing of preprints and registered reports" } },
+            { "value": "open-peer-review", "label": { "en": "Participation in open peer review" } },
+            { "value": "citizen-science", "label": { "en": "Citizen science / public engagement in research" } },
+            { "value": "reproducibility", "label": { "en": "Reproducibility of research methods, data, and code" } },
+            { "value": "other-open-science", "label": { "en": "Other open science practices (describe in methodology)" } }
+          ],
+          "ai_generation": { "supported": true, "mode": "recommend", "default_sources": ["Research_Design.md", "Proposal_Data.md"] }
+        },
+        {
+          "field_id": "annex-letters-of-commitment",
+          "label": { "en": "Letters of Commitment from Associated Partners" },
+          "description": { "en": "Required for each Associated Partner. Letters do not count towards page limits. Each letter signed by an authorised representative of the partner organisation." },
+          "type": "attachment-reference",
+          "required": true,
+          "ordering": 2,
+          "attachment_type": "letter-of-commitment-bundle",
+          "preparation_guidance": {
+            "en": "Compile one PDF per Associated Partner. Use the Letter of Commitment template provided by REA. Each letter on partner letterhead, signed and dated."
+          },
+          "ai_generation": { "supported": true, "mode": "generate", "default_sources": ["Support_Letter.md", "Partnership_Plan.md"] }
+        }
+      ]
+    }
+  ],
+  "cross_field_rules": [
+    {
+      "rule_id": "section-1-total-pages-le-14",
+      "kind": "computed-bound",
+      "expression": "page_count(B1-quality-credibility) + page_count(B1-methodology) + page_count(B1-gender-dimension) + page_count(B1-training-quality) + page_count(B1-supervision-quality) <= 14",
+      "user_facing_message": {
+        "en": "Section 1 (Excellence) must not exceed 14 pages in total across all subsections"
+      },
+      "severity": "error"
+    },
+    {
+      "rule_id": "section-2-total-pages-le-5",
+      "kind": "computed-bound",
+      "expression": "page_count(B2-pathway-impact) + page_count(B2-dissemination-exploitation) + page_count(B2-communication-public-engagement) <= 5",
+      "user_facing_message": {
+        "en": "Section 2 (Impact) must not exceed 5 pages in total"
+      },
+      "severity": "error"
+    },
+    {
+      "rule_id": "section-3-total-pages-le-10",
+      "kind": "computed-bound",
+      "expression": "page_count(B3-work-plan-narrative) <= 10",
+      "user_facing_message": {
+        "en": "Section 3 (Implementation) narrative must not exceed 10 pages (tables excluded from count)"
+      },
+      "severity": "error"
+    },
+    {
+      "rule_id": "total-person-months-le-360",
+      "kind": "computed-bound",
+      "expression": "sum_over_rows(B3-secondment-plan.person-months) <= 360",
+      "user_facing_message": {
+        "en": "Total person-months across the consortium must not exceed 360 (MSCA Staff Exchanges cap)"
+      },
+      "severity": "error"
+    },
+    {
+      "rule_id": "consortium-min-3-entities-3-countries",
+      "kind": "computed-bound",
+      "expression": "count_rows(A-participants where role IN ('coordinator','beneficiary')) >= 3 AND count_distinct(A-participants.country) >= 3",
+      "user_facing_message": {
+        "en": "Consortium must include at least 3 different participating legal entities from 3 different countries"
+      },
+      "severity": "error"
+    },
+    {
+      "rule_id": "coordinator-from-ms-or-ac",
+      "kind": "presence-conditional",
+      "source_field_id": "A-participants",
+      "user_facing_message": {
+        "en": "At least one beneficiary must be established in an EU Member State or Horizon Europe Associated Country"
+      },
+      "severity": "error"
+    },
+    {
+      "rule_id": "indirect-costs-25pct-of-direct",
+      "kind": "computed-bound",
+      "expression": "abs(sum_over_rows(A-budget-summary.rows where group_id='indirect-costs').total - 0.25 * sum_over_rows(A-budget-summary.rows where group_id='direct-costs').total) < 0.01",
+      "user_facing_message": {
+        "en": "Indirect costs must equal exactly 25% of direct costs (Horizon Europe flat rate)"
+      },
+      "severity": "error"
+    },
+    {
+      "rule_id": "wp-total-pm-matches-secondment-plan",
+      "kind": "value-equality",
+      "source_field_id": "B3-work-packages",
+      "target_field_id": "B3-secondment-plan",
+      "user_facing_message": {
+        "en": "Sum of person-months across work packages must match sum of person-months across secondment plan"
+      },
+      "severity": "error"
+    }
+  ],
+  "validation_artifacts": [
+    {
+      "artifact_id": "letters-of-commitment-bundle",
+      "label": { "en": "Letters of Commitment (Associated Partners)" },
+      "filename_pattern": "Letters_of_Commitment*.pdf",
+      "linked_field_id": "annex-letters-of-commitment",
+      "required": true,
+      "user_guidance": {
+        "en": "Compile letters of commitment from all Associated Partners into a single PDF bundle. Submit as Annex via the EU Funding & Tenders Portal."
+      }
+    },
+    {
+      "artifact_id": "gantt-chart",
+      "label": { "en": "Gantt Chart" },
+      "filename_pattern": "Gantt*.pdf",
+      "linked_field_id": "B3-gantt-chart",
+      "required": true,
+      "user_guidance": {
+        "en": "Submit the Gantt chart as a PDF showing all work packages, tasks, deliverables, milestones, and secondments across the project duration."
+      }
+    }
+  ]
+}

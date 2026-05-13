@@ -1,0 +1,618 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://grant-suite.netlify.app/schemas/form-schema/v1.0",
+  "title": "Grant Suite Form Schema v1.0",
+  "description": "Meta-schema validating Form_Schema.json instances. Locked by phase5-rebuild-02-form-schema.md on 2026-05-13.",
+  "type": "object",
+  "required": ["schema_version", "form_metadata", "sections"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "form_metadata": { "$ref": "#/$defs/formMetadata" },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/section" }
+    },
+    "cross_field_rules": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/crossFieldRule" }
+    },
+    "validation_artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/validationArtifact" }
+    }
+  },
+  "$defs": {
+    "iso639_1": {
+      "type": "string",
+      "enum": ["ms", "en", "zh", "ta", "ja", "ko", "de", "fr", "es", "pt", "ar", "it", "nl", "ru", "tr", "id", "vi", "th", "tl", "hi"]
+    },
+    "iso4217": {
+      "type": "string",
+      "enum": ["MYR", "USD", "GBP", "EUR", "SGD", "IDR", "SAR", "AUD", "JPY", "CHF", "CAD", "CNY", "INR", "KRW", "THB", "VND", "PHP", "NZD", "HKD", "TWD"]
+    },
+    "bilingualString": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/iso639_1" },
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "formMetadata": {
+      "type": "object",
+      "required": ["form_id", "form_title", "funder", "primary_language", "supported_languages", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "form_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+          "minLength": 3,
+          "maxLength": 80
+        },
+        "form_title": { "$ref": "#/$defs/bilingualString" },
+        "funder": {
+          "type": "object",
+          "required": ["name", "country"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "name_en": { "type": "string" },
+            "country": { "type": "string", "minLength": 2 },
+            "scheme": { "type": "string" },
+            "scheme_full_name": { "type": "string" },
+            "year": { "type": "integer", "minimum": 1900, "maximum": 2100 }
+          }
+        },
+        "primary_language": { "$ref": "#/$defs/iso639_1" },
+        "supported_languages": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/iso639_1" },
+          "uniqueItems": true
+        },
+        "submission_portal": { "type": "string" },
+        "submission_portal_url": { "type": "string", "format": "uri" },
+        "currency": { "$ref": "#/$defs/iso4217" },
+        "duration_options_years": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1, "maximum": 20 },
+          "uniqueItems": true
+        },
+        "budget_ceiling": { "type": ["number", "null"], "minimum": 0 },
+        "source": { "$ref": "#/$defs/source" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["type", "extraction_date"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["uploaded", "web-reconstructed", "manual"]
+        },
+        "extracted_from": { "type": ["string", "null"] },
+        "extraction_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "extraction_method": { "type": ["string", "null"] },
+        "extraction_confidence": {
+          "type": ["string", "null"],
+          "enum": ["high", "medium", "low", null]
+        },
+        "reviewed_by_user": { "type": "boolean" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+        "page_audit_trail": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["section_id", "source_page"],
+            "properties": {
+              "section_id": { "type": "string" },
+              "source_page": { "type": ["integer", "string"] }
+            }
+          }
+        }
+      }
+    },
+    "section": {
+      "type": "object",
+      "required": ["section_id", "label", "level"],
+      "additionalProperties": false,
+      "properties": {
+        "section_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "label": { "$ref": "#/$defs/bilingualString" },
+        "description": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/bilingualString" }
+          ]
+        },
+        "level": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "ordering": { "type": "integer", "minimum": 0 },
+        "required": { "type": "boolean" },
+        "visibility": { "$ref": "#/$defs/visibility" },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/field" }
+        },
+        "subsections": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/section" }
+        }
+      }
+    },
+    "visibility": {
+      "type": "object",
+      "required": ["type"],
+      "oneOf": [
+        {
+          "properties": {
+            "type": { "const": "always-visible" }
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": { "const": "conditional" },
+            "condition": { "$ref": "#/$defs/condition" },
+            "operator_message": { "$ref": "#/$defs/bilingualString" }
+          },
+          "required": ["type", "condition"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "condition": {
+      "type": "object",
+      "required": ["field_id", "operator"],
+      "additionalProperties": false,
+      "properties": {
+        "field_id": { "type": "string" },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "equals", "not-equals",
+            "contains", "not-contains",
+            "greater-than", "less-than",
+            "in-set", "not-in-set",
+            "is-empty", "is-not-empty"
+          ]
+        },
+        "value": {}
+      }
+    },
+    "field": {
+      "type": "object",
+      "required": ["field_id", "label", "type"],
+      "properties": {
+        "field_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "label": { "$ref": "#/$defs/bilingualString" },
+        "description": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/bilingualString" }
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "text", "longtext", "radio", "checkbox", "multiselect",
+            "number", "date", "table", "file-upload", "signature", "attachment-reference"
+          ]
+        },
+        "required": { "type": "boolean" },
+        "ordering": { "type": "integer", "minimum": 0 },
+        "visibility": { "$ref": "#/$defs/visibility" },
+        "ai_generation": { "$ref": "#/$defs/aiGeneration" },
+        "extraction_confidence": {
+          "type": ["string", "null"],
+          "enum": ["high", "medium", "low", null]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "text" } } },
+          "then": { "$ref": "#/$defs/textFieldExtensions" }
+        },
+        {
+          "if": { "properties": { "type": { "const": "longtext" } } },
+          "then": { "$ref": "#/$defs/longtextFieldExtensions" }
+        },
+        {
+          "if": { "properties": { "type": { "const": "radio" } } },
+          "then": { "$ref": "#/$defs/optionsFieldExtensions" }
+        },
+        {
+          "if": { "properties": { "type": { "const": "checkbox" } } },
+          "then": { "$ref": "#/$defs/checkboxFieldExtensions" }
+        },
+        {
+          "if": { "properties": { "type": { "const": "multiselect" } } },
+          "then": { "$ref": "#/$defs/multiselectFieldExtensions" }
+        },
+        {
+          "if": { "properties": { "type": { "const": "number" } } },
+          "then": { "$ref": "#/$defs/numberFieldExtensions" }
+        },
+        {
+          "if": { "properties": { "type": { "const": "date" } } },
+          "then": { "$ref": "#/$defs/dateFieldExtensions" }
+        },
+        {
+          "if": { "properties": { "type": { "const": "table" } } },
+          "then": { "$ref": "#/$defs/tableFieldExtensions" }
+        },
+        {
+          "if": { "properties": { "type": { "const": "file-upload" } } },
+          "then": { "$ref": "#/$defs/fileUploadFieldExtensions" }
+        },
+        {
+          "if": { "properties": { "type": { "const": "signature" } } },
+          "then": { "$ref": "#/$defs/signatureFieldExtensions" }
+        },
+        {
+          "if": { "properties": { "type": { "const": "attachment-reference" } } },
+          "then": { "$ref": "#/$defs/attachmentReferenceFieldExtensions" }
+        }
+      ]
+    },
+    "aiGeneration": {
+      "type": "object",
+      "required": ["supported"],
+      "properties": {
+        "supported": { "type": "boolean" },
+        "mode": {
+          "type": "string",
+          "enum": ["generate", "recommend", "import-from-source", "none"]
+        },
+        "default_sources": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "computed_from": { "type": ["string", "null"] }
+      }
+    },
+    "lengthLimit": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["words", "characters", "pages", "minutes", "none"]
+        },
+        "max": { "type": ["integer", "null"], "minimum": 0 },
+        "min": { "type": ["integer", "null"], "minimum": 0 },
+        "soft": { "type": "boolean" },
+        "source_phrasing": { "type": ["string", "null"] }
+      },
+      "if": {
+        "properties": { "kind": { "const": "none" } }
+      },
+      "then": {
+        "properties": {
+          "max": { "const": null }
+        }
+      },
+      "else": {
+        "required": ["max"]
+      }
+    },
+    "textFieldExtensions": {
+      "properties": {
+        "length_limit": { "$ref": "#/$defs/lengthLimit" },
+        "validation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {
+              "kind": { "type": "string", "enum": ["regex", "min-length", "max-length"] },
+              "pattern": { "type": "string" },
+              "value": {},
+              "message": { "$ref": "#/$defs/bilingualString" }
+            }
+          }
+        },
+        "input_mode": {
+          "type": "string",
+          "enum": ["text", "email", "tel", "url"]
+        }
+      }
+    },
+    "longtextFieldExtensions": {
+      "required": ["length_limit"],
+      "properties": {
+        "length_limit": { "$ref": "#/$defs/lengthLimit" },
+        "content_requirements": { "$ref": "#/$defs/bilingualString" },
+        "verbatim_user_facing": { "type": "boolean" },
+        "minimum_paragraphs": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "optionsFieldExtensions": {
+      "required": ["options"],
+      "properties": {
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/option" }
+        },
+        "layout": {
+          "type": "string",
+          "enum": ["horizontal", "vertical", "grid", "searchable-list"]
+        }
+      }
+    },
+    "checkboxFieldExtensions": {
+      "required": ["options"],
+      "properties": {
+        "options": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/option" }
+        },
+        "min_selections": { "type": "integer", "minimum": 0 },
+        "max_selections": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "multiselectFieldExtensions": {
+      "required": ["options", "min_selections"],
+      "properties": {
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/option" }
+        },
+        "min_selections": { "type": "integer", "minimum": 1 },
+        "max_selections": { "type": ["integer", "null"], "minimum": 1 },
+        "ranking_required": { "type": "boolean" }
+      }
+    },
+    "option": {
+      "type": "object",
+      "required": ["value", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "value": { "type": "string" },
+        "label": { "$ref": "#/$defs/bilingualString" },
+        "metadata": { "type": "object" }
+      }
+    },
+    "numberFieldExtensions": {
+      "properties": {
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "min": { "type": ["number", "null"] },
+            "max": { "type": ["number", "null"] },
+            "step": { "type": ["number", "null"] },
+            "currency": {
+              "oneOf": [
+                { "type": "null" },
+                { "$ref": "#/$defs/iso4217" }
+              ]
+            },
+            "unit_label": { "type": ["string", "null"] },
+            "decimal_places": { "type": ["integer", "null"], "minimum": 0 }
+          }
+        },
+        "computed": { "type": ["string", "null"] }
+      }
+    },
+    "dateFieldExtensions": {
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": ["YYYY-MM-DD", "DD/MM/YYYY", "MM/DD/YYYY", "YYYY-MM", "YYYY"]
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "min": { "type": ["string", "null"] },
+            "max": { "type": ["string", "null"] },
+            "must_be_after_field_id": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "tableFieldExtensions": {
+      "required": ["table_structure"],
+      "properties": {
+        "table_structure": {
+          "type": "object",
+          "required": ["row_mode", "columns"],
+          "properties": {
+            "row_mode": {
+              "type": "string",
+              "enum": ["dynamic", "fixed-rows", "row-groups"]
+            },
+            "min_rows": { "type": ["integer", "null"], "minimum": 0 },
+            "max_rows": { "type": ["integer", "null"], "minimum": 1 },
+            "columns": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/tableColumn" }
+            },
+            "row_groups": {
+              "type": ["array", "null"],
+              "items": { "$ref": "#/$defs/rowGroup" }
+            },
+            "fixed_rows": {
+              "type": ["array", "null"],
+              "items": { "$ref": "#/$defs/fixedRow" }
+            },
+            "has_grand_total_row": { "type": "boolean" },
+            "grand_total_expression": { "type": ["string", "null"] },
+            "per_row_attachments": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/perRowAttachment" }
+            }
+          },
+          "allOf": [
+            {
+              "if": { "properties": { "row_mode": { "const": "row-groups" } } },
+              "then": { "required": ["row_groups"], "properties": { "row_groups": { "type": "array", "minItems": 1 } } }
+            },
+            {
+              "if": { "properties": { "row_mode": { "const": "fixed-rows" } } },
+              "then": { "required": ["fixed_rows"], "properties": { "fixed_rows": { "type": "array", "minItems": 1 } } }
+            }
+          ]
+        }
+      }
+    },
+    "tableColumn": {
+      "type": "object",
+      "required": ["column_id", "label", "type"],
+      "properties": {
+        "column_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+        "label": { "$ref": "#/$defs/bilingualString" },
+        "type": {
+          "type": "string",
+          "enum": ["text", "longtext", "number", "date", "radio", "checkbox", "file-upload"]
+        },
+        "required": { "type": "boolean" },
+        "width_hint": {
+          "type": "string",
+          "enum": ["narrow", "medium", "wide"]
+        },
+        "constraints": { "type": "object" },
+        "options": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/option" }
+        },
+        "computed": { "type": ["string", "null"] }
+      }
+    },
+    "rowGroup": {
+      "type": "object",
+      "required": ["group_id", "group_label", "rows"],
+      "properties": {
+        "group_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+        "group_label": { "$ref": "#/$defs/bilingualString" },
+        "group_constraints": {
+          "type": "object",
+          "properties": {
+            "max_percent_of_total": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+            "max_amount": { "type": ["number", "null"], "minimum": 0 }
+          }
+        },
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["row_id", "row_label"],
+            "properties": {
+              "row_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+              "row_label": { "$ref": "#/$defs/bilingualString" },
+              "row_constraints": { "type": "object" },
+              "removable": { "type": "boolean" }
+            }
+          }
+        },
+        "has_subtotal": { "type": "boolean" },
+        "subtotal_label": { "$ref": "#/$defs/bilingualString" }
+      }
+    },
+    "fixedRow": {
+      "type": "object",
+      "required": ["row_id", "row_label"],
+      "properties": {
+        "row_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+        "row_label": { "$ref": "#/$defs/bilingualString" },
+        "row_constraints": { "type": "object" }
+      }
+    },
+    "perRowAttachment": {
+      "type": "object",
+      "required": ["attachment_id", "label"],
+      "properties": {
+        "attachment_id": { "type": "string" },
+        "label": { "$ref": "#/$defs/bilingualString" },
+        "required": { "type": "boolean" },
+        "default_source_pattern": { "type": ["string", "null"] }
+      }
+    },
+    "fileUploadFieldExtensions": {
+      "properties": {
+        "accepted_formats": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "max_file_size_mb": { "type": ["number", "null"], "minimum": 0 },
+        "default_source_pattern": { "type": ["string", "null"] }
+      }
+    },
+    "signatureFieldExtensions": {
+      "properties": {
+        "signer_role": {
+          "type": "string",
+          "enum": ["principal_investigator", "institutional_endorser", "co_investigator", "mentor", "other"]
+        },
+        "requires_date": { "type": "boolean" }
+      }
+    },
+    "attachmentReferenceFieldExtensions": {
+      "properties": {
+        "attachment_type": { "type": "string" },
+        "preparation_guidance": { "$ref": "#/$defs/bilingualString" }
+      }
+    },
+    "crossFieldRule": {
+      "type": "object",
+      "required": ["rule_id", "kind"],
+      "properties": {
+        "rule_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+        "kind": {
+          "type": "string",
+          "enum": ["value-equality", "computed-bound", "presence-conditional", "sum-equality"]
+        },
+        "source_field_id": { "type": ["string", "null"] },
+        "target_field_id": { "type": ["string", "null"] },
+        "expression": { "type": ["string", "null"] },
+        "user_facing_message": { "$ref": "#/$defs/bilingualString" },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning"]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "value-equality" } } },
+          "then": { "required": ["source_field_id", "target_field_id"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "computed-bound" } } },
+          "then": { "required": ["expression"] }
+        }
+      ]
+    },
+    "validationArtifact": {
+      "type": "object",
+      "required": ["artifact_id", "label"],
+      "properties": {
+        "artifact_id": { "type": "string" },
+        "label": { "$ref": "#/$defs/bilingualString" },
+        "filename_pattern": { "type": ["string", "null"] },
+        "linked_field_id": { "type": ["string", "null"] },
+        "required": { "type": "boolean" },
+        "user_guidance": { "$ref": "#/$defs/bilingualString" }
+      }
+    }
+  }
+}
