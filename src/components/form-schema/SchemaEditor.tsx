@@ -15,26 +15,42 @@ import {
   ListTree,
   Paperclip,
   Radio,
+  Sparkles,
+  SkipForward,
+  Pencil,
+  RotateCw,
   Table as TableIcon,
   TextCursorInput,
 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   computeOverallConfidence,
   type BilingualString,
   type CrossFieldRule,
+  type ExtractionStatus,
   type FormField,
   type FormSchema,
   type FormSection,
   type Iso639_1,
+  type Phase50WorkspaceState,
+  type SectionStatus,
   type ValidationArtifact,
 } from "@/lib/form-schema";
 
 import { ConfidenceChip } from "./ConfidenceChip";
 
+export type SectionAction = "extract" | "manual" | "skip" | "unskip" | "re-extract";
+
 interface SchemaEditorProps {
   schema: FormSchema;
+  workspaceState?: Phase50WorkspaceState | null;
+  onSectionAction?: (sectionId: string, action: SectionAction) => void;
+  /** When set, render an action toolbar instead of the read-only "Edit (v21-R2)" footer. */
+  enableSectionActions?: boolean;
+  /** Optional inline UI rendered inside a section card. Used by the Phase 5-0 workspace to embed the Pass 2 paste-back. */
+  renderSectionExtras?: (sectionId: string, status: SectionStatus) => React.ReactNode;
 }
 
 const FIELD_TYPE_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -63,6 +79,31 @@ const FIELD_TYPE_LABEL: Record<string, string> = {
   "file-upload": "File upload",
   signature: "Signature",
   "attachment-reference": "Attachment reference",
+};
+
+const SECTION_STATUS_STYLE: Record<SectionStatus, string> = {
+  "not-extracted": "bg-muted text-muted-foreground border-muted-foreground/30",
+  extracting: "bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300",
+  extracted: "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300",
+  manual: "bg-sky-100 text-sky-700 border-sky-300 dark:bg-sky-950/40 dark:text-sky-300",
+  skipped: "bg-muted text-muted-foreground/70 border-muted-foreground/30 line-through",
+};
+
+const SECTION_STATUS_LABEL: Record<SectionStatus, string> = {
+  "not-extracted": "Not extracted",
+  extracting: "Extracting…",
+  extracted: "Extracted",
+  manual: "Manual",
+  skipped: "Skipped",
+};
+
+const EXTRACTION_STATUS_LABEL: Record<ExtractionStatus, string> = {
+  "no-schema": "No schema",
+  "skeleton-only": "Skeleton only",
+  partial: "Partial extraction",
+  "fields-complete": "All fields extracted",
+  "relationships-extracted": "Relationships extracted",
+  ready: "Ready",
 };
 
 function bilingualText(s: BilingualString | null | undefined, primary: Iso639_1): string {
@@ -98,7 +139,22 @@ function flattenSections(sections: FormSection[]): FormSection[] {
   return out;
 }
 
-export function SchemaEditor({ schema }: SchemaEditorProps) {
+function countSectionsByStatus(
+  state: Phase50WorkspaceState | null | undefined,
+): { total: number; extracted: number } {
+  if (!state) return { total: 0, extracted: 0 };
+  const statuses = Object.values(state.sectionStatuses);
+  const extracted = statuses.filter((s) => s === "extracted").length;
+  return { total: statuses.length, extracted };
+}
+
+export function SchemaEditor({
+  schema,
+  workspaceState,
+  onSectionAction,
+  enableSectionActions = false,
+  renderSectionExtras,
+}: SchemaEditorProps) {
   const primary = schema.form_metadata.primary_language;
   const flat = useMemo(() => flattenSections(schema.sections), [schema.sections]);
   const overall = useMemo(() => computeOverallConfidence(schema), [schema]);
@@ -113,6 +169,8 @@ export function SchemaEditor({ schema }: SchemaEditorProps) {
   const sourceType = schema.form_metadata.source.type;
   const sourceLabel =
     sourceType === "uploaded" ? "Uploaded" : sourceType === "web-reconstructed" ? "Web-reconstructed" : "Manual";
+
+  const sectionCounts = countSectionsByStatus(workspaceState);
 
   return (
     <div className="space-y-6">
@@ -133,6 +191,14 @@ export function SchemaEditor({ schema }: SchemaEditorProps) {
             <span className="inline-flex items-center rounded-full bg-[#F0F4FF] text-[#4F7DF3] px-2.5 py-1 text-[11px] font-medium">
               {sourceLabel}
             </span>
+            {workspaceState && (
+              <span className="inline-flex items-center rounded-full bg-muted text-foreground px-2.5 py-1 text-[11px] font-medium">
+                {EXTRACTION_STATUS_LABEL[workspaceState.extractionStatus]}
+                {sectionCounts.total > 0 &&
+                  workspaceState.extractionStatus !== "no-schema" &&
+                  ` — ${sectionCounts.extracted}/${sectionCounts.total} extracted`}
+              </span>
+            )}
             <ConfidenceChip confidence={overall ?? undefined} size="md" />
           </div>
         </div>
@@ -183,19 +249,33 @@ export function SchemaEditor({ schema }: SchemaEditorProps) {
               <p className="text-xs font-medium text-foreground uppercase tracking-wider">Sections</p>
             </div>
             <nav className="space-y-1">
-              {flat.map((s) => (
-                <a
-                  key={`${s.section_id}-${s.level}`}
-                  href={`#section-${s.section_id}`}
-                  className={cn(
-                    "block text-xs rounded px-2 py-1 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors truncate",
-                    s.level > 1 && "pl-4 text-muted-foreground/80",
-                  )}
-                >
-                  <span className="text-muted-foreground/60 mr-1.5">{s.section_id}</span>
-                  {bilingualText(s.label, primary)}
-                </a>
-              ))}
+              {flat.map((s) => {
+                const status = workspaceState?.sectionStatuses[s.section_id];
+                return (
+                  <a
+                    key={`${s.section_id}-${s.level}`}
+                    href={`#section-${s.section_id}`}
+                    className={cn(
+                      "block text-xs rounded px-2 py-1 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors truncate",
+                      s.level > 1 && "pl-4 text-muted-foreground/80",
+                    )}
+                  >
+                    <span className="text-muted-foreground/60 mr-1.5">{s.section_id}</span>
+                    {bilingualText(s.label, primary)}
+                    {status && status !== "not-extracted" && (
+                      <span
+                        className={cn(
+                          "ml-1.5 inline-block rounded-full w-1.5 h-1.5",
+                          status === "extracted" && "bg-emerald-500",
+                          status === "extracting" && "bg-amber-500",
+                          status === "manual" && "bg-sky-500",
+                          status === "skipped" && "bg-muted-foreground/40",
+                        )}
+                      />
+                    )}
+                  </a>
+                );
+              })}
             </nav>
           </div>
         </aside>
@@ -207,6 +287,10 @@ export function SchemaEditor({ schema }: SchemaEditorProps) {
               section={section}
               primary={primary}
               pageAuditMap={pageAuditMap}
+              workspaceState={workspaceState}
+              onSectionAction={onSectionAction}
+              enableSectionActions={enableSectionActions}
+              renderSectionExtras={renderSectionExtras}
             />
           ))}
 
@@ -227,22 +311,37 @@ function SectionCard({
   section,
   primary,
   pageAuditMap,
+  workspaceState,
+  onSectionAction,
+  enableSectionActions,
+  renderSectionExtras,
 }: {
   section: FormSection;
   primary: Iso639_1;
   pageAuditMap: Map<string, number | string>;
+  workspaceState?: Phase50WorkspaceState | null;
+  onSectionAction?: (sectionId: string, action: SectionAction) => void;
+  enableSectionActions: boolean;
+  renderSectionExtras?: (sectionId: string, status: SectionStatus) => React.ReactNode;
 }) {
   const auditPage = pageAuditMap.get(section.section_id);
   const conditional = section.visibility?.type === "conditional" ? section.visibility : null;
+  const status: SectionStatus =
+    workspaceState?.sectionStatuses[section.section_id] ?? "not-extracted";
+
+  const fieldCount = section.fields?.length ?? 0;
+  const subsectionCount = section.subsections?.length ?? 0;
+
   return (
     <section
       id={`section-${section.section_id}`}
       className={cn(
         "rounded-xl border border-border bg-card",
         section.level > 1 && "ml-4 border-dashed",
+        status === "skipped" && "opacity-60",
       )}
     >
-      <header className="border-b border-border px-5 py-3 space-y-1">
+      <header className="border-b border-border px-5 py-3 space-y-2">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -251,6 +350,16 @@ function SectionCard({
               {section.level > 1 && (
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 rounded bg-muted px-1.5 py-0.5">
                   Level {section.level}
+                </span>
+              )}
+              {workspaceState && (
+                <span
+                  className={cn(
+                    "text-[10px] uppercase tracking-wider rounded border px-1.5 py-0.5",
+                    SECTION_STATUS_STYLE[status],
+                  )}
+                >
+                  {SECTION_STATUS_LABEL[status]}
                 </span>
               )}
             </div>
@@ -278,29 +387,136 @@ function SectionCard({
             )}
           </p>
         )}
+
+        {enableSectionActions && onSectionAction && (
+          <SectionActionBar
+            status={status}
+            fieldCount={fieldCount}
+            onAction={(action) => onSectionAction(section.section_id, action)}
+          />
+        )}
       </header>
 
       <div className="p-5 space-y-3">
-        {(section.fields ?? []).map((field) => (
-          <FieldCard key={field.field_id} field={field} primary={primary} />
-        ))}
-        {(section.subsections ?? []).map((sub) => (
-          <SectionCard
-            key={sub.section_id}
-            section={sub}
-            primary={primary}
-            pageAuditMap={pageAuditMap}
-          />
-        ))}
-        {(section.fields?.length ?? 0) === 0 && (section.subsections?.length ?? 0) === 0 && (
-          <p className="text-xs italic text-muted-foreground">No fields in this section.</p>
+        {renderSectionExtras?.(section.section_id, status)}
+
+        {status === "skipped" ? (
+          <p className="text-xs italic text-muted-foreground">Section skipped — excluded from the workspace.</p>
+        ) : status === "manual" ? (
+          <div className="rounded-md border border-dashed border-sky-300 dark:border-sky-700 bg-sky-50/40 dark:bg-sky-950/20 p-3">
+            <p className="text-xs text-sky-700 dark:text-sky-300">
+              <strong>Manual entry placeholder.</strong> Hand-built field creation UI ships in v21-R2. For now, this
+              section is marked manual but its fields are not editable here.
+            </p>
+          </div>
+        ) : status === "not-extracted" && enableSectionActions ? (
+          <p className="text-xs italic text-muted-foreground">
+            Fields not yet extracted. Use the actions above to extract with AI or add manually.
+          </p>
+        ) : (
+          <>
+            {(section.fields ?? []).map((field) => (
+              <FieldCard key={field.field_id} field={field} primary={primary} />
+            ))}
+            {(section.subsections ?? []).map((sub) => (
+              <SectionCard
+                key={sub.section_id}
+                section={sub}
+                primary={primary}
+                pageAuditMap={pageAuditMap}
+                workspaceState={workspaceState}
+                onSectionAction={onSectionAction}
+                enableSectionActions={enableSectionActions}
+                renderSectionExtras={renderSectionExtras}
+              />
+            ))}
+            {fieldCount === 0 && subsectionCount === 0 && (
+              <p className="text-xs italic text-muted-foreground">No fields in this section.</p>
+            )}
+          </>
         )}
       </div>
     </section>
   );
 }
 
-function FieldCard({ field, primary }: { field: FormField; primary: Iso639_1 }) {
+function SectionActionBar({
+  status,
+  fieldCount,
+  onAction,
+}: {
+  status: SectionStatus;
+  fieldCount: number;
+  onAction: (action: SectionAction) => void;
+}) {
+  if (status === "extracting") {
+    return (
+      <div className="flex items-center gap-2 pt-1 text-[11px] text-amber-700 dark:text-amber-300">
+        <Sparkles className="h-3 w-3" />
+        Awaiting paste-back below — copy the Pass 2 prompt, run it in your LLM, then paste the section output.
+      </div>
+    );
+  }
+  if (status === "extracted") {
+    return (
+      <div className="flex items-center gap-2 pt-1 flex-wrap">
+        <span className="text-[11px] text-muted-foreground">{fieldCount} field{fieldCount === 1 ? "" : "s"} extracted</span>
+        <Button type="button" variant="ghost" size="sm" className="h-7" onClick={() => onAction("re-extract")}>
+          <RotateCw className="h-3 w-3" />
+          Re-extract
+        </Button>
+      </div>
+    );
+  }
+  if (status === "manual") {
+    return (
+      <div className="flex items-center gap-2 pt-1 flex-wrap">
+        <Button type="button" variant="outline" size="sm" className="h-7" disabled title="Coming in v21-R2">
+          <Pencil className="h-3 w-3" />
+          Edit fields manually (v21-R2)
+        </Button>
+        <Button type="button" variant="ghost" size="sm" className="h-7" onClick={() => onAction("extract")}>
+          <Sparkles className="h-3 w-3" />
+          Extract with AI instead
+        </Button>
+      </div>
+    );
+  }
+  if (status === "skipped") {
+    return (
+      <div className="flex items-center gap-2 pt-1">
+        <Button type="button" variant="ghost" size="sm" className="h-7" onClick={() => onAction("unskip")}>
+          Unskip
+        </Button>
+      </div>
+    );
+  }
+  // not-extracted
+  return (
+    <div className="flex items-center gap-2 pt-1 flex-wrap">
+      <Button
+        type="button"
+        variant="default"
+        size="sm"
+        className="h-7 bg-[#4F7DF3] hover:bg-[#4F7DF3]/90"
+        onClick={() => onAction("extract")}
+      >
+        <Sparkles className="h-3 w-3" />
+        Extract with AI
+      </Button>
+      <Button type="button" variant="outline" size="sm" className="h-7" onClick={() => onAction("manual")}>
+        <Pencil className="h-3 w-3" />
+        Add manually
+      </Button>
+      <Button type="button" variant="ghost" size="sm" className="h-7" onClick={() => onAction("skip")}>
+        <SkipForward className="h-3 w-3" />
+        Skip
+      </Button>
+    </div>
+  );
+}
+
+export function FieldCard({ field, primary }: { field: FormField; primary: Iso639_1 }) {
   const Icon = FIELD_TYPE_ICON[field.type] ?? TextCursorInput;
   const typeLabel = FIELD_TYPE_LABEL[field.type] ?? field.type;
   return (
@@ -426,17 +642,6 @@ function FieldCard({ field, primary }: { field: FormField; primary: Iso639_1 }) 
           {bilingualText(field.preparation_guidance, primary)}
         </p>
       )}
-
-      <footer className="flex items-center justify-end pt-1">
-        <button
-          type="button"
-          disabled
-          className="text-[10px] text-muted-foreground/50 cursor-not-allowed"
-          title="Available in v21-R2"
-        >
-          Edit (v21-R2)
-        </button>
-      </footer>
     </article>
   );
 }

@@ -341,3 +341,30 @@ export interface FormSchema {
   cross_field_rules?: CrossFieldRule[];
   validation_artifacts?: ValidationArtifact[];
 }
+
+// ─── v21-R1.2 multi-pass workspace state ──────────────────────────────────────
+// Workspace state lives in IndexedDB alongside the Form_Schema. It is NOT part
+// of the Form_Schema document itself — phase5-rebuild-03-multipass-architecture.md
+// keeps extraction completeness separate from the schema.
+
+export type ExtractionStatus =
+  | "no-schema"
+  | "skeleton-only"
+  | "partial"
+  | "fields-complete"
+  | "relationships-extracted"
+  | "ready";
+
+export type SectionStatus =
+  | "not-extracted"
+  | "extracting"
+  | "extracted"
+  | "manual"
+  | "skipped";
+
+export interface Phase50WorkspaceState {
+  projectId: string;
+  extractionStatus: ExtractionStatus;
+  sectionStatuses: Record<string, SectionStatus>;
+  lastUpdatedAt: string;
+}
