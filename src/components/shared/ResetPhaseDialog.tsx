@@ -9,6 +9,13 @@ import { useDocumentStore } from "@/stores/document-store";
 import { storage } from "@/lib/storage";
 import { getDownstreamProgress } from "@/lib/phase-dependencies";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
+import { clearCompletedDrafts } from "@/lib/external-drafting";
+import {
+  deleteFormSchema,
+  deleteAllFormFiles,
+} from "@/lib/form-schema/storage";
+import { deleteWorkspaceState } from "@/lib/form-schema/workspace-state";
+import { deleteDocxMarkdownCache } from "@/lib/form-schema/docx-markdown-cache";
 
 import {
   Dialog,
@@ -80,6 +87,15 @@ export function ResetPhaseDialog({
       // reactive, but useState hooks in phase clients lazy-init from
       // localStorage and don't auto-sync. The reload below flushes them.
       storage.resetPhaseLocalStorage(projectId, phase);
+      // v21-R1.2-lite: Phase 5 also owns external drafting uploads and any
+      // leftover Phase 5-0 form-schema state (kept in IndexedDB).
+      if (phase === 5) {
+        await clearCompletedDrafts(projectId);
+        await deleteFormSchema(projectId);
+        await deleteAllFormFiles(projectId);
+        await deleteWorkspaceState(projectId);
+        await deleteDocxMarkdownCache(projectId);
+      }
       toast.success(`Phase ${phase} reset`, {
         description: `${phaseDocs.length} document${phaseDocs.length === 1 ? "" : "s"} deleted, all step statuses cleared.`,
       });
@@ -172,6 +188,12 @@ export function ResetPhaseDialog({
                   <li>All step statuses for Phase {phase}</li>
                   <li>All form inputs and saved drafts in this phase</li>
                   <li>The Phase {phase} quality gate result</li>
+                  {phase === 5 && (
+                    <>
+                      <li>All externally-drafted DOCX/markdown uploads</li>
+                      <li>Any Phase 5-0 form schema, uploaded form files, and extraction state</li>
+                    </>
+                  )}
                 </ul>
               </div>
 

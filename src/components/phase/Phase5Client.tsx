@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { Fragment, useEffect, useState, useCallback, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
@@ -56,8 +56,7 @@ import { JumpToStartButton } from "@/components/shared/JumpToStartButton";
 import { PhaseDangerZone } from "@/components/shared/PhaseDangerZone";
 import { PlaceholderTracker } from "@/components/shared/PlaceholderTracker";
 import { Phase5_0Workspace } from "@/components/form-schema";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { X as XIcon } from "lucide-react";
+import { Phase5ExternalDraftingPanel } from "@/components/phase/Phase5ExternalDraftingPanel";
 
 // ─── Phase 5 definition ────────────────────────────────────────────────────
 
@@ -710,8 +709,6 @@ function Phase5LegacyClient({ projectId: _pid }: { projectId: string }) {
   return (
     <TooltipProvider>
       <motion.div className="space-y-8" {...fadeInUp}>
-        <Phase5LegacyBanner projectId={projectId} />
-
         {/* ── Phase Header ───────────────────────────────────────────────── */}
         <div className="flex items-center gap-4">
           <PhaseIcon phase={5} size="lg" active />
@@ -780,8 +777,11 @@ function Phase5LegacyClient({ projectId: _pid }: { projectId: string }) {
             };
             const docStats = isComplete ? getDocStats(producedDocNames[stepDef.step]) : null;
 
+            const step1Complete = getStepStatus(1) === "complete";
+
             return (
-              <div key={stepDef.step} id={`phase5-step-${stepDef.step}`} className="relative">
+              <Fragment key={stepDef.step}>
+                <div id={`phase5-step-${stepDef.step}`} className="relative">
                 {/* Timeline line */}
                 {i < phase5Steps.length - 1 && (
                   <div
@@ -1521,7 +1521,16 @@ function Phase5LegacyClient({ projectId: _pid }: { projectId: string }) {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+                </div>
+                {stepDef.step === 1 && (
+                  <div className="ml-10 mb-6">
+                    <Phase5ExternalDraftingPanel
+                      projectId={projectId}
+                      unlocked={step1Complete}
+                    />
+                  </div>
+                )}
+              </Fragment>
             );
           })}
         </div>
@@ -1552,66 +1561,25 @@ function LockedStepMessage({ stepNum }: { stepNum: number }) {
   );
 }
 
-// ─── Phase 5-0 dismissible banner (shown in Legacy view) ────────────────────
+// ─── Phase 5 wrapper — legacy flow by default; ?phase50=1 opens the hidden
+//     Phase 5-0 workspace for power users / debugging.
 
-const PHASE_5_0_BANNER_DISMISS_KEY = "grant-suite-phase-5-0-banner-dismissed-";
-
-function Phase5LegacyBanner({ projectId }: { projectId: string }) {
-  const storageKey = `${PHASE_5_0_BANNER_DISMISS_KEY}${projectId}`;
-  const [dismissed, setDismissed] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem(storageKey) === "1";
-  });
-
-  if (dismissed) return null;
-
-  return (
-    <div className="flex items-start gap-3 rounded-lg border border-[#4F7DF3]/30 bg-[#F0F4FF] px-4 py-3">
-      <Sparkles className="h-4 w-4 text-[#4F7DF3] mt-0.5 shrink-0" />
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground">
-          Phase 5-0 is the new form-driven workspace.
-        </p>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Switch to the &quot;Phase 5-0 Form Schema&quot; tab above to use the new workflow. The legacy
-          steps below remain available for projects already in flight.
-        </p>
-      </div>
-      <button
-        type="button"
-        onClick={() => {
-          if (typeof window !== "undefined") localStorage.setItem(storageKey, "1");
-          setDismissed(true);
-        }}
-        className="text-muted-foreground hover:text-foreground"
-        aria-label="Dismiss banner"
-      >
-        <XIcon className="h-3.5 w-3.5" />
-      </button>
-    </div>
-  );
+function shouldShowPhase50Workspace(): boolean {
+  if (typeof window === "undefined") return false;
+  const params = new URLSearchParams(window.location.search);
+  return params.get("phase50") === "1";
 }
-
-// ─── Phase 5 wrapper — tabs between Phase 5-0 (new) and Legacy steps ────────
 
 export function Phase5Client({ projectId: _pid }: { projectId: string }) {
   void _pid;
   const [projectId] = useState(() => getProjectIdFromUrl());
+  const [showPhase50] = useState(shouldShowPhase50Workspace);
 
-  return (
-    <Tabs defaultValue="phase-5-0" className="space-y-4">
-      <TabsList>
-        <TabsTrigger value="phase-5-0">Phase 5-0 — Form Schema</TabsTrigger>
-        <TabsTrigger value="legacy">Legacy steps (Phase 5-1 to 5-8)</TabsTrigger>
-      </TabsList>
-      <TabsContent value="phase-5-0">
-        {projectId && <Phase5_0Workspace projectId={projectId} />}
-      </TabsContent>
-      <TabsContent value="legacy">
-        <Phase5LegacyClient projectId={projectId} />
-      </TabsContent>
-    </Tabs>
-  );
+  if (showPhase50 && projectId) {
+    return <Phase5_0Workspace projectId={projectId} />;
+  }
+
+  return <Phase5LegacyClient projectId={projectId} />;
 }
 
 // ─── Post-Step Stats ────────────────────────────────────────────────────────
