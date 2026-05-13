@@ -31,19 +31,47 @@ Read the form completely. Skim the bundle to confirm coverage. Then produce TWO 
 
 **1b. Recommended drafting sequence table.** After the outline, produce a clean markdown table ranking the AI-draftable sections in the order they should be drafted. Rank by reasoning value: sections whose content informs later sections come first (e.g., problem statement before methodology; methodology before budget justification; executive summary near last since it synthesizes everything).
 
+**Bundle related sections.** Group sections that share a coherent narrative spine into ONE table row so the user can draft them together in a single chat turn. Bundle when ALL THREE are true:
+
+(a) The sections share the same evidence base (same parts of the project bundle drive them).
+(b) Drafting one without the others would create internal inconsistencies (e.g., a hypothesis that doesn't follow from its problem statement; a Gantt chart that doesn't match the activity table).
+(c) The combined output stays within reasonable single-response length (under ~3000 words combined).
+
+Examples of good bundles:
+
+- **Application identity bundle:** A(i) Grant + A(ii) Field + A(iii) TRL + A(iv) Title + A(v) Keywords (short identity fields driven by the same project positioning)
+- **Priority classifications bundle:** C(i) through C(ix) (alignment selectors from the same national/funder framework)
+- **Research-design spine:** D(ii)(a)1 Problem + D(ii)(a)2 Hypothesis + D(ii)(a)3 Research Questions + D(ii)(c) Objectives (classic research-design spine; drafting them together prevents drift)
+- **Methodology spine:** D(ii)(d)1 Description + D(ii)(d)2 Flow Chart + D(ii)(d)3 Activities + D(ii)(d)4 Milestones + D(ii)(d)5 Gantt (methodology and its operationalization are inseparable; the Gantt is a visualization of activities crossed with milestones)
+- **IP and patent search:** D(iii)1 IP outputs + G Patent Search (same novelty-positioning narrative)
+- **Location and duration:** C(x) Location + C(xi) Duration (short interlocked parameters)
+
+Do NOT bundle:
+
+- Citation-heavy sections (Literature Review, Synopsis of previous research) with non-citation sections. Citation work is a different output mode.
+- Budget tables with narrative sections.
+- Sections with significantly different length limits or content requirements.
+- Sections that depend on outputs from another bundle that hasn't been drafted yet.
+
 Format:
 
 | Order | Section | Why prioritize | Length | Depends on |
 |---|---|---|---|---|
-| 1 | D(ii)(a)1 Problem Statement | Foundation for all downstream sections | 300 words | — |
-| 2 | D(ii)(c) Objectives | Direct translation of problem into measurable aims | 200 words | Problem Statement |
-| 3 | D(ii)(d)1 Methodology | Operationalizes the objectives | 800 words | Objectives |
+| 1 | A(i) + A(ii) + A(iii) + A(iv) + A(v) Application identity | Sets proposal identity, category, technology-readiness claim, and patent-search vocabulary | Short fields | Project overview |
+| 2 | C(i)–C(ix) Priority classifications | Fixes policy and priority-alignment frame before narrative | Short selectors | Project scope, intelligence |
+| 3 | D(ii)(a)1 + (a)2 + (a)3 + (c) Problem → Hypothesis → RQs → Objectives | One coherent research-design spine drafted as a single output | ~700 words total | Project bundle |
+| 4 | D(ii)(a)4 Literature Review | Supplies scientific rationale and citation base | Per form | Problem, RQs |
+| 5 | D(ii)(d)1–(d)5 Methodology spine + flow + activities + milestones + Gantt | Methodology and operationalization are inseparable | Tables plus narrative | Objectives |
 | ... | ... | ... | ... | ... |
-| N | D(i) Executive Summary | Synthesizes all other sections | 500 words | All major narrative sections |
+| N | D(i) Executive Summary | Synthesizes the full proposal against the funder's checklist | Per form | All major narrative sections |
+
+The Section column lists all bundled identifiers separated by \` + \` (or the form's natural range notation if continuous, like \`C(i)–C(ix)\`), followed by a short collective label. The Why prioritize column explains why they belong together AND why they come at this position.
+
+**Target table length: 10–15 rows for a typical 30-section form.** A 30-row table is a signal that bundling has been skipped.
 
 Include only \`AI-draftable\` sections in the table. Skip \`user-to-fill\` items (they appear in the outline but not the recommendation).
 
-After the outline and table, ask which section to draft first. Do not proceed without a pick.
+After the outline and table, ask which section (or bundle) to draft first. Do not proceed without a pick.
 
 ### Step 2: Draft the chosen section
 

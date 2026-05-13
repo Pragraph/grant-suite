@@ -34,6 +34,23 @@ describe("EXTERNAL_DRAFTING_PROMPT_TEMPLATE", () => {
     expect(EXTERNAL_DRAFTING_PROMPT_TEMPLATE).toContain("| Order | Section |");
   });
 
+  it("instructs the LLM to bundle related sections into single rows", () => {
+    expect(EXTERNAL_DRAFTING_PROMPT_TEMPLATE).toContain(
+      "Bundle related sections",
+    );
+    expect(EXTERNAL_DRAFTING_PROMPT_TEMPLATE).toContain(
+      "Target table length: 10",
+    );
+  });
+
+  it("gives concrete bundle examples including the methodology spine", () => {
+    expect(EXTERNAL_DRAFTING_PROMPT_TEMPLATE).toContain("Methodology spine");
+    expect(EXTERNAL_DRAFTING_PROMPT_TEMPLATE).toContain("Research-design spine");
+    expect(EXTERNAL_DRAFTING_PROMPT_TEMPLATE).toContain(
+      "Application identity bundle",
+    );
+  });
+
   it("references the docx skill path for DOCX export", () => {
     expect(EXTERNAL_DRAFTING_PROMPT_TEMPLATE).toContain(
       "/mnt/skills/public/docx/SKILL.md",
