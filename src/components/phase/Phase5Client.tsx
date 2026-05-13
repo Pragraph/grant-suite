@@ -415,7 +415,15 @@ function Phase5LegacyClient({ projectId: _pid }: { projectId: string }) {
   // ── Phase progress ────────────────────────────────────────────────────────
 
   const phaseCompletion = getPhaseCompletion(5, activeProject);
-  const phase5Steps = PHASE_5.steps;
+
+  // v21-R1.3: legacy per-section step cards (Executive Summary, Methods,
+  // Background, Impact, Budget Justification, Supporting Documents, Assembly)
+  // are hidden in favor of the External Drafting Bundle. Step 1 (Data
+  // Compilation) stays visible so the bundle has compiled context.
+  // The legacy components remain in the codebase as @deprecated — restore by
+  // including their step numbers in VISIBLE_PHASE5_STEPS.
+  const VISIBLE_PHASE5_STEPS = [1];
+  const phase5Steps = PHASE_5.steps.filter((s) => VISIBLE_PHASE5_STEPS.includes(s.step));
 
   const getStepStatus = useCallback(
     (stepNum: number): StepStatus => {
@@ -734,23 +742,8 @@ function Phase5LegacyClient({ projectId: _pid }: { projectId: string }) {
           <Progress value={phaseCompletion} className="h-1.5" />
         </div>
 
-        {/* ── Writing Order Rationale ─────────────────────────────────────── */}
-        <Card className="border-phase-5/15 bg-phase-5/5">
-          <CardContent className="p-3">
-            <div className="flex items-start gap-2">
-              <Info className="h-3.5 w-3.5 text-phase-5 mt-0.5 shrink-0" />
-              <div className="text-[11px] text-muted-foreground">
-                <p className="font-medium text-foreground mb-1">Why this writing order?</p>
-                <p>
-                  Sections are written in a specific sequence so each builds on the previous. The
-                  executive summary sets the narrative arc, methods define the work, background
-                  justifies the methods, and impact projects from them. Writing out of order leads to
-                  contradictions and wasted revisions.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Writing Order Rationale card removed in v21-R1.3 — only Step 1 is
+           visible, so the multi-step narrative no longer applies. */}
 
         {/* ── Steps ──────────────────────────────────────────────────────── */}
         <div className="space-y-0">
@@ -1535,11 +1528,42 @@ function Phase5LegacyClient({ projectId: _pid }: { projectId: string }) {
           })}
         </div>
 
+        {/* ── Coming Soon placeholder for legacy per-section steps ─────── */}
+        <PerSectionDraftingComingSoon />
+
         {/* ── Phase Complete CTA ─────────────────────────────────────────── */}
         <PhaseCompleteCTA projectId={projectId} phase={5} phaseCompletion={phaseCompletion} />
         <PhaseDangerZone projectId={projectId} phase={5} />
       </motion.div>
     </TooltipProvider>
+  );
+}
+
+// ─── "Coming Soon" placeholder for hidden legacy per-section steps ────────
+// v21-R1.3: in-app per-section drafting (Executive Summary, Methods, Impact,
+// Budget Justification, etc.) is hidden in favor of the External Drafting
+// Bundle. Legacy step components remain in this file as @deprecated; this
+// placeholder is the single user-facing surface that calls that out.
+function PerSectionDraftingComingSoon() {
+  return (
+    <Card className="border-dashed border-border bg-muted/30">
+      <CardContent className="p-4 flex items-start gap-3">
+        <Lock className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-medium text-foreground">Per-section drafting</p>
+            <Badge variant="outline" className="text-[10px] text-muted-foreground">
+              Coming soon
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            In-app per-section drafting (Executive Summary, Methods, Impact, Budget
+            Justification, etc.) is on the roadmap. For now, use the External Drafting Bundle
+            above to draft all sections in your preferred LLM.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

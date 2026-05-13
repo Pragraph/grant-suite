@@ -5,13 +5,11 @@ import {
   CheckCircle2,
   Copy,
   Download,
-  ExternalLink,
   FileDown,
   FileText,
+  HelpCircle,
   Loader2,
   Lock,
-  PackageOpen,
-  Send,
   Trash2,
   Upload,
 } from "lucide-react";
@@ -21,19 +19,36 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { storage } from "@/lib/storage";
 import { useProgressStore } from "@/stores/progress-store";
 import {
-  EXTERNAL_DRAFTING_PROMPT,
+  buildExternalDraftingPrompt,
   downloadProjectBundle,
   saveCompletedDraft,
   listCompletedDrafts,
   deleteCompletedDraft,
   getCompletedDraftBlob,
   deriveKindFromFilename,
+  getProjectOutputLanguage,
+  setProjectOutputLanguage,
+  SUPPORTED_OUTPUT_LANGUAGES,
+  DEFAULT_OUTPUT_LANGUAGE,
   type CompletedDraftKind,
   type CompletedDraftMetadata,
+  type SupportedOutputLanguage,
 } from "@/lib/external-drafting";
 import { PHASE_DEFINITIONS } from "@/lib/constants";
 
@@ -43,7 +58,6 @@ interface Phase5ExternalDraftingPanelProps {
 }
 
 const PHASE_5_STEPS = PHASE_DEFINITIONS.find((p) => p.phase === 5)?.steps ?? [];
-const PROMPT_PREVIEW_LENGTH = 240;
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -60,20 +74,34 @@ function formatTimestamp(iso: string): string {
   }
 }
 
+function downloadTextFile(content: string, filename: string, mime: string): void {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
 export function Phase5ExternalDraftingPanel({
   projectId,
   unlocked,
 }: Phase5ExternalDraftingPanelProps) {
-  const [expanded, setExpanded] = useState(false);
   const [bundleBuilding, setBundleBuilding] = useState(false);
+  const [pdfConverting, setPdfConverting] = useState(false);
   const [drafts, setDrafts] = useState<CompletedDraftMetadata[]>([]);
-  const [draftsLoading, setDraftsLoading] = useState(false);
+  const [draftsLoading, setDraftsLoading] = useState(true);
   const [uploadingKind, setUploadingKind] = useState<CompletedDraftKind | null>(null);
   const [promptExpanded, setPromptExpanded] = useState(false);
-  const [whyExpanded, setWhyExpanded] = useState(false);
   const [completing, setCompleting] = useState(false);
+  const [outputLanguage, setOutputLanguageState] = useState<SupportedOutputLanguage>(() => {
+    if (typeof window === "undefined" || !projectId) return DEFAULT_OUTPUT_LANGUAGE;
+    return getProjectOutputLanguage(projectId);
+  });
   const docxInputRef = useRef<HTMLInputElement | null>(null);
   const mdInputRef = useRef<HTMLInputElement | null>(null);
+  const pdfInputRef = useRef<HTMLInputElement | null>(null);
 
   const updateStepStatus = useProgressStore((s) => s.updateStepStatus);
   const updateGateStatus = useProgressStore((s) => s.updateGateStatus);
@@ -100,23 +128,34 @@ export function Phase5ExternalDraftingPanel({
     };
   }, [projectId]);
 
+
   const hasCompletedDraft = drafts.length > 0;
 
-  const promptPreview = useMemo(() => {
-    if (promptExpanded) return EXTERNAL_DRAFTING_PROMPT;
-    return `${EXTERNAL_DRAFTING_PROMPT.slice(0, PROMPT_PREVIEW_LENGTH)}…`;
-  }, [promptExpanded]);
+  const builtPrompt = useMemo(
+    () => buildExternalDraftingPrompt(outputLanguage),
+    [outputLanguage],
+  );
+
+  const handleLanguageChange = useCallback(
+    (value: string) => {
+      const next = SUPPORTED_OUTPUT_LANGUAGES.find((l) => l.value === value)?.value;
+      if (!next) return;
+      setOutputLanguageState(next);
+      if (projectId) setProjectOutputLanguage(projectId, next);
+    },
+    [projectId],
+  );
 
   const handleCopyPrompt = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(EXTERNAL_DRAFTING_PROMPT);
+      await navigator.clipboard.writeText(builtPrompt);
       toast.success("Prompt copied", {
-        description: "Paste it into your LLM chat alongside the form and bundle.",
+        description: `Output language: ${outputLanguage}. Paste it into your LLM alongside the form and bundle.`,
       });
     } catch {
       toast.error("Failed to copy prompt");
     }
-  }, []);
+  }, [builtPrompt, outputLanguage]);
 
   const handleDownloadBundle = useCallback(async () => {
     if (!projectId) return;
@@ -143,6 +182,48 @@ export function Phase5ExternalDraftingPanel({
       setBundleBuilding(false);
     }
   }, [projectId]);
+
+  const handleConvertPdf = useCallback(async (file: File) => {
+    if (!file) return;
+    if (file.type && file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      toast.error("Pick a PDF file", {
+        description: `Received ${file.name}.`,
+      });
+      return;
+    }
+    setPdfConverting(true);
+    try {
+      const { convertPdfToMarkdown } = await import(
+        "@/lib/external-drafting/pdf-to-markdown"
+      );
+      const result = await convertPdfToMarkdown(file);
+      if (result.markdown.trim().length === 0) {
+        toast.error("Couldn't extract text from this PDF", {
+          description:
+            result.warnings[0] ??
+            "The PDF may be image-based. Try attaching it to your LLM directly instead.",
+        });
+        return;
+      }
+      const baseName = file.name.replace(/\.pdf$/i, "");
+      downloadTextFile(result.markdown, `${baseName}.md`, "text/markdown");
+      if (result.warnings.length > 0) {
+        toast.success(`Converted ${result.pageCount} pages`, {
+          description: `${result.warnings.length} page(s) had no extractable text. Downloaded ${baseName}.md.`,
+        });
+      } else {
+        toast.success(`Converted ${result.pageCount} pages`, {
+          description: `Downloaded ${baseName}.md.`,
+        });
+      }
+    } catch (err) {
+      toast.error("PDF conversion failed", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    } finally {
+      setPdfConverting(false);
+    }
+  }, []);
 
   const handleUpload = useCallback(
     async (file: File, kind: CompletedDraftKind) => {
@@ -253,46 +334,40 @@ export function Phase5ExternalDraftingPanel({
         !unlocked && "opacity-70",
       )}
     >
-      <CardContent className="p-5 space-y-4">
-        <div className="flex items-start gap-3">
-          <div
-            className={cn(
-              "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2",
-              unlocked
-                ? "border-phase-5 bg-phase-5/10 text-phase-5"
-                : "border-border bg-transparent text-muted-foreground",
-            )}
-          >
-            <Send className="h-4 w-4" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base font-semibold text-foreground">
-                External Drafting Bundle
-              </h3>
-              <Badge variant="outline" className="text-[10px] border-phase-5/40 text-phase-5">
-                Recommended
-              </Badge>
-              {!unlocked && (
-                <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
-                  <Lock className="h-2.5 w-2.5 mr-0.5" />
-                  Locked
-                </Badge>
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Compile your project data, draft the proposal sections in any frontier LLM
-              (ChatGPT 5.5 Thinking or Claude Opus 4.7), then upload the generated draft back here.
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setExpanded((prev) => !prev)}
-            className="shrink-0"
-          >
-            {expanded ? "Hide" : "Open"}
-          </Button>
+      <CardContent className="p-5 space-y-5">
+        {/* ── Header ─────────────────────────────────────────────────────── */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className="text-base font-semibold text-foreground">
+            External Drafting Bundle
+          </h3>
+          <Badge variant="outline" className="text-[10px] border-phase-5/40 text-phase-5">
+            Recommended
+          </Badge>
+          {!unlocked && (
+            <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
+              <Lock className="h-2.5 w-2.5 mr-0.5" />
+              Locked
+            </Badge>
+          )}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                aria-label="Why external drafting?"
+                className="ml-auto text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <HelpCircle className="h-4 w-4" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-80 text-xs leading-relaxed">
+              <p className="font-medium text-foreground mb-1">Why external drafting?</p>
+              <p className="text-muted-foreground">
+                Grant Suite prepares your project context; the LLM does the form-specific drafting.
+                This lets you use whichever LLM you prefer and keeps Grant Suite focused on what it
+                does best.
+              </p>
+            </PopoverContent>
+          </Popover>
         </div>
 
         {!unlocked && (
@@ -302,19 +377,15 @@ export function Phase5ExternalDraftingPanel({
           </p>
         )}
 
-        {expanded && unlocked && (
-          <div className="space-y-5 pt-2">
-            {/* ── Section A: Download bundle ─────────────────────────── */}
-            <section className="space-y-2">
-              <div className="flex items-center gap-2">
-                <PackageOpen className="h-4 w-4 text-phase-5" />
-                <h4 className="text-sm font-medium text-foreground">
-                  1. Download project bundle
-                </h4>
-              </div>
+        {unlocked && (
+          <div className="space-y-5">
+            {/* ── 1. Download bundle ─────────────────────────────────────── */}
+            <section className="space-y-1.5">
+              <h4 className="text-sm font-medium text-foreground">
+                1. Download project bundle
+              </h4>
               <p className="text-xs text-muted-foreground">
-                ZIP of every project markdown file produced so far (Phases 1–5). Upload this to
-                your LLM along with the grant form file.
+                ZIP of every project markdown produced so far. Upload alongside the grant form.
               </p>
               <Button
                 onClick={handleDownloadBundle}
@@ -331,68 +402,104 @@ export function Phase5ExternalDraftingPanel({
               </Button>
             </section>
 
-            {/* ── Section B: External drafting prompt ────────────────── */}
-            <section className="space-y-2">
-              <div className="flex items-center gap-2">
-                <ExternalLink className="h-4 w-4 text-phase-5" />
-                <h4 className="text-sm font-medium text-foreground">
-                  2. Draft externally
-                </h4>
-              </div>
+            {/* ── 2. (Optional) Convert PDF to markdown ──────────────────── */}
+            <section className="space-y-1.5">
+              <h4 className="text-sm font-medium text-foreground">
+                2. (Optional) Convert grant form PDF to markdown
+              </h4>
               <p className="text-xs text-muted-foreground">
-                Open ChatGPT 5.5 Thinking or Claude Opus 4.7 in a new tab. Attach your grant form
-                (PDF or DOCX) <strong>and</strong> the bundle you just downloaded. Paste the prompt
-                below. Follow the section-by-section drafting workflow.
+                Better quality for some LLMs. Skip if your LLM reads PDFs natively.
               </p>
-              <div className="flex flex-wrap items-center gap-2">
-                <Button onClick={handleCopyPrompt} size="sm" variant="secondary">
-                  <Copy className="h-3.5 w-3.5 mr-1.5" />
-                  Copy prompt
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setPromptExpanded((p) => !p)}
-                >
-                  {promptExpanded ? "Collapse preview" : "Expand full prompt"}
-                </Button>
-              </div>
-              <Textarea
-                readOnly
-                value={promptPreview}
-                className="text-[11px] font-mono leading-relaxed"
-                rows={promptExpanded ? 24 : 6}
+              <input
+                ref={pdfInputRef}
+                type="file"
+                aria-label="Pick a PDF to convert to markdown"
+                accept=".pdf,application/pdf"
+                className="hidden"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) void handleConvertPdf(file);
+                  event.target.value = "";
+                }}
               />
-              <button
-                type="button"
-                onClick={() => setWhyExpanded((p) => !p)}
-                className="text-[11px] text-phase-5 hover:underline"
+              <Button
+                onClick={() => pdfInputRef.current?.click()}
+                disabled={pdfConverting}
+                size="sm"
+                variant="outline"
               >
-                {whyExpanded ? "Hide" : "Why external drafting?"}
-              </button>
-              {whyExpanded && (
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Grant forms have dozens of bespoke fields, instructions in multiple languages,
-                  and idiosyncratic structures. Frontier LLMs read those forms accurately when
-                  given the file directly. Drafting externally avoids building a fragile
-                  form-extraction pipeline in-app while keeping your project data as the
-                  authoritative source. Once drafted, you upload the result back here so it lives
-                  with the rest of the project.
-                </p>
+                {pdfConverting ? (
+                  <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                ) : (
+                  <Download className="h-3.5 w-3.5 mr-1.5" />
+                )}
+                Convert PDF to markdown
+              </Button>
+            </section>
+
+            {/* ── 3. Open LLM + paste prompt ─────────────────────────────── */}
+            <section className="space-y-2">
+              <h4 className="text-sm font-medium text-foreground">
+                3. Open ChatGPT or Claude, attach files, paste prompt
+              </h4>
+              <p className="text-xs text-muted-foreground">
+                The prompt walks the LLM through outlining, drafting, and exporting.
+              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <label
+                    htmlFor="external-drafting-language"
+                    className="text-xs text-muted-foreground"
+                  >
+                    Output language:
+                  </label>
+                  <Select value={outputLanguage} onValueChange={handleLanguageChange}>
+                    <SelectTrigger
+                      id="external-drafting-language"
+                      className="h-8 w-45 text-xs"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SUPPORTED_OUTPUT_LANGUAGES.map((lang) => (
+                        <SelectItem key={lang.value} value={lang.value} className="text-xs">
+                          {lang.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2 ml-auto">
+                  <Button onClick={handleCopyPrompt} size="sm" variant="secondary">
+                    <Copy className="h-3.5 w-3.5 mr-1.5" />
+                    Copy prompt
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setPromptExpanded((p) => !p)}
+                  >
+                    {promptExpanded ? "Collapse" : "Expand full prompt"}
+                  </Button>
+                </div>
+              </div>
+              {promptExpanded && (
+                <Textarea
+                  readOnly
+                  value={builtPrompt}
+                  className="text-[11px] font-mono leading-relaxed"
+                  rows={24}
+                />
               )}
             </section>
 
-            {/* ── Section C: Upload completed draft ──────────────────── */}
+            {/* ── 4. Upload completed draft ──────────────────────────────── */}
             <section className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Upload className="h-4 w-4 text-phase-5" />
-                <h4 className="text-sm font-medium text-foreground">
-                  3. Upload completed draft
-                </h4>
-              </div>
+              <h4 className="text-sm font-medium text-foreground">
+                4. Upload your finished draft
+              </h4>
               <p className="text-xs text-muted-foreground">
-                Drop the DOCX exported from your LLM session. Add the markdown copy too if you
-                have it. Re-uploading creates a new version — older versions stay accessible.
+                Re-uploading creates a new version — older versions stay accessible.
               </p>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-2 rounded-lg border border-border bg-background p-3">
@@ -400,9 +507,6 @@ export function Phase5ExternalDraftingPanel({
                     <FileText className="h-3.5 w-3.5 text-phase-5" />
                     <p className="text-xs font-medium text-foreground">DOCX</p>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    Primary submission-ready file.
-                  </p>
                   <input
                     ref={docxInputRef}
                     type="file"
@@ -427,17 +531,16 @@ export function Phase5ExternalDraftingPanel({
                     ) : (
                       <Upload className="h-3.5 w-3.5 mr-1.5" />
                     )}
-                    Upload DOCX
+                    Choose DOCX
                   </Button>
                 </div>
                 <div className="space-y-2 rounded-lg border border-border bg-background p-3">
                   <div className="flex items-center gap-2">
                     <FileText className="h-3.5 w-3.5 text-phase-5/60" />
-                    <p className="text-xs font-medium text-foreground">Markdown (optional)</p>
+                    <p className="text-xs font-medium text-foreground">
+                      Markdown (optional)
+                    </p>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    For diffing, re-runs, or downstream tooling.
-                  </p>
                   <input
                     ref={mdInputRef}
                     type="file"
@@ -462,7 +565,7 @@ export function Phase5ExternalDraftingPanel({
                     ) : (
                       <Upload className="h-3.5 w-3.5 mr-1.5" />
                     )}
-                    Upload markdown
+                    Choose markdown
                   </Button>
                 </div>
               </div>
@@ -518,18 +621,8 @@ export function Phase5ExternalDraftingPanel({
               </div>
             </section>
 
-            {/* ── Section D: Mark complete ────────────────────────────── */}
-            <section className="space-y-2 pt-2 border-t border-phase-5/15">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-phase-5" />
-                <h4 className="text-sm font-medium text-foreground">
-                  4. Mark Phase 5 complete
-                </h4>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Marks all Phase 5 steps complete and moves you to Phase 6. Requires at least one
-                uploaded completed draft.
-              </p>
+            {/* ── Footer: Mark complete ──────────────────────────────────── */}
+            <div className="pt-3 border-t border-phase-5/15">
               <Button
                 onClick={handleMarkComplete}
                 disabled={!hasCompletedDraft || completing}
@@ -543,7 +636,7 @@ export function Phase5ExternalDraftingPanel({
                 )}
                 Mark Phase 5 complete
               </Button>
-            </section>
+            </div>
           </div>
         )}
       </CardContent>

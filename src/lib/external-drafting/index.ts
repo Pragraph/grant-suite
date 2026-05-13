@@ -1,4 +1,12 @@
-export { EXTERNAL_DRAFTING_PROMPT } from "./prompt";
+export {
+  EXTERNAL_DRAFTING_PROMPT,
+  EXTERNAL_DRAFTING_PROMPT_TEMPLATE,
+  SUPPORTED_OUTPUT_LANGUAGES,
+  DEFAULT_OUTPUT_LANGUAGE,
+  buildExternalDraftingPrompt,
+  isSupportedOutputLanguage,
+} from "./prompt";
+export type { SupportedOutputLanguage } from "./prompt";
 export {
   buildBundleZip,
   buildBundleReadme,
@@ -19,3 +27,7 @@ export type {
   CompletedDraftMetadata,
   CompletedDraftRecord,
 } from "./uploads";
+export {
+  getProjectOutputLanguage,
+  setProjectOutputLanguage,
+} from "./language-preference";
