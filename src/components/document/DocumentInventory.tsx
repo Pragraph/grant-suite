@@ -3,15 +3,19 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  AlertTriangle,
   FileText,
   Search,
   ChevronDown,
   ChevronRight,
   Download,
   History,
+  Loader2,
   PackageOpen,
+  Trash2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 import { useDocumentStore } from "@/stores/document-store";
@@ -27,6 +31,7 @@ import { PhaseIcon } from "@/components/ui/phase-icon";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -53,7 +58,7 @@ export function DocumentInventory({
   fullPage = false,
   className,
 }: DocumentInventoryProps) {
-  const { documents } = useDocumentStore();
+  const { documents, deleteDocumentByCanonicalName } = useDocumentStore();
 
   const [search, setSearch] = useState("");
   const [collapsedPhases, setCollapsedPhases] = useState<Set<number>>(
@@ -67,6 +72,10 @@ export function DocumentInventory({
   // Version history
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyDoc, setHistoryDoc] = useState<Document | null>(null);
+
+  // Delete confirmation
+  const [deleteTarget, setDeleteTarget] = useState<Document | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Hover state for action buttons
   const [hoveredDocId, setHoveredDocId] = useState<string | null>(null);
@@ -131,6 +140,40 @@ export function DocumentInventory({
     a.download = doc.canonicalName;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleDeleteClick = (doc: Document, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteTarget(doc);
+  };
+
+  const deleteVersionCount = useMemo(() => {
+    if (!deleteTarget) return 0;
+    return documents.filter(
+      (d) =>
+        d.projectId === projectId &&
+        d.canonicalName === deleteTarget.canonicalName,
+    ).length;
+  }, [deleteTarget, documents, projectId]);
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await deleteDocumentByCanonicalName(projectId, deleteTarget.canonicalName);
+      toast.success("Document deleted", {
+        description: `${deleteTarget.name} and ${deleteVersionCount} version${
+          deleteVersionCount === 1 ? "" : "s"
+        } removed.`,
+      });
+      setDeleteTarget(null);
+    } catch (err) {
+      toast.error("Could not delete document", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const phasesWithDocs = PHASE_DEFINITIONS.filter((p) => docsByPhase[p.phase]);
@@ -270,6 +313,18 @@ export function DocumentInventory({
                                       >
                                         <History className="h-3 w-3" />
                                       </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-50"
+                                        onClick={(e) =>
+                                          handleDeleteClick(doc, e)
+                                        }
+                                        title="Delete"
+                                        aria-label={`Delete ${doc.name}`}
+                                      >
+                                        <Trash2 className="h-3 w-3" />
+                                      </Button>
                                     </div>
                                   ) : (
                                     <div className="flex items-center gap-2 shrink-0 ml-2">
@@ -355,6 +410,74 @@ export function DocumentInventory({
           onOpenChange={setHistoryOpen}
         />
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleting) setDeleteTarget(null);
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+              </div>
+              <div className="space-y-1">
+                <DialogTitle className="text-base">
+                  Delete this document?
+                </DialogTitle>
+                <DialogDescription className="text-sm">
+                  This permanently removes{" "}
+                  <span className="font-medium text-foreground">
+                    {deleteTarget?.name}
+                  </span>{" "}
+                  and{" "}
+                  <span className="font-medium text-foreground">
+                    all {deleteVersionCount} stored version
+                    {deleteVersionCount === 1 ? "" : "s"}
+                  </span>{" "}
+                  from this project.
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="rounded-md border border-red-200 bg-red-50 p-3 text-xs text-red-700 space-y-1.5">
+            <p className="font-medium">This action cannot be undone.</p>
+            <p>
+              Any phase steps that consumed this document will need to be
+              re-run or have a new version uploaded. Other documents in this
+              project are not affected.
+            </p>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDeleteTarget(null)}
+              disabled={deleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleConfirmDelete}
+              disabled={deleting}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {deleting ? (
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              ) : (
+                <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              Delete document
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
