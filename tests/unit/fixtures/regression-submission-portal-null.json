@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "form_metadata": {
+    "form_id": "regression-test-submission-portal-null",
+    "form_title": { "en": "Regression Test — submission_portal nullable" },
+    "funder": { "name": "Test Funder", "country": "Test" },
+    "primary_language": "en",
+    "supported_languages": ["en"],
+    "submission_portal": null,
+    "submission_portal_url": null,
+    "source": {
+      "type": "manual",
+      "extraction_date": "2026-05-13",
+      "reviewed_by_user": false,
+      "reviewed_at": null
+    }
+  },
+  "sections": [
+    {
+      "section_id": "A",
+      "label": { "en": "Section A" },
+      "level": 1,
+      "fields": []
+    }
+  ]
+}

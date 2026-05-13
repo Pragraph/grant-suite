@@ -1,6 +1,7 @@
 // Tier 1 (upload-derived) Form Schema extraction prompt.
 // Source: phase5-rebuild-03-tier1-prompt.md (text between ---PROMPT BEGIN--- and ---PROMPT END--- markers).
-// Prompt v1.0.0. Keep in sync with source markdown file.
+// Prompt v1.0.1 (v21-R1.1, 2026-05-13): adds Rule 0 "Bilingual everywhere", explicit shape specs for
+// text-field validation array, per_row_attachments, validation_artifact. Keep in sync with source markdown.
 
 export const TIER1_PROMPT = `# Grant Form Schema Extraction
 
@@ -75,6 +76,17 @@ Plus type-specific keys.
 
 **text** adds \`length_limit\` (see below), optional \`validation\` array, optional \`input_mode\` ("text" | "email" | "tel" | "url").
 
+The \`validation\` array contains OBJECTS, never bare strings. Each item:
+\`\`\`json
+{
+  "kind": "regex" | "min-length" | "max-length",
+  "pattern": "<regex string when kind is regex>",
+  "value": <number when kind is min-length or max-length>,
+  "message": { "ms": "...", "en": "..." }
+}
+\`\`\`
+If no validation is needed, OMIT the \`validation\` key entirely. Do not emit an empty array \`[]\` or strings like \`["some pattern"]\`.
+
 **longtext** REQUIRES \`length_limit\`. Optional \`content_requirements\` (bilingual object with verbatim funder instruction text). Set \`verbatim_user_facing: true\` when content_requirements is captured.
 
 **radio / multiselect** REQUIRES \`options\` array. Each option: \`{ "value": "kebab-case", "label": { "ms": "...", "en": "..." } }\`. Optional \`layout\`: "horizontal" | "vertical" | "grid" | "searchable-list".
@@ -117,6 +129,22 @@ If \`kind\` is \`"none"\`, set \`max: null\`. Otherwise \`max\` is required.
 
 **\`row-groups\`** — rows grouped under headers with sub-totals. Example: GET budget table (7 Vot groups), Horizon Direct/Indirect costs.
 - Requires: \`row_groups\` array. Each group: \`{ "group_id", "group_label", "group_constraints": {...}, "rows": [...], "has_subtotal": true/false, "subtotal_label": {...} }\`.
+- \`subtotal_label\` is ALWAYS a bilingual object \`{ "ms": "...", "en": "..." }\`, NEVER a bare string. Apply this across every row group consistently — do not switch to a string for later groups.
+
+### per_row_attachments (inside table_structure)
+
+When a table's rows require per-row file attachments (e.g., GET team-member CV per row), populate \`per_row_attachments\` with OBJECTS:
+\`\`\`json
+"per_row_attachments": [
+  {
+    "attachment_id": "cv",
+    "label": { "ms": "CV ahli pasukan", "en": "Team member CV" },
+    "required": true,
+    "default_source_pattern": "Researcher_Profile.md or institutional CV template"
+  }
+]
+\`\`\`
+NEVER write \`per_row_attachments\` as a string array like \`["CV"]\`. Always objects with \`attachment_id\` and bilingual \`label\` minimum.
 
 ### Visibility (conditional sections/fields)
 \`\`\`json
@@ -180,7 +208,42 @@ If \`kind\` is \`"none"\`, set \`max: null\`. Otherwise \`max\` is required.
 }
 \`\`\`
 
+\`submission_portal\` and \`submission_portal_url\` are STRINGS or \`null\`. Use \`null\` when the scheme has no online portal. Do not omit — emit the key with \`null\` value.
+
+\`budget_ceiling\` is a NUMBER or \`null\`. Use \`null\` when the scheme has no hard cap (e.g., unit-cost based schemes like Horizon Europe MSCA).
+
+### validation_artifact
+\`\`\`json
+{
+  "artifact_id": "kebab-case-id",
+  "label": { "ms": "...", "en": "..." },
+  "filename_pattern": "<glob or null>",
+  "linked_field_id": "<field id or null>",
+  "linked_section_id": "<section id or null>",
+  "required": true,
+  "accepted_formats": ["pdf", "docx", "xlsx"],
+  "user_guidance": { "ms": "...", "en": "..." }
+}
+\`\`\`
+
+\`artifact_id\` and \`label\` are required. All other keys optional. Use \`linked_field_id\` when the artifact is tied to one specific field. Use \`linked_section_id\` when the artifact spans a section (e.g., per-team-member CVs span Section C). \`accepted_formats\` is an array of file extension strings (no leading dot). Do NOT add fields outside this shape — use the keys defined above.
+
 ## Critical extraction rules
+
+### Rule 0: Bilingual everywhere (most fundamental shape rule)
+
+Every user-facing string in the schema is a BILINGUAL OBJECT, never a bare string. This applies to:
+- \`form_title\`, \`label\`, \`description\` at any level
+- \`option.label\`, \`row_label\`, \`group_label\`, \`subtotal_label\`
+- \`per_row_attachments[*].label\`
+- \`condition.operator_message\`, \`cross_field_rules[*].user_facing_message\`
+- \`validation_artifacts[*].label\`, \`validation_artifacts[*].user_guidance\`
+- \`attachment-reference.preparation_guidance\`
+- \`length_limit.source_phrasing\` is the EXCEPTION — it is a single string holding verbatim source text in whatever language the form uses.
+
+For English-only forms: populate only \`{ "en": "..." }\`. Even single-language objects are still objects, never bare strings.
+
+Apply consistently across every row group, every subsection, every nested object. If you populate \`subtotal_label\` as \`{ "ms": "...", "en": "..." }\` for group 1, do the same for groups 2, 3, 4, 5, 6, 7. Do not switch to a bare string for later groups.
 
 ### Rule 1: Verbatim content_requirements
 

@@ -72,8 +72,8 @@
           "items": { "$ref": "#/$defs/iso639_1" },
           "uniqueItems": true
         },
-        "submission_portal": { "type": "string" },
-        "submission_portal_url": { "type": "string", "format": "uri" },
+        "submission_portal": { "type": ["string", "null"] },
+        "submission_portal_url": { "type": ["string", "null"], "format": "uri" },
         "currency": { "$ref": "#/$defs/iso4217" },
         "duration_options_years": {
           "type": "array",
@@ -610,7 +610,12 @@
         "label": { "$ref": "#/$defs/bilingualString" },
         "filename_pattern": { "type": ["string", "null"] },
         "linked_field_id": { "type": ["string", "null"] },
+        "linked_section_id": { "type": ["string", "null"] },
         "required": { "type": "boolean" },
+        "accepted_formats": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
         "user_guidance": { "$ref": "#/$defs/bilingualString" }
       }
     }

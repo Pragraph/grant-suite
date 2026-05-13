@@ -71,8 +71,10 @@ export interface FormMetadata {
   funder: FormFunder;
   primary_language: Iso639_1;
   supported_languages: Iso639_1[];
-  submission_portal?: string;
-  submission_portal_url?: string;
+  /** Nullable per v21-R1.1 (2026-05-13): schemes without an online portal emit null. */
+  submission_portal?: string | null;
+  /** Nullable per v21-R1.1 (2026-05-13): schemes without an online portal emit null. */
+  submission_portal_url?: string | null;
   currency?: Iso4217;
   duration_options_years?: number[];
   budget_ceiling?: number | null;
@@ -324,7 +326,11 @@ export interface ValidationArtifact {
   label: BilingualString;
   filename_pattern?: string | null;
   linked_field_id?: string | null;
+  /** Added v21-R1.1 (2026-05-13): artifacts that span a whole section rather than one field. */
+  linked_section_id?: string | null;
   required?: boolean;
+  /** Added v21-R1.1 (2026-05-13): accepted upload extensions (no leading dot). */
+  accepted_formats?: string[];
   user_guidance?: BilingualString;
 }
 

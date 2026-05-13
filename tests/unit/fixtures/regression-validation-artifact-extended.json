@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "form_metadata": {
+    "form_id": "regression-test-validation-artifact-extended",
+    "form_title": { "en": "Regression Test — validation_artifact extended shape" },
+    "funder": { "name": "Test Funder", "country": "Test" },
+    "primary_language": "en",
+    "supported_languages": ["en"],
+    "source": {
+      "type": "manual",
+      "extraction_date": "2026-05-13",
+      "reviewed_by_user": false,
+      "reviewed_at": null
+    }
+  },
+  "sections": [
+    {
+      "section_id": "A",
+      "label": { "en": "Section A" },
+      "level": 1,
+      "fields": []
+    }
+  ],
+  "validation_artifacts": [
+    {
+      "artifact_id": "team-cvs",
+      "label": { "en": "Team Member CVs" },
+      "linked_section_id": "A",
+      "linked_field_id": null,
+      "filename_pattern": null,
+      "required": true,
+      "accepted_formats": ["pdf", "docx"],
+      "user_guidance": { "en": "Submit one CV per team member." }
+    }
+  ]
+}

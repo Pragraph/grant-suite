@@ -33,6 +33,36 @@ describe("Tier 1 prompt", () => {
     expect(TIER1_PROMPT).toContain("## Shape reference");
     expect(TIER1_PROMPT).toContain("## Critical extraction rules");
   });
+
+  it("contains critical-rules end marker used by Tier 2 inlining (v21-R1.1)", () => {
+    expect(TIER1_PROMPT).toContain("## Additional rules");
+  });
+
+  it("contains Rule 0 'Bilingual everywhere' anti-pattern guidance (v21-R1.1)", () => {
+    expect(TIER1_PROMPT).toContain("Rule 0: Bilingual everywhere");
+    expect(TIER1_PROMPT).toContain("NEVER a bare string");
+  });
+
+  it("specifies text-field validation array shape (v21-R1.1)", () => {
+    expect(TIER1_PROMPT).toContain("The `validation` array contains OBJECTS");
+  });
+
+  it("specifies per_row_attachments shape (v21-R1.1)", () => {
+    expect(TIER1_PROMPT).toContain("per_row_attachments");
+    expect(TIER1_PROMPT).toContain("NEVER write `per_row_attachments` as a string array");
+  });
+
+  it("specifies validation_artifact shape with linked_section_id and accepted_formats (v21-R1.1)", () => {
+    expect(TIER1_PROMPT).toContain("### validation_artifact");
+    expect(TIER1_PROMPT).toContain("linked_section_id");
+    expect(TIER1_PROMPT).toContain("accepted_formats");
+  });
+
+  it("buildTier1Prompt returns a non-empty string starting with the title", () => {
+    const prompt = buildTier1Prompt();
+    expect(prompt.length).toBeGreaterThan(5000);
+    expect(prompt).toMatch(/^# Grant Form Schema Extraction/);
+  });
 });
 
 describe("Tier 2 prompt", () => {
@@ -79,5 +109,38 @@ describe("Tier 2 prompt", () => {
       year: 2026,
     });
     expect(built).toContain("NO field may be marked");
+  });
+
+  it("substitutes SHAPE_REFERENCE placeholder with actual Tier 1 shape content (v21-R1.1)", () => {
+    const built = buildTier2Prompt({
+      schemeName: "Test Scheme",
+      funder: "Test Funder",
+      year: 2026,
+    });
+    expect(built).not.toContain("{{SHAPE_REFERENCE}}");
+    expect(built).toContain("### Section");
+    expect(built).toContain("### Field — universal keys");
+  });
+
+  it("substitutes CRITICAL_RULES placeholder with Rule 0 through Rule 8 (v21-R1.1)", () => {
+    const built = buildTier2Prompt({
+      schemeName: "Test Scheme",
+      funder: "Test Funder",
+      year: 2026,
+    });
+    expect(built).not.toContain("{{CRITICAL_RULES}}");
+    expect(built).toContain("Rule 0: Bilingual everywhere");
+    expect(built).toContain("Rule 1: Verbatim content_requirements");
+  });
+
+  it("propagates validation_artifact shape into runtime prompt (v21-R1.1)", () => {
+    const built = buildTier2Prompt({
+      schemeName: "Test Scheme",
+      funder: "Test Funder",
+      year: 2026,
+    });
+    expect(built).toContain("### validation_artifact");
+    expect(built).toContain("linked_section_id");
+    expect(built).toContain("accepted_formats");
   });
 });

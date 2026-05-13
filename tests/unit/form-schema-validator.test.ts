@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import getFixture from "./fixtures/form-schema-get.json";
 import horizonFixture from "./fixtures/form-schema-horizon-msca.json";
+import regressionSubmissionPortalNull from "./fixtures/regression-submission-portal-null.json";
+import regressionValidationArtifactExtended from "./fixtures/regression-validation-artifact-extended.json";
 import { validateFormSchema, isFormSchema } from "@/lib/form-schema/validator";
 
 describe("Form Schema validator — worked examples", () => {
@@ -25,6 +27,26 @@ describe("Form Schema validator — worked examples", () => {
   it("isFormSchema type guard returns true for valid fixtures", () => {
     expect(isFormSchema(getFixture)).toBe(true);
     expect(isFormSchema(horizonFixture)).toBe(true);
+  });
+});
+
+describe("Form Schema validator — v21-R1.1 regressions", () => {
+  it("submission_portal: null and submission_portal_url: null validate", () => {
+    const result = validateFormSchema(regressionSubmissionPortalNull);
+    if (!result.valid) {
+      console.log("submission_portal null errors:", JSON.stringify(result.errors.slice(0, 5), null, 2));
+    }
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it("validation_artifact with linked_section_id and accepted_formats validates", () => {
+    const result = validateFormSchema(regressionValidationArtifactExtended);
+    if (!result.valid) {
+      console.log("validation_artifact errors:", JSON.stringify(result.errors.slice(0, 5), null, 2));
+    }
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
   });
 });
 

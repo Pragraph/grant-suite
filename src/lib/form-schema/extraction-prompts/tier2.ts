@@ -1,9 +1,10 @@
 // Tier 2 (web-reconstructed) Form Schema extraction prompt.
 // Source: phase5-rebuild-03-tier2-prompt.md (text between ---PROMPT BEGIN--- and ---PROMPT END--- markers).
 // Template variables: {{SCHEME_NAME}}, {{FUNDER}}, {{YEAR}}, {{URL}}.
-// The "## Shape reference" parenthetical is replaced at runtime with the Tier 1 shape reference
-// per phase5-rebuild-03-tier2-prompt.md "Shape reference inclusion".
-// Prompt v1.0.0. Keep in sync with source markdown file.
+// Two placeholders are replaced at runtime with Tier 1 sections:
+//   {{SHAPE_REFERENCE}} → Tier 1 "## Shape reference" through "## Critical extraction rules"
+//   {{CRITICAL_RULES}}  → Tier 1 "## Critical extraction rules" through "## Additional rules"
+// Prompt v1.0.1 (v21-R1.1, 2026-05-13): adds CRITICAL_RULES placeholder so Rule 0 propagates to Tier 2.
 
 import { TIER1_PROMPT } from "./tier1";
 
@@ -13,9 +14,6 @@ export interface Tier2Inputs {
   year: number;
   url?: string;
 }
-
-const SHAPE_REFERENCE_PLACEHOLDER =
-  "(Same as Tier 1 prompt. The codebase concatenates the Tier 1 shape reference here at runtime to keep this artifact small and to ensure both tiers stay in sync. Treat the shape rules as identical to Tier 1.)";
 
 export const TIER2_PROMPT_TEMPLATE = `# Grant Form Schema Reconstruction (Web-Based)
 
@@ -48,7 +46,9 @@ Same as Tier 1: a single JSON object with \`schema_version\`, \`form_metadata\`,
 
 ## Shape reference
 
-(Same as Tier 1 prompt. The codebase concatenates the Tier 1 shape reference here at runtime to keep this artifact small and to ensure both tiers stay in sync. Treat the shape rules as identical to Tier 1.)
+(Same as Tier 1 prompt. The codebase substitutes the \`{{SHAPE_REFERENCE}}\` placeholder with the Tier 1 shape spec at runtime. Treat the shape rules as identical to Tier 1, including Rule 0 "Bilingual everywhere," the validation-array shape, per_row_attachments shape, and validation_artifact shape.)
+
+{{SHAPE_REFERENCE}}
 
 ## Web search guidance
 
@@ -143,9 +143,9 @@ Instead of \`page_audit_trail\`, populate a \`url_audit_trail\` array in \`form_
 
 ## Critical extraction rules
 
-(Same as Tier 1 prompt — Rules 1 through 8.)
+(Same as Tier 1 prompt — Rules 0 through 8. The codebase substitutes the \`{{CRITICAL_RULES}}\` placeholder with the Tier 1 critical rules at runtime. Rule 0 "Bilingual everywhere" is especially important for web-reconstructed schemas because public documentation often uses inconsistent formatting.)
 
-The verbatim content_requirements rule (Rule 1) is even more important in Tier 2 because the LLM cannot see the actual form. Any content_requirements you extract must be quoted from the source documentation. If the documentation paraphrases ("applicants should describe their methodology") rather than instructs in verbatim form-field text ("Please describe the methodology"), mark \`verbatim_user_facing: false\` and note the source in a \`description\` field.
+{{CRITICAL_RULES}}
 
 ## Confidence calibration for Tier 2
 
@@ -176,22 +176,33 @@ Return ONLY the JSON. No prose, no markdown fences, no preamble. The first chara
 
 Return the complete JSON.`;
 
-function extractShapeReference(): string {
-  const startMarker = "## Shape reference";
-  const endMarker = "## Critical extraction rules";
-  const start = TIER1_PROMPT.indexOf(startMarker);
-  const end = TIER1_PROMPT.indexOf(endMarker);
+function extractShapeReferenceSection(): string {
+  const start = TIER1_PROMPT.indexOf("## Shape reference");
+  const end = TIER1_PROMPT.indexOf("## Critical extraction rules");
   if (start === -1 || end === -1) {
-    throw new Error("Tier 1 prompt structure unexpected — shape reference markers not found");
+    throw new Error(
+      "Tier 1 prompt structure unexpected — shape reference markers not found. Check tier1.ts inlining matches the canonical prompt artifact.",
+    );
+  }
+  return TIER1_PROMPT.slice(start, end).trim();
+}
+
+function extractCriticalRulesSection(): string {
+  const start = TIER1_PROMPT.indexOf("## Critical extraction rules");
+  const end = TIER1_PROMPT.indexOf("## Additional rules");
+  if (start === -1 || end === -1) {
+    throw new Error(
+      "Tier 1 prompt structure unexpected — critical rules markers not found. Check tier1.ts inlining matches the canonical prompt artifact.",
+    );
   }
   return TIER1_PROMPT.slice(start, end).trim();
 }
 
 export function buildTier2Prompt(inputs: Tier2Inputs): string {
-  const shapeReference = extractShapeReference();
-  return TIER2_PROMPT_TEMPLATE
-    .split(SHAPE_REFERENCE_PLACEHOLDER)
-    .join(shapeReference)
+  // Each placeholder occurs twice in the template — once inside a descriptor parenthetical
+  // (wrapped in backticks) and once standalone. replaceAll handles both.
+  return TIER2_PROMPT_TEMPLATE.replaceAll("{{SHAPE_REFERENCE}}", extractShapeReferenceSection())
+    .replaceAll("{{CRITICAL_RULES}}", extractCriticalRulesSection())
     .replace(/\{\{SCHEME_NAME\}\}/g, inputs.schemeName)
     .replace(/\{\{FUNDER\}\}/g, inputs.funder)
     .replace(/\{\{YEAR\}\}/g, inputs.year.toString())
