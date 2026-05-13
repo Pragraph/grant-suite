@@ -164,9 +164,12 @@ async function loadPdfJs(): Promise<PdfJsModule> {
   if (!pdfjsModulePromise) {
     pdfjsModulePromise = (async () => {
       const pdfjs = (await import("pdfjs-dist")) as unknown as PdfJsModule;
-      // pdfjs-dist v4+ requires explicit worker setup. Use CDN URL — works in
-      // static export environments without bundler-specific worker plumbing.
-      pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
+      // pdfjs-dist v4+ requires explicit worker setup. The worker file is
+      // copied from node_modules/pdfjs-dist/build/ into public/ at the project
+      // root so it ships same-origin with no CDN dependency. If pdfjs-dist is
+      // upgraded, re-copy:
+      //   cp node_modules/pdfjs-dist/build/pdf.worker.min.mjs public/pdf.worker.min.mjs
+      pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
       return pdfjs;
     })();
   }
